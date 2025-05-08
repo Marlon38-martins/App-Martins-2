@@ -92,10 +92,10 @@ export default function CheckoutPage() {
     toast({
       title: 'Pagamento Confirmado!',
       description: `Sua ${business?.type === 'Hotel' || business?.type === 'Pousada' ? 'reserva' : 'compra/solicitação'} em ${business?.name} foi processada com sucesso.`,
-      variant: 'default', // 'default' is a success-like style in many themes
+      variant: 'default', 
     });
     setIsSubmitting(false);
-    router.push(`/`); // Redirect to a success page or home
+    router.push(`/`); 
   };
   
   const getActionName = () => {
@@ -109,16 +109,16 @@ export default function CheckoutPage() {
 
   if (isLoading) {
     return (
-      <div className="container mx-auto px-4 py-8 md:px-6">
-        <Skeleton className="mb-4 h-10 w-32" /> {/* Back button skeleton */}
+      <div> {/* Removed container and padding classes */}
+        <Skeleton className="mb-4 h-10 w-32" /> 
         <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
           <div className="md:col-span-2">
-            <Skeleton className="mb-4 h-12 w-3/4" /> {/* Title Skeleton */}
-            <Skeleton className="h-96 w-full rounded-lg" /> {/* Form Skeleton */}
+            <Skeleton className="mb-4 h-12 w-3/4" /> 
+            <Skeleton className="h-96 w-full rounded-lg" /> 
           </div>
           <div className="md:col-span-1">
-            <Skeleton className="mb-4 h-10 w-1/2" /> {/* Summary Title Skeleton */}
-            <Skeleton className="h-64 w-full rounded-lg" /> {/* Summary Card Skeleton */}
+            <Skeleton className="mb-4 h-10 w-1/2" /> 
+            <Skeleton className="h-64 w-full rounded-lg" /> 
           </div>
         </div>
       </div>
@@ -127,7 +127,7 @@ export default function CheckoutPage() {
 
   if (error) {
     return (
-      <div className="container mx-auto flex min-h-[calc(100vh-150px)] flex-col items-center justify-center px-4 py-8 md:px-6">
+      <div className="flex min-h-[calc(100vh-250px)] flex-col items-center justify-center">  {/* Adjusted min-height */}
         <Alert variant="destructive" className="w-full max-w-md">
           <Frown className="h-5 w-5" />
           <AlertTitle>Erro</AlertTitle>
@@ -145,7 +145,7 @@ export default function CheckoutPage() {
 
   if (!business) {
      return (
-      <div className="container mx-auto flex min-h-[calc(100vh-150px)] flex-col items-center justify-center px-4 py-8 md:px-6">
+      <div className="flex min-h-[calc(100vh-250px)] flex-col items-center justify-center"> {/* Adjusted min-height */}
         <Frown className="mb-4 h-20 w-20 text-muted-foreground" />
         <h2 className="mb-2 text-2xl font-semibold">Estabelecimento não encontrado</h2>
         <p className="mb-6 text-muted-foreground">O checkout não pode prosseguir sem um estabelecimento válido.</p>
@@ -160,7 +160,7 @@ export default function CheckoutPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8 md:px-6">
+    <div> {/* Removed container and padding classes */}
       <Button asChild variant="outline" className="mb-6">
         <Link href={`/business/${business.id}`}>
           <ArrowLeft className="mr-2 h-4 w-4" />
@@ -302,7 +302,7 @@ export default function CheckoutPage() {
         </div>
 
         <div className="md:col-span-1">
-          <Card className="sticky top-24 shadow-lg">
+          <Card className="sticky top-24 shadow-lg"> {/* Adjust top value based on header height if sticky */}
             <CardHeader>
               <CardTitle className="flex items-center text-xl">
                 <ShoppingCart className="mr-2 h-5 w-5 text-accent" />

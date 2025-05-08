@@ -35,7 +35,7 @@ export default function ServicesPage() {
           const existing = categoryMap.get(business.type);
           categoryMap.set(business.type, {
             count: (existing?.count || 0) + 1,
-            icon: existing?.icon || business.icon, // Use first encountered icon for category
+            icon: existing?.icon || business.icon, 
           });
         });
 
@@ -57,7 +57,7 @@ export default function ServicesPage() {
   }, []);
 
   return (
-    <div className="container mx-auto px-4 py-8 md:px-6">
+    <div> {/* Removed container and padding classes */}
       <section className="mb-8 text-center">
         <h2 className="mb-2 text-3xl font-bold tracking-tight text-primary md:text-4xl">
           Nossos Parceiros e Serviços

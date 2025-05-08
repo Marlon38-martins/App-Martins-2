@@ -1,26 +1,15 @@
-import Link from 'next/link';
-import { MountainSnow, ShoppingCart } from 'lucide-react'; // Using MountainSnow as a placeholder for Martins' feel
+'use client';
+
+import { SidebarTrigger } from '@/components/ui/sidebar';
+// PanelLeft is the default icon for SidebarTrigger.
 
 export function Header() {
   return (
-    <header className="bg-primary text-primary-foreground shadow-md">
-      <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-6">
-        <Link href="/" className="flex items-center gap-2">
-          <MountainSnow className="h-7 w-7" />
-          <h1 className="text-xl font-bold tracking-tight">Martins Prime</h1>
-        </Link>
-        <nav>
-          <ul className="flex items-center gap-4">
-            <li>
-              <Link href="/services" className="flex items-center gap-1 hover:text-accent transition-colors">
-                <ShoppingCart className="h-5 w-5" />
-                Serviços
-              </Link>
-            </li>
-            {/* Additional navigation items can be added here */}
-          </ul>
-        </nav>
-      </div>
+    <header className="sticky top-0 z-40 flex h-16 items-center gap-4 border-b bg-background/95 px-4 shadow-sm backdrop-blur md:px-6">
+      <SidebarTrigger />
+      {/* The rest of the header is kept minimal for an app-like feel. */}
+      {/* Page titles can be part of the page content itself or added here if desired. */}
+      {/* User-specific actions (e.g., profile, logout) could also be added here on the right. */}
     </header>
   );
 }

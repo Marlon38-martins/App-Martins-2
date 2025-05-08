@@ -65,7 +65,7 @@ export default function BusinessPage({ params }: { params: BusinessPageParams })
 
   if (isLoading) {
     return (
-      <div className="container mx-auto px-4 py-8 md:px-6">
+      <div> {/* Removed container and padding classes */}
         <Skeleton className="mb-4 h-10 w-32" /> {/* Back button skeleton */}
         <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
           <div>
@@ -89,7 +89,7 @@ export default function BusinessPage({ params }: { params: BusinessPageParams })
 
   if (error) {
     return (
-      <div className="container mx-auto flex min-h-[calc(100vh-150px)] flex-col items-center justify-center px-4 py-8 md:px-6">
+      <div className="flex min-h-[calc(100vh-250px)] flex-col items-center justify-center"> {/* Adjusted min-height */}
         <Alert variant="destructive" className="w-full max-w-md">
           <Frown className="h-5 w-5" />
           <AlertTitle>Erro</AlertTitle>
@@ -107,7 +107,7 @@ export default function BusinessPage({ params }: { params: BusinessPageParams })
 
   if (!business) {
      return (
-      <div className="container mx-auto flex min-h-[calc(100vh-150px)] flex-col items-center justify-center px-4 py-8 md:px-6">
+      <div className="flex min-h-[calc(100vh-250px)] flex-col items-center justify-center"> {/* Adjusted min-height */}
         <Frown className="mb-4 h-20 w-20 text-muted-foreground" />
         <h2 className="mb-2 text-2xl font-semibold">Estabelecimento não encontrado</h2>
         <p className="mb-6 text-muted-foreground">O estabelecimento que você procura pode não existir ou foi removido.</p>
@@ -124,7 +124,7 @@ export default function BusinessPage({ params }: { params: BusinessPageParams })
   const { text: checkoutButtonText, Icon: CheckoutButtonIcon } = getButtonTextAndIcon(business.type);
 
   return (
-    <div className="container mx-auto px-4 py-8 md:px-6">
+    <div> {/* Removed container and padding classes */}
       <Button asChild variant="outline" className="mb-6">
         <Link href="/services">
           <ArrowLeft className="mr-2 h-4 w-4" />

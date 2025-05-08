@@ -11,7 +11,7 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { slugify, unslugify } from '@/lib/utils';
 import { Frown, ArrowLeft, ListFilter } from 'lucide-react';
-import { SearchBar } from '@/components/search-bar'; // Assuming you have a SearchBar
+import { SearchBar } from '@/components/search-bar'; 
 
 export default function CategoryPage() {
   const params = useParams();
@@ -43,11 +43,10 @@ export default function CategoryPage() {
         setFilteredBusinesses(categoryBusinesses);
 
         if (categoryBusinesses.length === 0 && data.length > 0) {
-            // If slug doesn't match any type, maybe it's a direct type name attempt or invalid
             const businessesByType = data.filter(business => business.type.toLowerCase() === categorySlug.toLowerCase());
             if (businessesByType.length > 0) {
                 setFilteredBusinesses(businessesByType);
-                setCategoryName(businessesByType[0].type); // Update category name if found this way
+                setCategoryName(businessesByType[0].type); 
             } else {
                  // setError(`Nenhuma empresa encontrada para a categoria "${unsluggedCategory}". Verifique o link ou tente outra categoria.`);
             }
@@ -73,7 +72,7 @@ export default function CategoryPage() {
   }, [searchTerm, allBusinesses, categorySlug]);
 
   return (
-    <div className="container mx-auto px-4 py-8 md:px-6">
+    <div> {/* Removed container and padding classes */}
       <Button asChild variant="outline" className="mb-6">
         <Link href="/services">
           <ArrowLeft className="mr-2 h-4 w-4" />

@@ -49,7 +49,7 @@ export default function HomePage() {
   }, [businesses, searchTerm, selectedCategory]);
 
   return (
-    <div className="container mx-auto px-4 py-8 md:px-6">
+    <div> {/* Removed container and padding classes */}
       <section className="mb-8 text-center">
         <h2 className="mb-2 text-3xl font-bold tracking-tight text-primary md:text-4xl">
           Explore o Melhor de Martins
