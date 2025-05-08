@@ -4,17 +4,32 @@ import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { getGramadoBusinessById, getDealsForBusiness, type GramadoBusiness, type Deal } from '@/services/gramado-businesses';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { BusinessTypeIcon } from '@/components/icons';
-import { MapPin, Phone, Globe, ArrowLeft, TicketPercent, Frown } from 'lucide-react';
+import { MapPin, Phone, Globe, ArrowLeft, TicketPercent, Frown, CreditCard, ShoppingBag as ShoppingBagIcon, BedDouble as BedIcon, UtensilsCrossed as RestaurantIcon } from 'lucide-react';
 
 interface BusinessPageParams {
   id: string;
 }
+
+const getButtonTextAndIcon = (type: string) => {
+  const lowerType = type.toLowerCase();
+  if (lowerType.includes('hotel') || lowerType.includes('pousada')) {
+    return { text: 'Fazer Reserva Agora', Icon: BedIcon };
+  }
+  if (lowerType.includes('restaurante') || lowerType.includes('café')) {
+    return { text: 'Fazer Pedido / Reservar Mesa', Icon: RestaurantIcon };
+  }
+  if (lowerType.includes('loja') || lowerType.includes('artesanato')) {
+    return { text: 'Comprar / Ver Produtos', Icon: ShoppingBagIcon };
+  }
+  return { text: 'Solicitar Serviço', Icon: CreditCard };
+};
+
 
 export default function BusinessPage({ params }: { params: BusinessPageParams }) {
   const { id } = params;
@@ -64,6 +79,7 @@ export default function BusinessPage({ params }: { params: BusinessPageParams })
               <Skeleton className="h-20 w-full rounded-lg" />
               <Skeleton className="h-20 w-full rounded-lg" />
             </div>
+             <Skeleton className="mt-8 h-28 w-full rounded-lg" /> {/* Checkout section skeleton */}
           </div>
         </div>
         <Skeleton className="mt-8 h-24 w-full" /> {/* Description skeleton */}
@@ -104,13 +120,15 @@ export default function BusinessPage({ params }: { params: BusinessPageParams })
       </div>
     );
   }
+  
+  const { text: checkoutButtonText, Icon: CheckoutButtonIcon } = getButtonTextAndIcon(business.type);
 
   return (
     <div className="container mx-auto px-4 py-8 md:px-6">
       <Button asChild variant="outline" className="mb-6">
-        <Link href="/">
+        <Link href="/services">
           <ArrowLeft className="mr-2 h-4 w-4" />
-          Voltar
+          Voltar para Serviços
         </Link>
       </Button>
 
@@ -163,34 +181,66 @@ export default function BusinessPage({ params }: { params: BusinessPageParams })
         </div>
 
         <div className="md:col-span-2">
-          <h3 className="mb-4 flex items-center text-2xl font-semibold text-primary">
-            <TicketPercent className="mr-2 h-7 w-7 text-accent" />
-            Ofertas Exclusivas
-          </h3>
-          {deals.length > 0 ? (
-            <div className="space-y-4">
-              {deals.map(deal => (
-                <Card key={deal.id} className="bg-card shadow-lg">
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-lg text-accent">{deal.description}</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    {deal.discountPercentage > 0 && (
-                      <Badge variant="default" className="mb-2 bg-accent text-accent-foreground">
-                        {deal.discountPercentage}% OFF
-                      </Badge>
-                    )}
-                    <p className="text-sm text-muted-foreground">{deal.termsAndConditions}</p>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          ) : (
-            <Card className="border-dashed bg-muted/50 p-6 text-center shadow-none">
-              <TicketPercent className="mx-auto mb-2 h-10 w-10 text-muted-foreground" />
-              <p className="text-muted-foreground">Nenhuma oferta especial disponível no momento para este estabelecimento.</p>
-            </Card>
-          )}
+          {/* Deals Section */}
+          <div className="mb-8">
+            <h3 className="mb-4 flex items-center text-2xl font-semibold text-primary">
+              <TicketPercent className="mr-2 h-7 w-7 text-accent" />
+              Ofertas Exclusivas
+            </h3>
+            {deals.length > 0 ? (
+              <div className="space-y-4">
+                {deals.map(deal => (
+                  <Card key={deal.id} className="bg-card shadow-lg">
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-lg text-accent">{deal.description}</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      {deal.discountPercentage > 0 && (
+                        <Badge variant="default" className="mb-2 bg-accent text-accent-foreground">
+                          {deal.discountPercentage}% OFF
+                        </Badge>
+                      )}
+                      <p className="text-sm text-muted-foreground">{deal.termsAndConditions}</p>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            ) : (
+              <Card className="border-dashed bg-muted/50 p-6 text-center shadow-none">
+                <TicketPercent className="mx-auto mb-2 h-10 w-10 text-muted-foreground" />
+                <p className="text-muted-foreground">Nenhuma oferta especial disponível no momento para este estabelecimento.</p>
+              </Card>
+            )}
+          </div>
+
+          {/* Checkout/Booking Section */}
+          <Card className="bg-card shadow-xl">
+            <CardHeader>
+              <CardTitle className="flex items-center text-2xl text-primary">
+                <CheckoutButtonIcon className="mr-2 h-7 w-7 text-accent" />
+                {business.type.includes('Hotel') || business.type.includes('Pousada') ? 'Reservas' : 
+                 business.type.includes('Restaurante') || business.type.includes('Café') ? 'Pedidos e Reservas' :
+                 business.type.includes('Loja') ? 'Compras' :
+                 'Contratar Serviço'}
+              </CardTitle>
+              <CardDescription className="text-muted-foreground">
+                Pronto para aproveitar o que {business.name} tem a oferecer?
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <p className="mb-4 text-sm text-foreground/80">
+                Clique no botão abaixo para prosseguir com sua solicitação ou compra de forma rápida e segura.
+              </p>
+            </CardContent>
+            <CardFooter>
+              <Button asChild size="lg" className="w-full bg-primary hover:bg-primary/90">
+                <Link href={`/checkout/${business.id}`}>
+                  <CheckoutButtonIcon className="mr-2 h-5 w-5" />
+                  {checkoutButtonText}
+                </Link>
+              </Button>
+            </CardFooter>
+          </Card>
         </div>
       </div>
     </div>
