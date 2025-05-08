@@ -52,7 +52,7 @@ export default function HomePage() {
     <div className="container mx-auto px-4 py-8 md:px-6">
       <section className="mb-8 text-center">
         <h2 className="mb-2 text-3xl font-bold tracking-tight text-primary md:text-4xl">
-          Explore o Melhor de Gramado
+          Explore o Melhor de Martins
         </h2>
         <p className="text-lg text-foreground/80">
           Descubra descontos e promoções exclusivas nos melhores estabelecimentos.

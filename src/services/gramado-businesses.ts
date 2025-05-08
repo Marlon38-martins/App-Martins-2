@@ -1,7 +1,7 @@
 import type { LucideIcon } from 'lucide-react';
 
 /**
- * Represents a business in Gramado.
+ * Represents a business in Martins.
  */
 export interface GramadoBusiness {
   /**
@@ -95,86 +95,86 @@ export interface Deal {
 const businesses: GramadoBusiness[] = [
   {
     id: '1',
-    name: 'Restaurante Sabor da Serra',
+    name: 'Restaurante Mirante da Serra',
     type: 'Restaurante',
-    shortDescription: 'Culinária tradicional gaúcha em ambiente acolhedor.',
-    fullDescription: 'Desfrute do autêntico sabor da serra gaúcha em nosso restaurante. Com pratos preparados com ingredientes frescos e locais, oferecemos uma experiência gastronômica única. Ambiente familiar e serviço atencioso.',
-    address: 'Rua Borges de Medeiros, 2020',
-    phoneNumber: '(54) 3286-0001',
-    website: 'www.sabordaserra.com.br',
-    latitude: -29.3787,
-    longitude: -50.8742,
-    imageUrl: 'https://picsum.photos/seed/sabor/600/400',
+    shortDescription: 'Culinária regional com vista panorâmica.',
+    fullDescription: 'Saboreie pratos típicos do sertão potiguar enquanto aprecia uma vista deslumbrante da serra de Martins. Nosso cardápio celebra os ingredientes locais com um toque de sofisticação. Ambiente rústico e acolhedor.',
+    address: 'Rua Dr. Abdon Abel, 150, Centro, Martins - RN',
+    phoneNumber: '(84) 3391-0001',
+    website: 'www.mirantedaserramartins.com.br',
+    latitude: -6.0869, // Approximate latitude for Martins
+    longitude: -37.9119, // Approximate longitude for Martins
+    imageUrl: 'https://picsum.photos/seed/mirante/600/400',
     icon: 'UtensilsCrossed',
   },
   {
     id: '2',
-    name: 'Hotel Vista Bela',
-    type: 'Hotel',
-    shortDescription: 'Conforto e elegância com vistas deslumbrantes.',
-    fullDescription: 'O Hotel Vista Bela oferece acomodações luxuosas com vistas panorâmicas para as montanhas de Gramado. Ideal para casais e famílias, contamos com piscina aquecida, spa e café da manhã colonial.',
-    address: 'Av. das Hortênsias, 1500',
-    phoneNumber: '(54) 3286-0002',
-    website: 'www.hotelvistabela.com.br',
-    latitude: -29.3737,
-    longitude: -50.8705,
-    imageUrl: 'https://picsum.photos/seed/vista/600/400',
+    name: 'Pousada Aconchego Serrano',
+    type: 'Hotel', // Type can remain Hotel for Pousada
+    shortDescription: 'Charme e tranquilidade na serra.',
+    fullDescription: 'A Pousada Aconchego Serrano oferece acomodações confortáveis e charmosas, perfeitas para quem busca paz e contato com a natureza. Desfrute de nosso café da manhã regional e da hospitalidade martinense.',
+    address: 'Sítio Recanto Verde, Zona Rural, Martins - RN',
+    phoneNumber: '(84) 3391-0002',
+    website: 'www.aconchegoserrano.com.br',
+    latitude: -6.0900, // Approximate latitude
+    longitude: -37.9150, // Approximate longitude
+    imageUrl: 'https://picsum.photos/seed/aconchego/600/400',
     icon: 'BedDouble',
   },
   {
     id: '3',
-    name: 'Loja Artesanato Local',
+    name: 'Loja de Artesanato Mãos da Serra',
     type: 'Loja',
-    shortDescription: 'Lembranças e presentes artesanais da região.',
-    fullDescription: 'Encontre peças únicas de artesanato local, produzidas por artistas da Serra Gaúcha. De roupas de lã a chocolates caseiros, nossa loja é o lugar perfeito para encontrar um presente especial.',
-    address: 'Rua Torta, 10',
-    phoneNumber: '(54) 3286-0003',
-    website: 'www.artesanatolocalgramado.com.br',
-    latitude: -29.3755,
-    longitude: -50.8760,
-    imageUrl: 'https://picsum.photos/seed/artesanato/600/400',
+    shortDescription: 'Artesanato local e lembranças de Martins.',
+    fullDescription: 'Descubra a riqueza do artesanato de Martins em nossa loja. Peças em cerâmica, bordados, rendas e doces regionais. Leve um pedacinho da cultura serrana para casa.',
+    address: 'Praça Almino Afonso, 50, Centro, Martins - RN',
+    phoneNumber: '(84) 3391-0003',
+    website: 'www.maosdaserrart.com.br',
+    latitude: -6.0850, // Approximate latitude
+    longitude: -37.9100, // Approximate longitude
+    imageUrl: 'https://picsum.photos/seed/maosdaserra/600/400',
     icon: 'ShoppingBag',
   },
   {
     id: '4',
-    name: 'Tour Linha Bella',
+    name: 'Trilha da Casa de Pedra',
     type: 'Atração',
-    shortDescription: 'Passeio panorâmico pelas paisagens do interior.',
-    fullDescription: 'Descubra as belezas do interior de Gramado com o Tour Linha Bella. Um passeio que combina paisagens deslumbrantes, cultura local e degustação de produtos coloniais. Perfeito para toda a família.',
-    address: 'Saída da Praça das Etnias',
-    phoneNumber: '(54) 99999-0004',
-    website: 'www.tourlinhabella.com.br',
-    latitude: -29.3769,
-    longitude: -50.8788,
-    imageUrl: 'https://picsum.photos/seed/tour/600/400',
+    shortDescription: 'Aventura e história em meio à natureza.',
+    fullDescription: 'Explore a famosa Casa de Pedra em uma trilha ecológica guiada. Conheça as formações rochosas, a fauna e a flora locais, e aprenda sobre as lendas e a história da região. Necessário agendamento.',
+    address: 'Ponto de Encontro: Posto de Informações Turísticas, Martins - RN',
+    phoneNumber: '(84) 99999-0004',
+    website: 'www.martinsaventura.com.br/casadepedra',
+    latitude: -6.0800, // Approximate latitude (Casa de Pedra is a bit outside)
+    longitude: -37.9000, // Approximate longitude
+    imageUrl: 'https://picsum.photos/seed/casadepedra/600/400',
     icon: 'Landmark',
   },
   {
     id: '5',
-    name: 'Café Colonial da Vovó',
+    name: 'Cafeteria Grão Serrano',
     type: 'Café',
-    shortDescription: 'Delícias caseiras em um farto café colonial.',
-    fullDescription: 'Experimente o verdadeiro café colonial da Serra Gaúcha. Bolos, pães, geleias, queijos, salames e muitas outras delícias caseiras, preparadas com carinho e tradição. Um banquete para os sentidos.',
-    address: 'Estrada do Caracol, Km 2',
-    phoneNumber: '(54) 3286-0005',
-    website: 'www.cafedavovo.com.br',
-    latitude: -29.3511,
-    longitude: -50.8600,
-    imageUrl: 'https://picsum.photos/seed/cafe/600/400',
+    shortDescription: 'Cafés especiais e delícias regionais.',
+    fullDescription: 'Um refúgio para os amantes de café. Oferecemos grãos selecionados, métodos de preparo variados, bolos caseiros, tapiocas e outras iguarias para acompanhar sua bebida. Ambiente charmoso no coração de Martins.',
+    address: 'Rua Coronel Demétrio Lemos, 75, Centro, Martins - RN',
+    phoneNumber: '(84) 3391-0005',
+    website: 'www.graoserrano.com.br',
+    latitude: -6.0860, // Approximate latitude
+    longitude: -37.9110, // Approximate longitude
+    imageUrl: 'https://picsum.photos/seed/graoserrano/600/400',
     icon: 'Coffee',
   },
   {
     id: '6',
-    name: 'Parque do Lago Negro',
-    type: 'Parque',
-    shortDescription: 'Pedalinhos, natureza e tranquilidade.',
-    fullDescription: 'Um dos cartões postais de Gramado, o Lago Negro encanta com suas águas escuras, pedalinhos em formato de cisne e uma exuberante vegetação. Ideal para um passeio relaxante e fotos incríveis.',
-    address: 'R. A. J. Renner',
-    phoneNumber: '(54) 3286-0006',
-    website: 'www.gramado.rs.gov.br/lagonegro',
-    latitude: -29.3690,
-    longitude: -50.8800,
-    imageUrl: 'https://picsum.photos/seed/lago/600/400',
+    name: 'Mirante do Canto',
+    type: 'Parque', // Considered a scenic viewpoint/park area
+    shortDescription: 'Vista espetacular do pôr do sol serrano.',
+    fullDescription: 'O Mirante do Canto é um dos pontos mais altos de Martins, oferecendo uma vista panorâmica inesquecível, especialmente ao entardecer. Local ideal para contemplação e fotografias.',
+    address: 'Acesso pela RN-076, Martins - RN',
+    phoneNumber: 'N/A', // Often public access without a direct phone
+    website: 'turismo.martins.rn.gov.br/mirantedocanto',
+    latitude: -6.0795, // Approximate latitude
+    longitude: -37.9180, // Approximate longitude
+    imageUrl: 'https://picsum.photos/seed/mirantedocanto/600/400',
     icon: 'Trees',
   }
 ];
@@ -182,43 +182,43 @@ const businesses: GramadoBusiness[] = [
 const deals: Deal[] = [
   {
     id: '1',
-    businessId: '1',
-    description: '15% de desconto no rodízio de galeto aos fins de semana.',
+    businessId: '1', // Restaurante Mirante da Serra
+    description: '15% de desconto no prato principal às sextas-feiras.',
     discountPercentage: 15,
-    termsAndConditions: 'Válido aos sábados e domingos, para mesas com até 4 pessoas. Necessário apresentar o card do clube.',
+    termsAndConditions: 'Válido às sextas-feiras, para consumo no local. Necessário apresentar o card do clube.',
   },
   {
     id: '2',
-    businessId: '1',
-    description: 'Sobremesa cortesia para aniversariantes.',
-    discountPercentage: 0, // It's a courtesy, not a direct percentage off the bill total.
-    termsAndConditions: 'Válido no dia do aniversário, mediante apresentação de documento. Uma sobremesa selecionada por aniversariante.',
+    businessId: '1', // Restaurante Mirante da Serra
+    description: 'Suco regional cortesia para grupos acima de 5 pessoas.',
+    discountPercentage: 0, 
+    termsAndConditions: 'Válido para grupos com 5 ou mais pessoas, um suco por pessoa. Sabores regionais selecionados.',
   },
   {
     id: '3',
-    businessId: '2',
-    description: '10% de desconto na diária em baixa temporada.',
+    businessId: '2', // Pousada Aconchego Serrano
+    description: '10% de desconto na diária para estadias de 3 noites ou mais.',
     discountPercentage: 10,
-    termsAndConditions: 'Válido de março a junho, exceto feriados. Reserva antecipada obrigatória.',
+    termsAndConditions: 'Válido para reservas diretas com a pousada, sujeito à disponibilidade.',
   },
   {
     id: '4',
-    businessId: '3',
-    description: 'Ganhe um chaveiro exclusivo em compras acima de R$100.',
+    businessId: '3', // Loja de Artesanato Mãos da Serra
+    description: 'Brinde surpresa em compras acima de R$80.',
     discountPercentage: 0, 
-    termsAndConditions: 'Válido enquanto durarem os estoques. Um chaveiro por CPF.',
+    termsAndConditions: 'Válido enquanto durarem os estoques do brinde. Um brinde por CPF.',
   },
   {
     id: '5',
-    businessId: '5',
-    description: '20% de desconto no café colonial de segunda a quinta.',
+    businessId: '5', // Cafeteria Grão Serrano
+    description: 'Combo Café + Bolo do dia com 20% de desconto (terça a quinta).',
     discountPercentage: 20,
-    termsAndConditions: 'Válido de segunda a quinta-feira, exceto feriados. Não cumulativo com outras promoções.',
+    termsAndConditions: 'Válido de terça a quinta-feira, exceto feriados. Não cumulativo com outras promoções.',
   }
 ];
 
 /**
- * Asynchronously retrieves a list of businesses in Gramado.
+ * Asynchronously retrieves a list of businesses in Martins.
  *
  * @returns A promise that resolves to an array of GramadoBusiness objects.
  */

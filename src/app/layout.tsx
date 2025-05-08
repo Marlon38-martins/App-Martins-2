@@ -15,8 +15,8 @@ const geistMono = Geist_Mono({ // Corrected instantiation
 });
 
 export const metadata: Metadata = {
-  title: 'Gramado Prime Club',
-  description: 'Seu clube de vantagens em Gramado!',
+  title: 'Martins Prime',
+  description: 'Seu clube de vantagens em Martins, RN!',
 };
 
 export default function RootLayout({
@@ -32,7 +32,7 @@ export default function RootLayout({
           <main className="flex-grow">{children}</main>
           <footer className="bg-muted py-4 text-center text-muted-foreground">
             <div className="container mx-auto">
-              © {new Date().getFullYear()} Gramado Prime Club. Todos os direitos reservados.
+              © {new Date().getFullYear()} Martins Prime. Todos os direitos reservados.
             </div>
           </footer>
         </div>
