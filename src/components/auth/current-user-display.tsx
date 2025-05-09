@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useAuth } from '@/hooks/use-auth-client';
 import { signOut } from '@/lib/firebase/auth';
 import { SidebarMenuItem, SidebarMenuButton } from '@/components/ui/sidebar';
-import { LogIn, LogOut, UserCircle, UserPlus, Settings, Skeleton } from 'lucide-react';
+import { LogIn, LogOut, UserCircle, UserPlus, Settings } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
   DropdownMenu,
@@ -16,6 +16,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from '../ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
 
 
 export function CurrentUserDisplay() {

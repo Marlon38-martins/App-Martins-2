@@ -1,7 +1,7 @@
 // src/components/auth/auth-state-initializer.tsx
 'use client';
 
-import { useEffect }_from 'react';
+import { useEffect } from 'react';
 import { useAuth } from '@/hooks/use-auth-client'; // Assuming useAuth provides a way to set user/loading
 
 export function AuthStateInitializer() {
