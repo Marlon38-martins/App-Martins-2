@@ -13,10 +13,9 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Input } from '@/components/ui/input';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useToast } from '@/hooks/use-toast';
-import { signInWithEmail, signInWithGoogle } from '@/lib/firebase/auth'; // Firebase auth functions
-import { LogIn, Mail, Lock, MountainSnow, CheckCircle, AlertTriangle } from 'lucide-react'; // Using MountainSnow as a generic logo
+import { mockLogin, type User, type Subscription } from '@/services/gramado-businesses'; 
+import { LogIn, Mail, Lock, MountainSnow, CheckCircle } from 'lucide-react'; 
 
-// Assuming Google SVG or a similar icon component
 const GoogleIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <path d="M20.94 11c-.09-.69-.25-1.36-.48-2H12v3.89h5.03c-.26 1.23-.9 2.29-1.82 3.02v2.51h3.22c1.88-1.73 2.98-4.31 2.98-7.42z"/>
@@ -25,10 +24,9 @@ const GoogleIcon = () => (
   </svg>
 );
 
-
 const loginFormSchema = z.object({
   email: z.string().email({ message: "Por favor, insira um email válido." }),
-  password: z.string().min(1, { message: "Senha é obrigatória." }), // Min 1 for login, actual length validated by Firebase
+  password: z.string().min(1, { message: "Senha é obrigatória." }),
 });
 
 type LoginFormValues = z.infer<typeof loginFormSchema>;
@@ -47,58 +45,63 @@ export default function LoginPage() {
     },
   });
 
+  const handleMockLoginSuccess = (userName?: string | null) => {
+    toast({
+      title: 'Login Bem-sucedido!',
+      description: `Bem-vindo(a) de volta, ${userName || 'Usuário'}!`,
+      variant: 'default',
+      className: 'bg-green-500 text-white',
+      icon: <CheckCircle className="h-5 w-5 text-white" />
+    });
+    window.dispatchEvent(new CustomEvent('mockAuthChange')); // Notify layout/other components
+    router.push('/'); 
+  };
+
   const handleEmailLogin: SubmitHandler<LoginFormValues> = async (data) => {
     setIsSubmitting(true);
-    const { user, error } = await signInWithEmail(data.email, data.password);
+    // Simulate successful login
+    await new Promise(resolve => setTimeout(resolve, 500)); 
+    
+    const mockUser: User = {
+      id: 'mock-user-' + Date.now(),
+      email: data.email,
+      name: data.email.split('@')[0], // Simple name generation
+      photoURL: `https://picsum.photos/seed/${data.email}/100/100`
+    };
+    const mockSubscription: Subscription = {
+      id: 'sub-mock-' + Date.now(),
+      userId: mockUser.id,
+      planId: 'serrano_vip', // Default to VIP for mock
+      startDate: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
+      endDate: new Date(Date.now() + 335 * 24 * 60 * 60 * 1000),
+      status: 'active',
+    };
+    mockLogin(mockUser, mockSubscription);
     setIsSubmitting(false);
-
-    if (error) {
-      console.error('Login Error:', error);
-      let friendlyMessage = 'Erro ao fazer login. Verifique suas credenciais.';
-      if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
-        friendlyMessage = 'Email ou senha inválidos.';
-      } else if (error.code === 'auth/too-many-requests') {
-        friendlyMessage = 'Muitas tentativas de login. Tente novamente mais tarde.';
-      }
-      toast({
-        title: 'Erro no Login',
-        description: friendlyMessage,
-        variant: 'destructive',
-      });
-    } else if (user) {
-      toast({
-        title: 'Login Bem-sucedido!',
-        description: `Bem-vindo(a) de volta!`,
-        variant: 'default',
-        className: 'bg-green-500 text-white', // Example of success styling
-        icon: <CheckCircle className="h-5 w-5 text-white" />
-      });
-      router.push('/'); // Redirect to home or dashboard
-    }
+    handleMockLoginSuccess(mockUser.name);
   };
 
   const handleGoogleLogin = async () => {
     setIsGoogleSubmitting(true);
-    const { user, error } = await signInWithGoogle();
-    setIsGoogleSubmitting(false);
+    await new Promise(resolve => setTimeout(resolve, 500)); 
 
-    if (error) {
-      console.error('Google Login Error:', error);
-      toast({
-        title: 'Erro no Login com Google',
-        description: error.message || 'Não foi possível fazer login com Google.',
-        variant: 'destructive',
-      });
-    } else if (user) {
-      toast({
-        title: 'Login com Google Bem-sucedido!',
-        description: `Bem-vindo(a), ${user.displayName || 'Usuário'}!`,
-        variant: 'default',
-        className: 'bg-green-500 text-white',
-        icon: <CheckCircle className="h-5 w-5 text-white" />
-      });
-      router.push('/'); // Redirect to home or dashboard
-    }
+    const mockUser: User = {
+      id: 'mock-google-user-' + Date.now(),
+      email: 'google.user@example.com',
+      name: 'Usuário Google',
+      photoURL: 'https://picsum.photos/seed/googleuser/100/100'
+    };
+    const mockSubscription: Subscription = {
+      id: 'sub-mock-google-' + Date.now(),
+      userId: mockUser.id,
+      planId: 'serrano_vip',
+      startDate: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
+      endDate: new Date(Date.now() + 335 * 24 * 60 * 60 * 1000),
+      status: 'active',
+    };
+    mockLogin(mockUser, mockSubscription);
+    setIsGoogleSubmitting(false);
+    handleMockLoginSuccess(mockUser.name);
   };
 
   return (

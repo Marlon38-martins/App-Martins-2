@@ -8,17 +8,14 @@ import * as z from 'zod';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-// import { Label } from '@/components/ui/label'; // Not used directly, FormLabel is used
 import { Checkbox } from '@/components/ui/checkbox';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useToast } from '@/hooks/use-toast';
-import { User, Mail, Phone as PhoneIcon, Lock, CheckCircle, Award, Sparkles, Star, ShieldCheck, CreditCard } from 'lucide-react';
-import type { Plan } from '@/types/user';
+import { User, Mail, Phone as PhoneIcon, Lock, CheckCircle, Award, Sparkles, ShieldCheck, CreditCard } from 'lucide-react';
+import type { Plan, User as AppUser, Subscription } from '@/types/user';
 import { useRouter } from 'next/navigation';
-// Mock service imports - replace with actual Firebase Auth later
-import { signUpWithEmailAndPassword } from '@/lib/firebase/auth'; 
-// import { createUserProfile, createSubscription } from '@/services/users'; // Placeholder for user service functions
+import { mockLogin } from '@/services/gramado-businesses';
 
 const registrationFormSchema = z.object({
   name: z.string().min(3, { message: "Nome completo é obrigatório (mínimo 3 caracteres)." }),
@@ -93,64 +90,41 @@ export default function JoinPage() {
   const onSubmit: SubmitHandler<RegistrationFormValues> = async (data) => {
     setIsSubmitting(true);
     try {
-      // Step 1: Create user account with Firebase Auth
-      const userCredential = await signUpWithEmailAndPassword(data.email, data.password);
-      const firebaseUser = userCredential?.user;
-
-      if (!firebaseUser) {
-        throw new Error('Falha ao criar conta de usuário.');
-      }
-      
-      // Step 2: (Mocked) Create user profile in your database (e.g., Firestore)
-      // const userProfileData = {
-      //   id: firebaseUser.uid,
-      //   email: firebaseUser.email!,
-      //   name: data.name,
-      //   phone: data.phone,
-      //   cpf: data.cpf,
-      //   // any other fields
-      // };
-      // await createUserProfile(userProfileData); // This would be a call to your backend/Firestore
-
-      // Step 3: (Mocked) Create subscription
-      // const subscriptionData = {
-      //   userId: firebaseUser.uid,
-      //   planId: data.selectedPlan,
-      //   startDate: new Date(),
-      //   endDate: new Date(new Date().setFullYear(new Date().getFullYear() + 1)), // Example: 1 year
-      //   status: 'pending_payment', // Or 'active' if payment is immediate / not handled here
-      // };
-      // await createSubscription(subscriptionData); // Call to your backend/Firestore
-
-      // Simulate API call for additional profile/subscription setup if not using Firebase directly
+      // Simulate API call for registration
       await new Promise(resolve => setTimeout(resolve, 1000));
 
+      const mockUser: AppUser = {
+        id: 'mock-user-' + Date.now(),
+        email: data.email,
+        name: data.name,
+        photoURL: `https://picsum.photos/seed/${data.email}/100/100`
+      };
+      const mockSubscription: Subscription = {
+        id: 'sub-mock-' + Date.now(),
+        userId: mockUser.id,
+        planId: data.selectedPlan,
+        startDate: new Date(),
+        endDate: new Date(new Date().setFullYear(new Date().getFullYear() + 1)), // Example: 1 year
+        status: 'active', // Assume active after mock "payment"
+      };
+      
+      mockLogin(mockUser, mockSubscription);
 
       console.log('Registration Data:', data);
       toast({
         title: 'Cadastro Realizado com Sucesso!',
-        description: `Bem-vindo(a) ao Martins Prime, ${data.name}! Seu plano ${plans.find(p => p.id === data.selectedPlan)?.name} está quase ativo. Prossiga para o pagamento.`,
+        description: `Bem-vindo(a) ao Martins Prime, ${data.name}! Seu plano ${plans.find(p => p.id === data.selectedPlan)?.name} está ativo.`,
         variant: 'default',
       });
-      form.reset(); 
-      // router.push(`/payment?planId=${data.selectedPlan}`); // Redirect to a payment page
-      toast({
-        title: "Redirecionamento para Pagamento (Simulado)",
-        description: "Em uma aplicação real, você seria redirecionado para a página de pagamento.",
-        variant: "default"
-      });
+      form.reset();
+      window.dispatchEvent(new CustomEvent('mockAuthChange')); // Notify layout/other components
+      router.push('/'); // Redirect to home after "successful" join
 
     } catch (error: any) {
       console.error('Registration Error:', error);
-      let errorMessage = 'Ocorreu um erro durante o cadastro. Tente novamente.';
-      if (error.code === 'auth/email-already-in-use') {
-        errorMessage = 'Este email já está cadastrado. Tente fazer login ou use outro email.';
-      } else if (error.message) {
-        errorMessage = error.message;
-      }
       toast({
         title: 'Erro no Cadastro',
-        description: errorMessage,
+        description: error.message || 'Ocorreu um erro durante o cadastro. Tente novamente.',
         variant: 'destructive',
       });
     } finally {
@@ -356,14 +330,14 @@ export default function JoinPage() {
               
               <p className="flex items-center text-sm text-muted-foreground">
                 <ShieldCheck className="mr-2 h-4 w-4 text-green-500" />
-                Seus dados estão seguros conosco. O pagamento será processado após a confirmação.
+                Seus dados estão seguros conosco. (Simulação de Cadastro)
               </p>
 
             </CardContent>
             <CardFooter>
               <Button type="submit" size="lg" className="w-full bg-primary hover:bg-primary/90" disabled={isSubmitting}>
                 <CreditCard className="mr-2 h-5 w-5" />
-                {isSubmitting ? 'Processando Inscrição...' : 'Concluir Inscrição e Ir para Pagamento'}
+                {isSubmitting ? 'Processando Inscrição...' : 'Concluir Inscrição (Simulado)'}
               </Button>
             </CardFooter>
           </form>

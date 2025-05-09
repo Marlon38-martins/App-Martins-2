@@ -1,61 +1,66 @@
 // src/app/profile/page.tsx
 'use client';
 
-import { useAuth } from '@/hooks/use-auth-client';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import { ShieldCheck, Star } from 'lucide-react';
+import { ShieldCheck, Star, UserCircle } from 'lucide-react';
 import Link from 'next/link';
-import { getMockUserSubscription, type Subscription } from '@/services/gramado-businesses'; // For mock subscription
-import { useState } from 'react';
+import { getCurrentUser, getMockUserSubscription, type Subscription, type User } from '@/services/gramado-businesses'; 
 
 export default function ProfilePage() {
-  const { user, loading: authLoading } = useAuth();
   const router = useRouter();
+  const [user, setUser] = useState<User | null>(null);
   const [subscription, setSubscription] = useState<Subscription | null>(null);
-  const [subLoading, setSubLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!authLoading && !user) {
-      router.push('/login');
+    async function fetchData() {
+      setLoading(true);
+      const currentUser = await getCurrentUser();
+      if (!currentUser) {
+        router.push('/login');
+        return;
+      }
+      setUser(currentUser);
+      const subDetails = await getMockUserSubscription(currentUser.id);
+      setSubscription(subDetails);
+      setLoading(false);
     }
-  }, [user, authLoading, router]);
+    fetchData();
+  }, [router]);
 
-  useEffect(() => {
-    if (user) {
-      const fetchSubscription = async () => {
-        setSubLoading(true);
-        const subDetails = await getMockUserSubscription(user.id); // Using mocked function
-        setSubscription(subDetails);
-        setSubLoading(false);
-      };
-      fetchSubscription();
-    }
-  }, [user]);
-
-  if (authLoading || !user || subLoading) {
+  if (loading || !user) {
     return (
         <div className="space-y-4 p-4 md:p-6">
-            <Skeleton className="h-12 w-1/2" />
-            <Card>
+            <Skeleton className="h-12 w-1/2" /> {/* Page Title Skeleton */}
+            <Card className="shadow-lg">
                 <CardHeader>
-                    <div className="flex items-center gap-4">
-                        <Skeleton className="h-20 w-20 rounded-full" />
+                    <div className="flex flex-col sm:flex-row items-center gap-4">
+                        <Skeleton className="h-24 w-24 rounded-full" />
                         <div className="space-y-2">
-                            <Skeleton className="h-6 w-48" />
-                            <Skeleton className="h-4 w-64" />
+                            <Skeleton className="h-8 w-48" /> {/* User Name Skeleton */}
+                            <Skeleton className="h-6 w-64" /> {/* User Email Skeleton */}
                         </div>
                     </div>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                    <Skeleton className="h-8 w-1/3" />
-                    <Skeleton className="h-4 w-full" />
-                    <Skeleton className="h-4 w-3/4" />
-                    <Skeleton className="h-10 w-32 mt-4" />
+                <CardContent className="space-y-6">
+                    <div>
+                        <Skeleton className="h-6 w-1/3 mb-2" /> {/* Subscription Title Skeleton */}
+                        <div className="p-4 rounded-md border border-muted bg-muted/50">
+                            <Skeleton className="h-5 w-3/4 mb-1" />
+                            <Skeleton className="h-4 w-1/2 mb-1" />
+                            <Skeleton className="h-4 w-2/3" />
+                        </div>
+                    </div>
+                    <div>
+                        <Skeleton className="h-6 w-1/3 mb-2" /> {/* Activity Title Skeleton */}
+                        <Skeleton className="h-4 w-full" />
+                    </div>
+                    <Skeleton className="h-10 w-48 mt-4" /> {/* Button Skeleton */}
                 </CardContent>
             </Card>
         </div>
@@ -72,7 +77,7 @@ export default function ProfilePage() {
         <CardHeader>
           <div className="flex flex-col sm:flex-row items-center gap-4">
             <Avatar className="h-24 w-24 text-3xl">
-              <AvatarImage src={user.photoURL || undefined} alt={userName} />
+              <AvatarImage src={user.photoURL || `https://picsum.photos/seed/${user.email}/100/100`} alt={userName} />
               <AvatarFallback>{userInitial}</AvatarFallback>
             </Avatar>
             <div>

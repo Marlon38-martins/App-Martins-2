@@ -14,14 +14,12 @@ import {
     getDealsForBusiness, 
     type GramadoBusiness, 
     type Deal,
-    checkUserOfferUsage, // Mocked service
-    recordUserOfferUsage, // Mocked service
-    getCurrentUser,         // Mocked service
-    getMockUserSubscription   // Mocked service
+    checkUserOfferUsage, 
+    recordUserOfferUsage, 
+    getCurrentUser,      
+    getMockUserSubscription  
 } from '@/services/gramado-businesses';
-import type { User, Subscription } from '@/types/user';
-import { useAuth } from '@/hooks/use-auth-client';
-
+import type { User as AppUser, Subscription } from '@/types/user'; // Renamed User to AppUser to avoid conflict
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -30,7 +28,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useToast } from '@/hooks/use-toast';
-import { ArrowLeft, User as UserIcon, Mail, Phone as PhoneIcon, ShieldCheck, ShoppingCart, Frown, Star, Tag, AlertTriangle, CheckCircle } from 'lucide-react';
+import { ArrowLeft, User as UserIcon, Mail, Phone as PhoneIcon, ShieldCheck, ShoppingCart, Frown, Star, Tag, AlertTriangle } from 'lucide-react';
 
 const checkoutFormSchema = z.object({
   name: z.string().min(2, { message: 'Nome deve ter pelo menos 2 caracteres.' }),
@@ -44,23 +42,22 @@ interface CheckoutPageParams {
   businessId: string;
 }
 
-
 function CheckoutPageContent({ businessId }: { businessId: string }) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const dealId = searchParams.get('dealId');
   const { toast } = useToast();
-  const { user: authUser, loading: authLoading } = useAuth();
-
+  
+  const [authUser, setAuthUser] = useState<AppUser | null>(null);
   const [business, setBusiness] = useState<GramadoBusiness | null>(null);
   const [specificDeal, setSpecificDeal] = useState<Deal | null>(null);
   const [userSubscription, setUserSubscription] = useState<Subscription | null>(null);
   const [hasUsedOffer, setHasUsedOffer] = useState(false);
   
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingPage, setIsLoadingPage] = useState(true); // Overall page loading
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [eligibilityChecked, setEligibilityChecked] = useState(false);
+  const [authCheckedAndEligible, setAuthCheckedAndEligible] = useState(false);
 
 
   const form = useForm<CheckoutFormValues>({
@@ -74,64 +71,68 @@ function CheckoutPageContent({ businessId }: { businessId: string }) {
 
  useEffect(() => {
     if (authUser) {
-      form.setValue('name', authUser.displayName || '');
+      form.setValue('name', authUser.name || '');
       form.setValue('email', authUser.email || '');
+      // phone might not be available on authUser directly
     }
   }, [authUser, form]);
 
 
   useEffect(() => {
-    if (!businessId || authLoading) { // Wait for auth loading to complete
-        // setError("ID do estabelecimento não fornecido.");
-        // setIsLoading(false);
+    if (!businessId) {
+        setIsLoadingPage(false);
         return;
     };
 
-    async function loadData() {
-      setIsLoading(true);
+    async function loadDataAndCheckAuth() {
+      setIsLoadingPage(true);
       setError(null);
-      setEligibilityChecked(false);
+      setAuthCheckedAndEligible(false);
 
       try {
+        const user = await getCurrentUser();
+        setAuthUser(user);
+
         const businessData = await getGramadoBusinessById(businessId);
         if (!businessData) {
           setError('Estabelecimento não encontrado.');
-          setIsLoading(false);
+          setIsLoadingPage(false);
           return;
         }
         setBusiness(businessData);
 
+        let currentDeal = null;
         if (dealId) {
           const allDeals = await getDealsForBusiness(businessId);
-          const foundDeal = allDeals.find(d => d.id === dealId);
-          setSpecificDeal(foundDeal || null);
+          currentDeal = allDeals.find(d => d.id === dealId) || null;
+          setSpecificDeal(currentDeal);
         }
         
-        // Check user eligibility
-        if (authUser) {
-          const sub = await getMockUserSubscription(authUser.uid);
+        if (user) {
+          const sub = await getMockUserSubscription(user.id);
           setUserSubscription(sub);
           if (!sub || sub.status !== 'active') {
             setError('Sua assinatura Martins Prime não está ativa. Por favor, renove ou associe-se.');
-            setIsLoading(false);
-            setEligibilityChecked(true);
+            setAuthCheckedAndEligible(false); // Not eligible
+            setIsLoadingPage(false);
             return;
           }
 
-          if (dealId && specificDeal?.isPay1Get2 && specificDeal?.usageLimitPerUser === 1) {
-            const used = await checkUserOfferUsage(authUser.uid, dealId);
+          if (dealId && currentDeal?.isPay1Get2 && currentDeal?.usageLimitPerUser === 1) {
+            const used = await checkUserOfferUsage(user.id, dealId);
             setHasUsedOffer(used);
             if (used) {
-              setError(`Você já utilizou esta oferta "${specificDeal.title}" anteriormente.`);
-              setIsLoading(false);
-              setEligibilityChecked(true);
+              setError(`Você já utilizou esta oferta "${currentDeal.title}" anteriormente.`);
+              setAuthCheckedAndEligible(false); // Not eligible
+              setIsLoadingPage(false);
               return;
             }
           }
+          setAuthCheckedAndEligible(true); // Eligible
         } else {
           setError('Você precisa estar logado para usar um benefício Martins Prime.');
-          setIsLoading(false);
-          setEligibilityChecked(true);
+          setAuthCheckedAndEligible(false); // Not eligible
+          setIsLoadingPage(false);
           return;
         }
 
@@ -139,12 +140,11 @@ function CheckoutPageContent({ businessId }: { businessId: string }) {
         setError('Falha ao carregar dados ou verificar elegibilidade. Tente novamente.');
         console.error(err);
       } finally {
-        setIsLoading(false);
-        setEligibilityChecked(true);
+        setIsLoadingPage(false);
       }
     }
-    if(!authLoading) loadData(); // only run if auth is not loading
-  }, [businessId, dealId, authUser, authLoading, specificDeal?.title, specificDeal?.isPay1Get2, specificDeal?.usageLimitPerUser]);
+    loadDataAndCheckAuth();
+  }, [businessId, dealId]); // Removed dependencies that caused re-runs with partial data
 
 
   const getActionName = () => {
@@ -169,10 +169,9 @@ function CheckoutPageContent({ businessId }: { businessId: string }) {
 
     setIsSubmitting(true);
     try {
-      if (dealId) {
-        await recordUserOfferUsage(authUser.uid, dealId, businessId);
+      if (dealId && authUser) { // Ensure authUser is available
+        await recordUserOfferUsage(authUser.id, dealId, businessId);
       }
-      // Simulate API call for activating offer/generating voucher
       await new Promise(resolve => setTimeout(resolve, 1000));
       
       console.log('Offer Activation Data:', data, 'Deal ID:', dealId);
@@ -191,7 +190,7 @@ function CheckoutPageContent({ businessId }: { businessId: string }) {
   };
   
 
-  if (isLoading || authLoading) {
+  if (isLoadingPage) {
     return (
       <div> 
         <Skeleton className="mb-4 h-10 w-32" /> 
@@ -209,7 +208,7 @@ function CheckoutPageContent({ businessId }: { businessId: string }) {
     );
   }
 
-  if (eligibilityChecked && error) { // Show error only after eligibility is checked
+  if (error) { 
     return (
       <div className="flex min-h-[calc(100vh-250px)] flex-col items-center justify-center">
         <Alert variant="destructive" className="w-full max-w-md">
@@ -227,7 +226,7 @@ function CheckoutPageContent({ businessId }: { businessId: string }) {
     );
   }
   
-  if (!business) { // Should be caught by error above if loading is done
+  if (!business) {
      return (
       <div className="flex min-h-[calc(100vh-250px)] flex-col items-center justify-center">
         <Frown className="mb-4 h-20 w-20 text-muted-foreground" />
@@ -243,10 +242,6 @@ function CheckoutPageContent({ businessId }: { businessId: string }) {
     );
   }
 
-  // If all checks passed and no error after eligibility check
-  const canProceed = authUser && userSubscription?.status === 'active' && (!specificDeal || !specificDeal.isPay1Get2 || specificDeal.usageLimitPerUser !== 1 || !hasUsedOffer);
-
-
   return (
     <div> 
       <Button asChild variant="outline" className="mb-6">
@@ -261,15 +256,13 @@ function CheckoutPageContent({ businessId }: { businessId: string }) {
       </h2>
       <p className="mb-6 text-lg text-foreground/80">Em: {business.name}</p>
 
-
-      {!canProceed && eligibilityChecked && !error && ( // A specific state if not error, but cannot proceed
+      {!authCheckedAndEligible && !error && !isLoadingPage && (
           <Alert variant="default" className="mb-6">
             <AlertTriangle className="h-5 w-5" />
             <AlertTitle>Verificação Necessária</AlertTitle>
-            <AlertDescription>Por favor, verifique seu login e status da assinatura para usar os benefícios.</AlertDescription>
+            <AlertDescription>Por favor, verifique seu login e status da assinatura para usar os benefícios. Se já estiver logado, pode haver um problema com sua elegibilidade para esta oferta específica.</AlertDescription>
           </Alert>
       )}
-
 
       <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
         <div className="md:col-span-2">
@@ -293,7 +286,7 @@ function CheckoutPageContent({ businessId }: { businessId: string }) {
                       <FormItem>
                         <FormLabel htmlFor="name">Nome Completo (como no cadastro Prime)</FormLabel>
                         <FormControl>
-                          <Input id="name" placeholder="Seu nome completo" {...field} disabled={!canProceed}/>
+                          <Input id="name" placeholder="Seu nome completo" {...field} disabled={!authCheckedAndEligible || isSubmitting}/>
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -306,7 +299,7 @@ function CheckoutPageContent({ businessId }: { businessId: string }) {
                       <FormItem>
                         <FormLabel htmlFor="email">Email (do cadastro Prime)</FormLabel>
                         <FormControl>
-                          <Input id="email" type="email" placeholder="seuemail@exemplo.com" {...field} disabled={!canProceed}/>
+                          <Input id="email" type="email" placeholder="seuemail@exemplo.com" {...field} disabled={!authCheckedAndEligible || isSubmitting}/>
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -319,7 +312,7 @@ function CheckoutPageContent({ businessId }: { businessId: string }) {
                       <FormItem>
                         <FormLabel htmlFor="phone">Telefone (opcional, para contato)</FormLabel>
                         <FormControl>
-                          <Input id="phone" type="tel" placeholder="(XX) XXXXX-XXXX" {...field} disabled={!canProceed}/>
+                          <Input id="phone" type="tel" placeholder="(XX) XXXXX-XXXX" {...field} disabled={!authCheckedAndEligible || isSubmitting}/>
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -332,7 +325,7 @@ function CheckoutPageContent({ businessId }: { businessId: string }) {
                   </p>
                 </CardContent>
                 <CardFooter>
-                  <Button type="submit" size="lg" className="w-full bg-primary hover:bg-primary/90" disabled={isSubmitting || !canProceed}>
+                  <Button type="submit" size="lg" className="w-full bg-primary hover:bg-primary/90" disabled={isSubmitting || !authCheckedAndEligible}>
                     <Tag className="mr-2 h-5 w-5" />
                     {isSubmitting ? 'Confirmando...' : `Confirmar Uso do Benefício`}
                   </Button>
@@ -390,8 +383,6 @@ function CheckoutPageContent({ businessId }: { businessId: string }) {
 
 export default function CheckoutPageWrapper() {
   const params = useParams() as CheckoutPageParams; 
-  // useParams already gives an object, no need for use() here unless params itself is a promise (not typical for page components)
-  // const resolvedParams = use(params); // If params were a Promise, which is not standard here.
   return (
       <Suspense fallback={<div>Carregando checkout...</div>}>
           <CheckoutPageContent businessId={params.businessId} />

@@ -13,11 +13,9 @@ import {
   SidebarMenuButton,
   SidebarInset,
 } from '@/components/ui/sidebar';
-import { HomeIcon, ShoppingCart as ServicesIcon, MountainSnow, MapIcon, UserPlus, LayoutDashboard, LogIn, UserCircle, LogOut } from 'lucide-react';
+import { HomeIcon, ShoppingCart as ServicesIcon, MountainSnow, MapIcon, UserPlus, LayoutDashboard } from 'lucide-react';
 import { Header } from '@/components/layout/header';
-import { AuthProviderClient } from '@/hooks/use-auth-client'; // Renamed for clarity
-import { AuthStateInitializer } from '@/components/auth/auth-state-initializer';
-import { CurrentUserDisplay } from '@/components/auth/current-user-display';
+import { MockAuthSidebarActions } from '@/components/auth/mock-auth-sidebar-actions';
 
 
 const geistSans = Geist({
@@ -43,8 +41,6 @@ export default function RootLayout({
   return (
     <html lang="pt-BR">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <AuthProviderClient>
-          <AuthStateInitializer />
           <SidebarProvider defaultOpen={true}>
             <Sidebar collapsible="icon">
               <SidebarHeader className="p-4">
@@ -66,7 +62,7 @@ export default function RootLayout({
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                   <SidebarMenuItem>
-                    <SidebarMenuButton asChild tooltip={{content: "Serviços", side:"right"}}>
+                    <SidebarMenuButton asChild tooltip={{content: "Parceiros", side:"right"}}>
                       <Link href="/services">
                         <ServicesIcon />
                         <span className="group-data-[collapsible=icon]:hidden">Parceiros</span>
@@ -81,6 +77,7 @@ export default function RootLayout({
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
+                  {/* Static link to Join, login/profile handled by MockAuthSidebarActions */}
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild tooltip={{content: "Associe-se", side:"right"}}>
                       <Link href="/join">
@@ -98,7 +95,7 @@ export default function RootLayout({
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                   
-                  <CurrentUserDisplay />
+                  <MockAuthSidebarActions />
                   
                 </SidebarMenu>
               </SidebarContent>
@@ -116,7 +113,6 @@ export default function RootLayout({
               </footer>
             </SidebarInset>
           </SidebarProvider>
-        </AuthProviderClient>
         <Toaster />
       </body>
     </html>

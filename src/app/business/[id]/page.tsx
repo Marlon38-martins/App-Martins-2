@@ -3,11 +3,18 @@
 import { use, useEffect, useState, Suspense } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useSearchParams } from 'next/navigation'; // To get dealId from query
+import { useSearchParams } from 'next/navigation'; 
 
-import { getGramadoBusinessById, getDealsForBusiness, type GramadoBusiness, type Deal, getCurrentUser, getMockUserSubscription, checkUserOfferUsage } from '@/services/gramado-businesses';
+import { 
+    getGramadoBusinessById, 
+    getDealsForBusiness, 
+    type GramadoBusiness, 
+    type Deal, 
+    getCurrentUser, // Mocked
+    getMockUserSubscription, // Mocked
+    checkUserOfferUsage // Mocked
+} from '@/services/gramado-businesses';
 import type { User, Subscription } from '@/types/user';
-import { useAuth } from '@/hooks/use-auth-client'; 
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -21,12 +28,10 @@ interface BusinessPageParams {
   id: string;
 }
 
-// Helper to generate button text and icon based on deal type
 const getDealActivationDetails = (deal: Deal, businessType: string) => {
   if (deal.isPay1Get2) {
     return { text: `Ativar ${deal.title}`, Icon: Tag, query: `?dealId=${deal.id}` };
   }
-  // Fallback for general business type or other deal types
   const lowerType = businessType.toLowerCase();
   if (lowerType.includes('hotel') || lowerType.includes('pousada')) {
     return { text: 'Reservar com Benefício Prime', Icon: Tag, query: `?dealId=${deal.id}` };
@@ -39,19 +44,32 @@ const getDealActivationDetails = (deal: Deal, businessType: string) => {
 
 function BusinessPageContent({ params }: { params: BusinessPageParams }) {
   const { id } = params;
-  const { user: authUser, loading: authLoading } = useAuth(); // Use client-side auth context
   
+  const [authUser, setAuthUser] = useState<User | null>(null);
   const [business, setBusiness] = useState<GramadoBusiness | null>(null);
   const [deals, setDeals] = useState<Deal[]>([]);
   const [userSubscription, setUserSubscription] = useState<Subscription | null>(null);
-  const [userRedemptions, setUserRedemptions] = useState<Record<string, boolean>>({}); // Store offerId: hasRedeemed
+  const [userRedemptions, setUserRedemptions] = useState<Record<string, boolean>>({});
 
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [authChecked, setAuthChecked] = useState(false);
 
 
   useEffect(() => {
     if (!id) return;
+
+    async function loadInitialAuth() {
+        const user = await getCurrentUser();
+        setAuthUser(user);
+        setAuthChecked(true);
+    }
+    loadInitialAuth();
+  }, [id]);
+
+
+  useEffect(() => {
+    if (!id || !authChecked) return; // Wait for auth check
 
     async function loadBusinessData() {
       setIsLoading(true);
@@ -63,13 +81,13 @@ function BusinessPageContent({ params }: { params: BusinessPageParams }) {
           const dealsData = await getDealsForBusiness(id as string);
           setDeals(dealsData);
 
-          if (authUser) { // Check subscription and redemptions only if user is logged in
+          if (authUser) { 
             const sub = await getMockUserSubscription(authUser.uid);
             setUserSubscription(sub);
             
             const redemptions: Record<string, boolean> = {};
             for (const deal of dealsData) {
-                if (deal.isPay1Get2 && deal.usageLimitPerUser === 1) { // Only check P1G2 with limit 1 for now
+                if (deal.isPay1Get2 && deal.usageLimitPerUser === 1) { 
                     redemptions[deal.id] = await checkUserOfferUsage(authUser.uid, deal.id);
                 }
             }
@@ -87,9 +105,9 @@ function BusinessPageContent({ params }: { params: BusinessPageParams }) {
       }
     }
     loadBusinessData();
-  }, [id, authUser]); // Reload if authUser changes
+  }, [id, authUser, authChecked]); 
 
-  if (isLoading || authLoading) {
+  if (isLoading || !authChecked) {
     return (
       <div> 
         <Skeleton className="mb-4 h-10 w-32" /> 
@@ -290,9 +308,8 @@ function BusinessPageContent({ params }: { params: BusinessPageParams }) {
   );
 }
 
-// This component ensures that `useSearchParams` is used within a Suspense boundary
 export default function BusinessPage({ params: paramsPromise }: { params: Promise<BusinessPageParams> }) {
-    const params = use(paramsPromise); // Resolve the promise for params
+    const params = use(paramsPromise);
     return (
         <Suspense fallback={<div>Carregando detalhes do negócio...</div>}>
             <BusinessPageContent params={params} />
