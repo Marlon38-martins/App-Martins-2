@@ -13,21 +13,18 @@ import { getGramadoBusinessById, getDealsForBusiness, type GramadoBusiness, type
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+// import { Label } from '@/components/ui/label'; // No longer needed directly
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useToast } from '@/hooks/use-toast';
-import { ArrowLeft, CreditCard, User, Mail, Phone as PhoneIcon, ShieldCheck, ShoppingCart, Frown, Star } from 'lucide-react';
+import { ArrowLeft, User, Mail, Phone as PhoneIcon, ShieldCheck, ShoppingCart, Frown, Star, Tag } from 'lucide-react';
 
 const checkoutFormSchema = z.object({
   name: z.string().min(2, { message: 'Nome deve ter pelo menos 2 caracteres.' }),
   email: z.string().email({ message: 'Por favor, insira um email válido.' }),
   phone: z.string().min(10, { message: 'Telefone deve ter pelo menos 10 dígitos.' }),
-  cardName: z.string().min(2, { message: 'Nome no cartão é obrigatório.' }),
-  cardNumber: z.string().length(16, { message: 'Número do cartão deve ter 16 dígitos.' }).regex(/^\d+$/, { message: "Apenas números são permitidos."}),
-  cardExpiry: z.string().length(5, { message: 'Validade MM/AA (ex: 12/25).' }).regex(/^(0[1-9]|1[0-2])\/\d{2}$/, { message: "Formato MM/AA inválido."}),
-  cardCvv: z.string().min(3, {message: 'CVV deve ter 3 ou 4 dígitos.'}).max(4, {message: 'CVV deve ter 3 ou 4 dígitos.'}).regex(/^\d+$/, { message: "Apenas números são permitidos."}),
+  // Credit card fields removed
 });
 
 type CheckoutFormValues = z.infer<typeof checkoutFormSchema>;
@@ -50,10 +47,6 @@ export default function CheckoutPage() {
       name: '',
       email: '',
       phone: '',
-      cardName: '',
-      cardNumber: '',
-      cardExpiry: '',
-      cardCvv: '',
     },
   });
 
@@ -87,38 +80,38 @@ export default function CheckoutPage() {
   }, [businessId]);
 
   const getActionName = () => {
-    if (!business) return "Serviço";
+    if (!business) return "Benefício";
     const type = business.type.toLowerCase();
-    if (type.includes('hotel') || type.includes('pousada')) return "Reserva";
-    if (type.includes('restaurante') || type.includes('café')) return "Pedido/Reserva";
-    if (type.includes('loja') || type.includes('artesanato')) return "Compra";
-    return "Serviço";
+    if (type.includes('hotel') || type.includes('pousada')) return "Reserva com Benefício";
+    if (type.includes('restaurante') || type.includes('café')) return "Uso de Benefício";
+    if (type.includes('loja') || type.includes('artesanato')) return "Compra com Desconto Prime";
+    return "Benefício Prime";
   }
 
   const onSubmit: SubmitHandler<CheckoutFormValues> = async (data) => {
     setIsSubmitting(true);
-    // Simulate API call for payment processing
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    // Simulate API call for activating offer/generating voucher
+    await new Promise(resolve => setTimeout(resolve, 1500));
     
-    console.log('Checkout Data:', data);
+    console.log('Offer Activation Data:', data);
     toast({
-      title: 'Solicitação Confirmada!',
-      description: `Sua ${getActionName().toLowerCase()} em ${business?.name} com os benefícios Martins Prime foi registrada! O estabelecimento confirmará os detalhes e descontos.`,
+      title: 'Benefício Confirmado!',
+      description: `Seu benefício Martins Prime em ${business?.name} foi ativado. Apresente esta confirmação ou seu card de membro no estabelecimento.`,
       variant: 'default', 
     });
     setIsSubmitting(false);
-    router.push(`/`); 
+    router.push(`/business/${businessId}`); 
   };
   
 
   if (isLoading) {
     return (
-      <div> {/* Removed container and padding classes */}
+      <div> 
         <Skeleton className="mb-4 h-10 w-32" /> 
         <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
           <div className="md:col-span-2">
             <Skeleton className="mb-4 h-12 w-3/4" /> 
-            <Skeleton className="h-96 w-full rounded-lg" /> 
+            <Skeleton className="h-80 w-full rounded-lg" /> {/* Reduced height as no payment fields */}
           </div>
           <div className="md:col-span-1">
             <Skeleton className="mb-4 h-10 w-1/2" /> 
@@ -131,7 +124,7 @@ export default function CheckoutPage() {
 
   if (error) {
     return (
-      <div className="flex min-h-[calc(100vh-250px)] flex-col items-center justify-center">  {/* Adjusted min-height */}
+      <div className="flex min-h-[calc(100vh-250px)] flex-col items-center justify-center">
         <Alert variant="destructive" className="w-full max-w-md">
           <Frown className="h-5 w-5" />
           <AlertTitle>Erro</AlertTitle>
@@ -149,10 +142,10 @@ export default function CheckoutPage() {
 
   if (!business) {
      return (
-      <div className="flex min-h-[calc(100vh-250px)] flex-col items-center justify-center"> {/* Adjusted min-height */}
+      <div className="flex min-h-[calc(100vh-250px)] flex-col items-center justify-center">
         <Frown className="mb-4 h-20 w-20 text-muted-foreground" />
         <h2 className="mb-2 text-2xl font-semibold">Estabelecimento não encontrado</h2>
-        <p className="mb-6 text-muted-foreground">O checkout não pode prosseguir sem um estabelecimento válido.</p>
+        <p className="mb-6 text-muted-foreground">Não é possível prosseguir sem um estabelecimento válido.</p>
         <Button asChild variant="default">
           <Link href="/">
             <ArrowLeft className="mr-2 h-4 w-4" />
@@ -164,7 +157,7 @@ export default function CheckoutPage() {
   }
 
   return (
-    <div> {/* Removed container and padding classes */}
+    <div> 
       <Button asChild variant="outline" className="mb-6">
         <Link href={`/business/${business.id}`}>
           <ArrowLeft className="mr-2 h-4 w-4" />
@@ -173,7 +166,7 @@ export default function CheckoutPage() {
       </Button>
 
       <h2 className="mb-6 text-3xl font-bold tracking-tight text-primary md:text-4xl">
-        Checkout: {getActionName()} em {business.name}
+        Confirmar {getActionName()} em {business.name}
       </h2>
 
       <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
@@ -182,8 +175,11 @@ export default function CheckoutPage() {
             <CardHeader>
               <CardTitle className="flex items-center text-2xl">
                 <User className="mr-2 h-6 w-6 text-accent" />
-                Seus Dados Pessoais
+                Seus Dados para Confirmação
               </CardTitle>
+              <CardDescription>
+                Confirme seus dados para ativar o benefício Martins Prime.
+              </CardDescription>
             </CardHeader>
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -193,7 +189,7 @@ export default function CheckoutPage() {
                     name="name"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel htmlFor="name">Nome Completo</FormLabel>
+                        <FormLabel htmlFor="name">Nome Completo (como no cadastro Prime)</FormLabel>
                         <FormControl>
                           <Input id="name" placeholder="Seu nome completo" {...field} />
                         </FormControl>
@@ -206,7 +202,7 @@ export default function CheckoutPage() {
                     name="email"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel htmlFor="email">Email</FormLabel>
+                        <FormLabel htmlFor="email">Email (do cadastro Prime)</FormLabel>
                         <FormControl>
                           <Input id="email" type="email" placeholder="seuemail@exemplo.com" {...field} />
                         </FormControl>
@@ -219,7 +215,7 @@ export default function CheckoutPage() {
                     name="phone"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel htmlFor="phone">Telefone</FormLabel>
+                        <FormLabel htmlFor="phone">Telefone (opcional, para contato)</FormLabel>
                         <FormControl>
                           <Input id="phone" type="tel" placeholder="(XX) XXXXX-XXXX" {...field} />
                         </FormControl>
@@ -227,77 +223,16 @@ export default function CheckoutPage() {
                       </FormItem>
                     )}
                   />
-
-                  <hr className="my-6 border-border" />
-
-                  <h3 className="flex items-center text-xl font-semibold text-primary">
-                    <CreditCard className="mr-2 h-5 w-5 text-accent" />
-                    Dados de Pagamento
-                  </h3>
-                  <FormField
-                    control={form.control}
-                    name="cardName"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel htmlFor="cardName">Nome no Cartão</FormLabel>
-                        <FormControl>
-                          <Input id="cardName" placeholder="Nome como aparece no cartão" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-                    <div className="md:col-span-2">
-                      <FormField
-                        control={form.control}
-                        name="cardNumber"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel htmlFor="cardNumber">Número do Cartão</FormLabel>
-                            <FormControl>
-                              <Input id="cardNumber" placeholder="0000 0000 0000 0000" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-                     <FormField
-                        control={form.control}
-                        name="cardExpiry"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel htmlFor="cardExpiry">Validade</FormLabel>
-                            <FormControl>
-                              <Input id="cardExpiry" placeholder="MM/AA" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                  </div>
-                  <FormField
-                        control={form.control}
-                        name="cardCvv"
-                        render={({ field }) => (
-                          <FormItem className='md:w-1/3'>
-                            <FormLabel htmlFor="cardCvv">CVV</FormLabel>
-                            <FormControl>
-                              <Input id="cardCvv" placeholder="123" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                  <p className="flex items-center text-sm text-muted-foreground">
+                  
+                  <p className="flex items-center text-sm text-muted-foreground pt-4">
                     <ShieldCheck className="mr-2 h-4 w-4 text-green-500" />
-                    Pagamento seguro e processado por um gateway parceiro.
+                    Ao confirmar, seu benefício será registrado para uso no estabelecimento.
                   </p>
                 </CardContent>
                 <CardFooter>
                   <Button type="submit" size="lg" className="w-full bg-primary hover:bg-primary/90" disabled={isSubmitting}>
-                    {isSubmitting ? 'Processando...' : `Finalizar ${getActionName()}`}
+                    <Tag className="mr-2 h-5 w-5" />
+                    {isSubmitting ? 'Confirmando...' : `Confirmar Uso do ${getActionName()}`}
                   </Button>
                 </CardFooter>
               </form>
@@ -306,11 +241,11 @@ export default function CheckoutPage() {
         </div>
 
         <div className="md:col-span-1">
-          <Card className="sticky top-24 shadow-lg"> {/* Adjust top value based on header height if sticky */}
+          <Card className="sticky top-24 shadow-lg"> 
             <CardHeader>
               <CardTitle className="flex items-center text-xl">
                 <ShoppingCart className="mr-2 h-5 w-5 text-accent" />
-                Resumo da {getActionName().toLowerCase()}
+                Resumo do Benefício
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -328,29 +263,28 @@ export default function CheckoutPage() {
                 <p className="text-sm text-muted-foreground">{business.type}</p>
               </div>
               <p className="text-sm text-foreground/80">
-                Você está prestes a {getActionName() === "Reserva" ? "fazer uma reserva" : getActionName() === "Compra" ? "realizar uma compra" : "solicitar um serviço"} em {business.name}.
+                Você está prestes a utilizar um benefício exclusivo Martins Prime em {business.name}.
               </p>
               
               {deals.length > 0 && (
                 <div className="mt-3 rounded-md border border-accent/50 bg-accent/10 p-3 text-sm">
-                  <p className="flex items-center font-semibold text-accent-foreground">
-                    <Star className="mr-2 h-4 w-4 text-yellow-500" /> {/* Changed icon and color for visibility */}
-                    Benefícios Martins Prime!
+                  <p className="flex items-center font-semibold text-accent"> {/* text-accent for better visibility on accent/10 bg */}
+                    <Star className="mr-2 h-4 w-4 text-yellow-400" /> {/* Slightly brighter yellow */}
+                    Benefícios Martins Prime Aplicáveis!
                   </p>
                   <p className="mt-1 text-accent-foreground/90">
-                    Como membro, você tem acesso a ofertas especiais neste estabelecimento.
-                    Elas serão confirmadas e aplicadas diretamente pelo parceiro.
+                    O estabelecimento aplicará os descontos e ofertas VIP conforme os termos do clube e do parceiro.
                   </p>
-                  {deals[0] && (
-                      <p className="mt-1 text-xs text-accent-foreground/80">
-                          Ex: {deals[0].description}
+                  {deals.map(deal => (
+                      <p key={deal.id} className="mt-1 text-xs text-accent-foreground/80">
+                          - {deal.title} ({deal.description.length > 30 ? deal.description.substring(0, 30) + "..." : deal.description })
                       </p>
-                  )}
+                  ))}
                 </div>
               )}
 
               <div className="mt-3 rounded-md border border-muted bg-muted/50 p-3 text-sm text-muted-foreground">
-                <strong>Nota:</strong> Este é um formulário de solicitação inicial. A confirmação final, valores e detalhes adicionais serão tratados diretamente com o estabelecimento após o envio.
+                <strong>Importante:</strong> A confirmação aqui registra sua intenção de uso do benefício. O estabelecimento validará sua elegibilidade e aplicará as condições Martins Prime no local.
               </div>
             </CardContent>
           </Card>
@@ -359,4 +293,3 @@ export default function CheckoutPage() {
     </div>
   );
 }
-

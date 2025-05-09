@@ -83,13 +83,17 @@ export interface Deal {
    */
   description: string;
   /**
-   * The discount percentage.
+   * The discount percentage. Can be 0 if it's a "buy one get one" or other type of offer.
    */
   discountPercentage: number;
   /**
    * The terms and conditions of the deal.
    */
   termsAndConditions: string;
+  /**
+   * A short, catchy title for the deal.
+   */
+  title: string;
 }
 
 const businesses: GramadoBusiness[] = [
@@ -181,39 +185,60 @@ const businesses: GramadoBusiness[] = [
 
 const deals: Deal[] = [
   {
-    id: '1',
+    id: 'deal-1',
     businessId: '1', // Restaurante Mirante da Serra
-    description: '15% de desconto no prato principal às sextas-feiras.',
+    title: 'Jantar Romântico na Serra',
+    description: '15% de desconto no prato principal às sextas-feiras para membros Prime.',
     discountPercentage: 15,
-    termsAndConditions: 'Válido às sextas-feiras, para consumo no local. Necessário apresentar o card do clube.',
+    termsAndConditions: 'Válido às sextas-feiras, para consumo no local. Necessário apresentar o card digital Martins Prime.',
   },
   {
-    id: '2',
+    id: 'deal-2',
     businessId: '1', // Restaurante Mirante da Serra
-    description: 'Suco regional cortesia para grupos acima de 5 pessoas.',
+    title: 'Sobremesa Regional Cortesia',
+    description: 'Grupos acima de 4 pessoas ganham uma sobremesa regional especial.',
     discountPercentage: 0, 
-    termsAndConditions: 'Válido para grupos com 5 ou mais pessoas, um suco por pessoa. Sabores regionais selecionados.',
+    termsAndConditions: 'Válido para grupos com 4 ou mais membros Prime. Uma sobremesa por grupo, conforme disponibilidade.',
   },
   {
-    id: '3',
+    id: 'deal-3',
     businessId: '2', // Pousada Aconchego Serrano
-    description: '10% de desconto na diária para estadias de 3 noites ou mais.',
+    title: 'Estadia Prolongada com Desconto',
+    description: '10% OFF na diária para estadias de 3 noites ou mais.',
     discountPercentage: 10,
-    termsAndConditions: 'Válido para reservas diretas com a pousada, sujeito à disponibilidade.',
+    termsAndConditions: 'Válido para reservas diretas com a pousada, mediante apresentação do card Martins Prime. Sujeito à disponibilidade.',
   },
   {
-    id: '4',
+    id: 'deal-4',
     businessId: '3', // Loja de Artesanato Mãos da Serra
-    description: 'Brinde surpresa em compras acima de R$80.',
+    title: 'Lembrança Especial da Serra',
+    description: 'Brinde exclusivo em compras acima de R$100 para membros Martins Prime.',
     discountPercentage: 0, 
-    termsAndConditions: 'Válido enquanto durarem os estoques do brinde. Um brinde por CPF.',
+    termsAndConditions: 'Válido enquanto durarem os estoques do brinde. Um brinde por CPF/membro.',
   },
   {
-    id: '5',
+    id: 'deal-5',
     businessId: '5', // Cafeteria Grão Serrano
-    description: 'Combo Café + Bolo do dia com 20% de desconto (terça a quinta).',
+    title: 'Café da Tarde Prime',
+    description: 'Combo Café Especial + Bolo Caseiro com 20% OFF (terça a quinta).',
     discountPercentage: 20,
-    termsAndConditions: 'Válido de terça a quinta-feira, exceto feriados. Não cumulativo com outras promoções.',
+    termsAndConditions: 'Válido de terça a quinta-feira, exceto feriados. Apresentar card Martins Prime. Não cumulativo.',
+  },
+  {
+    id: 'deal-6',
+    businessId: '2', // Pousada Aconchego Serrano
+    title: 'Early Check-in VIP',
+    description: 'Membros Serrano VIP podem solicitar early check-in gratuito (sujeito à disponibilidade).',
+    discountPercentage: 0,
+    termsAndConditions: 'Exclusivo para membros do plano Serrano VIP. Solicitar no momento da reserva. Sujeito à disponibilidade da pousada.',
+  },
+  {
+    id: 'deal-7',
+    businessId: '4', // Trilha da Casa de Pedra
+    title: 'Aventura em Grupo com Desconto',
+    description: '10% de desconto para grupos de 5 ou mais pessoas na Trilha da Casa de Pedra.',
+    discountPercentage: 10,
+    termsAndConditions: 'Agendamento prévio obrigatório. Todos os participantes do grupo devem ser membros Martins Prime.',
   }
 ];
 

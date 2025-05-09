@@ -4,29 +4,35 @@
 import { useState, useEffect, useMemo } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { getGramadoBusinesses, type GramadoBusiness } from '@/services/gramado-businesses';
+import { getGramadoBusinesses, getAllDeals, type GramadoBusiness, type Deal } from '@/services/gramado-businesses';
 import { BusinessCard } from '@/components/business/business-card';
+import { DealCard } from '@/components/deal/deal-card'; // Import DealCard
 import { SearchBar } from '@/components/search-bar';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
-import { Frown, Play } from 'lucide-react';
+import { Frown, Play, Tag } from 'lucide-react'; // Added Tag icon
 
 export default function HomePage() {
   const [businesses, setBusinesses] = useState<GramadoBusiness[]>([]);
+  const [allDeals, setAllDeals] = useState<Deal[]>([]); // State for all deals
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    async function loadBusinesses() {
+    async function loadData() {
       setIsLoading(true);
       setError(null);
       try {
-        const data = await getGramadoBusinesses();
-        setBusinesses(data);
+        const [businessData, dealsData] = await Promise.all([
+          getGramadoBusinesses(),
+          getAllDeals() 
+        ]);
+        setBusinesses(businessData);
+        setAllDeals(dealsData);
       } catch (err) {
         setError('Falha ao carregar os dados. Tente novamente mais tarde.');
         console.error(err);
@@ -34,7 +40,7 @@ export default function HomePage() {
         setIsLoading(false);
       }
     }
-    loadBusinesses();
+    loadData();
   }, []);
 
   const touristSpots = useMemo(() => {
@@ -42,8 +48,15 @@ export default function HomePage() {
       .filter(
         (business) => business.type === 'Atração' || business.type === 'Parque'
       )
-      .slice(0, 3); // Show top 3 tourist spots
+      .slice(0, 3); 
   }, [businesses]);
+
+  const featuredDeals = useMemo(() => {
+    // Show up to 3-4 deals, perhaps prioritizing those with discounts or specific types
+    return allDeals
+      .sort((a, b) => b.discountPercentage - a.discountPercentage) // Prioritize deals with higher discount
+      .slice(0, 4);
+  }, [allDeals]);
 
   const otherServiceBusinesses = useMemo(() => {
     return businesses.filter(
@@ -71,6 +84,23 @@ export default function HomePage() {
       <div>
         {/* Hero Skeleton */}
         <Skeleton className="relative mb-12 h-[400px] w-full rounded-lg md:h-[500px]" />
+
+        {/* Featured Deals Skeletons */}
+        <section className="mb-12">
+          <Skeleton className="mb-6 h-9 w-3/4 mx-auto md:w-1/2" /> {/* Title Skeleton */}
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {Array.from({ length: 4 }).map((_, index) => (
+              <div key={index} className="flex flex-col space-y-3">
+                <Skeleton className="h-[200px] w-full rounded-xl" />
+                <div className="space-y-2">
+                  <Skeleton className="h-4 w-full" />
+                  <Skeleton className="h-4 w-3/4" />
+                  <Skeleton className="h-8 w-full" />
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
 
         {/* Featured Tourist Spots Skeletons */}
         <section className="mb-12">
@@ -149,20 +179,38 @@ export default function HomePage() {
         />
         <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/40 p-4 text-center text-white">
           <h1 className="text-4xl font-bold tracking-tight md:text-6xl drop-shadow-lg">
-            Bem-vindo a Chill Martins!
+            Bem-vindo ao Chill Martins!
           </h1>
           <p className="mt-4 max-w-2xl text-lg md:text-xl drop-shadow-md">
-            Descubra a serenidade e as belezas da serra potiguar. Explore, relaxe e aproveite.
+            Seu clube de vantagens exclusivo para curtir o melhor de Martins, RN. Descubra ofertas, explore e aproveite!
           </p>
           <Button asChild size="lg" className="mt-8 bg-accent hover:bg-accent/90 text-accent-foreground shadow-md">
-            <Link href="/map">Explore o Mapa Interativo</Link>
+            <Link href="/join">Associe-se Agora!</Link>
           </Button>
         </div>
       </section>
 
-      {/* Section 2: Featured Tourist Spots */}
+      {/* Section 2: Featured Deals */}
+      {featuredDeals.length > 0 && (
+        <section className="mb-16">
+          <h2 className="mb-2 text-center text-3xl font-bold tracking-tight text-primary md:text-4xl">
+            Ofertas Imperdíveis Martins Prime
+          </h2>
+          <p className="mb-8 text-center text-lg text-foreground/80">
+            Confira alguns dos benefícios exclusivos para membros do nosso clube!
+          </p>
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {featuredDeals.map(deal => {
+              const businessForDeal = businesses.find(b => b.id === deal.businessId);
+              return <DealCard key={deal.id} deal={deal} business={businessForDeal} />;
+            })}
+          </div>
+        </section>
+      )}
+
+      {/* Section 3: Featured Tourist Spots */}
       {touristSpots.length > 0 && (
-        <section className="mb-12">
+        <section className="mb-16">
           <h2 className="mb-6 text-center text-3xl font-bold tracking-tight text-primary md:text-4xl">
             Conheça as Maravilhas de Martins
           </h2>
@@ -174,8 +222,8 @@ export default function HomePage() {
         </section>
       )}
 
-      {/* Section 3: Video Showcase */}
-      <section className="mb-12">
+      {/* Section 4: Video Showcase */}
+      <section className="mb-16">
         <h2 className="mb-6 text-center text-3xl font-bold tracking-tight text-primary md:text-4xl">
           Martins em Movimento
         </h2>
@@ -193,10 +241,9 @@ export default function HomePage() {
                 aria-label="Assistir vídeo sobre Martins" 
                 className="group p-3 bg-background/80 rounded-full text-primary backdrop-blur-sm transition-all hover:bg-background hover:scale-110 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-black/50"
                 onClick={() => {
-                  // In a real app, this would open a modal or navigate to a video player
                   const videoUrl = "https://www.youtube.com/watch?v=dQw4w9WgXcQ"; // Placeholder video
                   window.open(videoUrl, "_blank");
-                  alert('Abrindo vídeo demonstrativo em nova aba...');
+                  toast({ title: "Vídeo Demonstrativo", description: "Abrindo vídeo em nova aba..."});
                 }}
               >
                 <Play className="h-10 w-10 fill-primary md:h-12 md:w-12 transition-transform group-hover:scale-105" />
@@ -209,13 +256,13 @@ export default function HomePage() {
         </p>
       </section>
 
-      {/* Section 4: Explore Other Establishments */}
+      {/* Section 5: Explore Other Establishments */}
       <section className="mb-8 text-center">
         <h2 className="mb-2 text-3xl font-bold tracking-tight text-primary md:text-4xl">
-          Explore Outros Estabelecimentos
+          Explore Nossos Parceiros
         </h2>
         <p className="text-lg text-foreground/80">
-          Encontre restaurantes, hotéis, lojas e serviços em Martins.
+          Encontre restaurantes, hotéis, lojas e serviços em Martins com benefícios Prime.
         </p>
       </section>
 

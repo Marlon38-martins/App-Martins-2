@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { BusinessTypeIcon } from '@/components/icons';
-import { MapPin, Phone, Globe, ArrowLeft, TicketPercent, Frown, CreditCard, ShoppingBag as ShoppingBagIcon, BedDouble as BedIcon, UtensilsCrossed as RestaurantIcon } from 'lucide-react';
+import { MapPin, Phone, Globe, ArrowLeft, TicketPercent, Frown, Star, Tag } from 'lucide-react'; // Added Star, Tag
 
 interface BusinessPageParams {
   id: string;
@@ -18,16 +18,20 @@ interface BusinessPageParams {
 
 const getButtonTextAndIcon = (type: string) => {
   const lowerType = type.toLowerCase();
+  // Generalizing for "Prime Gourmet" style offer redemption
   if (lowerType.includes('hotel') || lowerType.includes('pousada')) {
-    return { text: 'Fazer Reserva Agora', Icon: BedIcon };
+    return { text: 'Ativar Benefício Prime (Reserva)', Icon: Tag };
   }
   if (lowerType.includes('restaurante') || lowerType.includes('café')) {
-    return { text: 'Fazer Pedido / Reservar Mesa', Icon: RestaurantIcon };
+    return { text: 'Usar Benefício Prime Aqui', Icon: Tag };
   }
   if (lowerType.includes('loja') || lowerType.includes('artesanato')) {
-    return { text: 'Comprar / Ver Produtos', Icon: ShoppingBagIcon };
+    return { text: 'Ativar Desconto Prime', Icon: Tag };
   }
-  return { text: 'Solicitar Serviço', Icon: CreditCard };
+  if (lowerType.includes('atração') || lowerType.includes('parque')) {
+    return { text: 'Verificar Benefício Prime', Icon: Tag };
+  }
+  return { text: 'Aproveitar Benefício Prime', Icon: Tag };
 };
 
 
@@ -66,31 +70,31 @@ export default function BusinessPage({ params: paramsPromise }: { params: Promis
 
   if (isLoading) {
     return (
-      <div> {/* Removed container and padding classes */}
-        <Skeleton className="mb-4 h-10 w-32" /> {/* Back button skeleton */}
+      <div> 
+        <Skeleton className="mb-4 h-10 w-32" /> 
         <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
           <div>
-            <Skeleton className="mb-4 h-72 w-full rounded-lg md:h-96" /> {/* Image skeleton */}
-            <Skeleton className="mb-2 h-8 w-3/4" /> {/* Name skeleton */}
-            <Skeleton className="mb-4 h-6 w-1/2" /> {/* Type skeleton */}
+            <Skeleton className="mb-4 h-72 w-full rounded-lg md:h-96" /> 
+            <Skeleton className="mb-2 h-8 w-3/4" /> 
+            <Skeleton className="mb-4 h-6 w-1/2" /> 
           </div>
           <div>
-            <Skeleton className="mb-4 h-8 w-1/3" /> {/* Deals title skeleton */}
+            <Skeleton className="mb-4 h-8 w-1/3" /> 
             <div className="space-y-4">
               <Skeleton className="h-20 w-full rounded-lg" />
               <Skeleton className="h-20 w-full rounded-lg" />
             </div>
-             <Skeleton className="mt-8 h-28 w-full rounded-lg" /> {/* Checkout section skeleton */}
+             <Skeleton className="mt-8 h-28 w-full rounded-lg" /> 
           </div>
         </div>
-        <Skeleton className="mt-8 h-24 w-full" /> {/* Description skeleton */}
+        <Skeleton className="mt-8 h-24 w-full" /> 
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="flex min-h-[calc(100vh-250px)] flex-col items-center justify-center"> {/* Adjusted min-height */}
+      <div className="flex min-h-[calc(100vh-250px)] flex-col items-center justify-center"> 
         <Alert variant="destructive" className="w-full max-w-md">
           <Frown className="h-5 w-5" />
           <AlertTitle>Erro</AlertTitle>
@@ -108,7 +112,7 @@ export default function BusinessPage({ params: paramsPromise }: { params: Promis
 
   if (!business) {
      return (
-      <div className="flex min-h-[calc(100vh-250px)] flex-col items-center justify-center"> {/* Adjusted min-height */}
+      <div className="flex min-h-[calc(100vh-250px)] flex-col items-center justify-center"> 
         <Frown className="mb-4 h-20 w-20 text-muted-foreground" />
         <h2 className="mb-2 text-2xl font-semibold">Estabelecimento não encontrado</h2>
         <p className="mb-6 text-muted-foreground">O estabelecimento que você procura pode não existir ou foi removido.</p>
@@ -122,10 +126,10 @@ export default function BusinessPage({ params: paramsPromise }: { params: Promis
     );
   }
   
-  const { text: checkoutButtonText, Icon: CheckoutButtonIcon } = getButtonTextAndIcon(business.type);
+  const { text: benefitButtonText, Icon: BenefitButtonIcon } = getButtonTextAndIcon(business.type);
 
   return (
-    <div> {/* Removed container and padding classes */}
+    <div> 
       <Button asChild variant="outline" className="mb-6">
         <Link href="/services">
           <ArrowLeft className="mr-2 h-4 w-4" />
@@ -186,58 +190,59 @@ export default function BusinessPage({ params: paramsPromise }: { params: Promis
           <div className="mb-8">
             <h3 className="mb-4 flex items-center text-2xl font-semibold text-primary">
               <TicketPercent className="mr-2 h-7 w-7 text-accent" />
-              Ofertas Exclusivas
+              Benefícios Exclusivos Martins Prime
             </h3>
             {deals.length > 0 ? (
               <div className="space-y-4">
                 {deals.map(deal => (
                   <Card key={deal.id} className="bg-card shadow-lg">
-                    <CardHeader className="pb-2">
-                      <CardTitle className="text-lg text-accent">{deal.description}</CardTitle>
+                    <CardHeader className="pb-3">
+                      <CardTitle className="text-lg text-accent">{deal.title}</CardTitle>
+                       <CardDescription className="text-sm text-muted-foreground pt-1">{deal.description}</CardDescription>
                     </CardHeader>
                     <CardContent>
                       {deal.discountPercentage > 0 && (
-                        <Badge variant="default" className="mb-2 bg-accent text-accent-foreground">
+                        <Badge variant="default" className="mb-2 mr-2 bg-primary text-primary-foreground">
                           {deal.discountPercentage}% OFF
                         </Badge>
                       )}
-                      <p className="text-sm text-muted-foreground">{deal.termsAndConditions}</p>
+                       <Badge variant="outline" className="mb-2">
+                          Exclusivo Prime
+                        </Badge>
+                      <p className="mt-2 text-xs text-muted-foreground">{deal.termsAndConditions}</p>
                     </CardContent>
                   </Card>
                 ))}
               </div>
             ) : (
               <Card className="border-dashed bg-muted/50 p-6 text-center shadow-none">
-                <TicketPercent className="mx-auto mb-2 h-10 w-10 text-muted-foreground" />
-                <p className="text-muted-foreground">Nenhuma oferta especial disponível no momento para este estabelecimento.</p>
+                <Star className="mx-auto mb-2 h-10 w-10 text-muted-foreground" /> {/* Changed icon to Star */}
+                <p className="text-muted-foreground">Nenhum benefício Martins Prime específico divulgado para este estabelecimento no momento. Membros Prime ainda podem ter vantagens gerais!</p>
               </Card>
             )}
           </div>
 
-          {/* Checkout/Booking Section */}
+          {/* Benefit Activation Section */}
           <Card className="bg-card shadow-xl">
             <CardHeader>
               <CardTitle className="flex items-center text-2xl text-primary">
-                <CheckoutButtonIcon className="mr-2 h-7 w-7 text-accent" />
-                {business.type.includes('Hotel') || business.type.includes('Pousada') ? 'Reservas' : 
-                 business.type.includes('Restaurante') || business.type.includes('Café') ? 'Pedidos e Reservas' :
-                 business.type.includes('Loja') ? 'Compras' :
-                 'Contratar Serviço'}
+                <BenefitButtonIcon className="mr-2 h-7 w-7 text-accent" />
+                Aproveitar Martins Prime
               </CardTitle>
               <CardDescription className="text-muted-foreground">
-                Pronto para aproveitar o que {business.name} tem a oferecer?
+                Pronto para usar seus benefícios exclusivos em {business.name}?
               </CardDescription>
             </CardHeader>
             <CardContent>
               <p className="mb-4 text-sm text-foreground/80">
-                Clique no botão abaixo para prosseguir com sua solicitação ou compra de forma rápida e segura.
+                Confirme para registrar o uso do seu benefício Martins Prime neste estabelecimento.
               </p>
             </CardContent>
             <CardFooter>
               <Button asChild size="lg" className="w-full bg-primary hover:bg-primary/90">
                 <Link href={`/checkout/${business.id}`}>
-                  <CheckoutButtonIcon className="mr-2 h-5 w-5" />
-                  {checkoutButtonText}
+                  <BenefitButtonIcon className="mr-2 h-5 w-5" />
+                  {benefitButtonText}
                 </Link>
               </Button>
             </CardFooter>
