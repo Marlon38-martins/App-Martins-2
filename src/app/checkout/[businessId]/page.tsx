@@ -9,7 +9,7 @@ import { useForm, type SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 
-import { getGramadoBusinessById, type GramadoBusiness } from '@/services/gramado-businesses';
+import { getGramadoBusinessById, getDealsForBusiness, type GramadoBusiness, type Deal } from '@/services/gramado-businesses';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -18,7 +18,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useToast } from '@/hooks/use-toast';
-import { ArrowLeft, CreditCard, User, Mail, Phone as PhoneIcon, ShieldCheck, ShoppingCart, Frown } from 'lucide-react';
+import { ArrowLeft, CreditCard, User, Mail, Phone as PhoneIcon, ShieldCheck, ShoppingCart, Frown, Star } from 'lucide-react';
 
 const checkoutFormSchema = z.object({
   name: z.string().min(2, { message: 'Nome deve ter pelo menos 2 caracteres.' }),
@@ -39,6 +39,7 @@ export default function CheckoutPage() {
   const businessId = params.businessId as string;
 
   const [business, setBusiness] = useState<GramadoBusiness | null>(null);
+  const [deals, setDeals] = useState<Deal[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -63,41 +64,28 @@ export default function CheckoutPage() {
         return;
     };
 
-    async function loadBusiness() {
+    async function loadData() {
       setIsLoading(true);
       setError(null);
       try {
-        const data = await getGramadoBusinessById(businessId);
-        if (data) {
-          setBusiness(data);
+        const businessData = await getGramadoBusinessById(businessId);
+        if (businessData) {
+          setBusiness(businessData);
+          const dealsData = await getDealsForBusiness(businessId);
+          setDeals(dealsData);
         } else {
           setError('Estabelecimento não encontrado.');
         }
       } catch (err) {
-        setError('Falha ao carregar dados do estabelecimento. Tente novamente.');
+        setError('Falha ao carregar dados. Tente novamente.');
         console.error(err);
       } finally {
         setIsLoading(false);
       }
     }
-    loadBusiness();
+    loadData();
   }, [businessId]);
 
-  const onSubmit: SubmitHandler<CheckoutFormValues> = async (data) => {
-    setIsSubmitting(true);
-    // Simulate API call for payment processing
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
-    console.log('Checkout Data:', data);
-    toast({
-      title: 'Pagamento Confirmado!',
-      description: `Sua ${business?.type === 'Hotel' || business?.type === 'Pousada' ? 'reserva' : 'compra/solicitação'} em ${business?.name} foi processada com sucesso.`,
-      variant: 'default', 
-    });
-    setIsSubmitting(false);
-    router.push(`/`); 
-  };
-  
   const getActionName = () => {
     if (!business) return "Serviço";
     const type = business.type.toLowerCase();
@@ -106,6 +94,22 @@ export default function CheckoutPage() {
     if (type.includes('loja') || type.includes('artesanato')) return "Compra";
     return "Serviço";
   }
+
+  const onSubmit: SubmitHandler<CheckoutFormValues> = async (data) => {
+    setIsSubmitting(true);
+    // Simulate API call for payment processing
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    
+    console.log('Checkout Data:', data);
+    toast({
+      title: 'Solicitação Confirmada!',
+      description: `Sua ${getActionName().toLowerCase()} em ${business?.name} com os benefícios Martins Prime foi registrada! O estabelecimento confirmará os detalhes e descontos.`,
+      variant: 'default', 
+    });
+    setIsSubmitting(false);
+    router.push(`/`); 
+  };
+  
 
   if (isLoading) {
     return (
@@ -306,7 +310,7 @@ export default function CheckoutPage() {
             <CardHeader>
               <CardTitle className="flex items-center text-xl">
                 <ShoppingCart className="mr-2 h-5 w-5 text-accent" />
-                Resumo do {getActionName()}
+                Resumo da {getActionName().toLowerCase()}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -325,10 +329,28 @@ export default function CheckoutPage() {
               </div>
               <p className="text-sm text-foreground/80">
                 Você está prestes a {getActionName() === "Reserva" ? "fazer uma reserva" : getActionName() === "Compra" ? "realizar uma compra" : "solicitar um serviço"} em {business.name}.
-                Detalhes específicos e valores serão confirmados após esta etapa inicial.
               </p>
-              <div className="rounded-md border border-accent/50 bg-accent/10 p-3 text-sm text-accent-foreground">
-                <strong>Nota:</strong> Este é um formulário de solicitação. A confirmação final, valores e detalhes adicionais serão tratados diretamente com o estabelecimento após o envio.
+              
+              {deals.length > 0 && (
+                <div className="mt-3 rounded-md border border-accent/50 bg-accent/10 p-3 text-sm">
+                  <p className="flex items-center font-semibold text-accent-foreground">
+                    <Star className="mr-2 h-4 w-4 text-yellow-500" /> {/* Changed icon and color for visibility */}
+                    Benefícios Martins Prime!
+                  </p>
+                  <p className="mt-1 text-accent-foreground/90">
+                    Como membro, você tem acesso a ofertas especiais neste estabelecimento.
+                    Elas serão confirmadas e aplicadas diretamente pelo parceiro.
+                  </p>
+                  {deals[0] && (
+                      <p className="mt-1 text-xs text-accent-foreground/80">
+                          Ex: {deals[0].description}
+                      </p>
+                  )}
+                </div>
+              )}
+
+              <div className="mt-3 rounded-md border border-muted bg-muted/50 p-3 text-sm text-muted-foreground">
+                <strong>Nota:</strong> Este é um formulário de solicitação inicial. A confirmação final, valores e detalhes adicionais serão tratados diretamente com o estabelecimento após o envio.
               </div>
             </CardContent>
           </Card>
@@ -337,3 +359,4 @@ export default function CheckoutPage() {
     </div>
   );
 }
+
