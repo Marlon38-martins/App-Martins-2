@@ -5,6 +5,7 @@ import type { GramadoBusiness} from '@/services/gramado-businesses';
 import { getGramadoBusinesses } from '@/services/gramado-businesses';
 import { useEffect, useState, useMemo } from 'react';
 import Link from 'next/link';
+import Image from 'next/image'; // Added import for Image
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
@@ -107,9 +108,15 @@ export default function MapPage() {
 
       {!isLoading && !error && mapPoints.length > 0 && (
         <TooltipProvider>
-          <div className="relative h-[500px] w-full rounded-lg border bg-secondary/10 shadow-lg md:h-[700px] overflow-hidden">
-            {/* Optional: Add a background image or pattern for the map */}
-            {/* <Image src="/placeholder-map-background.png" layout="fill" objectFit="cover" alt="Mapa de fundo" className="opacity-30" /> */}
+          <div className="relative h-[500px] w-full rounded-lg border shadow-lg md:h-[700px] overflow-hidden">
+            <Image 
+              src="https://picsum.photos/1200/900" 
+              alt="Mapa de fundo ilustrativo de Martins" 
+              layout="fill" 
+              objectFit="cover" 
+              className="opacity-20 -z-10" 
+              data-ai-hint="map background"
+            />
             
             {mapPoints.map((point) => (
               <Tooltip key={point.id}>
@@ -168,3 +175,4 @@ export default function MapPage() {
     </div>
   );
 }
+
