@@ -15,7 +15,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Button } from '../ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 
 
@@ -112,26 +111,3 @@ export function CurrentUserDisplay() {
     </>
   );
 }
-
-// Placeholder pages for profile and settings
-export function ProfilePagePlaceholder() {
-    return (
-        <div className="p-4">
-            <h1 className="text-2xl font-bold">Meu Perfil</h1>
-            <p>Esta é a página do perfil. Conteúdo a ser adicionado.</p>
-        </div>
-    );
-}
-
-export function SettingsPagePlaceholder() {
-     return (
-        <div className="p-4">
-            <h1 className="text-2xl font-bold">Configurações</h1>
-            <p>Esta é a página de configurações. Conteúdo a ser adicionado.</p>
-        </div>
-    );
-}
-
-// You would create actual pages for these routes:
-// src/app/profile/page.tsx
-// src/app/settings/page.tsx

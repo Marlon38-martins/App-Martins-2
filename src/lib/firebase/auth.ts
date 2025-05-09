@@ -12,7 +12,7 @@ import {
 import { auth } from './config'; // Your Firebase app initialization
 import type { User } from '@/types/user'; // Your application's User type
 
-export async function signUpWithEmailAndPassword(email: string, password: string): Promise<{ user: FirebaseUser; error: null } | { user: null; error: AuthError }> {
+export async function signUpWithEmailAndPassword(email: string, password: string): Promise<{ user: FirebaseUser | null; error: AuthError | null }> {
   try {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     return { user: userCredential.user, error: null };
@@ -21,7 +21,7 @@ export async function signUpWithEmailAndPassword(email: string, password: string
   }
 }
 
-export async function signInWithEmail(email: string, password: string): Promise<{ user: FirebaseUser; error: null } | { user: null; error: AuthError }> {
+export async function signInWithEmail(email: string, password: string): Promise<{ user: FirebaseUser | null; error: AuthError | null }> {
   try {
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
     return { user: userCredential.user, error: null };
@@ -30,7 +30,7 @@ export async function signInWithEmail(email: string, password: string): Promise<
   }
 }
 
-export async function signInWithGoogle(): Promise<{ user: FirebaseUser; error: null } | { user: null; error: AuthError }> {
+export async function signInWithGoogle(): Promise<{ user: FirebaseUser | null; error: AuthError | null }> {
   const provider = new GoogleAuthProvider();
   try {
     const result = await signInWithPopup(auth, provider);
@@ -51,11 +51,12 @@ export async function signOut(): Promise<void> {
 
 /**
  * Listens for auth state changes and maps FirebaseUser to your app's User type.
- * @param callback - Function to call with the app User object or null.
+ * @param callback - Function to call with the app User object or null, and any AuthError.
  * @returns Unsubscribe function.
  */
-export function onAuthStateChanged(callback: (user: User | null) => void): () => void {
+export function onAuthStateChanged(callback: (user: User | null, error: AuthError | null) => void): () => void {
   return firebaseOnAuthStateChanged(auth, (firebaseUser: FirebaseUser | null) => {
+    // This is the success observer
     if (firebaseUser) {
       const appUser: User = {
         id: firebaseUser.uid,
@@ -64,9 +65,12 @@ export function onAuthStateChanged(callback: (user: User | null) => void): () =>
         photoURL: firebaseUser.photoURL,
         // You might fetch additional user profile data from Firestore here
       };
-      callback(appUser);
+      callback(appUser, null);
     } else {
-      callback(null);
+      callback(null, null);
     }
+  }, (error: AuthError) => { // This is the error observer
+    console.error("Firebase onAuthStateChanged error observer caught an error:", error);
+    callback(null, error);
   });
 }
