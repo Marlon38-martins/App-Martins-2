@@ -6,17 +6,20 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { getGramadoBusinesses, getAllDeals, type GramadoBusiness, type Deal } from '@/services/gramado-businesses';
 import { BusinessCard } from '@/components/business/business-card';
-import { DealCard } from '@/components/deal/deal-card'; // Import DealCard
+import { DealCard } from '@/components/deal/deal-card';
 import { SearchBar } from '@/components/search-bar';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
-import { Frown, Play, Tag } from 'lucide-react'; // Added Tag icon
+import { Frown, Play, Tag } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
+
 
 export default function HomePage() {
+  const { toast } = useToast();
   const [businesses, setBusinesses] = useState<GramadoBusiness[]>([]);
-  const [allDeals, setAllDeals] = useState<Deal[]>([]); // State for all deals
+  const [allDeals, setAllDeals] = useState<Deal[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [isLoading, setIsLoading] = useState(true);
@@ -52,9 +55,8 @@ export default function HomePage() {
   }, [businesses]);
 
   const featuredDeals = useMemo(() => {
-    // Show up to 3-4 deals, perhaps prioritizing those with discounts or specific types
     return allDeals
-      .sort((a, b) => b.discountPercentage - a.discountPercentage) // Prioritize deals with higher discount
+      .sort((a, b) => (b.discountPercentage ?? 0) - (a.discountPercentage ?? 0))
       .slice(0, 4);
   }, [allDeals]);
 
@@ -179,7 +181,7 @@ export default function HomePage() {
         />
         <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/40 p-4 text-center text-white">
           <h1 className="text-4xl font-bold tracking-tight md:text-6xl drop-shadow-lg">
-            Bem-vindo ao Chill Martins!
+            Bem-vindo ao Martins Prime!
           </h1>
           <p className="mt-4 max-w-2xl text-lg md:text-xl drop-shadow-md">
             Seu clube de vantagens exclusivo para curtir o melhor de Martins, RN. Descubra ofertas, explore e aproveite!

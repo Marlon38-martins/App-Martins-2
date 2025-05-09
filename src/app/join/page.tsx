@@ -8,12 +8,17 @@ import * as z from 'zod';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+// import { Label } from '@/components/ui/label'; // Not used directly, FormLabel is used
 import { Checkbox } from '@/components/ui/checkbox';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useToast } from '@/hooks/use-toast';
 import { User, Mail, Phone as PhoneIcon, Lock, CheckCircle, Award, Sparkles, Star, ShieldCheck, CreditCard } from 'lucide-react';
+import type { Plan } from '@/types/user';
+import { useRouter } from 'next/navigation';
+// Mock service imports - replace with actual Firebase Auth later
+import { signUpWithEmailAndPassword } from '@/lib/firebase/auth'; 
+// import { createUserProfile, createSubscription } from '@/services/users'; // Placeholder for user service functions
 
 const registrationFormSchema = z.object({
   name: z.string().min(3, { message: "Nome completo é obrigatório (mínimo 3 caracteres)." }),
@@ -31,11 +36,12 @@ const registrationFormSchema = z.object({
 
 type RegistrationFormValues = z.infer<typeof registrationFormSchema>;
 
-const plans = [
+const plans: Plan[] = [
   {
     id: 'explorador',
     name: 'Plano Explorador',
     price: 'R$ 19,90/mês',
+    priceMonthly: 19.90,
     Icon: Award,
     features: [
       'Acesso a descontos básicos em parceiros selecionados.',
@@ -50,10 +56,11 @@ const plans = [
     id: 'serrano_vip',
     name: 'Plano Serrano VIP',
     price: 'R$ 49,90/mês',
+    priceMonthly: 49.90,
     Icon: Sparkles,
     features: [
       'Todos os benefícios do plano Explorador.',
-      'Descontos maiores e ofertas VIP exclusivas.',
+      'Descontos maiores e ofertas VIP exclusivas (incluindo Pague 1 Leve 2).',
       'Acesso antecipado a promoções e pacotes.',
       'Convites para eventos especiais em Martins.',
       'Cartão de membro VIP digital personalizado.',
@@ -66,6 +73,7 @@ const plans = [
 
 export default function JoinPage() {
   const { toast } = useToast();
+  const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm<RegistrationFormValues>({
@@ -84,18 +92,70 @@ export default function JoinPage() {
 
   const onSubmit: SubmitHandler<RegistrationFormValues> = async (data) => {
     setIsSubmitting(true);
-    // Simulate API call for registration
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
-    console.log('Registration Data:', data);
-    toast({
-      title: 'Cadastro Realizado com Sucesso!',
-      description: `Bem-vindo(a) ao Martins Prime, ${data.name}! Seu plano ${plans.find(p => p.id === data.selectedPlan)?.name} está quase ativo.`,
-      variant: 'default',
-    });
-    setIsSubmitting(false);
-    form.reset(); 
-    // router.push(`/welcome-member`); // Potentially redirect to a welcome page
+    try {
+      // Step 1: Create user account with Firebase Auth
+      const userCredential = await signUpWithEmailAndPassword(data.email, data.password);
+      const firebaseUser = userCredential?.user;
+
+      if (!firebaseUser) {
+        throw new Error('Falha ao criar conta de usuário.');
+      }
+      
+      // Step 2: (Mocked) Create user profile in your database (e.g., Firestore)
+      // const userProfileData = {
+      //   id: firebaseUser.uid,
+      //   email: firebaseUser.email!,
+      //   name: data.name,
+      //   phone: data.phone,
+      //   cpf: data.cpf,
+      //   // any other fields
+      // };
+      // await createUserProfile(userProfileData); // This would be a call to your backend/Firestore
+
+      // Step 3: (Mocked) Create subscription
+      // const subscriptionData = {
+      //   userId: firebaseUser.uid,
+      //   planId: data.selectedPlan,
+      //   startDate: new Date(),
+      //   endDate: new Date(new Date().setFullYear(new Date().getFullYear() + 1)), // Example: 1 year
+      //   status: 'pending_payment', // Or 'active' if payment is immediate / not handled here
+      // };
+      // await createSubscription(subscriptionData); // Call to your backend/Firestore
+
+      // Simulate API call for additional profile/subscription setup if not using Firebase directly
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
+
+      console.log('Registration Data:', data);
+      toast({
+        title: 'Cadastro Realizado com Sucesso!',
+        description: `Bem-vindo(a) ao Martins Prime, ${data.name}! Seu plano ${plans.find(p => p.id === data.selectedPlan)?.name} está quase ativo. Prossiga para o pagamento.`,
+        variant: 'default',
+      });
+      form.reset(); 
+      // router.push(`/payment?planId=${data.selectedPlan}`); // Redirect to a payment page
+      toast({
+        title: "Redirecionamento para Pagamento (Simulado)",
+        description: "Em uma aplicação real, você seria redirecionado para a página de pagamento.",
+        variant: "default"
+      });
+
+    } catch (error: any) {
+      console.error('Registration Error:', error);
+      let errorMessage = 'Ocorreu um erro durante o cadastro. Tente novamente.';
+      if (error.code === 'auth/email-already-in-use') {
+        errorMessage = 'Este email já está cadastrado. Tente fazer login ou use outro email.';
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+      toast({
+        title: 'Erro no Cadastro',
+        description: errorMessage,
+        variant: 'destructive',
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -111,11 +171,11 @@ export default function JoinPage() {
 
       <div className="mb-12 grid grid-cols-1 gap-8 md:grid-cols-2">
         {plans.map((plan) => (
-          <Card key={plan.id} className={`shadow-xl flex flex-col ${plan.bgColor} border-2 ${plan.borderColor}`}>
+          <Card key={plan.id} className={`shadow-xl flex flex-col ${plan.bgColor || ''} border-2 ${plan.borderColor || 'border-transparent'}`}>
             <CardHeader>
               <div className="flex items-center gap-3">
-                <plan.Icon className={`h-10 w-10 ${plan.textColor}`} />
-                <CardTitle className={`text-2xl font-semibold ${plan.textColor}`}>{plan.name}</CardTitle>
+                {plan.Icon && <plan.Icon className={`h-10 w-10 ${plan.textColor || 'text-primary'}`} />}
+                <CardTitle className={`text-2xl font-semibold ${plan.textColor || 'text-primary'}`}>{plan.name}</CardTitle>
               </div>
               <CardDescription className="text-xl font-medium text-muted-foreground pt-1">{plan.price}</CardDescription>
             </CardHeader>
@@ -245,7 +305,7 @@ export default function JoinPage() {
                 name="selectedPlan"
                 render={({ field }) => (
                   <FormItem className="space-y-3">
-                    <FormLabel className="text-base">Escolha seu Plano</FormLabel>
+                    <FormLabel className="text-base">Escolha seu Plano Martins Prime</FormLabel>
                     <FormControl>
                       <RadioGroup
                         onValueChange={field.onChange}

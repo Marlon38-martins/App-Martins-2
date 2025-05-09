@@ -4,93 +4,98 @@
 
 @layer base {
   :root {
-    --background: 60 56% 92%; /* Light Beige */
-    --foreground: 10 23% 25%; /* Dark Brown */
+    --background: 60 56% 92%; /* Light Beige (#F5F5DC) */
+    --foreground: 20 27% 23%; /* Dark Brown (#4E342E) */
 
     --card: 0 0% 100%; /* White */
-    --card-foreground: 10 23% 25%; /* Dark Brown */
+    --card-foreground: 20 27% 23%; /* Dark Brown */
 
     --popover: 0 0% 100%; /* White */
-    --popover-foreground: 10 23% 25%; /* Dark Brown */
+    --popover-foreground: 20 27% 23%; /* Dark Brown */
 
-    --primary: 123 45% 34%; /* Deep Green */
-    --primary-foreground: 0 0% 98%; /* Off-white for text on primary */
+    --primary: 123 45% 34%; /* Deep Green (#2E7D32) */
+    --primary-foreground: 60 100% 97%; /* Very Light Beige/Almost White for text on primary */
 
-    --secondary: 123 30% 60%; /* Lighter, less saturated Green */
+    /* Secondary color: Light Beige (#F5F5DC) for backgrounds is already --background.
+       Let's define a different secondary for other elements if needed, or use muted.
+       Using a slightly darker beige for secondary elements or a lighter green.
+       Let's go with a lighter green for components.
+    */
+    --secondary: 123 30% 50%; /* Lighter Green */
     --secondary-foreground: 0 0% 98%; /* Off-white for text on secondary */
 
     --muted: 60 30% 85%; /* Muted Beige */
-    --muted-foreground: 10 23% 45%; /* Slightly desaturated brown */
+    --muted-foreground: 20 20% 40%; /* Desaturated Brown */
 
-    --accent: 45 100% 51%; /* Golden Yellow */
-    --accent-foreground: 10 23% 25%; /* Dark Brown for text on accent */
+    --accent: 45 100% 51%; /* Golden Yellow (#FFC107) */
+    --accent-foreground: 20 27% 15%; /* Darker Brown for text on accent for contrast */
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
 
     --border: 60 30% 80%; /* Beige-toned border */
-    --input: 0 0% 100%; /* White input background for contrast */
+    --input: 0 0% 100%; /* White input background for contrast, can be light beige too */
     --ring: 123 45% 34%; /* Deep Green for focus rings */
 
     --radius: 0.5rem;
 
-    --chart-1: 123 45% 34%;
-    --chart-2: 45 100% 51%;
-    --chart-3: 10 23% 45%;
-    --chart-4: 123 30% 60%;
-    --chart-5: 60 30% 85%;
+    --chart-1: hsl(var(--primary));
+    --chart-2: hsl(var(--accent));
+    --chart-3: hsl(var(--secondary));
+    --chart-4: 180 45% 34%; /* A Teal for contrast if needed */
+    --chart-5: 30 80% 55%; /* An Orange for contrast */
     
     /* Sidebar variables themed consistently */
-    --sidebar-background: 123 45% 28%; 
-    --sidebar-foreground: 60 56% 92%; 
-    --sidebar-primary: 45 100% 51%; 
-    --sidebar-primary-foreground: 10 23% 25%; 
-    --sidebar-accent: 123 45% 40%; 
-    --sidebar-accent-foreground: 0 0% 98%; 
-    --sidebar-border: 123 45% 20%; 
-    --sidebar-ring: 45 100% 51%;
+    --sidebar-background: 123 45% 28%; /* Darker Deep Green */
+    --sidebar-foreground: 60 50% 90%; /* Light Beige */
+    --sidebar-primary: 45 100% 51%;  /* Golden Yellow */
+    --sidebar-primary-foreground: 20 27% 15%; /* Dark Brown */
+    --sidebar-accent: 123 45% 40%; /* Mid Green */
+    --sidebar-accent-foreground: 0 0% 98%; /* Off-white */
+    --sidebar-border: 123 45% 20%; /* Very Dark Green */
+    --sidebar-ring: 45 100% 51%; /* Golden Yellow */
   }
 
   .dark {
-    --background: 10 23% 15%; /* Dark Brownish background */
-    --foreground: 60 56% 92%; /* Light Beige text */
+    --background: 20 27% 15%; /* Dark Brown (#4E342E base, made darker) */
+    --foreground: 60 56% 92%; /* Light Beige (#F5F5DC) */
 
-    --card: 10 23% 20%; /* Darker Brown for cards */
+    --card: 20 27% 20%; /* Slightly Lighter Dark Brown for cards */
     --card-foreground: 60 56% 92%; /* Light Beige text */
 
-    --popover: 10 23% 20%;
+    --popover: 20 27% 20%;
     --popover-foreground: 60 56% 92%;
 
-    --primary: 123 45% 45%; /* Brighter Green for dark mode */
+    --primary: 123 45% 45%; /* Brighter Deep Green */
     --primary-foreground: 0 0% 98%;
 
-    --secondary: 123 30% 35%; /* Darker, less saturated Green */
+    --secondary: 123 30% 35%; /* Darker Lighter Green */
     --secondary-foreground: 0 0% 98%;
 
-    --muted: 10 23% 25%; /* Muted Dark Brown */
+    --muted: 20 20% 25%; /* Muted Dark Brown */
     --muted-foreground: 60 30% 70%; /* Muted Beige text */
 
     --accent: 45 100% 60%; /* Brighter Golden Yellow */
-    --accent-foreground: 10 23% 15%;
+    --accent-foreground: 20 27% 10%; /* Very Dark Brown for text on accent */
 
-    --border: 10 23% 30%;
-    --input: 10 23% 25%;
-    --ring: 123 45% 45%;
+    --border: 20 20% 30%; /* Dark Beige-toned border */
+    --input: 20 20% 25%; /* Muted Dark Brown for input background */
+    --ring: 123 45% 45%; /* Brighter Deep Green for focus rings */
     
-    --chart-1: 123 45% 45%;
-    --chart-2: 45 100% 60%;
-    --chart-3: 60 30% 70%;
-    --chart-4: 123 30% 35%;
-    --chart-5: 10 23% 25%;
+    --chart-1: hsl(var(--primary));
+    --chart-2: hsl(var(--accent));
+    --chart-3: hsl(var(--secondary));
+    --chart-4: 180 45% 45%;
+    --chart-5: 30 80% 65%;
 
     /* Sidebar dark theme */
-    --sidebar-background: 10 23% 10%;
-    --sidebar-foreground: 60 56% 92%;
-    --sidebar-primary: 45 100% 60%;
-    --sidebar-primary-foreground: 10 23% 15%;
-    --sidebar-accent: 123 45% 30%;
+    --sidebar-background: 20 27% 10%; /* Very Dark Brown */
+    --sidebar-foreground: 60 56% 92%; /* Light Beige */
+    --sidebar-primary: 45 100% 60%; /* Brighter Golden Yellow */
+    --sidebar-primary-foreground: 20 27% 10%; /* Very Dark Brown */
+    --sidebar-accent: 123 45% 30%; /* Darker Mid Green */
     --sidebar-accent-foreground: 0 0% 98%;
-    --sidebar-border: 10 23% 5%;
+    --sidebar-border: 20 27% 5%; /* Almost Black Brown */
     --sidebar-ring: 45 100% 60%;
   }
 }

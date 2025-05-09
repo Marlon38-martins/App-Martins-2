@@ -10,7 +10,7 @@ import { ArrowRight, Tag } from 'lucide-react';
 
 interface DealCardProps {
   deal: Deal;
-  business?: GramadoBusiness; // Business can be optional if deal info is self-contained enough
+  business?: GramadoBusiness; 
 }
 
 export function DealCard({ deal, business }: DealCardProps) {
@@ -29,14 +29,24 @@ export function DealCard({ deal, business }: DealCardProps) {
             objectFit="cover"
             data-ai-hint={business?.type ? `${business.type} offer` : "deal offer"}
           />
-           {deal.discountPercentage > 0 && (
-            <Badge
-              variant="destructive"
-              className="absolute right-2 top-2 bg-accent text-accent-foreground shadow-md"
-            >
-              {deal.discountPercentage}% OFF
-            </Badge>
-          )}
+          <div className="absolute right-2 top-2 flex flex-col items-end gap-1">
+            {deal.discountPercentage && deal.discountPercentage > 0 && (
+              <Badge
+                variant="default" // Changed from destructive to default for better contrast with accent below
+                className="bg-primary text-primary-foreground shadow-md"
+              >
+                {deal.discountPercentage}% OFF
+              </Badge>
+            )}
+            {deal.isPay1Get2 && (
+                <Badge
+                 variant="destructive" // Keep accent for P1G2
+                 className="bg-accent text-accent-foreground shadow-md"
+                >
+                    Pague 1 Leve 2
+                </Badge>
+            )}
+          </div>
         </div>
       )}
       <CardHeader className="pb-2 pt-3">
@@ -54,7 +64,8 @@ export function DealCard({ deal, business }: DealCardProps) {
       </CardContent>
       <CardFooter>
         <Button asChild variant="default" className="w-full bg-accent hover:bg-accent/90 text-accent-foreground">
-          <Link href={`/business/${deal.businessId}`}>
+          {/* Link to checkout page with businessId and dealId */}
+          <Link href={`/checkout/${deal.businessId}?dealId=${deal.id}`}>
             <Tag className="mr-2 h-4 w-4" />
             Ver Detalhes da Oferta
             <ArrowRight className="ml-auto h-4 w-4" />

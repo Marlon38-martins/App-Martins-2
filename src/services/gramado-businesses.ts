@@ -1,4 +1,5 @@
 import type { LucideIcon } from 'lucide-react';
+import type { User, Subscription } from '@/types/user'; // Placeholder for actual user/subscription types
 
 /**
  * Represents a business in Martins.
@@ -85,7 +86,7 @@ export interface Deal {
   /**
    * The discount percentage. Can be 0 if it's a "buy one get one" or other type of offer.
    */
-  discountPercentage: number;
+  discountPercentage?: number; // Optional, as P1G2 might not have a percentage
   /**
    * The terms and conditions of the deal.
    */
@@ -94,6 +95,14 @@ export interface Deal {
    * A short, catchy title for the deal.
    */
   title: string;
+  /**
+   * Indicates if this is a "Pague 1 Leve 2" style offer.
+   */
+  isPay1Get2?: boolean;
+  /**
+   * How many times a single user can redeem this offer. Defaults to 1 for P1G2.
+   */
+  usageLimitPerUser?: number;
 }
 
 const businesses: GramadoBusiness[] = [
@@ -187,10 +196,12 @@ const deals: Deal[] = [
   {
     id: 'deal-1',
     businessId: '1', // Restaurante Mirante da Serra
-    title: 'Jantar Romântico na Serra',
-    description: '15% de desconto no prato principal às sextas-feiras para membros Prime.',
-    discountPercentage: 15,
-    termsAndConditions: 'Válido às sextas-feiras, para consumo no local. Necessário apresentar o card digital Martins Prime.',
+    title: 'Pague 1 Prato Principal, Leve 2',
+    description: 'Na compra de um prato principal selecionado, ganhe outro de igual ou menor valor. Válido para membros Prime.',
+    discountPercentage: 0, // Not a direct discount, but P1G2
+    isPay1Get2: true,
+    usageLimitPerUser: 1,
+    termsAndConditions: 'Válido de segunda a quinta, exceto feriados. Necessário apresentar o card digital Martins Prime. Não cumulativo com outras promoções. Consulte pratos selecionados.',
   },
   {
     id: 'deal-2',
@@ -203,25 +214,27 @@ const deals: Deal[] = [
   {
     id: 'deal-3',
     businessId: '2', // Pousada Aconchego Serrano
-    title: 'Estadia Prolongada com Desconto',
-    description: '10% OFF na diária para estadias de 3 noites ou mais.',
-    discountPercentage: 10,
-    termsAndConditions: 'Válido para reservas diretas com a pousada, mediante apresentação do card Martins Prime. Sujeito à disponibilidade.',
+    title: 'Pague 2 Diárias, Fique 3',
+    description: 'Reserve duas diárias e ganhe a terceira noite como cortesia Martins Prime.',
+    isPay1Get2: true, // Conceptually similar, pay X get Y
+    usageLimitPerUser: 1,
+    termsAndConditions: 'Válido para reservas diretas com a pousada, mediante apresentação do card Martins Prime. Sujeito à disponibilidade. Não válido em alta temporada ou feriados prolongados.',
   },
   {
     id: 'deal-4',
     businessId: '3', // Loja de Artesanato Mãos da Serra
-    title: 'Lembrança Especial da Serra',
-    description: 'Brinde exclusivo em compras acima de R$100 para membros Martins Prime.',
-    discountPercentage: 0, 
-    termsAndConditions: 'Válido enquanto durarem os estoques do brinde. Um brinde por CPF/membro.',
+    title: '15% OFF em Peças Selecionadas',
+    description: 'Desconto de 15% em todas as peças de cerâmica e bordados para membros Prime.',
+    discountPercentage: 15, 
+    termsAndConditions: 'Válido enquanto durarem os estoques. Apresentar card Martins Prime.',
   },
   {
     id: 'deal-5',
     businessId: '5', // Cafeteria Grão Serrano
-    title: 'Café da Tarde Prime',
-    description: 'Combo Café Especial + Bolo Caseiro com 20% OFF (terça a quinta).',
-    discountPercentage: 20,
+    title: 'Café em Dobro Prime',
+    description: 'Na compra de um café expresso, ganhe outro. Benefício exclusivo Martins Prime.',
+    isPay1Get2: true,
+    usageLimitPerUser: 1, // Example: can use this specific P1G2 offer once
     termsAndConditions: 'Válido de terça a quinta-feira, exceto feriados. Apresentar card Martins Prime. Não cumulativo.',
   },
   {
@@ -286,3 +299,80 @@ export async function getAllDeals(): Promise<Deal[]> {
     await new Promise(resolve => setTimeout(resolve, 300));
     return deals;
 }
+
+
+// --- Mocked User, Subscription, and Redemption Services ---
+// In a real app, these would interact with Firebase or your backend.
+
+const MOCK_USER_ID = 'mock-user-123';
+let mockUserRedemptions: { [offerId: string]: boolean } = {};
+let mockCurrentUser: User | null = null;
+let mockUserSubscription: Subscription | null = null;
+
+
+export async function getCurrentUser(): Promise<User | null> {
+  await new Promise(resolve => setTimeout(resolve, 100));
+  // Simulate fetching the current logged-in user.
+  // In a real app, this would use Firebase Auth or your auth provider.
+  // For now, return a mock user if 'loggedIn'
+  if (typeof window !== 'undefined' && localStorage.getItem('isMockLoggedIn') === 'true') {
+    if (!mockCurrentUser) {
+        mockCurrentUser = {
+            id: MOCK_USER_ID,
+            email: 'membro.prime@example.com',
+            name: 'Membro Prime Teste',
+            // other fields...
+        };
+    }
+    return mockCurrentUser;
+  }
+  return null;
+}
+
+export async function getMockUserSubscription(userId: string): Promise<Subscription | null> {
+  await new Promise(resolve => setTimeout(resolve, 100));
+  if (userId === MOCK_USER_ID && mockUserSubscription) {
+    return mockUserSubscription;
+  }
+  // Simulate a user having an active "Serrano VIP" subscription for testing
+  if (userId === MOCK_USER_ID && typeof window !== 'undefined' && localStorage.getItem('isMockLoggedIn') === 'true') {
+    return {
+        id: 'sub-vip-123',
+        userId: MOCK_USER_ID,
+        planId: 'serrano_vip', // Matches a plan ID from join/page.tsx
+        startDate: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), // 30 days ago
+        endDate: new Date(Date.now() + 335 * 24 * 60 * 60 * 1000), // ~11 months from now
+        status: 'active',
+    };
+  }
+  return null;
+}
+
+export async function checkUserOfferUsage(userId: string, offerId: string): Promise<boolean> {
+  await new Promise(resolve => setTimeout(resolve, 100));
+  if (userId !== MOCK_USER_ID) return false; // Only works for mock user
+  // console.log(`Checking usage for user ${userId}, offer ${offerId}: ${!!mockUserRedemptions[offerId]}`);
+  return !!mockUserRedemptions[offerId];
+}
+
+export async function recordUserOfferUsage(userId: string, offerId: string, businessId: string): Promise<void> {
+  await new Promise(resolve => setTimeout(resolve, 100));
+  if (userId !== MOCK_USER_ID) return; // Only works for mock user
+  // console.log(`Recording usage for user ${userId}, offer ${offerId}, business ${businessId}`);
+  mockUserRedemptions[offerId] = true;
+}
+
+// Helper for mocking login/logout in UI (development only)
+export function mockLogin(user: User, subscription: Subscription) {
+  mockCurrentUser = user;
+  mockUserSubscription = subscription;
+  mockUserRedemptions = {}; // Reset redemptions on new login
+  if (typeof window !== 'undefined') localStorage.setItem('isMockLoggedIn', 'true');
+}
+
+export function mockLogout() {
+  mockCurrentUser = null;
+  mockUserSubscription = null;
+  if (typeof window !== 'undefined') localStorage.removeItem('isMockLoggedIn');
+}
+// --- End Mocked Services ---

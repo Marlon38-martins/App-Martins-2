@@ -1,47 +1,54 @@
 'use client';
 
-import { use, useEffect, useState } from 'react';
+import { use, useEffect, useState, Suspense } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { getGramadoBusinessById, getDealsForBusiness, type GramadoBusiness, type Deal } from '@/services/gramado-businesses';
+import { useSearchParams } from 'next/navigation'; // To get dealId from query
+
+import { getGramadoBusinessById, getDealsForBusiness, type GramadoBusiness, type Deal, getCurrentUser, getMockUserSubscription, checkUserOfferUsage } from '@/services/gramado-businesses';
+import type { User, Subscription } from '@/types/user';
+import { useAuth } from '@/hooks/use-auth-client'; 
+
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { BusinessTypeIcon } from '@/components/icons';
-import { MapPin, Phone, Globe, ArrowLeft, TicketPercent, Frown, Star, Tag } from 'lucide-react'; // Added Star, Tag
+import { MapPin, Phone, Globe, ArrowLeft, TicketPercent, Frown, Star, Tag, UserCheck, AlertTriangle } from 'lucide-react';
 
 interface BusinessPageParams {
   id: string;
 }
 
-const getButtonTextAndIcon = (type: string) => {
-  const lowerType = type.toLowerCase();
-  // Generalizing for "Prime Gourmet" style offer redemption
+// Helper to generate button text and icon based on deal type
+const getDealActivationDetails = (deal: Deal, businessType: string) => {
+  if (deal.isPay1Get2) {
+    return { text: `Ativar ${deal.title}`, Icon: Tag, query: `?dealId=${deal.id}` };
+  }
+  // Fallback for general business type or other deal types
+  const lowerType = businessType.toLowerCase();
   if (lowerType.includes('hotel') || lowerType.includes('pousada')) {
-    return { text: 'Ativar Benefício Prime (Reserva)', Icon: Tag };
+    return { text: 'Reservar com Benefício Prime', Icon: Tag, query: `?dealId=${deal.id}` };
   }
   if (lowerType.includes('restaurante') || lowerType.includes('café')) {
-    return { text: 'Usar Benefício Prime Aqui', Icon: Tag };
+    return { text: 'Usar Benefício Prime Aqui', Icon: Tag, query: `?dealId=${deal.id}` };
   }
-  if (lowerType.includes('loja') || lowerType.includes('artesanato')) {
-    return { text: 'Ativar Desconto Prime', Icon: Tag };
-  }
-  if (lowerType.includes('atração') || lowerType.includes('parque')) {
-    return { text: 'Verificar Benefício Prime', Icon: Tag };
-  }
-  return { text: 'Aproveitar Benefício Prime', Icon: Tag };
+  return { text: 'Aproveitar Benefício Prime', Icon: Tag, query: `?dealId=${deal.id}` };
 };
 
-
-export default function BusinessPage({ params: paramsPromise }: { params: Promise<BusinessPageParams> }) {
-  const params = use(paramsPromise);
+function BusinessPageContent({ params }: { params: BusinessPageParams }) {
   const { id } = params;
+  const { user: authUser, loading: authLoading } = useAuth(); // Use client-side auth context
+  
   const [business, setBusiness] = useState<GramadoBusiness | null>(null);
   const [deals, setDeals] = useState<Deal[]>([]);
+  const [userSubscription, setUserSubscription] = useState<Subscription | null>(null);
+  const [userRedemptions, setUserRedemptions] = useState<Record<string, boolean>>({}); // Store offerId: hasRedeemed
+
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
 
   useEffect(() => {
     if (!id) return;
@@ -55,6 +62,20 @@ export default function BusinessPage({ params: paramsPromise }: { params: Promis
           setBusiness(businessData);
           const dealsData = await getDealsForBusiness(id as string);
           setDeals(dealsData);
+
+          if (authUser) { // Check subscription and redemptions only if user is logged in
+            const sub = await getMockUserSubscription(authUser.uid);
+            setUserSubscription(sub);
+            
+            const redemptions: Record<string, boolean> = {};
+            for (const deal of dealsData) {
+                if (deal.isPay1Get2 && deal.usageLimitPerUser === 1) { // Only check P1G2 with limit 1 for now
+                    redemptions[deal.id] = await checkUserOfferUsage(authUser.uid, deal.id);
+                }
+            }
+            setUserRedemptions(redemptions);
+          }
+
         } else {
           setError('Estabelecimento não encontrado.');
         }
@@ -66,9 +87,9 @@ export default function BusinessPage({ params: paramsPromise }: { params: Promis
       }
     }
     loadBusinessData();
-  }, [id]);
+  }, [id, authUser]); // Reload if authUser changes
 
-  if (isLoading) {
+  if (isLoading || authLoading) {
     return (
       <div> 
         <Skeleton className="mb-4 h-10 w-32" /> 
@@ -126,14 +147,14 @@ export default function BusinessPage({ params: paramsPromise }: { params: Promis
     );
   }
   
-  const { text: benefitButtonText, Icon: BenefitButtonIcon } = getButtonTextAndIcon(business.type);
+  const canUsePrimeBenefits = authUser && userSubscription && userSubscription.status === 'active';
 
   return (
     <div> 
       <Button asChild variant="outline" className="mb-6">
         <Link href="/services">
           <ArrowLeft className="mr-2 h-4 w-4" />
-          Voltar para Serviços
+          Voltar para Parceiros
         </Link>
       </Button>
 
@@ -186,69 +207,95 @@ export default function BusinessPage({ params: paramsPromise }: { params: Promis
         </div>
 
         <div className="md:col-span-2">
-          {/* Deals Section */}
           <div className="mb-8">
             <h3 className="mb-4 flex items-center text-2xl font-semibold text-primary">
               <TicketPercent className="mr-2 h-7 w-7 text-accent" />
-              Benefícios Exclusivos Martins Prime
+              Ofertas Martins Prime
             </h3>
+            {!authUser && (
+                 <Alert variant="default" className="mb-4 bg-accent/10 border-accent/30">
+                    <UserCheck className="h-5 w-5 text-accent" />
+                    <AlertTitle className="text-accent">Faça Login para Vantagens!</AlertTitle>
+                    <AlertDescription>
+                        <Link href="/login" className="font-semibold underline hover:text-accent/80">Faça login</Link> ou <Link href="/join" className="font-semibold underline hover:text-accent/80">associe-se</Link> para ver e usar os benefícios Martins Prime.
+                    </AlertDescription>
+                </Alert>
+            )}
+            {authUser && !canUsePrimeBenefits && (
+                 <Alert variant="default" className="mb-4 bg-accent/10 border-accent/30">
+                    <AlertTriangle className="h-5 w-5 text-accent" />
+                    <AlertTitle className="text-accent">Assinatura Prime Necessária</AlertTitle>
+                    <AlertDescription>
+                        Sua assinatura Martins Prime não está ativa. <Link href="/join" className="font-semibold underline hover:text-accent/80">Renove ou associe-se</Link> para aproveitar!
+                    </AlertDescription>
+                </Alert>
+            )}
+
             {deals.length > 0 ? (
               <div className="space-y-4">
-                {deals.map(deal => (
-                  <Card key={deal.id} className="bg-card shadow-lg">
-                    <CardHeader className="pb-3">
-                      <CardTitle className="text-lg text-accent">{deal.title}</CardTitle>
-                       <CardDescription className="text-sm text-muted-foreground pt-1">{deal.description}</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      {deal.discountPercentage > 0 && (
-                        <Badge variant="default" className="mb-2 mr-2 bg-primary text-primary-foreground">
-                          {deal.discountPercentage}% OFF
-                        </Badge>
+                {deals.map(deal => {
+                  const { text: benefitButtonText, Icon: BenefitButtonIcon, query: dealQuery } = getDealActivationDetails(deal, business.type);
+                  const hasRedeemedThisOffer = userRedemptions[deal.id] || false;
+                  const isP1G2Limited = deal.isPay1Get2 && deal.usageLimitPerUser === 1;
+
+                  return (
+                    <Card key={deal.id} className={`bg-card shadow-lg ${hasRedeemedThisOffer && isP1G2Limited ? 'opacity-60' : ''}`}>
+                      <CardHeader className="pb-3">
+                        <CardTitle className="text-lg text-accent">{deal.title}</CardTitle>
+                        <CardDescription className="text-sm text-muted-foreground pt-1">{deal.description}</CardDescription>
+                      </CardHeader>
+                      <CardContent className="pb-4">
+                        <div className="flex flex-wrap gap-2 mb-2">
+                            {deal.discountPercentage && deal.discountPercentage > 0 && (
+                                <Badge variant="default" className="bg-primary text-primary-foreground">
+                                {deal.discountPercentage}% OFF
+                                </Badge>
+                            )}
+                            {deal.isPay1Get2 && (
+                                <Badge variant="destructive" className="bg-accent text-accent-foreground">
+                                Pague 1 Leve 2
+                                </Badge>
+                            )}
+                            <Badge variant="outline">Exclusivo Prime</Badge>
+                        </div>
+                        <p className="mt-2 text-xs text-muted-foreground">{deal.termsAndConditions}</p>
+                        {isP1G2Limited && hasRedeemedThisOffer && (
+                            <p className="mt-2 text-xs font-semibold text-destructive">Você já utilizou esta oferta "Pague 1 Leve 2".</p>
+                        )}
+                      </CardContent>
+                      {canUsePrimeBenefits && (!isP1G2Limited || !hasRedeemedThisOffer) && (
+                        <CardFooter>
+                           <Button asChild size="default" className="w-full bg-primary hover:bg-primary/90" disabled={!canUsePrimeBenefits || (isP1G2Limited && hasRedeemedThisOffer)}>
+                            <Link href={`/checkout/${business.id}${dealQuery}`}>
+                              <BenefitButtonIcon className="mr-2 h-5 w-5" />
+                              {benefitButtonText}
+                            </Link>
+                          </Button>
+                        </CardFooter>
                       )}
-                       <Badge variant="outline" className="mb-2">
-                          Exclusivo Prime
-                        </Badge>
-                      <p className="mt-2 text-xs text-muted-foreground">{deal.termsAndConditions}</p>
-                    </CardContent>
-                  </Card>
-                ))}
+                    </Card>
+                  );
+                })}
               </div>
             ) : (
               <Card className="border-dashed bg-muted/50 p-6 text-center shadow-none">
-                <Star className="mx-auto mb-2 h-10 w-10 text-muted-foreground" /> {/* Changed icon to Star */}
-                <p className="text-muted-foreground">Nenhum benefício Martins Prime específico divulgado para este estabelecimento no momento. Membros Prime ainda podem ter vantagens gerais!</p>
+                <Star className="mx-auto mb-2 h-10 w-10 text-muted-foreground" />
+                <p className="text-muted-foreground">Nenhuma oferta Martins Prime específica divulgada para este estabelecimento no momento. Membros Prime ainda podem ter vantagens gerais!</p>
               </Card>
             )}
           </div>
-
-          {/* Benefit Activation Section */}
-          <Card className="bg-card shadow-xl">
-            <CardHeader>
-              <CardTitle className="flex items-center text-2xl text-primary">
-                <BenefitButtonIcon className="mr-2 h-7 w-7 text-accent" />
-                Aproveitar Martins Prime
-              </CardTitle>
-              <CardDescription className="text-muted-foreground">
-                Pronto para usar seus benefícios exclusivos em {business.name}?
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="mb-4 text-sm text-foreground/80">
-                Confirme para registrar o uso do seu benefício Martins Prime neste estabelecimento.
-              </p>
-            </CardContent>
-            <CardFooter>
-              <Button asChild size="lg" className="w-full bg-primary hover:bg-primary/90">
-                <Link href={`/checkout/${business.id}`}>
-                  <BenefitButtonIcon className="mr-2 h-5 w-5" />
-                  {benefitButtonText}
-                </Link>
-              </Button>
-            </CardFooter>
-          </Card>
         </div>
       </div>
     </div>
   );
+}
+
+// This component ensures that `useSearchParams` is used within a Suspense boundary
+export default function BusinessPage({ params: paramsPromise }: { params: Promise<BusinessPageParams> }) {
+    const params = use(paramsPromise); // Resolve the promise for params
+    return (
+        <Suspense fallback={<div>Carregando detalhes do negócio...</div>}>
+            <BusinessPageContent params={params} />
+        </Suspense>
+    );
 }

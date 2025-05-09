@@ -11,15 +11,14 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label'; // Unused, FormLabel is used
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Checkbox } from '@/components/ui/checkbox'; // Added for P1G2 offer
 import { useToast } from '@/hooks/use-toast';
 import type { LucideIconName } from '@/services/gramado-businesses';
-import { ArrowLeft, Building, PlusCircle } from 'lucide-react';
+import { ArrowLeft, Building, PlusCircle, Tag } from 'lucide-react';
 
-// Ensure this list matches the LucideIconName type in gramado-businesses.ts
 const iconNames: LucideIconName[] = [
   'UtensilsCrossed', 
   'BedDouble', 
@@ -42,8 +41,23 @@ const establishmentFormSchema = z.object({
   latitude: z.coerce.number({ invalid_type_error: 'Latitude deve ser um número.' }).min(-90, {message: "Latitude mínima é -90"}).max(90, {message: "Latitude máxima é 90"}),
   longitude: z.coerce.number({ invalid_type_error: 'Longitude deve ser um número.' }).min(-180, {message: "Longitude mínima é -180"}).max(180, {message: "Longitude máxima é 180"}),
   imageUrl: z.string().url({ message: 'URL da imagem inválida (ex: https://picsum.photos/seed/nomedaloja/600/400).' }),
-  icon: z.enum(iconNames as [LucideIconName, ...LucideIconName[]], { required_error: "Ícone é obrigatório." }), // Cast for z.enum
+  icon: z.enum(iconNames as [LucideIconName, ...LucideIconName[]], { required_error: "Ícone é obrigatório." }),
+  // Fields for a single default offer
+  hasDefaultOffer: z.boolean().optional(),
+  defaultOfferTitle: z.string().optional(),
+  defaultOfferDescription: z.string().optional(),
+  defaultOfferIsPay1Get2: z.boolean().optional(),
+  defaultOfferTerms: z.string().optional(),
+}).refine(data => {
+  if (data.hasDefaultOffer) {
+    return !!data.defaultOfferTitle && !!data.defaultOfferDescription && !!data.defaultOfferTerms;
+  }
+  return true;
+}, {
+  message: "Se uma oferta padrão for adicionada, título, descrição e termos são obrigatórios.",
+  path: ["defaultOfferTitle"], // Show error on one of the fields
 });
+
 
 type EstablishmentFormValues = z.infer<typeof establishmentFormSchema>;
 
@@ -62,19 +76,50 @@ export default function AddEstablishmentPage() {
       address: '',
       phoneNumber: '',
       website: '',
-      latitude: undefined, // Default to undefined for coerce.number to handle empty input
+      latitude: undefined,
       longitude: undefined,
       imageUrl: 'https://picsum.photos/seed/novo-estabelecimento/600/400',
       icon: undefined,
+      hasDefaultOffer: false,
+      defaultOfferTitle: '',
+      defaultOfferDescription: '',
+      defaultOfferIsPay1Get2: true,
+      defaultOfferTerms: 'Válido conforme regras do clube Martins Prime. Apresente seu card de membro.',
     },
   });
 
+  const watchHasDefaultOffer = form.watch('hasDefaultOffer');
+
   const onSubmit: SubmitHandler<EstablishmentFormValues> = async (data) => {
     setIsSubmitting(true);
-    // Simulate API call for adding establishment
+    // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 1500));
     
-    console.log('New Establishment Data:', data);
+    // Log the data including the offer details if provided
+    const newEstablishment = {
+        id: String(Date.now()), // mock ID
+        ...data,
+    };
+    
+    let newDeal = null;
+    if (data.hasDefaultOffer && data.defaultOfferTitle && data.defaultOfferDescription && data.defaultOfferTerms) {
+        newDeal = {
+            id: `deal-${Date.now()}`, // mock ID
+            businessId: newEstablishment.id,
+            title: data.defaultOfferTitle,
+            description: data.defaultOfferDescription,
+            isPay1Get2: data.defaultOfferIsPay1Get2,
+            usageLimitPerUser: data.defaultOfferIsPay1Get2 ? 1 : undefined, // Default for P1G2
+            termsAndConditions: data.defaultOfferTerms,
+            discountPercentage: 0, // Default for new offer, can be changed later
+        };
+        console.log('New Default Offer:', newDeal);
+    }
+
+
+    console.log('New Establishment Data:', newEstablishment);
+    // Here you would typically send `newEstablishment` and `newDeal` to your backend to save them.
+
     toast({
       title: 'Solicitação de Cadastro Enviada!',
       description: `O estabelecimento "${data.name}" foi submetido para aprovação.`,
@@ -96,26 +141,27 @@ export default function AddEstablishmentPage() {
 
       <section className="mb-8">
         <h2 className="mb-2 text-3xl font-bold tracking-tight text-primary md:text-4xl">
-          Adicionar Novo Estabelecimento
+          Adicionar Novo Estabelecimento Parceiro
         </h2>
         <p className="text-lg text-foreground/80">
-          Preencha os dados abaixo para cadastrar um novo parceiro no Chill Martins.
+          Preencha os dados abaixo para cadastrar um novo parceiro no Martins Prime.
         </p>
       </section>
 
       <Card className="shadow-xl">
-        <CardHeader>
-          <CardTitle className="flex items-center text-2xl text-primary">
-            <Building className="mr-3 h-7 w-7 text-accent" />
-            Detalhes do Estabelecimento
-          </CardTitle>
-          <CardDescription>
-            Forneça informações completas para o cadastro. Todos os campos marcados com * são obrigatórios.
-          </CardDescription>
-        </CardHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
+            <CardHeader>
+              <CardTitle className="flex items-center text-2xl text-primary">
+                <Building className="mr-3 h-7 w-7 text-accent" />
+                Detalhes do Estabelecimento
+              </CardTitle>
+              <CardDescription>
+                Forneça informações completas para o cadastro. Todos os campos marcados com * são obrigatórios.
+              </CardDescription>
+            </CardHeader>
             <CardContent className="space-y-6">
+              {/* ... existing establishment fields ... */}
               <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                 <FormField
                   control={form.control}
@@ -284,6 +330,96 @@ export default function AddEstablishmentPage() {
                 />
               </div>
 
+              {/* Default Offer Section */}
+              <div className="space-y-4 rounded-md border border-dashed p-4">
+                <FormField
+                  control={form.control}
+                  name="hasDefaultOffer"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                      <FormControl>
+                        <Checkbox
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                          id="hasDefaultOffer"
+                        />
+                      </FormControl>
+                      <div className="space-y-1 leading-none">
+                        <FormLabel htmlFor="hasDefaultOffer" className="cursor-pointer flex items-center text-lg text-primary">
+                          <Tag className="mr-2 h-5 w-5 text-accent" />
+                          Adicionar Oferta Padrão Inicial?
+                        </FormLabel>
+                        <FormDescription>
+                          Cadastre uma oferta promocional inicial (ex: "Pague 1 Leve 2") para este estabelecimento.
+                        </FormDescription>
+                      </div>
+                    </FormItem>
+                  )}
+                />
+                {watchHasDefaultOffer && (
+                  <div className="ml-8 space-y-6 border-l border-accent pl-6 pt-2">
+                    <FormField
+                      control={form.control}
+                      name="defaultOfferTitle"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Título da Oferta Padrão *</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Ex: Prato Principal em Dobro" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="defaultOfferDescription"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Descrição da Oferta Padrão *</FormLabel>
+                          <FormControl>
+                            <Textarea placeholder="Descreva a oferta. Ex: Compre um prato principal e ganhe outro de igual ou menor valor." {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                     <FormField
+                        control={form.control}
+                        name="defaultOfferIsPay1Get2"
+                        render={({ field }) => (
+                            <FormItem className="flex flex-row items-center space-x-3 space-y-0">
+                            <FormControl>
+                                <Checkbox
+                                checked={field.value}
+                                onCheckedChange={field.onChange}
+                                id="defaultOfferIsPay1Get2"
+                                />
+                            </FormControl>
+                            <FormLabel htmlFor="defaultOfferIsPay1Get2" className="cursor-pointer font-normal">
+                                Esta é uma oferta "Pague 1 Leve 2"?
+                            </FormLabel>
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="defaultOfferTerms"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Termos e Condições da Oferta Padrão *</FormLabel>
+                          <FormControl>
+                            <Textarea placeholder="Ex: Válido de segunda a quinta, exceto feriados. Apresente o card Martins Prime." {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                )}
+              </div>
+
+
             </CardContent>
             <CardFooter>
               <Button type="submit" size="lg" className="w-full bg-primary hover:bg-primary/90" disabled={isSubmitting}>
@@ -297,4 +433,3 @@ export default function AddEstablishmentPage() {
     </div>
   );
 }
-
