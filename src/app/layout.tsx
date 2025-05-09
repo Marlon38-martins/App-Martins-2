@@ -28,7 +28,7 @@ const geistMono = Geist_Mono({ // Corrected instantiation
 });
 
 export const metadata: Metadata = {
-  title: 'Martins Prime',
+  title: 'Chill Martins',
   description: 'Seu clube de vantagens em Martins, RN!',
 };
 
@@ -46,7 +46,7 @@ export default function RootLayout({
               <Link href="/" className="flex items-center gap-2">
                 <MountainSnow className="h-7 w-7 text-sidebar-primary" />
                 <span className="text-xl font-bold tracking-tight text-sidebar-foreground group-data-[collapsible=icon]:hidden">
-                  Martins Prime
+                  Chill Martins
                 </span>
               </Link>
             </SidebarHeader>
@@ -107,7 +107,7 @@ export default function RootLayout({
             {/* 
             <SidebarFooter className="p-2">
               <p className="text-xs text-sidebar-foreground/70 group-data-[collapsible=icon]:hidden">
-                © {new Date().getFullYear()} Martins Prime
+                © {new Date().getFullYear()} Chill Martins
               </p>
             </SidebarFooter> 
             */}
@@ -120,7 +120,7 @@ export default function RootLayout({
             </main>
             <footer className="bg-background py-4 text-center text-sm text-muted-foreground border-t">
               <div className="px-4"> {/* Simplified container for footer */}
-                © {new Date().getFullYear()} Martins Prime. Todos os direitos reservados.
+                © {new Date().getFullYear()} Chill Martins. Todos os direitos reservados.
               </div>
             </footer>
           </SidebarInset>
