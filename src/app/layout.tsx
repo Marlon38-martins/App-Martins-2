@@ -14,7 +14,7 @@ import {
   SidebarInset,
   // SidebarFooter, // Optional
 } from '@/components/ui/sidebar';
-import { HomeIcon, ShoppingCart as ServicesIcon, MountainSnow, MapIcon, UserPlus } from 'lucide-react';
+import { HomeIcon, ShoppingCart as ServicesIcon, MountainSnow, MapIcon, UserPlus, LayoutDashboard } from 'lucide-react';
 import { Header } from '@/components/layout/header';
 
 const geistSans = Geist({ // Corrected instantiation
@@ -81,6 +81,14 @@ export default function RootLayout({
                     <Link href="/join">
                       <UserPlus />
                       <span className="group-data-[collapsible=icon]:hidden">Associe-se</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+                <SidebarMenuItem>
+                  <SidebarMenuButton asChild tooltip={{content: "Administração", side:"right"}}>
+                    <Link href="/admin/add-establishment">
+                      <LayoutDashboard />
+                      <span className="group-data-[collapsible=icon]:hidden">Administração</span>
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
