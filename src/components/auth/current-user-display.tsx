@@ -1,11 +1,11 @@
-// src/components/auth/mock-auth-sidebar-actions.tsx
+// src/components/auth/current-user-display.tsx
 'use client';
 
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { getCurrentUser, mockLogout, type User } from '@/services/gramado-businesses';
+import { useAuth } from '@/hooks/use-auth-client';
 import { SidebarMenuItem, SidebarMenuButton } from '@/components/ui/sidebar';
+import { LogIn, LogOut, UserCircle, UserPlus, Settings } from 'lucide-react';
+import { Skeleton } from '@/components/ui/skeleton'; // Correct import
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
   DropdownMenu,
@@ -15,39 +15,24 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Button } from '@/components/ui/button';
-import { LogIn, LogOut, UserCircle, UserPlus, Settings, ShieldCheck } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { Skeleton } from '@/components/ui/skeleton';
+import { useRouter } from 'next/navigation';
 
-export function MockAuthSidebarActions() {
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
-  const router = useRouter();
+
+export function CurrentUserDisplay() {
+  const { user, loading, signOutUser } = useAuth();
   const { toast } = useToast();
-
-  useEffect(() => {
-    async function fetchUser() {
-      setLoading(true);
-      const user = await getCurrentUser();
-      setCurrentUser(user);
-      setLoading(false);
-    }
-    fetchUser();
-     // Listen for custom events if login/logout happens elsewhere, or use a polling mechanism if necessary
-     // For simplicity, this example relies on page navigation or re-mounts to update user state.
-     // A more robust solution might involve a global state or custom event bus for mock auth changes.
-    const handleAuthChange = () => fetchUser();
-    window.addEventListener('mockAuthChange', handleAuthChange);
-    return () => window.removeEventListener('mockAuthChange', handleAuthChange);
-  }, []);
+  const router = useRouter();
 
   const handleSignOut = async () => {
-    await mockLogout();
-    setCurrentUser(null); // Update local state
-    toast({ title: 'Logout Realizado', description: 'Você foi desconectado com sucesso.' });
-    window.dispatchEvent(new CustomEvent('mockAuthChange')); // Notify other components
-    router.push('/login');
+    try {
+      await signOutUser();
+      toast({ title: 'Logout Realizado', description: 'Você foi desconectado com sucesso.' });
+      router.push('/login'); // Redirect to login after sign out
+    } catch (error) {
+      console.error("Error signing out: ", error);
+      toast({ title: 'Erro no Logout', description: 'Não foi possível fazer logout. Tente novamente.', variant: 'destructive' });
+    }
   };
 
   if (loading) {
@@ -61,8 +46,8 @@ export function MockAuthSidebarActions() {
     );
   }
 
-  if (currentUser) {
-    const userName = currentUser.name || currentUser.email?.split('@')[0] || 'Membro Prime';
+  if (user) {
+    const userName = user.name || user.email?.split('@')[0] || 'Membro Prime';
     const userInitial = userName.charAt(0).toUpperCase();
 
     return (
@@ -71,7 +56,7 @@ export function MockAuthSidebarActions() {
           <DropdownMenuTrigger asChild>
             <button className="flex w-full items-center gap-2 rounded-md p-2 text-left text-sm text-sidebar-foreground outline-none transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 focus-visible:ring-sidebar-ring group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:size-10">
               <Avatar className="h-8 w-8">
-                <AvatarImage src={currentUser.photoURL || undefined} alt={userName} />
+                <AvatarImage src={user.photoURL || undefined} alt={userName} />
                 <AvatarFallback>{userInitial}</AvatarFallback>
               </Avatar>
               <span className="truncate group-data-[collapsible=icon]:hidden">{userName}</span>
@@ -80,9 +65,9 @@ export function MockAuthSidebarActions() {
           <DropdownMenuContent side="right" align="start" className="w-56 bg-popover text-popover-foreground ml-2 group-data-[collapsible=icon]:ml-0">
             <DropdownMenuLabel className="font-normal">
               <div className="flex flex-col space-y-1">
-                <p className="text-sm font-medium leading-none">{currentUser.name || "Usuário"}</p>
+                <p className="text-sm font-medium leading-none">{user.name || "Usuário"}</p>
                 <p className="text-xs leading-none text-muted-foreground">
-                  {currentUser.email}
+                  {user.email}
                 </p>
               </div>
             </DropdownMenuLabel>

@@ -16,6 +16,7 @@ import { User, Mail, Phone as PhoneIcon, Lock, CheckCircle, Award, Sparkles, Shi
 import type { Plan, User as AppUser, Subscription } from '@/types/user';
 import { useRouter } from 'next/navigation';
 import { mockLogin } from '@/services/gramado-businesses';
+import { useAuth } from '@/hooks/use-auth-client';
 
 const registrationFormSchema = z.object({
   name: z.string().min(3, { message: "Nome completo é obrigatório (mínimo 3 caracteres)." }),
@@ -71,6 +72,7 @@ const plans: Plan[] = [
 export default function JoinPage() {
   const { toast } = useToast();
   const router = useRouter();
+  const { signInUser } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm<RegistrationFormValues>({
@@ -90,7 +92,6 @@ export default function JoinPage() {
   const onSubmit: SubmitHandler<RegistrationFormValues> = async (data) => {
     setIsSubmitting(true);
     try {
-      // Simulate API call for registration
       await new Promise(resolve => setTimeout(resolve, 1000));
 
       const mockUser: AppUser = {
@@ -104,11 +105,12 @@ export default function JoinPage() {
         userId: mockUser.id,
         planId: data.selectedPlan,
         startDate: new Date(),
-        endDate: new Date(new Date().setFullYear(new Date().getFullYear() + 1)), // Example: 1 year
-        status: 'active', // Assume active after mock "payment"
+        endDate: new Date(new Date().setFullYear(new Date().getFullYear() + 1)), 
+        status: 'active', 
       };
       
-      mockLogin(mockUser, mockSubscription);
+      mockLogin(mockUser, mockSubscription); // This service function sets localStorage
+      signInUser(mockUser, mockSubscription); // Update auth context
 
       console.log('Registration Data:', data);
       toast({
@@ -117,8 +119,7 @@ export default function JoinPage() {
         variant: 'default',
       });
       form.reset();
-      window.dispatchEvent(new CustomEvent('mockAuthChange')); // Notify layout/other components
-      router.push('/'); // Redirect to home after "successful" join
+      router.push('/'); 
 
     } catch (error: any) {
       console.error('Registration Error:', error);

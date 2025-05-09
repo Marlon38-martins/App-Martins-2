@@ -15,7 +15,9 @@ import {
 } from '@/components/ui/sidebar';
 import { HomeIcon, ShoppingCart as ServicesIcon, MountainSnow, MapIcon, UserPlus, LayoutDashboard } from 'lucide-react';
 import { Header } from '@/components/layout/header';
-import { MockAuthSidebarActions } from '@/components/auth/mock-auth-sidebar-actions';
+import { AuthProviderClient } from '@/hooks/use-auth-client';
+import { AuthStateInitializer } from '@/components/auth/auth-state-initializer';
+import { CurrentUserDisplay } from '@/components/auth/current-user-display';
 
 
 const geistSans = Geist({
@@ -41,6 +43,8 @@ export default function RootLayout({
   return (
     <html lang="pt-BR">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        <AuthProviderClient>
+          <AuthStateInitializer />
           <SidebarProvider defaultOpen={true}>
             <Sidebar collapsible="icon">
               <SidebarHeader className="p-4">
@@ -77,16 +81,13 @@ export default function RootLayout({
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
-                  {/* Static link to Join, login/profile handled by MockAuthSidebarActions */}
-                  <SidebarMenuItem>
-                    <SidebarMenuButton asChild tooltip={{content: "Associe-se", side:"right"}}>
-                      <Link href="/join">
-                        <UserPlus />
-                        <span className="group-data-[collapsible=icon]:hidden">Associe-se</span>
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                  <SidebarMenuItem>
+                  
+                  <CurrentUserDisplay />
+                  
+                </SidebarMenu>
+              </SidebarContent>
+                 {/* Admin link - can be conditionally rendered based on user role in CurrentUserDisplay or here via useAuth hook if needed */}
+                 <SidebarMenuItem>
                     <SidebarMenuButton asChild tooltip={{content: "Administração", side:"right"}}>
                       <Link href="/admin/add-establishment">
                         <LayoutDashboard />
@@ -94,11 +95,6 @@ export default function RootLayout({
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
-                  
-                  <MockAuthSidebarActions />
-                  
-                </SidebarMenu>
-              </SidebarContent>
             </Sidebar>
 
             <SidebarInset>
@@ -113,6 +109,7 @@ export default function RootLayout({
               </footer>
             </SidebarInset>
           </SidebarProvider>
+        </AuthProviderClient>
         <Toaster />
       </body>
     </html>

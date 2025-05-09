@@ -15,6 +15,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { useToast } from '@/hooks/use-toast';
 import { mockLogin, type User, type Subscription } from '@/services/gramado-businesses'; 
 import { LogIn, Mail, Lock, MountainSnow, CheckCircle } from 'lucide-react'; 
+import { useAuth } from '@/hooks/use-auth-client';
 
 const GoogleIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -34,6 +35,7 @@ type LoginFormValues = z.infer<typeof loginFormSchema>;
 export default function LoginPage() {
   const { toast } = useToast();
   const router = useRouter();
+  const { signInUser } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isGoogleSubmitting, setIsGoogleSubmitting] = useState(false);
 
@@ -45,40 +47,40 @@ export default function LoginPage() {
     },
   });
 
-  const handleMockLoginSuccess = (userName?: string | null) => {
+  const handleMockLoginSuccess = (loggedInUser: User, userSub: Subscription) => {
+    signInUser(loggedInUser, userSub); // Update auth context
     toast({
       title: 'Login Bem-sucedido!',
-      description: `Bem-vindo(a) de volta, ${userName || 'Usuário'}!`,
+      description: `Bem-vindo(a) de volta, ${loggedInUser.name || 'Usuário'}!`,
       variant: 'default',
       className: 'bg-green-500 text-white',
       icon: <CheckCircle className="h-5 w-5 text-white" />
     });
-    window.dispatchEvent(new CustomEvent('mockAuthChange')); // Notify layout/other components
     router.push('/'); 
   };
 
   const handleEmailLogin: SubmitHandler<LoginFormValues> = async (data) => {
     setIsSubmitting(true);
-    // Simulate successful login
     await new Promise(resolve => setTimeout(resolve, 500)); 
     
     const mockUser: User = {
       id: 'mock-user-' + Date.now(),
       email: data.email,
-      name: data.email.split('@')[0], // Simple name generation
+      name: data.email.split('@')[0], 
       photoURL: `https://picsum.photos/seed/${data.email}/100/100`
     };
     const mockSubscription: Subscription = {
       id: 'sub-mock-' + Date.now(),
       userId: mockUser.id,
-      planId: 'serrano_vip', // Default to VIP for mock
+      planId: 'serrano_vip', 
       startDate: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
       endDate: new Date(Date.now() + 335 * 24 * 60 * 60 * 1000),
       status: 'active',
     };
-    mockLogin(mockUser, mockSubscription);
+    
+    mockLogin(mockUser, mockSubscription); // This service function sets localStorage
     setIsSubmitting(false);
-    handleMockLoginSuccess(mockUser.name);
+    handleMockLoginSuccess(mockUser, mockSubscription);
   };
 
   const handleGoogleLogin = async () => {
@@ -99,9 +101,9 @@ export default function LoginPage() {
       endDate: new Date(Date.now() + 335 * 24 * 60 * 60 * 1000),
       status: 'active',
     };
-    mockLogin(mockUser, mockSubscription);
+    mockLogin(mockUser, mockSubscription); // This service function sets localStorage
     setIsGoogleSubmitting(false);
-    handleMockLoginSuccess(mockUser.name);
+    handleMockLoginSuccess(mockUser, mockSubscription);
   };
 
   return (

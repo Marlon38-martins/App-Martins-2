@@ -13,34 +13,45 @@ import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
 import { UserCircle, Bell, ShieldLock, CreditCard, LogOut } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { getCurrentUser, mockLogout, type User } from '@/services/gramado-businesses';
+import { useAuth } from '@/hooks/use-auth-client'; // Using the updated hook
+import { mockLogout } from '@/services/gramado-businesses'; // Directly use mockLogout for clarity
 
 export default function SettingsPage() {
   const router = useRouter();
   const { toast } = useToast();
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+  const { user, loading, signOutUser: contextSignOutUser } = useAuth(); // Get user and loading state from context
+
+  // Local form state for settings, can be initialized with user data
+  const [name, setName] = useState('');
+  // Add other local states for settings as needed, e.g., notification preferences
 
   useEffect(() => {
-    async function fetchUser() {
-      setLoading(true);
-      const currentUserData = await getCurrentUser();
-      if (!currentUserData) {
-        router.push('/login');
-      } else {
-        setUser(currentUserData);
-      }
-      setLoading(false);
+    if (!loading && !user) {
+      router.push('/login');
+    } else if (user) {
+      setName(user.name || '');
     }
-    fetchUser();
-  }, [router]);
+  }, [user, loading, router]);
 
+  const handleSaveChanges = () => {
+    // Here you would typically update the user's profile using a service call
+    // For now, it's a simulation
+    toast({ title: "Simulação", description: `Dados salvos (simulado). Nome: ${name}` });
+    // Potentially update the user object in the AuthContext if name change is successful
+    // This would require modifying useAuth or having an updateUser function in the context
+  };
+  
   const handleSignOut = async () => {
-    await mockLogout();
-    toast({ title: "Logout Realizado", description: "Você foi desconectado com sucesso."});
-    setUser(null); // Clear local user state
-    window.dispatchEvent(new CustomEvent('mockAuthChange')); // Notify other components
-    router.push('/login'); 
+    try {
+        await contextSignOutUser(); // Use signout from context
+        // Toast and redirect are now handled within CurrentUserDisplay/useAuth if needed globally
+        // or can be kept here for page-specific feedback
+        // toast({ title: "Logout Realizado", description: "Você foi desconectado com sucesso."});
+        // router.push('/login'); // Already handled by context listener or CurrentUserDisplay
+    } catch (error) {
+        console.error("Error signing out from settings: ", error);
+        toast({ title: "Erro no Logout", description: "Não foi possível fazer logout. Tente novamente.", variant: 'destructive' });
+    }
   };
 
   if (loading || !user) {
@@ -82,14 +93,14 @@ export default function SettingsPage() {
         <CardContent className="space-y-4">
           <div>
             <Label htmlFor="name">Nome</Label>
-            <Input id="name" defaultValue={user.name || ''} placeholder="Seu nome completo" />
+            <Input id="name" value={name} onChange={(e) => setName(e.target.value)} placeholder="Seu nome completo" />
           </div>
           <div>
             <Label htmlFor="email">Email</Label>
             <Input id="email" type="email" value={user.email || ''} disabled />
             <p className="text-xs text-muted-foreground mt-1">O email não pode ser alterado por aqui.</p>
           </div>
-          <Button onClick={() => toast({title: "Simulação", description: "Dados salvos (simulado)." })}>Salvar Alterações (Simulado)</Button>
+          <Button onClick={handleSaveChanges}>Salvar Alterações (Simulado)</Button>
         </CardContent>
       </Card>
 
