@@ -14,7 +14,7 @@
     --popover-foreground: 30 25% 20%; /* Dark Brown */
 
     --primary: 45 85% 50%; /* Rich Gold */
-    --primary-foreground: 45 60% 15%; /* Darker Gold/Brown text on primary for contrast */
+    --primary-foreground: 45 60% 15%; /* Darker Gold/Brown text on primary */
 
     --secondary: 45 60% 70%; /* Muted Gold */
     --secondary-foreground: 30 25% 15%; /* Darker Brown text on secondary */
@@ -22,8 +22,8 @@
     --muted: 45 40% 88%; /* Muted Pale Gold */
     --muted-foreground: 30 20% 40%; /* Desaturated Brown */
 
-    --accent: 50 90% 55%; /* Vibrant Gold - slightly more orange */
-    --accent-foreground: 30 25% 10%; /* Very Dark Brown text on accent */
+    --accent: 120 35% 40%; /* Deep Green */
+    --accent-foreground: 120 25% 95%; /* Very Light Green/White text on accent */
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
@@ -35,7 +35,7 @@
     --radius: 0.5rem;
 
     --chart-1: hsl(var(--primary));
-    --chart-2: hsl(var(--accent));
+    --chart-2: hsl(var(--accent)); /* This will now be green */
     --chart-3: hsl(var(--secondary));
     --chart-4: 30 70% 60%; /* A complementary Warm Orange */
     --chart-5: 20 50% 50%; /* A complementary Brown */
@@ -43,12 +43,12 @@
     /* Sidebar variables themed consistently */
     --sidebar-background: 45 70% 40%; /* Darker Gold */
     --sidebar-foreground: 45 50% 90%; /* Light Gold/Beige */
-    --sidebar-primary: 50 90% 55%;  /* Vibrant Gold Accent */
-    --sidebar-primary-foreground: 30 25% 10%; /* Dark Brown */
+    --sidebar-primary: 120 35% 45%;  /* Green Accent for sidebar */
+    --sidebar-primary-foreground: 120 25% 95%; /* Light text for sidebar green */
     --sidebar-accent: 45 70% 55%; /* Mid Gold */
     --sidebar-accent-foreground: 30 25% 10%; /* Dark Brown for text on sidebar accent */
     --sidebar-border: 45 70% 30%; /* Very Dark Gold */
-    --sidebar-ring: 50 90% 55%; /* Vibrant Gold */
+    --sidebar-ring: 120 35% 45%; /* Green for sidebar ring */
   }
 
   .dark {
@@ -70,15 +70,15 @@
     --muted: 45 20% 20%; /* Muted Dark Gold/Brown */
     --muted-foreground: 45 50% 75%; /* Muted Light Gold text */
 
-    --accent: 50 80% 65%; /* Brighter Vibrant Gold for dark mode */
-    --accent-foreground: 45 20% 5%; /* Almost Black Brown text on accent */
+    --accent: 120 35% 55%; /* Brighter Green for dark mode */
+    --accent-foreground: 120 25% 10%; /* Dark Green/Black text on accent */
 
     --border: 45 25% 30%; /* Dark Gold-toned border */
     --input: 45 20% 20%; /* Muted Dark Gold/Brown for input background */
     --ring: 45 75% 60%; /* Brighter Gold for focus rings */
     
     --chart-1: hsl(var(--primary));
-    --chart-2: hsl(var(--accent));
+    --chart-2: hsl(var(--accent)); /* This will now be green */
     --chart-3: hsl(var(--secondary));
     --chart-4: 30 70% 50%; /* Darker Warm Orange */
     --chart-5: 20 50% 40%; /* Darker Brown */
@@ -86,12 +86,12 @@
     /* Sidebar dark theme */
     --sidebar-background: 45 30% 8%; /* Very Dark Desaturated Gold */
     --sidebar-foreground: 45 60% 90%; /* Light Gold/Beige */
-    --sidebar-primary: 50 80% 65%; /* Brighter Vibrant Gold */
-    --sidebar-primary-foreground: 45 20% 5%; /* Very Dark Brown */
+    --sidebar-primary: 120 35% 60%; /* Brighter Green for sidebar */
+    --sidebar-primary-foreground: 120 25% 10%; /* Dark text for sidebar green */
     --sidebar-accent: 45 60% 50%; /* Mid Gold */
     --sidebar-accent-foreground: 45 60% 95%; /* Very Light Gold */
     --sidebar-border: 45 30% 5%; /* Almost Black Gold */
-    --sidebar-ring: 50 80% 65%;
+    --sidebar-ring: 120 35% 60%; /* Brighter Green for sidebar ring */
   }
 }
 
