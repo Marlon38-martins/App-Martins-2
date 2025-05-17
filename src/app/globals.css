@@ -4,99 +4,94 @@
 
 @layer base {
   :root {
-    --background: 60 56% 92%; /* Light Beige (#F5F5DC) */
-    --foreground: 20 27% 23%; /* Dark Brown (#4E342E) */
+    --background: 45 60% 95%; /* Pale Gold/Beige */
+    --foreground: 30 25% 20%; /* Dark Brown */
 
-    --card: 0 0% 100%; /* White */
-    --card-foreground: 20 27% 23%; /* Dark Brown */
+    --card: 45 50% 92%; /* Lighter Gold/Beige for cards */
+    --card-foreground: 30 25% 20%; /* Dark Brown */
 
-    --popover: 0 0% 100%; /* White */
-    --popover-foreground: 20 27% 23%; /* Dark Brown */
+    --popover: 45 50% 92%; /* Lighter Gold/Beige for popovers */
+    --popover-foreground: 30 25% 20%; /* Dark Brown */
 
-    --primary: 123 45% 34%; /* Deep Green (#2E7D32) */
-    --primary-foreground: 60 100% 97%; /* Very Light Beige/Almost White for text on primary */
+    --primary: 45 85% 50%; /* Rich Gold */
+    --primary-foreground: 45 60% 15%; /* Darker Gold/Brown text on primary for contrast */
 
-    /* Secondary color: Light Beige (#F5F5DC) for backgrounds is already --background.
-       Let's define a different secondary for other elements if needed, or use muted.
-       Using a slightly darker beige for secondary elements or a lighter green.
-       Let's go with a lighter green for components.
-    */
-    --secondary: 123 30% 50%; /* Lighter Green */
-    --secondary-foreground: 0 0% 98%; /* Off-white for text on secondary */
+    --secondary: 45 60% 70%; /* Muted Gold */
+    --secondary-foreground: 30 25% 15%; /* Darker Brown text on secondary */
 
-    --muted: 60 30% 85%; /* Muted Beige */
-    --muted-foreground: 20 20% 40%; /* Desaturated Brown */
+    --muted: 45 40% 88%; /* Muted Pale Gold */
+    --muted-foreground: 30 20% 40%; /* Desaturated Brown */
 
-    --accent: 45 100% 51%; /* Golden Yellow (#FFC107) */
-    --accent-foreground: 20 27% 15%; /* Darker Brown for text on accent for contrast */
+    --accent: 50 90% 55%; /* Vibrant Gold - slightly more orange */
+    --accent-foreground: 30 25% 10%; /* Very Dark Brown text on accent */
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 60 30% 80%; /* Beige-toned border */
-    --input: 0 0% 100%; /* White input background for contrast, can be light beige too */
-    --ring: 123 45% 34%; /* Deep Green for focus rings */
+    --border: 45 50% 80%; /* Gold-toned border */
+    --input: 45 50% 92%; /* Lighter Gold/Beige input */
+    --ring: 45 85% 50%; /* Rich Gold for focus rings */
 
     --radius: 0.5rem;
 
     --chart-1: hsl(var(--primary));
     --chart-2: hsl(var(--accent));
     --chart-3: hsl(var(--secondary));
-    --chart-4: 180 45% 34%; /* A Teal for contrast if needed */
-    --chart-5: 30 80% 55%; /* An Orange for contrast */
+    --chart-4: 30 70% 60%; /* A complementary Warm Orange */
+    --chart-5: 20 50% 50%; /* A complementary Brown */
     
     /* Sidebar variables themed consistently */
-    --sidebar-background: 123 45% 28%; /* Darker Deep Green */
-    --sidebar-foreground: 60 50% 90%; /* Light Beige */
-    --sidebar-primary: 45 100% 51%;  /* Golden Yellow */
-    --sidebar-primary-foreground: 20 27% 15%; /* Dark Brown */
-    --sidebar-accent: 123 45% 40%; /* Mid Green */
-    --sidebar-accent-foreground: 0 0% 98%; /* Off-white */
-    --sidebar-border: 123 45% 20%; /* Very Dark Green */
-    --sidebar-ring: 45 100% 51%; /* Golden Yellow */
+    --sidebar-background: 45 70% 40%; /* Darker Gold */
+    --sidebar-foreground: 45 50% 90%; /* Light Gold/Beige */
+    --sidebar-primary: 50 90% 55%;  /* Vibrant Gold Accent */
+    --sidebar-primary-foreground: 30 25% 10%; /* Dark Brown */
+    --sidebar-accent: 45 70% 55%; /* Mid Gold */
+    --sidebar-accent-foreground: 30 25% 10%; /* Dark Brown for text on sidebar accent */
+    --sidebar-border: 45 70% 30%; /* Very Dark Gold */
+    --sidebar-ring: 50 90% 55%; /* Vibrant Gold */
   }
 
   .dark {
-    --background: 20 27% 15%; /* Dark Brown (#4E342E base, made darker) */
-    --foreground: 60 56% 92%; /* Light Beige (#F5F5DC) */
+    --background: 45 20% 10%; /* Very Dark Muted Gold/Brown */
+    --foreground: 45 60% 90%; /* Light Gold/Beige */
 
-    --card: 20 27% 20%; /* Slightly Lighter Dark Brown for cards */
-    --card-foreground: 60 56% 92%; /* Light Beige text */
+    --card: 45 25% 15%; /* Dark Gold/Brown for cards */
+    --card-foreground: 45 60% 90%; /* Light Gold/Beige text */
 
-    --popover: 20 27% 20%;
-    --popover-foreground: 60 56% 92%;
+    --popover: 45 25% 15%;
+    --popover-foreground: 45 60% 90%;
 
-    --primary: 123 45% 45%; /* Brighter Deep Green */
-    --primary-foreground: 0 0% 98%;
+    --primary: 45 75% 60%; /* Brighter Gold for dark mode */
+    --primary-foreground: 45 30% 10%; /* Very Dark Brown */
 
-    --secondary: 123 30% 35%; /* Darker Lighter Green */
-    --secondary-foreground: 0 0% 98%;
+    --secondary: 45 50% 40%; /* Darker Muted Gold */
+    --secondary-foreground: 45 60% 90%; /* Light Gold/Beige text */
 
-    --muted: 20 20% 25%; /* Muted Dark Brown */
-    --muted-foreground: 60 30% 70%; /* Muted Beige text */
+    --muted: 45 20% 20%; /* Muted Dark Gold/Brown */
+    --muted-foreground: 45 50% 75%; /* Muted Light Gold text */
 
-    --accent: 45 100% 60%; /* Brighter Golden Yellow */
-    --accent-foreground: 20 27% 10%; /* Very Dark Brown for text on accent */
+    --accent: 50 80% 65%; /* Brighter Vibrant Gold for dark mode */
+    --accent-foreground: 45 20% 5%; /* Almost Black Brown text on accent */
 
-    --border: 20 20% 30%; /* Dark Beige-toned border */
-    --input: 20 20% 25%; /* Muted Dark Brown for input background */
-    --ring: 123 45% 45%; /* Brighter Deep Green for focus rings */
+    --border: 45 25% 30%; /* Dark Gold-toned border */
+    --input: 45 20% 20%; /* Muted Dark Gold/Brown for input background */
+    --ring: 45 75% 60%; /* Brighter Gold for focus rings */
     
     --chart-1: hsl(var(--primary));
     --chart-2: hsl(var(--accent));
     --chart-3: hsl(var(--secondary));
-    --chart-4: 180 45% 45%;
-    --chart-5: 30 80% 65%;
+    --chart-4: 30 70% 50%; /* Darker Warm Orange */
+    --chart-5: 20 50% 40%; /* Darker Brown */
 
     /* Sidebar dark theme */
-    --sidebar-background: 20 27% 10%; /* Very Dark Brown */
-    --sidebar-foreground: 60 56% 92%; /* Light Beige */
-    --sidebar-primary: 45 100% 60%; /* Brighter Golden Yellow */
-    --sidebar-primary-foreground: 20 27% 10%; /* Very Dark Brown */
-    --sidebar-accent: 123 45% 30%; /* Darker Mid Green */
-    --sidebar-accent-foreground: 0 0% 98%;
-    --sidebar-border: 20 27% 5%; /* Almost Black Brown */
-    --sidebar-ring: 45 100% 60%;
+    --sidebar-background: 45 30% 8%; /* Very Dark Desaturated Gold */
+    --sidebar-foreground: 45 60% 90%; /* Light Gold/Beige */
+    --sidebar-primary: 50 80% 65%; /* Brighter Vibrant Gold */
+    --sidebar-primary-foreground: 45 20% 5%; /* Very Dark Brown */
+    --sidebar-accent: 45 60% 50%; /* Mid Gold */
+    --sidebar-accent-foreground: 45 60% 95%; /* Very Light Gold */
+    --sidebar-border: 45 30% 5%; /* Almost Black Gold */
+    --sidebar-ring: 50 80% 65%;
   }
 }
 
