@@ -52,15 +52,23 @@ export interface GramadoBusiness {
   /**
    * Optional icon name for the business type.
    */
-  icon?: LucideIconName; 
+  icon?: LucideIconName;
+  /**
+   * Average rating of the business (0-5).
+   */
+  rating?: number;
+  /**
+   * Number of reviews for the business.
+   */
+  reviewCount?: number;
 }
 
 // Define a type for LucideIcon names for better type safety if needed elsewhere.
-export type LucideIconName = 
-  | 'UtensilsCrossed' 
-  | 'BedDouble' 
-  | 'ShoppingBag' 
-  | 'Landmark' 
+export type LucideIconName =
+  | 'UtensilsCrossed'
+  | 'BedDouble'
+  | 'ShoppingBag'
+  | 'Landmark'
   | 'Wrench'
   | 'Coffee'
   | 'Trees'
@@ -117,8 +125,10 @@ const businesses: GramadoBusiness[] = [
     website: 'www.mirantedaserramartins.com.br',
     latitude: -6.0869, // Approximate latitude for Martins
     longitude: -37.9119, // Approximate longitude for Martins
-    imageUrl: 'https://picsum.photos/seed/mirante/600/400',
+    imageUrl: 'https://placehold.co/600x400.png',
     icon: 'UtensilsCrossed',
+    rating: 4.8,
+    reviewCount: 125,
   },
   {
     id: '2',
@@ -131,8 +141,10 @@ const businesses: GramadoBusiness[] = [
     website: 'www.aconchegoserrano.com.br',
     latitude: -6.0900, // Approximate latitude
     longitude: -37.9150, // Approximate longitude
-    imageUrl: 'https://picsum.photos/seed/aconchego/600/400',
+    imageUrl: 'https://placehold.co/600x400.png',
     icon: 'BedDouble',
+    rating: 4.5,
+    reviewCount: 88,
   },
   {
     id: '3',
@@ -145,8 +157,10 @@ const businesses: GramadoBusiness[] = [
     website: 'www.maosdaserrart.com.br',
     latitude: -6.0850, // Approximate latitude
     longitude: -37.9100, // Approximate longitude
-    imageUrl: 'https://picsum.photos/seed/maosdaserra/600/400',
+    imageUrl: 'https://placehold.co/600x400.png',
     icon: 'ShoppingBag',
+    rating: 4.2,
+    reviewCount: 45,
   },
   {
     id: '4',
@@ -159,8 +173,10 @@ const businesses: GramadoBusiness[] = [
     website: 'www.martinsaventura.com.br/casadepedra',
     latitude: -6.0800, // Approximate latitude (Casa de Pedra is a bit outside)
     longitude: -37.9000, // Approximate longitude
-    imageUrl: 'https://picsum.photos/seed/casadepedra/600/400',
+    imageUrl: 'https://placehold.co/600x400.png',
     icon: 'Landmark',
+    rating: 4.9,
+    reviewCount: 210,
   },
   {
     id: '5',
@@ -173,8 +189,10 @@ const businesses: GramadoBusiness[] = [
     website: 'www.graoserrano.com.br',
     latitude: -6.0860, // Approximate latitude
     longitude: -37.9110, // Approximate longitude
-    imageUrl: 'https://picsum.photos/seed/graoserrano/600/400',
+    imageUrl: 'https://placehold.co/600x400.png',
     icon: 'Coffee',
+    rating: 4.7,
+    reviewCount: 75,
   },
   {
     id: '6',
@@ -187,8 +205,10 @@ const businesses: GramadoBusiness[] = [
     website: 'turismo.martins.rn.gov.br/mirantedocanto',
     latitude: -6.0795, // Approximate latitude
     longitude: -37.9180, // Approximate longitude
-    imageUrl: 'https://picsum.photos/seed/mirantedocanto/600/400',
+    imageUrl: 'https://placehold.co/600x400.png',
     icon: 'Trees',
+    rating: 4.9,
+    reviewCount: 150,
   }
 ];
 
@@ -208,7 +228,7 @@ const deals: Deal[] = [
     businessId: '1', // Restaurante Mirante da Serra
     title: 'Sobremesa Regional Cortesia',
     description: 'Grupos acima de 4 pessoas ganham uma sobremesa regional especial.',
-    discountPercentage: 0, 
+    discountPercentage: 0,
     termsAndConditions: 'Válido para grupos com 4 ou mais membros Prime. Uma sobremesa por grupo, conforme disponibilidade.',
   },
   {
@@ -225,7 +245,7 @@ const deals: Deal[] = [
     businessId: '3', // Loja de Artesanato Mãos da Serra
     title: '15% OFF em Peças Selecionadas',
     description: 'Desconto de 15% em todas as peças de cerâmica e bordados para membros Prime.',
-    discountPercentage: 15, 
+    discountPercentage: 15,
     termsAndConditions: 'Válido enquanto durarem os estoques. Apresentar card Martins Prime.',
   },
   {
@@ -315,64 +335,110 @@ export async function getCurrentUser(): Promise<User | null> {
   // Simulate fetching the current logged-in user.
   // In a real app, this would use Firebase Auth or your auth provider.
   // For now, return a mock user if 'loggedIn'
-  if (typeof window !== 'undefined' && localStorage.getItem('isMockLoggedIn') === 'true') {
-    if (!mockCurrentUser) {
+  if (typeof window !== 'undefined') {
+    const storedUser = localStorage.getItem('mockUser');
+    if (storedUser) {
+      mockCurrentUser = JSON.parse(storedUser);
+      return mockCurrentUser;
+    }
+    // Fallback to old logic if no user in localStorage, for compatibility with existing login flow
+    if (localStorage.getItem('isMockLoggedIn') === 'true' && !mockCurrentUser) {
         mockCurrentUser = {
             id: MOCK_USER_ID,
             email: 'membro.prime@example.com',
             name: 'Membro Prime Teste',
-            // other fields...
+            photoURL: `https://placehold.co/100x100.png`
         };
+        localStorage.setItem('mockUser', JSON.stringify(mockCurrentUser));
+        return mockCurrentUser;
     }
-    return mockCurrentUser;
   }
   return null;
 }
 
 export async function getMockUserSubscription(userId: string): Promise<Subscription | null> {
   await new Promise(resolve => setTimeout(resolve, 100));
-  if (userId === MOCK_USER_ID && mockUserSubscription) {
-    return mockUserSubscription;
+
+  if (typeof window !== 'undefined') {
+      const storedSub = localStorage.getItem('mockSubscription');
+      if (storedSub) {
+          const sub = JSON.parse(storedSub) as Subscription;
+          // Ensure dates are Date objects
+          sub.startDate = new Date(sub.startDate);
+          sub.endDate = new Date(sub.endDate);
+          if (sub.userId === userId) {
+            mockUserSubscription = sub;
+            return mockUserSubscription;
+          }
+      }
   }
-  // Simulate a user having an active "Serrano VIP" subscription for testing
-  if (userId === MOCK_USER_ID && typeof window !== 'undefined' && localStorage.getItem('isMockLoggedIn') === 'true') {
-    return {
+  
+  // Fallback for initial mock or if not matching stored user
+  if (userId === MOCK_USER_ID && typeof window !== 'undefined' && localStorage.getItem('isMockLoggedIn') === 'true' && !mockUserSubscription) {
+    const defaultSub = {
         id: 'sub-vip-123',
         userId: MOCK_USER_ID,
         planId: 'serrano_vip', // Matches a plan ID from join/page.tsx
         startDate: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), // 30 days ago
         endDate: new Date(Date.now() + 335 * 24 * 60 * 60 * 1000), // ~11 months from now
-        status: 'active',
+        status: 'active' as 'active',
     };
+    localStorage.setItem('mockSubscription', JSON.stringify(defaultSub));
+    mockUserSubscription = defaultSub;
+    return mockUserSubscription;
   }
   return null;
 }
 
 export async function checkUserOfferUsage(userId: string, offerId: string): Promise<boolean> {
   await new Promise(resolve => setTimeout(resolve, 100));
-  if (userId !== MOCK_USER_ID) return false; // Only works for mock user
-  // console.log(`Checking usage for user ${userId}, offer ${offerId}: ${!!mockUserRedemptions[offerId]}`);
-  return !!mockUserRedemptions[offerId];
+  if (userId !== mockCurrentUser?.id) return false; 
+  
+  if (typeof window !== 'undefined') {
+    const redemptions = JSON.parse(localStorage.getItem(`mockUserRedemptions-${userId}`) || '{}');
+    return !!redemptions[offerId];
+  }
+  return false; // Default if localStorage not available
 }
 
 export async function recordUserOfferUsage(userId: string, offerId: string, businessId: string): Promise<void> {
   await new Promise(resolve => setTimeout(resolve, 100));
-  if (userId !== MOCK_USER_ID) return; // Only works for mock user
-  // console.log(`Recording usage for user ${userId}, offer ${offerId}, business ${businessId}`);
-  mockUserRedemptions[offerId] = true;
+   if (userId !== mockCurrentUser?.id) return;
+
+  if (typeof window !== 'undefined') {
+    const redemptions = JSON.parse(localStorage.getItem(`mockUserRedemptions-${userId}`) || '{}');
+    redemptions[offerId] = true;
+    localStorage.setItem(`mockUserRedemptions-${userId}`, JSON.stringify(redemptions));
+  }
 }
 
 // Helper for mocking login/logout in UI (development only)
 export function mockLogin(user: User, subscription: Subscription) {
   mockCurrentUser = user;
   mockUserSubscription = subscription;
-  mockUserRedemptions = {}; // Reset redemptions on new login
-  if (typeof window !== 'undefined') localStorage.setItem('isMockLoggedIn', 'true');
+  
+  if (typeof window !== 'undefined') {
+    localStorage.setItem('isMockLoggedIn', 'true'); // Keep for general login state if needed
+    localStorage.setItem('mockUser', JSON.stringify(user));
+    localStorage.setItem('mockSubscription', JSON.stringify(subscription));
+    localStorage.removeItem(`mockUserRedemptions-${user.id}`); // Reset redemptions
+    // Dispatch event to notify other parts of the app (like AuthProviderClient)
+    window.dispatchEvent(new CustomEvent('mockAuthChange'));
+  }
 }
 
 export function mockLogout() {
   mockCurrentUser = null;
   mockUserSubscription = null;
-  if (typeof window !== 'undefined') localStorage.removeItem('isMockLoggedIn');
+  if (typeof window !== 'undefined') {
+    const userId = JSON.parse(localStorage.getItem('mockUser') || '{}').id;
+    if (userId) {
+        localStorage.removeItem(`mockUserRedemptions-${userId}`);
+    }
+    localStorage.removeItem('isMockLoggedIn');
+    localStorage.removeItem('mockUser');
+    localStorage.removeItem('mockSubscription');
+    window.dispatchEvent(new CustomEvent('mockAuthChange'));
+  }
 }
 // --- End Mocked Services ---

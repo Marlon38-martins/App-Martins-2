@@ -12,8 +12,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
-import { Frown, Play, Tag } from 'lucide-react';
+import { Frown, Play, Tag, Award } from 'lucide-react'; // Added Award
 import { useToast } from '@/hooks/use-toast';
+import { RankingPanel } from '@/components/ranking/RankingPanel';
 
 
 export default function HomePage() {
@@ -32,7 +33,7 @@ export default function HomePage() {
       try {
         const [businessData, dealsData] = await Promise.all([
           getGramadoBusinesses(),
-          getAllDeals() 
+          getAllDeals()
         ]);
         setBusinesses(businessData);
         setAllDeals(dealsData);
@@ -51,12 +52,12 @@ export default function HomePage() {
       .filter(
         (business) => business.type === 'Atração' || business.type === 'Parque'
       )
-      .slice(0, 3); 
+      .slice(0, 3);
   }, [businesses]);
 
   const featuredDeals = useMemo(() => {
     return allDeals
-      .sort((a, b) => (b.discountPercentage ?? 0) - (a.discountPercentage ?? 0))
+      .sort((a, b) => (b.discountPercentage ?? 0) - (a.discountPercentage ?? 0)) // Prioritize deals with discount %
       .slice(0, 4);
   }, [allDeals]);
 
@@ -81,6 +82,33 @@ export default function HomePage() {
     });
   }, [otherServiceBusinesses, searchTerm, selectedCategory]);
 
+  const rankedBusinessesByCategory = useMemo(() => {
+    if (!businesses.length) return {};
+
+    const categoriesToRank = ['Restaurante', 'Hotel', 'Atração']; // Define which categories to show rankings for
+    const topN = 3; // Show top N per category
+
+    const result: Record<string, GramadoBusiness[]> = {};
+
+    categoriesToRank.forEach(categoryType => {
+      const categoryBusinesses = businesses
+        .filter(b => b.type === categoryType && typeof b.rating === 'number' && typeof b.reviewCount === 'number' && b.reviewCount > 0)
+        .sort((a, b) => {
+          if (b.rating! !== a.rating!) {
+            return b.rating! - a.rating!;
+          }
+          return b.reviewCount! - a.reviewCount!; // Tie-breaker
+        })
+        .slice(0, topN);
+
+      if (categoryBusinesses.length > 0) {
+        result[categoryType] = categoryBusinesses;
+      }
+    });
+    return result;
+  }, [businesses]);
+
+
   if (isLoading) {
     return (
       <div>
@@ -99,6 +127,28 @@ export default function HomePage() {
                   <Skeleton className="h-4 w-3/4" />
                   <Skeleton className="h-8 w-full" />
                 </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* Ranking Panel Skeletons */}
+        <section className="mb-12">
+          <Skeleton className="mb-6 h-9 w-3/4 mx-auto md:w-1/2" /> {/* Title Skeleton */}
+           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {Array.from({ length: 3 }).map((_, index) => (
+              <div key={`rank-skeleton-${index}`} className="space-y-3 p-4 border rounded-lg">
+                <Skeleton className="h-6 w-1/2 mb-2" /> {/* Category Title */}
+                {Array.from({ length: 2 }).map((_, itemIndex) => (
+                  <div key={`rank-item-skeleton-${itemIndex}`} className="flex items-start space-x-3 py-2 border-b last:border-none">
+                    <Skeleton className="h-16 w-16 rounded-md shrink-0" />
+                    <div className="flex-1 space-y-2">
+                      <Skeleton className="h-4 w-3/4" />
+                      <Skeleton className="h-3 w-1/2" />
+                      <Skeleton className="h-3 w-1/4" />
+                    </div>
+                  </div>
+                ))}
               </div>
             ))}
           </div>
@@ -125,7 +175,7 @@ export default function HomePage() {
           <Skeleton className="mb-6 h-9 w-3/4 mx-auto md:w-1/2" /> {/* Title Skeleton */}
           <Skeleton className="aspect-video w-full max-w-3xl mx-auto rounded-lg" />
         </section>
-        
+
         {/* Explore Establishments Skeletons */}
         <Skeleton className="mb-2 h-9 w-3/4 mx-auto md:w-1/2" /> {/* Title Skeleton */}
         <Skeleton className="mb-8 h-6 w-full mx-auto md:w-3/4" /> {/* Subtitle Skeleton */}
@@ -171,7 +221,7 @@ export default function HomePage() {
       {/* Section 1: Hero Image/Welcome */}
       <section className="relative mb-12 h-[400px] w-full overflow-hidden rounded-lg shadow-xl md:h-[500px]">
         <Image
-          src="https://picsum.photos/seed/martins-rn-hero/1600/900"
+          src="https://placehold.co/1600x900.png"
           alt="Paisagem deslumbrante de Martins, RN"
           layout="fill"
           objectFit="cover"
@@ -210,6 +260,21 @@ export default function HomePage() {
         </section>
       )}
 
+      {/* Section: Ranking Panel */}
+       {Object.keys(rankedBusinessesByCategory).length > 0 && (
+        <section className="mb-16">
+          <h2 className="mb-2 text-center text-3xl font-bold tracking-tight text-primary md:text-4xl">
+            <Award className="inline-block h-8 w-8 mr-2 text-accent" />
+            Destaques por Avaliação
+          </h2>
+          <p className="mb-8 text-center text-lg text-foreground/80">
+            Os locais mais bem avaliados pelos nossos exploradores Prime!
+          </p>
+          <RankingPanel rankedBusinessesByCategory={rankedBusinessesByCategory} />
+        </section>
+      )}
+
+
       {/* Section 3: Featured Tourist Spots */}
       {touristSpots.length > 0 && (
         <section className="mb-16">
@@ -231,16 +296,16 @@ export default function HomePage() {
         </h2>
         <div className="aspect-video w-full max-w-4xl mx-auto overflow-hidden rounded-lg shadow-xl bg-muted border border-border">
           <div className="relative h-full w-full">
-            <Image 
-              src="https://picsum.photos/seed/martins-video-thumb/1280/720" 
-              alt="Thumbnail de vídeo sobre as belezas de Martins" 
-              layout="fill" 
+            <Image
+              src="https://placehold.co/1280x720.png"
+              alt="Thumbnail de vídeo sobre as belezas de Martins"
+              layout="fill"
               objectFit="cover"
               data-ai-hint="nature travel video"
             />
             <div className="absolute inset-0 flex items-center justify-center bg-black/40 transition-opacity hover:opacity-75">
-              <button 
-                aria-label="Assistir vídeo sobre Martins" 
+              <button
+                aria-label="Assistir vídeo sobre Martins"
                 className="group p-3 bg-background/80 rounded-full text-primary backdrop-blur-sm transition-all hover:bg-background hover:scale-110 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-black/50"
                 onClick={() => {
                   const videoUrl = "https://www.youtube.com/watch?v=dQw4w9WgXcQ"; // Placeholder video
@@ -285,7 +350,7 @@ export default function HomePage() {
           </SelectContent>
         </Select>
       </div>
-      
+
       {filteredListedBusinesses.length === 0 && !isLoading && (
         <div className="mt-12 flex flex-col items-center justify-center text-center">
             <Frown className="mb-4 h-16 w-16 text-muted-foreground" />

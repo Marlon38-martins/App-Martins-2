@@ -4,15 +4,34 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription }
 import { Button } from '@/components/ui/button';
 import type { GramadoBusiness } from '@/services/gramado-businesses';
 import { BusinessTypeIcon } from '@/components/icons';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Star } from 'lucide-react';
 
 interface BusinessCardProps {
   business: GramadoBusiness;
 }
 
+const renderStars = (rating?: number) => {
+  if (typeof rating !== 'number') return null;
+  const fullStars = Math.floor(rating);
+  const halfStar = rating % 1 !== 0;
+  const stars = [];
+
+  for (let i = 0; i < fullStars; i++) {
+    stars.push(<Star key={`full-${i}`} className="h-3 w-3 text-yellow-400 fill-yellow-400" />);
+  }
+  if (halfStar) {
+    stars.push(<Star key="half" className="h-3 w-3 text-yellow-400 fill-yellow-200" />);
+  }
+  for (let i = 0; i < (5 - fullStars - (halfStar ? 1 : 0)); i++) {
+    stars.push(<Star key={`empty-${i}-card`} className="h-3 w-3 text-muted-foreground/50" />);
+  }
+  return <div className="flex items-center">{stars}</div>;
+};
+
+
 export function BusinessCard({ business }: BusinessCardProps) {
   return (
-    <Card className="flex h-full flex-col overflow-hidden shadow-lg transition-shadow hover:shadow-xl">
+    <Card className="flex h-full flex-col overflow-hidden shadow-lg transition-shadow hover:shadow-xl group">
       <CardHeader className="pb-2">
         <div className="relative mb-2 aspect-[16/9] w-full overflow-hidden rounded-md">
           <Image
@@ -21,7 +40,7 @@ export function BusinessCard({ business }: BusinessCardProps) {
             layout="fill"
             objectFit="cover"
             className="transition-transform duration-300 group-hover:scale-105"
-            data-ai-hint={`${business.type} building`}
+            data-ai-hint={`${business.type} building exterior`}
           />
         </div>
         <div className="flex items-center justify-between">
@@ -29,6 +48,12 @@ export function BusinessCard({ business }: BusinessCardProps) {
            {business.icon && <BusinessTypeIcon type={business.icon} className="h-5 w-5 text-muted-foreground" />}
         </div>
         <CardDescription className="text-sm text-muted-foreground">{business.type}</CardDescription>
+         {business.rating !== undefined && business.reviewCount !== undefined && (
+          <div className="flex items-center space-x-1 pt-1">
+            {renderStars(business.rating)}
+            <span className="text-xs text-muted-foreground">({business.reviewCount})</span>
+          </div>
+        )}
       </CardHeader>
       <CardContent className="flex-grow pb-2 pt-0">
         <p className="text-sm text-foreground/80 line-clamp-3">{business.shortDescription}</p>
