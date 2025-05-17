@@ -51,7 +51,7 @@ export default function RootLayout({
                 <Link href="/" className="flex items-center gap-2">
                   <MountainSnow className="h-7 w-7 text-sidebar-primary" />
                   <span className="text-xl font-bold tracking-tight text-sidebar-foreground group-data-[collapsible=icon]:hidden">
-                    Martins Prime
+                    Guia Mais Martins
                   </span>
                 </Link>
               </SidebarHeader>
