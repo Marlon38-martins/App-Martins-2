@@ -1,3 +1,4 @@
+
 import type {Metadata} from 'next';
 import Link from 'next/link';
 import { Geist, Geist_Mono } from 'next/font/google';
@@ -165,20 +166,21 @@ export default function RootLayout({
                     </SidebarMenuButton>
                   </SidebarMenuItem>
 
-                  {/* Partner/Admin Section */}
+                  {/* Auth Actions - moved up */}
+                  <CurrentUserDisplay />
+                  
+                  {/* Partner/Admin Section - moved down */}
                   <SidebarMenuItem>
                     <PartnerPanelDropdown />
                   </SidebarMenuItem>
                    <SidebarMenuItem>
                       <SidebarMenuButton asChild tooltip={{content: "Seja Parceiro", side:"right"}}>
                         <Link href="/partner-registration">
-                          <Briefcase /> {/* Updated Icon */}
+                          <Briefcase />
                           <span className="group-data-[collapsible=icon]:hidden">Seja Parceiro</span>
                         </Link>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
-                  
-                  <CurrentUserDisplay />
                   
                 </SidebarMenu>
               </SidebarContent>
@@ -202,4 +204,3 @@ export default function RootLayout({
     </html>
   );
 }
-
