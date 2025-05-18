@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Building2, Info, Newspaper, Briefcase, Phone, MapPin, CalendarDays, Users } from 'lucide-react';
+import { ArrowLeft, Building2, Info, Newspaper, Briefcase, Phone, MapPin, CalendarDays, Users, Instagram, Globe } from 'lucide-react';
 
 export default function InstitutionalPage() {
   const currentYear = new Date().getFullYear();
@@ -59,6 +59,13 @@ export default function InstitutionalPage() {
             <p className="text-foreground/90 leading-relaxed">
               A economia local é impulsionada pelo turismo, agricultura e artesanato, refletindo a criatividade e o trabalho do povo martinense. Eventos culturais e festivais ao longo do ano celebram as tradições e a alegria da cidade.
             </p>
+             <div className="mt-4 flex flex-col sm:flex-row gap-3">
+                <Button variant="outline" asChild>
+                    <Link href="https://www.martins.rn.gov.br/sobre" target="_blank" rel="noopener noreferrer">
+                        <Globe className="mr-2 h-4 w-4" /> Saiba Mais no Portal Oficial
+                    </Link>
+                </Button>
+            </div>
           </CardContent>
         </Card>
 
@@ -80,6 +87,11 @@ export default function InstitutionalPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <Button variant="outline" asChild><Link href="/services/atracao">Ver Atrações Turísticas</Link></Button>
                 <Button variant="outline" asChild><Link href="/services/hotel">Encontrar Hospedagem</Link></Button>
+                <Button variant="outline" asChild className="sm:col-span-2">
+                    <Link href="https://www.instagram.com/turismomartinsrn" target="_blank" rel="noopener noreferrer">
+                        <Instagram className="mr-2 h-4 w-4" /> Visite o Instagram Oficial do Turismo
+                    </Link>
+                </Button>
             </div>
             <p className="mt-4 text-sm text-muted-foreground">
                 <strong>Centro de Atendimento ao Turista (CAT):</strong> Praça Central, S/N - Aberto diariamente das 09:00 às 17:00.
@@ -118,7 +130,11 @@ export default function InstitutionalPage() {
                 </AlertDescription>
             </Alert>
             <div className="text-center mt-6">
-                <Button variant="link" className="text-primary">Ver Calendário Completo de Eventos (Link Externo)</Button>
+                <Button variant="link" className="text-primary" asChild>
+                  <Link href="https://www.martins.rn.gov.br/eventos" target="_blank" rel="noopener noreferrer">
+                    Ver Calendário Completo de Eventos
+                  </Link>
+                </Button>
             </div>
           </CardContent>
         </Card>
@@ -154,7 +170,11 @@ export default function InstitutionalPage() {
               </AlertDescription>
             </Alert>
             <div className="text-center mt-6">
-                <Button variant="link" className="text-primary">Ver Todas as Notícias (Link Externo)</Button>
+                <Button variant="link" className="text-primary" asChild>
+                  <Link href="https://www.martins.rn.gov.br/noticias" target="_blank" rel="noopener noreferrer">
+                    Ver Todas as Notícias
+                  </Link>
+                </Button>
             </div>
           </CardContent>
         </Card>
@@ -210,11 +230,18 @@ export default function InstitutionalPage() {
             <p className="text-foreground/90"><strong>Telefone Geral:</strong> (84) 3391-XXXX</p>
             <p className="text-foreground/90"><strong>Email Geral:</strong> contato@martins.rn.gov.br (exemplo)</p>
             <p className="text-foreground/90"><strong>Horário de Atendimento:</strong> Segunda a Sexta, das 08:00 às 14:00</p>
-            <Button variant="outline" asChild className="mt-2">
-                <Link href="https://www.martins.rn.gov.br" target="_blank" rel="noopener noreferrer">
-                    Acessar Portal da Prefeitura
-                </Link>
-            </Button>
+            <div className="flex flex-col sm:flex-row gap-3 mt-2">
+                <Button variant="default" asChild className="bg-primary hover:bg-primary/90">
+                    <Link href="https://www.martins.rn.gov.br" target="_blank" rel="noopener noreferrer">
+                        <Globe className="mr-2 h-4 w-4" /> Acessar Portal da Prefeitura
+                    </Link>
+                </Button>
+                <Button variant="outline" asChild>
+                    <Link href="https://www.instagram.com/prefeiturademartins" target="_blank" rel="noopener noreferrer">
+                        <Instagram className="mr-2 h-4 w-4" /> Siga no Instagram
+                    </Link>
+                </Button>
+            </div>
           </CardContent>
           <CardFooter>
             <p className="text-xs text-muted-foreground">
@@ -228,3 +255,4 @@ export default function InstitutionalPage() {
   );
 }
 
+    
