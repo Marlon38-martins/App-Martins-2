@@ -30,7 +30,8 @@ import {
   LayoutGrid,
   Info,
   Briefcase, // For Partner Panel
-  Tag // For Manage Offers
+  Tag, // For Manage Offers
+  Search as SearchIcon // Added SearchIcon
 } from 'lucide-react'; 
 import { Header } from '@/components/layout/header';
 import { AuthProviderClient } from '@/hooks/use-auth-client';
@@ -139,6 +140,15 @@ export default function RootLayout({
                       <Link href="/map">
                         <MapIcon />
                         <span className="group-data-[collapsible=icon]:hidden">Mapa</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+
+                  <SidebarMenuItem>
+                    <SidebarMenuButton asChild tooltip={{content: "Buscar", side:"right"}}>
+                      <Link href="/search">
+                        <SearchIcon />
+                        <span className="group-data-[collapsible=icon]:hidden">Buscar</span>
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
