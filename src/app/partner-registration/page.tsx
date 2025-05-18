@@ -4,7 +4,7 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { CheckCircle, Award, MessageSquare, Briefcase, ArrowLeft, TrendingUp, Rocket, Handshake } from 'lucide-react';
+import { CheckCircle, Award, MessageSquare, Briefcase, ArrowLeft, TrendingUp, Rocket, Handshake, BadgePercent, Eye } from 'lucide-react';
 
 export default function PartnerRegistrationPage() {
   return (
@@ -41,6 +41,18 @@ export default function PartnerRegistrationPage() {
                 <CheckCircle className="mr-3 mt-1 h-5 w-5 shrink-0 text-green-500" />
                 <span className="text-foreground/90">
                   <strong>Destaque no app com selo de parceiro:</strong> Aumente sua visibilidade e credibilidade entre os usuários.
+                </span>
+              </li>
+              <li className="flex items-start">
+                <CheckCircle className="mr-3 mt-1 h-5 w-5 shrink-0 text-green-500" />
+                <span className="text-foreground/90">
+                  <strong>Visibilidade com selo de parceiro oficial:</strong> Ganhe um selo de destaque que aumenta a confiança e atrai mais clientes.
+                </span>
+              </li>
+              <li className="flex items-start">
+                <CheckCircle className="mr-3 mt-1 h-5 w-5 shrink-0 text-green-500" />
+                <span className="text-foreground/90">
+                  <strong>Ferramentas para criar promoções e cupons:</strong> Gerencie facilmente suas ofertas para maximizar o engajamento e as vendas.
                 </span>
               </li>
               <li className="flex items-start">
