@@ -4,7 +4,7 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { CheckCircle, Award, MessageSquare, Briefcase, ArrowLeft, TrendingUp, Rocket, Handshake, BadgePercent, Eye, BarChart3, Settings2, UserPlus } from 'lucide-react';
+import { CheckCircle, Award, MessageSquare, Briefcase, ArrowLeft, TrendingUp, Rocket, Handshake, BadgePercent, Eye, BarChart3, Settings2, UserPlus, Wrench } from 'lucide-react';
 
 export default function PartnerRegistrationPage() {
   return (
@@ -80,7 +80,7 @@ export default function PartnerRegistrationPage() {
             <CardDescription>Escolha o plano que melhor se adapta às suas necessidades e orçamento.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               <div className="rounded-lg border bg-card p-6 shadow-sm">
                 <h3 className="mb-2 text-xl font-semibold text-accent">Assinatura Mensal</h3>
                 <p className="mb-1 text-2xl font-bold text-primary">R$ 49 a R$ 199</p>
@@ -100,6 +100,19 @@ export default function PartnerRegistrationPage() {
                   <li><CheckCircle className="mr-2 inline h-4 w-4 text-green-500" />Ideal para testar a plataforma.</li>
                   <li><CheckCircle className="mr-2 inline h-4 w-4 text-green-500" />Acesso às ferramentas de ofertas.</li>
                 </ul>
+              </div>
+              <div className="rounded-lg border bg-card p-6 shadow-sm">
+                <h3 className="mb-2 text-xl font-semibold text-accent flex items-center">
+                  <Wrench className="mr-2 h-5 w-5" /> Assinatura Sob Medida
+                </h3>
+                <p className="text-sm text-muted-foreground mb-3">
+                  Planos personalizados para necessidades únicas. Ideal para grandes redes ou requisitos especiais.
+                </p>
+                <Button variant="outline" asChild className="w-full">
+                  <Link href="mailto:parcerias@guiamais.com.br">
+                    <MessageSquare className="mr-2 h-4 w-4" /> Falar com Consultor
+                  </Link>
+                </Button>
               </div>
             </div>
             <p className="text-sm text-muted-foreground">
@@ -145,3 +158,4 @@ export default function PartnerRegistrationPage() {
     </div>
   );
 }
+
