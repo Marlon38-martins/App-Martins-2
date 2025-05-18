@@ -14,13 +14,14 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { useToast } from '@/hooks/use-toast';
 import { 
     User, Mail, Phone as PhoneIcon, Lock, CheckCircle, Award, Sparkles, ShieldCheck, CreditCard, Star,
-    TicketPercent, MapPinned, WifiOff, Languages, XCircle, TrendingUp, Info
+    TicketPercent, MapPinned, WifiOff, Languages, XCircle, TrendingUp, Info, CalendarDays
 } from 'lucide-react';
 import type { Plan, User as AppUser, Subscription } from '@/types/user';
 import { useRouter } from 'next/navigation';
 import { mockLogin } from '@/services/gramado-businesses';
 import { useAuth } from '@/hooks/use-auth-client';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { cn } from '@/lib/utils';
 
 const registrationFormSchema = z.object({
   name: z.string().min(3, { message: "Nome completo é obrigatório (mínimo 3 caracteres)." }),
@@ -29,7 +30,7 @@ const registrationFormSchema = z.object({
   cpf: z.string().regex(/^\d{3}\.\d{3}\.\d{3}-\d{2}$/, { message: "CPF inválido. Formato: 000.000.000-00" }),
   password: z.string().min(6, { message: "Senha deve ter pelo menos 6 caracteres." }),
   confirmPassword: z.string().min(6, { message: "Confirmação de senha é obrigatória." }),
-  selectedPlan: z.literal('premium_mensal', { required_error: "Por favor, selecione o plano Premium." }),
+  selectedPlan: z.enum(['premium_mensal', 'premium_anual'], { required_error: "Por favor, selecione um plano Premium." }),
   agreeToTerms: z.boolean().refine(value => value === true, { message: "Você deve aceitar os termos e condições para prosseguir." }),
 }).refine(data => data.password === data.confirmPassword, {
   message: "As senhas não coincidem.",
@@ -38,22 +39,44 @@ const registrationFormSchema = z.object({
 
 type RegistrationFormValues = z.infer<typeof registrationFormSchema>;
 
-const premiumPlan: Plan = {
+const premiumFeatures: Plan['features'] = [
+    { text: 'Descontos exclusivos em parceiros', IconComp: TicketPercent },
+    { text: 'Roteiros personalizados e acesso offline', IconComp: MapPinned },
+    { text: 'Suporte multilíngue', IconComp: Languages },
+    { text: 'Programa de recompensas por apoiar o comércio local', IconComp: Award },
+    { text: 'Acesso Offline aos seus roteiros e cupons', IconComp: WifiOff },
+    { text: 'Conteúdo VIP exclusivo (em breve)', IconComp: Star },
+];
+
+const premiumPlans: Plan[] = [
+  {
     id: 'premium_mensal',
     name: 'Plano Premium Mensal',
-    price: 'R$ 19,90/mês',
-    priceMonthly: 19.90,
-    Icon: Sparkles,
-    features: [ // Features for the main card display if needed, now we use a dedicated section
-        { text: 'Descontos exclusivos em parceiros', IconComp: TicketPercent },
-        { text: 'Roteiros personalizados e acesso offline', IconComp: MapPinned },
-        { text: 'Atendimento VIP e suporte multilíngue', IconComp: Languages },
-        { text: 'Programa de recompensas por apoiar o comércio local', IconComp: Award },
-    ],
-    bgColor: 'bg-primary/20',
-    borderColor: 'border-primary',
-    textColor: 'text-primary'
-};
+    price: 'R$ 19,90',
+    priceNumeric: 19.90,
+    billingCycle: 'mês',
+    features: premiumFeatures,
+    Icon: CalendarDays, // Using CalendarDays for monthly billing
+    bgColor: 'bg-primary/10',
+    borderColor: 'border-primary/30',
+    textColor: 'text-primary',
+  },
+  {
+    id: 'premium_anual',
+    name: 'Plano Premium Anual',
+    price: 'R$ 199,00', // Example: R$ 199 / 12 = R$ 16,58
+    priceNumeric: 199.00,
+    billingCycle: 'ano',
+    priceAnnualDisplay: "R$ 199,00/ano",
+    annualEquivalentMonthlyPrice: "(equivale a R$ 16,58/mês)",
+    features: premiumFeatures,
+    Icon: Sparkles, // Using Sparkles for annual (best value)
+    bgColor: 'bg-accent/10',
+    borderColor: 'border-accent',
+    textColor: 'text-accent',
+    highlight: true, // Mark as best value
+  }
+];
 
 
 const comparisonFeatures = [
@@ -69,6 +92,7 @@ export default function JoinPage() {
   const router = useRouter();
   const { signInUser } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [currentSelectedPlanId, setCurrentSelectedPlanId] = useState<Plan['id']>('premium_mensal');
 
   const form = useForm<RegistrationFormValues>({
     resolver: zodResolver(registrationFormSchema),
@@ -79,10 +103,12 @@ export default function JoinPage() {
       cpf: '',
       password: '',
       confirmPassword: '',
-      selectedPlan: 'premium_mensal', // Default to premium
+      selectedPlan: 'premium_mensal',
       agreeToTerms: false,
     },
   });
+
+  const selectedPlanDetails = premiumPlans.find(p => p.id === currentSelectedPlanId) || premiumPlans[0];
 
   const onSubmit: SubmitHandler<RegistrationFormValues> = async (data) => {
     setIsSubmitting(true);
@@ -95,12 +121,17 @@ export default function JoinPage() {
         name: data.name,
         photoURL: `https://placehold.co/100x100.png`
       };
+      
+      const endDate = data.selectedPlan === 'premium_anual' 
+        ? new Date(new Date().setFullYear(new Date().getFullYear() + 1)) 
+        : new Date(new Date().setMonth(new Date().getMonth() + 1));
+
       const mockSubscription: Subscription = {
         id: 'sub-mock-' + Date.now(),
         userId: mockUser.id,
-        planId: data.selectedPlan, // 'premium_mensal'
+        planId: data.selectedPlan,
         startDate: new Date(),
-        endDate: new Date(new Date().setFullYear(new Date().getFullYear() + 1)), 
+        endDate: endDate, 
         status: 'active', 
       };
       
@@ -109,7 +140,7 @@ export default function JoinPage() {
 
       toast({
         title: 'Inscrição Premium Realizada!',
-        description: `Bem-vindo(a) ao Guia Mais Premium, ${data.name}! Seu plano está ativo.`,
+        description: `Bem-vindo(a) ao Guia Mais Premium, ${data.name}! Seu plano ${data.selectedPlan === 'premium_anual' ? 'Anual' : 'Mensal'} está ativo.`,
         variant: 'default',
       });
       form.reset();
@@ -142,15 +173,10 @@ export default function JoinPage() {
       <section className="mb-12">
         <h2 className="mb-6 text-center text-2xl font-semibold text-accent">Seus Benefícios Exclusivos:</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {[
-            { icon: TicketPercent, text: 'Descontos Exclusivos', hint: "exclusive discounts" },
-            { icon: MapPinned, text: 'Roteiros Personalizados', hint: "custom routes" },
-            { icon: WifiOff, text: 'Acesso Offline', hint: "offline access" },
-            { icon: Award, text: 'Ganhe Pontos e Recompensas', hint: "points rewards" },
-          ].map((benefit, index) => (
+          {premiumFeatures.slice(0, 4).map((benefit, index) => ( // Show first 4 prominent benefits
             <Card key={index} className="text-center shadow-md hover:shadow-lg transition-shadow bg-card">
               <CardContent className="pt-6">
-                <benefit.icon className="mx-auto h-12 w-12 text-primary mb-3" />
+                <benefit.IconComp className="mx-auto h-12 w-12 text-primary mb-3" />
                 <p className="font-medium text-card-foreground">{benefit.text}</p>
               </CardContent>
             </Card>
@@ -211,13 +237,72 @@ export default function JoinPage() {
             <User className="mr-3 h-7 w-7 text-accent" />
             Complete seus Dados para Assinar
           </CardTitle>
-          <CardDescription>
-            Preencha para se tornar um membro Guia Mais Premium. ({premiumPlan.price})
+           <CardDescription>
+            Escolha seu plano e preencha para se tornar um membro Guia Mais Premium.
           </CardDescription>
         </CardHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <CardContent className="space-y-6">
+              {/* Plan Selection */}
+              <FormField
+                control={form.control}
+                name="selectedPlan"
+                render={({ field }) => (
+                  <FormItem className="space-y-3">
+                    <FormLabel className="text-lg font-semibold">Selecione seu Plano Premium:</FormLabel>
+                    <FormControl>
+                      <RadioGroup
+                        onValueChange={(value) => {
+                            field.onChange(value);
+                            setCurrentSelectedPlanId(value as Plan['id']);
+                        }}
+                        value={field.value}
+                        className="grid grid-cols-1 md:grid-cols-2 gap-4"
+                      >
+                        {premiumPlans.map((plan) => (
+                          <FormItem 
+                            key={plan.id} 
+                            className={cn(
+                                "flex flex-col items-start space-y-1 rounded-md border p-4 transition-all cursor-pointer hover:border-primary",
+                                field.value === plan.id && "border-2 border-primary ring-2 ring-primary ring-offset-2",
+                                plan.highlight && "border-accent hover:border-accent ring-accent"
+                            )}
+                           onClick={() => { // Allow clicking the whole card to select
+                                field.onChange(plan.id);
+                                setCurrentSelectedPlanId(plan.id);
+                            }}
+                          >
+                            <div className="flex items-center justify-between w-full">
+                                <FormLabel className="font-semibold text-lg flex items-center cursor-pointer">
+                                    {plan.Icon && <plan.Icon className={cn("mr-2 h-6 w-6", plan.textColor)} />}
+                                    {plan.name}
+                                </FormLabel>
+                                <FormControl>
+                                  <RadioGroupItem value={plan.id} className="sr-only" />
+                                </FormControl>
+                                {plan.highlight && <Badge variant="destructive" className="bg-accent text-accent-foreground text-xs">Melhor Valor!</Badge>}
+                            </div>
+                            <p className={cn("text-2xl font-bold", plan.textColor)}>{plan.price} <span className="text-sm font-normal text-muted-foreground">/{plan.billingCycle}</span></p>
+                            {plan.annualEquivalentMonthlyPrice && <p className="text-xs text-muted-foreground">{plan.annualEquivalentMonthlyPrice}</p>}
+                             <ul className="mt-2 space-y-1 text-xs text-muted-foreground">
+                                {plan.features.slice(0,2).map(feature => ( // Show first 2 features as teaser
+                                    <li key={feature.text} className="flex items-center">
+                                        <CheckCircle className="mr-1.5 h-3 w-3 text-green-500"/> {feature.text}
+                                    </li>
+                                ))}
+                                <li>& mais...</li>
+                            </ul>
+                          </FormItem>
+                        ))}
+                      </RadioGroup>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+
               {/* Registration Fields */}
               <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                 <FormField
@@ -303,32 +388,6 @@ export default function JoinPage() {
                   )}
                 />
               </div>
-
-              {/* Hidden field for plan selection, always premium_mensal */}
-              <FormField
-                control={form.control}
-                name="selectedPlan"
-                render={({ field }) => (
-                  <FormItem className="hidden">
-                    <FormControl>
-                      <RadioGroup
-                        onValueChange={field.onChange}
-                        value={field.value} // Controlled component
-                      >
-                        <FormItem className="flex items-center space-x-3 space-y-0">
-                          <FormControl>
-                            <RadioGroupItem value="premium_mensal" />
-                          </FormControl>
-                          <FormLabel className="font-normal cursor-pointer">
-                            {premiumPlan.name} ({premiumPlan.price})
-                          </FormLabel>
-                        </FormItem>
-                      </RadioGroup>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
               
               <FormField
                 control={form.control}
@@ -364,7 +423,7 @@ export default function JoinPage() {
             <div className="fixed bottom-0 left-0 right-0 z-50 bg-background/90 p-4 backdrop-blur-sm border-t border-border shadow-t-lg">
                 <Button type="submit" size="lg" className="w-full bg-accent hover:bg-accent/80 text-accent-foreground text-lg py-3" disabled={isSubmitting}>
                     <CheckCircle className="mr-2 h-6 w-6" />
-                    {isSubmitting ? 'Processando...' : `Assinar Agora (${premiumPlan.price})`}
+                    {isSubmitting ? 'Processando...' : `Assinar Agora - ${selectedPlanDetails.price}/${selectedPlanDetails.billingCycle}`}
                 </Button>
                 <p className="mt-3 text-center text-xs text-muted-foreground">
                     💚 Sua assinatura apoia o comércio local!
