@@ -14,7 +14,7 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { useToast } from '@/hooks/use-toast';
 import { 
     User, Mail, Phone as PhoneIcon, Lock, CheckCircle, Award, Sparkles, ShieldCheck, CreditCard, Star,
-    TicketPercent, MapPinned, WifiOff, Languages, XCircle, TrendingUp, Info, CalendarDays, Route as RouteIcon
+    TicketPercent, MapPinned, WifiOff, Languages, XCircle, TrendingUp, Info, CalendarDays, Route as RouteIcon, MapPin
 } from 'lucide-react';
 import type { Plan, User as AppUser, Subscription } from '@/types/user';
 import { useRouter } from 'next/navigation';
@@ -22,7 +22,7 @@ import { mockLogin } from '@/services/gramado-businesses';
 import { useAuth } from '@/hooks/use-auth-client';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { cn } from '@/lib/utils';
-import { Badge } from "@/components/ui/badge"; // Added import for Badge
+import { Badge } from "@/components/ui/badge";
 
 const registrationFormSchema = z.object({
   name: z.string().min(3, { message: "Nome completo é obrigatório (mínimo 3 caracteres)." }),
@@ -81,13 +81,13 @@ const premiumPlans: Plan[] = [
 
 
 const comparisonFeatures = [
-    { name: 'Acesso a roteiros locais', free: true, premium: true },
-    { name: 'Descontos exclusivos em parceiros', free: false, premium: true },
-    { name: 'Roteiros personalizados e acesso offline', free: false, premium: true },
-    { name: 'Suporte multilíngue', free: false, premium: true },
-    { name: 'Programa de recompensas', free: false, premium: true},
-    { name: 'Acesso Offline aos seus roteiros e cupons', free: false, premium: true },
-    { name: 'Conteúdo VIP exclusivo', free: false, premium: true },
+    { name: 'Acesso a roteiros locais', free: true, premium: true, IconComp: MapPin },
+    { name: 'Descontos exclusivos em parceiros', free: false, premium: true, IconComp: TicketPercent },
+    { name: 'Roteiros personalizados e acesso offline', free: false, premium: true, IconComp: RouteIcon },
+    { name: 'Suporte multilíngue', free: false, premium: true, IconComp: Languages },
+    { name: 'Programa de recompensas', free: false, premium: true, IconComp: Award},
+    { name: 'Acesso Offline aos seus roteiros e cupons', free: false, premium: true, IconComp: WifiOff },
+    { name: 'Conteúdo VIP exclusivo', free: false, premium: true, IconComp: Star },
 ];
 
 export default function JoinPage() {
@@ -206,7 +206,10 @@ export default function JoinPage() {
                     <TableBody>
                         {comparisonFeatures.map((feature) => (
                             <TableRow key={feature.name}>
-                                <TableCell className="font-medium text-left">{feature.name}</TableCell>
+                                <TableCell className="font-medium text-left flex items-center">
+                                  {feature.IconComp && <feature.IconComp className="mr-2 h-4 w-4 text-muted-foreground" />}
+                                  {feature.name}
+                                </TableCell>
                                 <TableCell className="text-center">
                                     {feature.free ? <CheckCircle className="h-5 w-5 text-green-500 mx-auto" /> : <XCircle className="h-5 w-5 text-muted-foreground mx-auto" />}
                                 </TableCell>
@@ -426,7 +429,7 @@ export default function JoinPage() {
                     {isSubmitting ? 'Processando...' : `Assinar Agora - ${selectedPlanDetails.price}/${selectedPlanDetails.billingCycle}`}
                 </Button>
                 <p className="mt-3 text-center text-xs text-muted-foreground">
-                    💚 Sua assinatura apoia o comércio local!
+                    💚 Sua assinatura contribui para melhorar sua experiência na Serra mais linda do RN
                 </p>
             </div>
           </form>
