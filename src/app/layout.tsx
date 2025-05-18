@@ -25,9 +25,10 @@ import {
   ShoppingBag,
   Coffee,
   Beer,
-  Landmark as AttractionIcon, // Renamed to avoid conflict if Landmark is used elsewhere
+  Landmark as AttractionIcon, 
   Trees,
-  LayoutGrid // For "View All"
+  LayoutGrid,
+  Info // Added Info icon
 } from 'lucide-react'; 
 import { Header } from '@/components/layout/header';
 import { AuthProviderClient } from '@/hooks/use-auth-client';
@@ -99,7 +100,6 @@ export default function RootLayout({
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                   
-                  {/* Enhanced Parceiros Menu Item */}
                   <SidebarMenuItem>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
@@ -112,8 +112,6 @@ export default function RootLayout({
                         side="right" 
                         align="start" 
                         className="w-56 bg-popover text-popover-foreground ml-2 group-data-[collapsible=icon]:ml-0"
-                        // Prevent closing on item click if items are links
-                        // onCloseAutoFocus={(e) => e.preventDefault()} 
                       >
                         {categoriesForMenu.map(category => (
                           <DropdownMenuItem key={category.slug} asChild>
@@ -142,12 +140,20 @@ export default function RootLayout({
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
+
+                  <SidebarMenuItem>
+                    <SidebarMenuButton asChild tooltip={{content: "Institucional", side:"right"}}>
+                      <Link href="/institutional">
+                        <Info />
+                        <span className="group-data-[collapsible=icon]:hidden">Institucional</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
                   
                   <CurrentUserDisplay />
                   
                 </SidebarMenu>
               </SidebarContent>
-                 {/* Admin link - can be conditionally rendered based on user role in CurrentUserDisplay or here via useAuth hook if needed */}
                  <SidebarMenuItem>
                     <SidebarMenuButton asChild tooltip={{content: "Administração", side:"right"}}>
                       <Link href="/admin/add-establishment">
