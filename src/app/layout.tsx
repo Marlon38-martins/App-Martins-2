@@ -169,6 +169,14 @@ export default function RootLayout({
                   <SidebarMenuItem>
                     <PartnerPanelDropdown />
                   </SidebarMenuItem>
+                   <SidebarMenuItem>
+                      <SidebarMenuButton asChild tooltip={{content: "Seja Parceiro", side:"right"}}>
+                        <Link href="/partner-registration">
+                          <Briefcase /> {/* Updated Icon */}
+                          <span className="group-data-[collapsible=icon]:hidden">Seja Parceiro</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
                   
                   <CurrentUserDisplay />
                   
@@ -194,3 +202,4 @@ export default function RootLayout({
     </html>
   );
 }
+

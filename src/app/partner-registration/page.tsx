@@ -4,7 +4,7 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { CheckCircle, Award, MessageSquare, Briefcase, ArrowLeft, TrendingUp, Rocket, Handshake, BadgePercent, Eye } from 'lucide-react';
+import { CheckCircle, Award, MessageSquare, Briefcase, ArrowLeft, TrendingUp, Rocket, Handshake, BadgePercent, Eye, BarChart3, Settings2 } from 'lucide-react';
 
 export default function PartnerRegistrationPage() {
   return (
@@ -19,7 +19,7 @@ export default function PartnerRegistrationPage() {
       <section className="mb-10 text-center">
         <Rocket className="mx-auto h-16 w-16 text-primary mb-4" />
         <h1 className="mb-3 text-3xl font-bold tracking-tight text-primary md:text-4xl">
-          Cadastre seu Negócio e Atraia Mais Turistas!
+          Cadastre seu negócio e atraia mais turistas!
         </h1>
         <p className="text-lg text-foreground/80 max-w-2xl mx-auto">
           Junte-se à nossa rede de parceiros em Martins e impulsione seu estabelecimento com o Guia Mais.
@@ -40,12 +40,6 @@ export default function PartnerRegistrationPage() {
               <li className="flex items-start">
                 <CheckCircle className="mr-3 mt-1 h-5 w-5 shrink-0 text-green-500" />
                 <span className="text-foreground/90">
-                  <strong>Destaque no app com selo de parceiro:</strong> Aumente sua visibilidade e credibilidade entre os usuários.
-                </span>
-              </li>
-              <li className="flex items-start">
-                <CheckCircle className="mr-3 mt-1 h-5 w-5 shrink-0 text-green-500" />
-                <span className="text-foreground/90">
                   <strong>Visibilidade com selo de parceiro oficial:</strong> Ganhe um selo de destaque que aumenta a confiança e atrai mais clientes.
                 </span>
               </li>
@@ -58,13 +52,7 @@ export default function PartnerRegistrationPage() {
               <li className="flex items-start">
                 <CheckCircle className="mr-3 mt-1 h-5 w-5 shrink-0 text-green-500" />
                 <span className="text-foreground/90">
-                  <strong>Ferramenta para criar cupons e ofertas exclusivas:</strong> Atraia mais clientes com promoções personalizadas e fáceis de gerenciar.
-                </span>
-              </li>
-              <li className="flex items-start">
-                <CheckCircle className="mr-3 mt-1 h-5 w-5 shrink-0 text-green-500" />
-                <span className="text-foreground/90">
-                  <strong>Acesso a relatórios de desempenho:</strong> Acompanhe o alcance das suas ofertas, o número de resgates e o feedback dos clientes.
+                  <strong>Relatórios de desempenho e engajamento:</strong> Acompanhe o alcance das suas ofertas, o número de resgates e o feedback dos clientes (em breve).
                 </span>
               </li>
                <li className="flex items-start">
@@ -86,8 +74,8 @@ export default function PartnerRegistrationPage() {
         <Card className="shadow-lg">
           <CardHeader>
             <CardTitle className="flex items-center text-2xl text-primary">
-              <Briefcase className="mr-3 h-7 w-7" />
-              Modelos de Parceria Flexíveis
+              <Handshake className="mr-3 h-7 w-7" />
+              Opções de Parceria Flexíveis
             </CardTitle>
             <CardDescription>Escolha o plano que melhor se adapta às suas necessidades e orçamento.</CardDescription>
           </CardHeader>
@@ -99,18 +87,18 @@ export default function PartnerRegistrationPage() {
                 <p className="text-sm text-muted-foreground mb-3">/mês, conforme o pacote de funcionalidades.</p>
                 <ul className="space-y-1 text-sm text-foreground/80">
                   <li><CheckCircle className="mr-2 inline h-4 w-4 text-green-500" />Visibilidade premium.</li>
-                  <li><CheckCircle className="mr-2 inline h-4 w-4 text-green-500" />Criação ilimitada de ofertas (P1L2, descontos).</li>
+                  <li><CheckCircle className="mr-2 inline h-4 w-4 text-green-500" />Criação ilimitada de ofertas.</li>
                   <li><CheckCircle className="mr-2 inline h-4 w-4 text-green-500" />Relatórios detalhados.</li>
                 </ul>
               </div>
               <div className="rounded-lg border bg-card p-6 shadow-sm">
-                <h3 className="mb-2 text-xl font-semibold text-accent">Comissão por Venda/Conversão</h3>
+                <h3 className="mb-2 text-xl font-semibold text-accent">Comissão por Conversão</h3>
                 <p className="mb-1 text-2xl font-bold text-primary">5% a 15%</p>
                 <p className="text-sm text-muted-foreground mb-3">sobre o valor da oferta utilizada.</p>
                 <ul className="space-y-1 text-sm text-foreground/80">
                   <li><CheckCircle className="mr-2 inline h-4 w-4 text-green-500" />Pague apenas pelos resultados.</li>
                   <li><CheckCircle className="mr-2 inline h-4 w-4 text-green-500" />Ideal para testar a plataforma.</li>
-                  <li><CheckCircle className="mr-2 inline h-4 w-4 text-green-500" />Acesso às ferramentas de criação de ofertas.</li>
+                  <li><CheckCircle className="mr-2 inline h-4 w-4 text-green-500" />Acesso às ferramentas de ofertas.</li>
                 </ul>
               </div>
             </div>
@@ -123,7 +111,7 @@ export default function PartnerRegistrationPage() {
         <Card className="shadow-lg bg-gradient-to-r from-primary/10 via-background to-background">
           <CardHeader>
             <CardTitle className="flex items-center text-2xl text-primary">
-              <Handshake className="mr-3 h-7 w-7" />
+              <Rocket className="mr-3 h-7 w-7" />
               Pronto para Começar?
             </CardTitle>
             <CardDescription>Dê o próximo passo para destacar seu negócio em Martins!</CardDescription>
@@ -134,13 +122,13 @@ export default function PartnerRegistrationPage() {
             </p>
             <div className="flex flex-col sm:flex-row justify-center gap-4">
               <Button size="lg" className="bg-accent hover:bg-accent/90 text-accent-foreground" asChild>
-                <Link href="/admin/add-establishment"> {/* Placeholder link */}
-                  <Rocket className="mr-2 h-5 w-5" />
+                <Link href="/admin/add-establishment"> {/* Link para página de cadastro de estabelecimento do admin */}
+                  <UserPlus className="mr-2 h-5 w-5" /> {/* Ícone mais apropriado */}
                   Quero Ser Parceiro
                 </Link>
               </Button>
               <Button variant="outline" size="lg" asChild>
-                <Link href="mailto:parcerias@guiamaismartins.com.br"> {/* Placeholder email */}
+                <Link href="mailto:parcerias@guiamais.com.br"> {/* Email atualizado */}
                   <MessageSquare className="mr-2 h-5 w-5" />
                   Falar com Consultor
                 </Link>
@@ -157,5 +145,3 @@ export default function PartnerRegistrationPage() {
     </div>
   );
 }
-
-    
