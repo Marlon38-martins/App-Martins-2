@@ -83,13 +83,18 @@ export default function PartnerRegistrationPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               <div className="rounded-lg border bg-card p-6 shadow-sm">
                 <h3 className="mb-2 text-xl font-semibold text-accent">Assinatura Mensal</h3>
-                <p className="mb-1 text-2xl font-bold text-primary">R$ 49 a R$ 199</p>
-                <p className="text-sm text-muted-foreground mb-3">/mês, conforme o pacote de funcionalidades.</p>
+                {/* <p className="mb-1 text-2xl font-bold text-primary">R$ 49 a R$ 199</p> */}
+                <p className="text-sm text-muted-foreground mb-3">Valor conforme o pacote de funcionalidades. Contate-nos para detalhes.</p>
                 <ul className="space-y-1 text-sm text-foreground/80">
                   <li><CheckCircle className="mr-2 inline h-4 w-4 text-green-500" />Visibilidade premium.</li>
                   <li><CheckCircle className="mr-2 inline h-4 w-4 text-green-500" />Criação ilimitada de ofertas.</li>
-                  <li><CheckCircle className="mr-2 inline h-4 w-4 text-green-500" />Relatórios detalhados.</li>
+                  <li><CheckCircle className="mr-2 inline h-4 w-4 text-green-500" />Relatórios detalhados (em breve).</li>
                 </ul>
+                 <Button variant="outline" asChild className="w-full mt-4">
+                  <Link href="mailto:parcerias@guiamais.com.br">
+                    <MessageSquare className="mr-2 h-4 w-4" /> Saber Mais
+                  </Link>
+                </Button>
               </div>
               <div className="rounded-lg border bg-card p-6 shadow-sm">
                 <h3 className="mb-2 text-xl font-semibold text-accent">Comissão por Conversão</h3>
@@ -100,6 +105,11 @@ export default function PartnerRegistrationPage() {
                   <li><CheckCircle className="mr-2 inline h-4 w-4 text-green-500" />Ideal para testar a plataforma.</li>
                   <li><CheckCircle className="mr-2 inline h-4 w-4 text-green-500" />Acesso às ferramentas de ofertas.</li>
                 </ul>
+                 <Button variant="outline" asChild className="w-full mt-4">
+                  <Link href="mailto:parcerias@guiamais.com.br">
+                    <MessageSquare className="mr-2 h-4 w-4" /> Saber Mais
+                  </Link>
+                </Button>
               </div>
               <div className="rounded-lg border bg-card p-6 shadow-sm">
                 <h3 className="mb-2 text-xl font-semibold text-accent flex items-center">
@@ -135,13 +145,13 @@ export default function PartnerRegistrationPage() {
             </p>
             <div className="flex flex-col sm:flex-row justify-center gap-4">
               <Button size="lg" className="bg-accent hover:bg-accent/90 text-accent-foreground" asChild>
-                <Link href="/admin/add-establishment"> {/* Link para página de cadastro de estabelecimento do admin */}
-                  <UserPlus className="mr-2 h-5 w-5" /> {/* Ícone mais apropriado */}
+                <Link href="/admin/add-establishment"> 
+                  <UserPlus className="mr-2 h-5 w-5" />
                   Quero Ser Parceiro
                 </Link>
               </Button>
               <Button variant="outline" size="lg" asChild>
-                <Link href="mailto:parcerias@guiamais.com.br"> {/* Email atualizado */}
+                <Link href="mailto:parcerias@guiamais.com.br"> 
                   <MessageSquare className="mr-2 h-5 w-5" />
                   Falar com Consultor
                 </Link>
@@ -158,4 +168,3 @@ export default function PartnerRegistrationPage() {
     </div>
   );
 }
-
