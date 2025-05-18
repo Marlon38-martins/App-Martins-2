@@ -72,7 +72,8 @@ export type LucideIconName =
   | 'Wrench'
   | 'Coffee'
   | 'Trees'
-  | 'TicketPercent';
+  | 'TicketPercent'
+  | 'Beer'; // Added Beer
 
 
 /**
@@ -166,7 +167,7 @@ const businesses: GramadoBusiness[] = [
     id: '4',
     name: 'Trilha da Casa de Pedra',
     type: 'Atração',
-    shortDescription: 'Aventura e história em meio à natureza.',
+    shortDescription: 'Aventura e história em meio à naturezar.',
     fullDescription: 'Explore a famosa Casa de Pedra em uma trilha ecológica guiada. Conheça as formações rochosas, a fauna e a flora locais, e aprenda sobre as lendas e a história da região. Necessário agendamento.',
     address: 'Ponto de Encontro: Posto de Informações Turísticas, Martins - RN',
     phoneNumber: '(84) 99999-0004',
@@ -209,6 +210,22 @@ const businesses: GramadoBusiness[] = [
     icon: 'Trees',
     rating: 4.9,
     reviewCount: 150,
+  },
+  {
+    id: '7',
+    name: 'Bar Central',
+    type: 'Bar',
+    shortDescription: 'O ponto de encontro da cidade.',
+    fullDescription: 'Bar tradicional no centro de Martins, com petiscos regionais, cerveja gelada e um ambiente animado. Perfeito para um happy hour ou para encontrar amigos.',
+    address: 'Praça Central, 10, Centro, Martins - RN',
+    phoneNumber: '(84) 3391-0007',
+    website: 'www.barcentralmartins.com.br',
+    latitude: -6.0855,
+    longitude: -37.9105,
+    imageUrl: 'https://placehold.co/600x400.png',
+    icon: 'Beer',
+    rating: 4.3,
+    reviewCount: 60,
   }
 ];
 
@@ -272,6 +289,15 @@ const deals: Deal[] = [
     description: '10% de desconto para grupos de 5 ou mais pessoas na Trilha da Casa de Pedra.',
     discountPercentage: 10,
     termsAndConditions: 'Agendamento prévio obrigatório. Todos os participantes do grupo devem ser membros Martins Prime.',
+  },
+  {
+    id: 'deal-8',
+    businessId: '7', // Bar Central
+    title: 'Rodada Dupla de Caipirinha',
+    description: 'Peça uma caipirinha e ganhe a segunda por conta da casa. Exclusivo para membros Martins Prime.',
+    isPay1Get2: true,
+    usageLimitPerUser: 1,
+    termsAndConditions: 'Válido às sextas-feiras, das 18h às 20h. Apresentar card Martins Prime.',
   }
 ];
 

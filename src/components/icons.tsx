@@ -9,6 +9,7 @@ import {
   Coffee,
   Trees,
   TicketPercent,
+  Beer, // Added Beer
   Icon as LucideIconComponent, // Generic icon component
 } from 'lucide-react';
 import type { LucideProps } from 'lucide-react';
@@ -29,6 +30,7 @@ const iconMap: Record<string, React.ElementType<LucideProps>> = {
   Serviço: Wrench,
   Café: Coffee,
   Parque: Trees,
+  Bar: Beer, // Added Bar
   Default: TicketPercent,
   // Direct icon names from GramadoBusiness['icon']
   UtensilsCrossed: UtensilsCrossed,
@@ -39,6 +41,7 @@ const iconMap: Record<string, React.ElementType<LucideProps>> = {
   Coffee: Coffee,
   Trees: Trees,
   TicketPercent: TicketPercent,
+  Beer: Beer, // Added Beer
 };
 
 export function BusinessTypeIcon({ type, ...props }: BusinessIconProps) {

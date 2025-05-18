@@ -13,11 +13,34 @@ import {
   SidebarMenuButton,
   SidebarInset,
 } from '@/components/ui/sidebar';
-import { HomeIcon, ShoppingCart as ServicesIcon, MountainSnow, MapIcon, UserPlus, LayoutDashboard } from 'lucide-react';
+import { 
+  HomeIcon, 
+  ShoppingCart as ServicesIcon, 
+  MountainSnow, 
+  MapIcon, 
+  UserPlus, 
+  LayoutDashboard,
+  UtensilsCrossed,
+  BedDouble,
+  ShoppingBag,
+  Coffee,
+  Beer,
+  Landmark as AttractionIcon, // Renamed to avoid conflict if Landmark is used elsewhere
+  Trees,
+  LayoutGrid // For "View All"
+} from 'lucide-react'; 
 import { Header } from '@/components/layout/header';
 import { AuthProviderClient } from '@/hooks/use-auth-client';
 import { AuthStateInitializer } from '@/components/auth/auth-state-initializer';
 import { CurrentUserDisplay } from '@/components/auth/current-user-display';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { slugify } from '@/lib/utils';
 
 
 const geistSans = Geist({
@@ -34,6 +57,16 @@ export const metadata: Metadata = {
   title: 'Martins Prime',
   description: 'Seu clube de vantagens em Martins, RN!',
 };
+
+const categoriesForMenu = [
+  { name: 'Restaurantes', slug: slugify('Restaurante'), Icon: UtensilsCrossed },
+  { name: 'Hospedagem', slug: slugify('Hotel'), Icon: BedDouble },
+  { name: 'Bares', slug: slugify('Bar'), Icon: Beer },
+  { name: 'Cafés', slug: slugify('Café'), Icon: Coffee },
+  { name: 'Comércio', slug: slugify('Loja'), Icon: ShoppingBag },
+  { name: 'Lazer', slug: slugify('Atração'), Icon: AttractionIcon },
+  { name: 'Parques', slug: slugify('Parque'), Icon: Trees },
+];
 
 export default function RootLayout({
   children,
@@ -65,14 +98,42 @@ export default function RootLayout({
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
+                  
+                  {/* Enhanced Parceiros Menu Item */}
                   <SidebarMenuItem>
-                    <SidebarMenuButton asChild tooltip={{content: "Parceiros", side:"right"}}>
-                      <Link href="/services">
-                        <ServicesIcon />
-                        <span className="group-data-[collapsible=icon]:hidden">Parceiros</span>
-                      </Link>
-                    </SidebarMenuButton>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <SidebarMenuButton tooltip={{content: "Parceiros & Categorias", side:"right"}} className="w-full">
+                          <ServicesIcon />
+                          <span className="group-data-[collapsible=icon]:hidden">Parceiros</span>
+                        </SidebarMenuButton>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent 
+                        side="right" 
+                        align="start" 
+                        className="w-56 bg-popover text-popover-foreground ml-2 group-data-[collapsible=icon]:ml-0"
+                        // Prevent closing on item click if items are links
+                        // onCloseAutoFocus={(e) => e.preventDefault()} 
+                      >
+                        {categoriesForMenu.map(category => (
+                          <DropdownMenuItem key={category.slug} asChild>
+                            <Link href={`/services/${category.slug}`} className="flex items-center cursor-pointer">
+                              <category.Icon className="mr-2 h-4 w-4" />
+                              {category.name}
+                            </Link>
+                          </DropdownMenuItem>
+                        ))}
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem asChild>
+                          <Link href="/services" className="flex items-center cursor-pointer">
+                            <LayoutGrid className="mr-2 h-4 w-4" />
+                            Ver Todas as Categorias
+                          </Link>
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </SidebarMenuItem>
+
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild tooltip={{content: "Mapa", side:"right"}}>
                       <Link href="/map">
