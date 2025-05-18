@@ -3,18 +3,18 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Building2, Info, Newspaper, Briefcase } from 'lucide-react';
+import { ArrowLeft, Building2, Info, Newspaper, Briefcase, Phone, MapPin, CalendarDays, Users } from 'lucide-react';
 
 export default function InstitutionalPage() {
   const currentYear = new Date().getFullYear();
 
   return (
     <div className="max-w-4xl mx-auto p-4 md:p-6">
-      <Button asChild variant="outline" className="mb-6">
+      <Button asChild variant="outline" className="mb-6 print:hidden">
         <Link href="/">
           <ArrowLeft className="mr-2 h-4 w-4" />
           Voltar para Início
@@ -59,6 +59,67 @@ export default function InstitutionalPage() {
             <p className="text-foreground/90 leading-relaxed">
               A economia local é impulsionada pelo turismo, agricultura e artesanato, refletindo a criatividade e o trabalho do povo martinense. Eventos culturais e festivais ao longo do ano celebram as tradições e a alegria da cidade.
             </p>
+          </CardContent>
+        </Card>
+
+        <Card className="shadow-lg">
+          <CardHeader>
+            <CardTitle className="flex items-center text-2xl text-accent">
+              <MapPin className="mr-3 h-7 w-7" />
+              Turismo em Martins
+            </CardTitle>
+            <CardDescription>Explore as belezas e atrações da nossa cidade.</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <p className="text-foreground/90 leading-relaxed">
+              Martins oferece uma variedade de atrações para todos os gostos. Desde mirantes com vistas de tirar o fôlego, como o Mirante do Canto e o Mirante da Carranca, até trilhas históricas como a da Casa de Pedra. A cidade também é rica em cultura, com seu casario colonial e igrejas históricas.
+            </p>
+            <p className="text-foreground/90 leading-relaxed">
+              Para informações detalhadas, mapas, e agendamento de passeios guiados, visite o Centro de Atendimento ao Turista (CAT) localizado na Praça Central, ou entre em contato com a Secretaria Municipal de Turismo.
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <Button variant="outline" asChild><Link href="/services/atracao">Ver Atrações Turísticas</Link></Button>
+                <Button variant="outline" asChild><Link href="/services/hotel">Encontrar Hospedagem</Link></Button>
+            </div>
+            <p className="mt-4 text-sm text-muted-foreground">
+                <strong>Centro de Atendimento ao Turista (CAT):</strong> Praça Central, S/N - Aberto diariamente das 09:00 às 17:00.
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card className="shadow-lg">
+          <CardHeader>
+            <CardTitle className="flex items-center text-2xl text-accent">
+              <CalendarDays className="mr-3 h-7 w-7" />
+              Eventos Municipais e de Parceiros ({currentYear})
+            </CardTitle>
+            <CardDescription>Agenda de eventos e festividades em Martins.</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <Alert variant="default" className="bg-secondary/20 border-secondary">
+                <CalendarDays className="h-5 w-5 text-secondary-foreground"/>
+                <AlertTitle className="text-secondary-foreground">Festival Gastronômico da Serra</AlertTitle>
+                <AlertDescription>
+                    Sabores e tradições se encontram no principal evento culinário de Martins. Data: [Mês], {currentYear}. Local: Praça Central. Em breve mais informações!
+                </AlertDescription>
+            </Alert>
+            <Alert>
+                <Users className="h-5 w-5"/>
+                <AlertTitle>Festa do Padroeiro</AlertTitle>
+                <AlertDescription>
+                    Celebrações religiosas, shows e quermesse em homenagem ao padroeiro da cidade. Data: [Mês], {currentYear}.
+                </AlertDescription>
+            </Alert>
+             <Alert variant="default" className="bg-accent/10 border-accent/30">
+                <Info className="h-5 w-5 text-accent"/>
+                <AlertTitle className="text-accent">Feira de Artesanato Local</AlertTitle>
+                <AlertDescription>
+                    Exposição e venda de produtos artesanais de Martins e região. Todo primeiro domingo do mês, na Feira Coberta.
+                </AlertDescription>
+            </Alert>
+            <div className="text-center mt-6">
+                <Button variant="link" className="text-primary">Ver Calendário Completo de Eventos (Link Externo)</Button>
+            </div>
           </CardContent>
         </Card>
 
@@ -127,7 +188,7 @@ export default function InstitutionalPage() {
                 </AccordionContent>
               </AccordionItem>
                <AccordionItem value="item-4">
-                <AccordionTrigger className="text-lg hover:text-primary">Informações Turísticas</AccordionTrigger>
+                <AccordionTrigger className="text-lg hover:text-primary">Informações Turísticas (CAT)</AccordionTrigger>
                 <AccordionContent className="text-base text-foreground/80">
                   Visite o Centro de Atendimento ao Turista (CAT) na Praça Central para mapas, guias e informações sobre atrações e eventos. Aberto diariamente das 09:00 às 17:00.
                 </AccordionContent>
@@ -135,7 +196,35 @@ export default function InstitutionalPage() {
             </Accordion>
           </CardContent>
         </Card>
+
+        <Card className="shadow-lg">
+          <CardHeader>
+            <CardTitle className="flex items-center text-2xl text-accent">
+              <Phone className="mr-3 h-7 w-7" />
+              Informações de Contato - Prefeitura
+            </CardTitle>
+            <CardDescription>Entre em contato com a administração municipal.</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <p className="text-foreground/90"><strong>Endereço:</strong> Rua Principal, Nº 123, Centro, Martins - RN, CEP: 59800-000</p>
+            <p className="text-foreground/90"><strong>Telefone Geral:</strong> (84) 3391-XXXX</p>
+            <p className="text-foreground/90"><strong>Email Geral:</strong> contato@martins.rn.gov.br (exemplo)</p>
+            <p className="text-foreground/90"><strong>Horário de Atendimento:</strong> Segunda a Sexta, das 08:00 às 14:00</p>
+            <Button variant="outline" asChild className="mt-2">
+                <Link href="https://www.martins.rn.gov.br" target="_blank" rel="noopener noreferrer">
+                    Acessar Portal da Prefeitura
+                </Link>
+            </Button>
+          </CardContent>
+          <CardFooter>
+            <p className="text-xs text-muted-foreground">
+                Para informações específicas de secretarias (Saúde, Educação, Obras, Turismo, etc.), consulte o portal oficial.
+            </p>
+          </CardFooter>
+        </Card>
+
       </div>
     </div>
   );
 }
+
