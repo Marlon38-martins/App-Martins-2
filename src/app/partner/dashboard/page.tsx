@@ -139,7 +139,7 @@ export default function PartnerDashboardPage() {
               {business.name}
             </CardTitle>
             <Button variant="outline" size="sm" asChild>
-                <Link href={`/partner/edit-business/${business.id}`}> {/* Placeholder for edit page */}
+                <Link href={`/partner/edit-business/${business.id}`}> 
                     <Edit3 className="mr-2 h-4 w-4" /> Editar Dados
                 </Link>
             </Button>
@@ -196,3 +196,4 @@ export default function PartnerDashboardPage() {
     </div>
   );
 }
+
