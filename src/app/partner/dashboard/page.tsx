@@ -11,7 +11,19 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter }
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Building, Tag, Edit3, ShieldAlert, ArrowLeft, PlusCircle, Eye } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Separator } from '@/components/ui/separator';
+import { 
+    Building, 
+    Tag, 
+    Edit3, 
+    ShieldAlert, 
+    ArrowLeft, 
+    PlusCircle, 
+    Eye, 
+    BarChart3, // For performance
+    Settings2 // For editing an offer
+} from 'lucide-react';
 import { BusinessTypeIcon } from '@/components/icons';
 
 const MOCK_PARTNER_EMAIL = 'partner@example.com'; // For demo purposes
@@ -62,22 +74,39 @@ export default function PartnerDashboardPage() {
 
   if (authLoading || isLoadingData) {
     return (
-      <div className="p-4 md:p-6">
-        <Skeleton className="h-10 w-1/3 mb-6" />
+      <div className="p-4 md:p-6 space-y-6">
+        <Skeleton className="h-10 w-1/3" />
         <Card>
           <CardHeader><Skeleton className="h-8 w-1/2" /></CardHeader>
           <CardContent className="space-y-4">
-            <Skeleton className="h-20 w-full" />
-            <Skeleton className="h-6 w-3/4" />
+            <div className="flex flex-col md:flex-row gap-4">
+                <Skeleton className="h-48 w-full md:w-1/3 rounded-md" />
+                <div className="flex-1 space-y-2">
+                    <Skeleton className="h-6 w-3/4" />
+                    <Skeleton className="h-4 w-full" />
+                    <Skeleton className="h-4 w-5/6" />
+                    <Skeleton className="h-4 w-1/2" />
+                </div>
+            </div>
             <Skeleton className="h-10 w-1/4 mt-2" />
           </CardContent>
+        </Card>
+         <Card>
+          <CardHeader><Skeleton className="h-8 w-1/2" /></CardHeader>
+          <CardContent className="space-y-4">
+            <Skeleton className="h-16 w-full" />
+            <Skeleton className="h-16 w-full" />
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader><Skeleton className="h-8 w-1/2" /></CardHeader>
+          <CardContent><Skeleton className="h-10 w-full" /></CardContent>
         </Card>
       </div>
     );
   }
 
   if (!user) {
-    // Should be handled by redirect, but as a fallback
     return <div className="p-6 text-center">Carregando informações do usuário...</div>;
   }
 
@@ -118,39 +147,75 @@ export default function PartnerDashboardPage() {
   }
 
   return (
-    <div className="p-4 md:p-6">
-      <div className="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
-          <h1 className="text-3xl font-bold text-primary">Painel do Meu Estabelecimento</h1>
-          <p className="text-muted-foreground">Gerencie as informações e ofertas do seu negócio.</p>
-        </div>
-         <Button asChild variant="outline">
-              <Link href={`/business/${business.id}`} target="_blank">
-                <Eye className="mr-2 h-4 w-4" /> Ver Página Pública
-              </Link>
-            </Button>
+    <div className="p-4 md:p-6 space-y-8">
+      <div className="mb-6">
+        <h1 className="text-3xl font-bold text-primary">Painel do Meu Estabelecimento</h1>
+        <p className="text-muted-foreground">Gerencie as informações e ofertas do seu negócio.</p>
       </div>
 
-      <Card className="mb-8 shadow-lg">
+      <Card className="shadow-lg">
         <CardHeader>
-          <div className="flex items-center justify-between">
-            <CardTitle className="text-2xl text-accent flex items-center">
-              {business.icon && <BusinessTypeIcon type={business.icon} className="mr-3 h-7 w-7" />}
-              {business.name}
-            </CardTitle>
-            <Button variant="outline" size="sm" asChild>
-                <Link href={`/partner/edit-business/${business.id}`}> 
-                    <Edit3 className="mr-2 h-4 w-4" /> Editar Dados
-                </Link>
-            </Button>
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+            <div className="flex items-center">
+              {business.icon && <BusinessTypeIcon type={business.icon} className="mr-3 h-8 w-8 text-accent" />}
+              <CardTitle className="text-2xl text-accent">{business.name}</CardTitle>
+            </div>
+            <div className="flex gap-2 mt-2 sm:mt-0">
+                <Button variant="outline" size="sm" asChild>
+                    <Link href={`/partner/edit-business/${business.id}`}> 
+                        <Edit3 className="mr-2 h-4 w-4" /> Editar Dados
+                    </Link>
+                </Button>
+                <Button variant="default" size="sm" asChild>
+                    <Link href={`/business/${business.id}`} target="_blank">
+                        <Eye className="mr-2 h-4 w-4" /> Ver Página Pública
+                    </Link>
+                </Button>
+            </div>
           </div>
-          <CardDescription>{business.type} - {business.address}</CardDescription>
         </CardHeader>
-        <CardContent>
-          <div className="relative aspect-video w-full max-w-md mb-4 rounded-md overflow-hidden mx-auto sm:mx-0">
-            <Image src={business.imageUrl} alt={`Imagem de ${business.name}`} layout="fill" objectFit="cover" data-ai-hint={`${business.type} exterior`} />
+        <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="md:col-span-1">
+            <div className="relative aspect-square w-full rounded-md overflow-hidden shadow-md">
+              <Image src={business.imageUrl} alt={`Imagem de ${business.name}`} layout="fill" objectFit="cover" data-ai-hint={`${business.type} exterior detail`} />
+            </div>
           </div>
-          <p className="text-foreground/90 line-clamp-3">{business.shortDescription}</p>
+          <div className="md:col-span-2 space-y-3">
+            <div>
+                <p className="text-sm font-medium text-muted-foreground">Tipo</p>
+                <p className="text-lg text-foreground">{business.type}</p>
+            </div>
+             <Separator />
+            <div>
+                <p className="text-sm font-medium text-muted-foreground">Endereço</p>
+                <p className="text-foreground">{business.address}</p>
+            </div>
+            {business.phoneNumber && (
+                <>
+                    <Separator />
+                    <div>
+                        <p className="text-sm font-medium text-muted-foreground">Telefone</p>
+                        <p className="text-foreground">{business.phoneNumber}</p>
+                    </div>
+                </>
+            )}
+            {business.website && (
+                 <>
+                    <Separator />
+                    <div>
+                        <p className="text-sm font-medium text-muted-foreground">Website</p>
+                        <a href={business.website.startsWith('http') ? business.website : `https://${business.website}`} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline block truncate">
+                            {business.website}
+                        </a>
+                    </div>
+                </>
+            )}
+            <Separator />
+            <div>
+                <p className="text-sm font-medium text-muted-foreground">Descrição Completa</p>
+                <p className="text-foreground/90 text-sm leading-relaxed">{business.fullDescription}</p>
+            </div>
+          </div>
         </CardContent>
       </Card>
 
@@ -171,29 +236,67 @@ export default function PartnerDashboardPage() {
         </CardHeader>
         <CardContent>
           {deals.length > 0 ? (
-            <ul className="space-y-3">
+            <div className="space-y-4">
               {deals.map(deal => (
-                <li key={deal.id} className="p-3 border rounded-md bg-card hover:bg-muted/50">
-                  <h4 className="font-semibold text-primary">{deal.title}</h4>
-                  <p className="text-sm text-muted-foreground line-clamp-2">{deal.description}</p>
-                  {deal.isPay1Get2 && <span className="text-xs font-bold text-accent">Pague 1 Leve 2</span>}
-                  {deal.discountPercentage && <span className="text-xs font-bold text-accent">{deal.discountPercentage}% OFF</span>}
-                </li>
+                <Card key={deal.id} className="bg-muted/30 p-4">
+                    <div className="flex flex-col sm:flex-row justify-between items-start gap-2">
+                        <div>
+                            <h4 className="font-semibold text-lg text-primary">{deal.title}</h4>
+                            <p className="text-sm text-muted-foreground line-clamp-2 mb-1">{deal.description}</p>
+                            <div>
+                                {deal.isPay1Get2 && <Badge variant="destructive" className="mr-1 bg-accent text-accent-foreground">Pague 1 Leve 2</Badge>}
+                                {deal.discountPercentage && <Badge variant="default" className="bg-primary text-primary-foreground">{deal.discountPercentage}% OFF</Badge>}
+                            </div>
+                        </div>
+                        <div className="mt-2 sm:mt-0 sm:ml-auto flex-shrink-0">
+                            <Button variant="outline" size="sm" disabled> {/* Placeholder */}
+                                <Settings2 className="mr-2 h-4 w-4" /> Editar Oferta
+                            </Button>
+                        </div>
+                    </div>
+                     <Separator className="my-3" />
+                    <p className="text-xs text-muted-foreground"><strong>Termos:</strong> {deal.termsAndConditions}</p>
+                </Card>
               ))}
-            </ul>
+            </div>
           ) : (
-            <p className="text-muted-foreground">Você ainda não cadastrou nenhuma oferta.</p>
+            <Alert>
+                <Tag className="h-4 w-4"/>
+                <AlertTitle>Nenhuma Oferta Cadastrada</AlertTitle>
+                <AlertDescription>Você ainda não cadastrou nenhuma oferta. Clique em "Adicionar Nova Oferta" para começar.</AlertDescription>
+            </Alert>
           )}
         </CardContent>
         <CardFooter>
             <p className="text-xs text-muted-foreground">
-                Mantenha suas ofertas atualizadas para atrair mais clientes!
+                Mantenha suas ofertas atualizadas para atrair mais clientes do Guia Mais!
             </p>
         </CardFooter>
       </Card>
 
-      {/* Placeholder for future sections like performance reports */}
+      <Card className="shadow-lg">
+        <CardHeader>
+            <CardTitle className="text-2xl text-accent flex items-center">
+                <BarChart3 className="mr-3 h-7 w-7" />
+                Visão Geral do Desempenho
+            </CardTitle>
+            <CardDescription>Acompanhe o impacto do Guia Mais no seu negócio.</CardDescription>
+        </CardHeader>
+        <CardContent>
+            <Alert variant="default" className="bg-secondary/20 border-secondary">
+                <BarChart3 className="h-4 w-4 text-secondary-foreground"/>
+                <AlertTitle className="text-secondary-foreground">Em Breve!</AlertTitle>
+                <AlertDescription>
+                Esta seção mostrará estatísticas sobre visualizações da sua página, resgates de ofertas e mais. Estamos trabalhando para trazer esses insights para você!
+                </AlertDescription>
+            </Alert>
+        </CardContent>
+         <CardFooter>
+            <p className="text-xs text-muted-foreground">
+                Utilize esses dados para otimizar suas ofertas e estratégias.
+            </p>
+        </CardFooter>
+      </Card>
     </div>
   );
 }
-
