@@ -12,11 +12,15 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useToast } from '@/hooks/use-toast';
-import { User, Mail, Phone as PhoneIcon, Lock, CheckCircle, Award, Sparkles, ShieldCheck, CreditCard, Star } from 'lucide-react';
+import { 
+    User, Mail, Phone as PhoneIcon, Lock, CheckCircle, Award, Sparkles, ShieldCheck, CreditCard, Star,
+    TicketPercent, MapPinned, WifiOff, Languages, XCircle, TrendingUp, Info
+} from 'lucide-react';
 import type { Plan, User as AppUser, Subscription } from '@/types/user';
 import { useRouter } from 'next/navigation';
 import { mockLogin } from '@/services/gramado-businesses';
 import { useAuth } from '@/hooks/use-auth-client';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
 const registrationFormSchema = z.object({
   name: z.string().min(3, { message: "Nome completo é obrigatório (mínimo 3 caracteres)." }),
@@ -25,7 +29,7 @@ const registrationFormSchema = z.object({
   cpf: z.string().regex(/^\d{3}\.\d{3}\.\d{3}-\d{2}$/, { message: "CPF inválido. Formato: 000.000.000-00" }),
   password: z.string().min(6, { message: "Senha deve ter pelo menos 6 caracteres." }),
   confirmPassword: z.string().min(6, { message: "Confirmação de senha é obrigatória." }),
-  selectedPlan: z.enum(['explorador', 'serrano_vip'], { required_error: "Por favor, selecione um plano." }),
+  selectedPlan: z.literal('premium_mensal', { required_error: "Por favor, selecione o plano Premium." }),
   agreeToTerms: z.boolean().refine(value => value === true, { message: "Você deve aceitar os termos e condições para prosseguir." }),
 }).refine(data => data.password === data.confirmPassword, {
   message: "As senhas não coincidem.",
@@ -34,42 +38,30 @@ const registrationFormSchema = z.object({
 
 type RegistrationFormValues = z.infer<typeof registrationFormSchema>;
 
-const plans: Plan[] = [
-  {
-    id: 'explorador',
-    name: 'Plano Explorador',
+const premiumPlan: Plan = {
+    id: 'premium_mensal',
+    name: 'Plano Premium Mensal',
     price: 'R$ 19,90/mês',
     priceMonthly: 19.90,
-    Icon: Award,
-    features: [
-      'Acesso a descontos básicos em parceiros selecionados.',
-      'Newsletter com novidades e eventos de Martins.',
-      'Suporte prioritário para dúvidas sobre o clube.',
-    ],
-    bgColor: 'bg-secondary/20',
-    borderColor: 'border-secondary',
-    textColor: 'text-secondary-foreground'
-  },
-  {
-    id: 'serrano_vip',
-    name: 'Plano Serrano VIP',
-    price: 'R$ 49,90/mês',
-    priceMonthly: 49.90,
     Icon: Sparkles,
-    features: [
-      'Todos os benefícios do plano Explorador.',
-      'Descontos maiores e ofertas VIP exclusivas (incluindo Pague 1 Leve 2) em restaurantes, passeios, lojas e atrações locais.',
-      'Acesso antecipado a promoções e pacotes.',
-      'Convites para eventos especiais em Martins.',
-      'Roteiros personalizados e acesso offline ao conteúdo do app.',
-      'Atendimento VIP e suporte prioritário (inclusive no seu idioma).',
-      'Programa de recompensas por apoiar o comércio local.',
-      'Cartão de membro VIP digital personalizado.',
+    features: [ // Features for the main card display if needed, now we use a dedicated section
+        { text: 'Descontos exclusivos em parceiros', IconComp: TicketPercent },
+        { text: 'Roteiros personalizados e acesso offline', IconComp: MapPinned },
+        { text: 'Atendimento VIP e suporte multilíngue', IconComp: Languages },
+        { text: 'Programa de recompensas por apoiar o comércio local', IconComp: Award },
     ],
     bgColor: 'bg-primary/20',
     borderColor: 'border-primary',
     textColor: 'text-primary'
-  },
+};
+
+
+const comparisonFeatures = [
+    { name: 'Acesso a roteiros locais', free: true, premium: true },
+    { name: 'Descontos em parceiros', free: false, premium: true },
+    { name: 'Suporte multilíngue', free: false, premium: true },
+    { name: 'Acesso Offline', free: false, premium: true },
+    { name: 'Conteúdo VIP exclusivo', free: false, premium: true },
 ];
 
 export default function JoinPage() {
@@ -87,7 +79,7 @@ export default function JoinPage() {
       cpf: '',
       password: '',
       confirmPassword: '',
-      selectedPlan: undefined,
+      selectedPlan: 'premium_mensal', // Default to premium
       agreeToTerms: false,
     },
   });
@@ -101,24 +93,23 @@ export default function JoinPage() {
         id: 'mock-user-' + Date.now(),
         email: data.email,
         name: data.name,
-        photoURL: `https://picsum.photos/seed/${data.email}/100/100`
+        photoURL: `https://placehold.co/100x100.png`
       };
       const mockSubscription: Subscription = {
         id: 'sub-mock-' + Date.now(),
         userId: mockUser.id,
-        planId: data.selectedPlan,
+        planId: data.selectedPlan, // 'premium_mensal'
         startDate: new Date(),
         endDate: new Date(new Date().setFullYear(new Date().getFullYear() + 1)), 
         status: 'active', 
       };
       
-      mockLogin(mockUser, mockSubscription); // This service function sets localStorage
-      signInUser(mockUser, mockSubscription); // Update auth context
+      mockLogin(mockUser, mockSubscription);
+      signInUser(mockUser, mockSubscription);
 
-      console.log('Registration Data:', data);
       toast({
-        title: 'Cadastro Realizado com Sucesso!',
-        description: `Bem-vindo(a) ao Guia Mais, ${data.name}! Seu plano ${plans.find(p => p.id === data.selectedPlan)?.name} está ativo.`,
+        title: 'Inscrição Premium Realizada!',
+        description: `Bem-vindo(a) ao Guia Mais Premium, ${data.name}! Seu plano está ativo.`,
         variant: 'default',
       });
       form.reset();
@@ -127,8 +118,8 @@ export default function JoinPage() {
     } catch (error: any) {
       console.error('Registration Error:', error);
       toast({
-        title: 'Erro no Cadastro',
-        description: error.message || 'Ocorreu um erro durante o cadastro. Tente novamente.',
+        title: 'Erro na Inscrição',
+        description: error.message || 'Ocorreu um erro. Tente novamente.',
         variant: 'destructive',
       });
     } finally {
@@ -137,75 +128,97 @@ export default function JoinPage() {
   };
 
   return (
-    <div>
+    <div className="pb-24"> {/* Padding bottom to avoid overlap with fixed button */}
       <section className="mb-10 text-center">
-        <h2 className="mb-2 text-3xl font-bold tracking-tight text-primary md:text-4xl">
-          Junte-se ao Clube Guia Mais
-        </h2>
-        <p className="text-lg text-foreground/80">
-          Escolha seu plano e comece a aproveitar vantagens exclusivas em Martins, RN!
+        <Sparkles className="mx-auto h-16 w-16 text-primary mb-4" />
+        <h1 className="mb-2 text-3xl font-bold tracking-tight text-primary md:text-4xl">
+          Assinatura Premium Guia Mais
+        </h1>
+        <p className="text-lg text-foreground/80 max-w-2xl mx-auto">
+          Descubra o melhor da cidade com o plano Premium e aproveite experiências inesquecíveis!
         </p>
       </section>
 
-      <section className="mb-12 text-center">
-        <div className="mb-8 rounded-lg border border-accent/30 bg-accent/10 p-6 shadow-md">
-          <h3 className="mb-3 text-2xl font-semibold text-accent flex items-center justify-center">
-            <Star className="mr-2 h-7 w-7 text-yellow-400" />
-            Descubra o melhor da cidade com o Guia Mais!
-          </h3>
-          <p className="text-md text-accent-foreground/90 max-w-xl mx-auto">
-            Assine um dos nossos planos e aproveite experiências exclusivas. 
-            Sua assinatura também ajuda a cidade a crescer e valoriza o comércio local. 💚
-          </p>
+      <section className="mb-12">
+        <h2 className="mb-6 text-center text-2xl font-semibold text-accent">Seus Benefícios Exclusivos:</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {[
+            { icon: TicketPercent, text: 'Descontos Exclusivos', hint: "exclusive discounts" },
+            { icon: MapPinned, text: 'Roteiros Personalizados', hint: "custom routes" },
+            { icon: WifiOff, text: 'Acesso Offline', hint: "offline access" },
+            { icon: Award, text: 'Ganhe Pontos e Recompensas', hint: "points rewards" },
+          ].map((benefit, index) => (
+            <Card key={index} className="text-center shadow-md hover:shadow-lg transition-shadow bg-card">
+              <CardContent className="pt-6">
+                <benefit.icon className="mx-auto h-12 w-12 text-primary mb-3" />
+                <p className="font-medium text-card-foreground">{benefit.text}</p>
+              </CardContent>
+            </Card>
+          ))}
         </div>
       </section>
 
-      <div className="mb-12 grid grid-cols-1 gap-8 md:grid-cols-2">
-        {plans.map((plan) => (
-          <Card key={plan.id} className={`shadow-xl flex flex-col ${plan.bgColor || ''} border-2 ${plan.borderColor || 'border-transparent'}`}>
+      <section className="mb-12">
+        <Card className="shadow-xl border-accent">
             <CardHeader>
-              <div className="flex items-center gap-3">
-                {plan.Icon && <plan.Icon className={`h-10 w-10 ${plan.textColor || 'text-primary'}`} />}
-                <CardTitle className={`text-2xl font-semibold ${plan.textColor || 'text-primary'}`}>{plan.name}</CardTitle>
-              </div>
-              <CardDescription className="text-xl font-medium text-muted-foreground pt-1">{plan.price}</CardDescription>
+                <CardTitle className="text-2xl text-accent text-center">🔓 Grátis vs. 🔑 Premium</CardTitle>
+                <CardDescription className="text-center">Veja a diferença e escolha o melhor para sua viagem!</CardDescription>
             </CardHeader>
-            <CardContent className="flex-grow">
-              <ul className="space-y-2">
-                {plan.features.map((feature, index) => (
-                  <li key={index} className="flex items-start">
-                    <CheckCircle className="mr-2 mt-1 h-5 w-5 shrink-0 text-green-500" />
-                    <span className="text-foreground/90">{feature}</span>
-                  </li>
-                ))}
-              </ul>
+            <CardContent>
+                <Table>
+                    <TableHeader>
+                        <TableRow>
+                            <TableHead className="w-[60%] text-left">Recurso</TableHead>
+                            <TableHead className="text-center">Grátis</TableHead>
+                            <TableHead className="text-center text-primary font-semibold">Premium</TableHead>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        {comparisonFeatures.map((feature) => (
+                            <TableRow key={feature.name}>
+                                <TableCell className="font-medium text-left">{feature.name}</TableCell>
+                                <TableCell className="text-center">
+                                    {feature.free ? <CheckCircle className="h-5 w-5 text-green-500 mx-auto" /> : <XCircle className="h-5 w-5 text-muted-foreground mx-auto" />}
+                                </TableCell>
+                                <TableCell className="text-center">
+                                    {feature.premium ? <CheckCircle className="h-5 w-5 text-green-500 mx-auto" /> : <XCircle className="h-5 w-5 text-muted-foreground mx-auto" />}
+                                </TableCell>
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
             </CardContent>
-            <CardFooter>
-                <Button 
-                    variant={plan.id === 'serrano_vip' ? 'default' : 'outline'} 
-                    className="w-full"
-                    onClick={() => form.setValue('selectedPlan', plan.id as 'explorador' | 'serrano_vip', { shouldValidate: true })}
-                >
-                    Selecionar Plano {plan.name.split(' ')[1]}
-                </Button>
-            </CardFooter>
-          </Card>
-        ))}
-      </div>
+        </Card>
+      </section>
+
+      <section className="mb-12 text-center">
+        <Card className="bg-secondary/20 border-secondary p-6 shadow-md">
+          <CardTitle className="text-xl text-secondary-foreground mb-2 flex items-center justify-center">
+            <Info className="mr-2 h-6 w-6"/> Experimente o Guia Mais!
+          </CardTitle>
+          <CardDescription className="text-secondary-foreground/90">
+            “Veja um roteiro exclusivo gratuito por 24h!” (Funcionalidade de teste em breve)
+          </CardDescription>
+          <Button variant="outline" className="mt-4 border-secondary text-secondary-foreground hover:bg-secondary/30">
+            Ativar Teste Gratuito (Simulado)
+          </Button>
+        </Card>
+      </section>
 
       <Card className="shadow-xl">
         <CardHeader>
           <CardTitle className="flex items-center text-2xl text-primary">
             <User className="mr-3 h-7 w-7 text-accent" />
-            Complete seu Cadastro
+            Complete seus Dados para Assinar
           </CardTitle>
           <CardDescription>
-            Preencha seus dados abaixo para se tornar um membro do Guia Mais.
+            Preencha para se tornar um membro Guia Mais Premium. ({premiumPlan.price})
           </CardDescription>
         </CardHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <CardContent className="space-y-6">
+              {/* Registration Fields */}
               <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                 <FormField
                   control={form.control}
@@ -291,28 +304,25 @@ export default function JoinPage() {
                 />
               </div>
 
+              {/* Hidden field for plan selection, always premium_mensal */}
               <FormField
                 control={form.control}
                 name="selectedPlan"
                 render={({ field }) => (
-                  <FormItem className="space-y-3">
-                    <FormLabel className="text-base">Escolha seu Plano Guia Mais</FormLabel>
+                  <FormItem className="hidden">
                     <FormControl>
                       <RadioGroup
                         onValueChange={field.onChange}
-                        defaultValue={field.value}
-                        className="flex flex-col space-y-2 md:flex-row md:space-y-0 md:space-x-4"
+                        value={field.value} // Controlled component
                       >
-                        {plans.map(plan => (
-                           <FormItem key={plan.id} className="flex items-center space-x-3 space-y-0">
-                           <FormControl>
-                             <RadioGroupItem value={plan.id} />
-                           </FormControl>
-                           <FormLabel className="font-normal cursor-pointer">
-                             {plan.name} ({plan.price})
-                           </FormLabel>
-                         </FormItem>
-                        ))}
+                        <FormItem className="flex items-center space-x-3 space-y-0">
+                          <FormControl>
+                            <RadioGroupItem value="premium_mensal" />
+                          </FormControl>
+                          <FormLabel className="font-normal cursor-pointer">
+                            {premiumPlan.name} ({premiumPlan.price})
+                          </FormLabel>
+                        </FormItem>
                       </RadioGroup>
                     </FormControl>
                     <FormMessage />
@@ -347,20 +357,22 @@ export default function JoinPage() {
               
               <p className="flex items-center text-sm text-muted-foreground">
                 <ShieldCheck className="mr-2 h-4 w-4 text-green-500" />
-                Seus dados estão seguros conosco. (Simulação de Cadastro)
+                Seus dados estão seguros conosco. Pagamento seguro (Simulação).
               </p>
-
             </CardContent>
-            <CardFooter>
-              <Button type="submit" size="lg" className="w-full bg-primary hover:bg-primary/90" disabled={isSubmitting}>
-                <CreditCard className="mr-2 h-5 w-5" />
-                {isSubmitting ? 'Processando Inscrição...' : 'Concluir Inscrição (Simulado)'}
-              </Button>
-            </CardFooter>
+            {/* Sticky Footer Button Section */}
+            <div className="fixed bottom-0 left-0 right-0 z-50 bg-background/90 p-4 backdrop-blur-sm border-t border-border shadow-t-lg">
+                <Button type="submit" size="lg" className="w-full bg-accent hover:bg-accent/80 text-accent-foreground text-lg py-3" disabled={isSubmitting}>
+                    <CheckCircle className="mr-2 h-6 w-6" />
+                    {isSubmitting ? 'Processando...' : `Assinar Agora (${premiumPlan.price})`}
+                </Button>
+                <p className="mt-3 text-center text-xs text-muted-foreground">
+                    💚 Sua assinatura apoia o comércio local!
+                </p>
+            </div>
           </form>
         </Form>
       </Card>
     </div>
   );
 }
-
