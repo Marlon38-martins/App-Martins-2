@@ -1,7 +1,7 @@
 // src/app/join/page.tsx
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm, type SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -14,7 +14,7 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { useToast } from '@/hooks/use-toast';
 import { 
     User, Mail, Phone as PhoneIcon, Lock, CheckCircle, Award, Sparkles, ShieldCheck, CreditCard, Star,
-    TicketPercent, MapPinned, WifiOff, Languages, XCircle, TrendingUp, Info, CalendarDays
+    TicketPercent, MapPinned, WifiOff, Languages, XCircle, TrendingUp, Info, CalendarDays, Route as RouteIcon
 } from 'lucide-react';
 import type { Plan, User as AppUser, Subscription } from '@/types/user';
 import { useRouter } from 'next/navigation';
@@ -22,6 +22,7 @@ import { mockLogin } from '@/services/gramado-businesses';
 import { useAuth } from '@/hooks/use-auth-client';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { cn } from '@/lib/utils';
+import { Badge } from "@/components/ui/badge"; // Added import for Badge
 
 const registrationFormSchema = z.object({
   name: z.string().min(3, { message: "Nome completo é obrigatório (mínimo 3 caracteres)." }),
@@ -41,7 +42,7 @@ type RegistrationFormValues = z.infer<typeof registrationFormSchema>;
 
 const premiumFeatures: Plan['features'] = [
     { text: 'Descontos exclusivos em parceiros', IconComp: TicketPercent },
-    { text: 'Roteiros personalizados e acesso offline', IconComp: MapPinned },
+    { text: 'Roteiros personalizados e acesso offline', IconComp: RouteIcon },
     { text: 'Suporte multilíngue', IconComp: Languages },
     { text: 'Programa de recompensas por apoiar o comércio local', IconComp: Award },
     { text: 'Acesso Offline aos seus roteiros e cupons', IconComp: WifiOff },
@@ -56,7 +57,7 @@ const premiumPlans: Plan[] = [
     priceNumeric: 19.90,
     billingCycle: 'mês',
     features: premiumFeatures,
-    Icon: CalendarDays, // Using CalendarDays for monthly billing
+    Icon: CalendarDays,
     bgColor: 'bg-primary/10',
     borderColor: 'border-primary/30',
     textColor: 'text-primary',
@@ -64,26 +65,28 @@ const premiumPlans: Plan[] = [
   {
     id: 'premium_anual',
     name: 'Plano Premium Anual',
-    price: 'R$ 199,00', // Example: R$ 199 / 12 = R$ 16,58
+    price: 'R$ 199,00', 
     priceNumeric: 199.00,
     billingCycle: 'ano',
     priceAnnualDisplay: "R$ 199,00/ano",
     annualEquivalentMonthlyPrice: "(equivale a R$ 16,58/mês)",
     features: premiumFeatures,
-    Icon: Sparkles, // Using Sparkles for annual (best value)
+    Icon: Sparkles, 
     bgColor: 'bg-accent/10',
     borderColor: 'border-accent',
     textColor: 'text-accent',
-    highlight: true, // Mark as best value
+    highlight: true, 
   }
 ];
 
 
 const comparisonFeatures = [
     { name: 'Acesso a roteiros locais', free: true, premium: true },
-    { name: 'Descontos em parceiros', free: false, premium: true },
+    { name: 'Descontos exclusivos em parceiros', free: false, premium: true },
+    { name: 'Roteiros personalizados e acesso offline', free: false, premium: true },
     { name: 'Suporte multilíngue', free: false, premium: true },
-    { name: 'Acesso Offline', free: false, premium: true },
+    { name: 'Programa de recompensas', free: false, premium: true},
+    { name: 'Acesso Offline aos seus roteiros e cupons', free: false, premium: true },
     { name: 'Conteúdo VIP exclusivo', free: false, premium: true },
 ];
 
@@ -92,7 +95,8 @@ export default function JoinPage() {
   const router = useRouter();
   const { signInUser } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [currentSelectedPlanId, setCurrentSelectedPlanId] = useState<Plan['id']>('premium_mensal');
+  const [currentSelectedPlanId, setCurrentSelectedPlanId] = useState<Plan['id']>(premiumPlans[0].id);
+
 
   const form = useForm<RegistrationFormValues>({
     resolver: zodResolver(registrationFormSchema),
@@ -103,7 +107,7 @@ export default function JoinPage() {
       cpf: '',
       password: '',
       confirmPassword: '',
-      selectedPlan: 'premium_mensal',
+      selectedPlan: premiumPlans[0].id,
       agreeToTerms: false,
     },
   });
@@ -159,7 +163,7 @@ export default function JoinPage() {
   };
 
   return (
-    <div className="pb-24"> {/* Padding bottom to avoid overlap with fixed button */}
+    <div className="pb-24">
       <section className="mb-10 text-center">
         <Sparkles className="mx-auto h-16 w-16 text-primary mb-4" />
         <h1 className="mb-2 text-3xl font-bold tracking-tight text-primary md:text-4xl">
@@ -173,7 +177,7 @@ export default function JoinPage() {
       <section className="mb-12">
         <h2 className="mb-6 text-center text-2xl font-semibold text-accent">Seus Benefícios Exclusivos:</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {premiumFeatures.slice(0, 4).map((benefit, index) => ( // Show first 4 prominent benefits
+          {premiumFeatures.slice(0, 4).map((benefit, index) => ( 
             <Card key={index} className="text-center shadow-md hover:shadow-lg transition-shadow bg-card">
               <CardContent className="pt-6">
                 <benefit.IconComp className="mx-auto h-12 w-12 text-primary mb-3" />
@@ -244,7 +248,6 @@ export default function JoinPage() {
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <CardContent className="space-y-6">
-              {/* Plan Selection */}
               <FormField
                 control={form.control}
                 name="selectedPlan"
@@ -268,7 +271,7 @@ export default function JoinPage() {
                                 field.value === plan.id && "border-2 border-primary ring-2 ring-primary ring-offset-2",
                                 plan.highlight && "border-accent hover:border-accent ring-accent"
                             )}
-                           onClick={() => { // Allow clicking the whole card to select
+                           onClick={() => { 
                                 field.onChange(plan.id);
                                 setCurrentSelectedPlanId(plan.id);
                             }}
@@ -286,7 +289,7 @@ export default function JoinPage() {
                             <p className={cn("text-2xl font-bold", plan.textColor)}>{plan.price} <span className="text-sm font-normal text-muted-foreground">/{plan.billingCycle}</span></p>
                             {plan.annualEquivalentMonthlyPrice && <p className="text-xs text-muted-foreground">{plan.annualEquivalentMonthlyPrice}</p>}
                              <ul className="mt-2 space-y-1 text-xs text-muted-foreground">
-                                {plan.features.slice(0,2).map(feature => ( // Show first 2 features as teaser
+                                {plan.features.slice(0,2).map(feature => ( 
                                     <li key={feature.text} className="flex items-center">
                                         <CheckCircle className="mr-1.5 h-3 w-3 text-green-500"/> {feature.text}
                                     </li>
@@ -302,8 +305,6 @@ export default function JoinPage() {
                 )}
               />
 
-
-              {/* Registration Fields */}
               <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                 <FormField
                   control={form.control}
@@ -419,7 +420,6 @@ export default function JoinPage() {
                 Seus dados estão seguros conosco. Pagamento seguro (Simulação).
               </p>
             </CardContent>
-            {/* Sticky Footer Button Section */}
             <div className="fixed bottom-0 left-0 right-0 z-50 bg-background/90 p-4 backdrop-blur-sm border-t border-border shadow-t-lg">
                 <Button type="submit" size="lg" className="w-full bg-accent hover:bg-accent/80 text-accent-foreground text-lg py-3" disabled={isSubmitting}>
                     <CheckCircle className="mr-2 h-6 w-6" />
@@ -435,3 +435,4 @@ export default function JoinPage() {
     </div>
   );
 }
+
