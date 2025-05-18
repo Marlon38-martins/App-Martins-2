@@ -12,7 +12,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useToast } from '@/hooks/use-toast';
-import { User, Mail, Phone as PhoneIcon, Lock, CheckCircle, Award, Sparkles, ShieldCheck, CreditCard } from 'lucide-react';
+import { User, Mail, Phone as PhoneIcon, Lock, CheckCircle, Award, Sparkles, ShieldCheck, CreditCard, Star } from 'lucide-react';
 import type { Plan, User as AppUser, Subscription } from '@/types/user';
 import { useRouter } from 'next/navigation';
 import { mockLogin } from '@/services/gramado-businesses';
@@ -58,9 +58,12 @@ const plans: Plan[] = [
     Icon: Sparkles,
     features: [
       'Todos os benefícios do plano Explorador.',
-      'Descontos maiores e ofertas VIP exclusivas (incluindo Pague 1 Leve 2).',
+      'Descontos maiores e ofertas VIP exclusivas (incluindo Pague 1 Leve 2) em restaurantes, passeios, lojas e atrações locais.',
       'Acesso antecipado a promoções e pacotes.',
       'Convites para eventos especiais em Martins.',
+      'Roteiros personalizados e acesso offline ao conteúdo do app.',
+      'Atendimento VIP e suporte prioritário (inclusive no seu idioma).',
+      'Programa de recompensas por apoiar o comércio local.',
       'Cartão de membro VIP digital personalizado.',
     ],
     bgColor: 'bg-primary/20',
@@ -115,7 +118,7 @@ export default function JoinPage() {
       console.log('Registration Data:', data);
       toast({
         title: 'Cadastro Realizado com Sucesso!',
-        description: `Bem-vindo(a) ao Martins Prime, ${data.name}! Seu plano ${plans.find(p => p.id === data.selectedPlan)?.name} está ativo.`,
+        description: `Bem-vindo(a) ao Guia Mais, ${data.name}! Seu plano ${plans.find(p => p.id === data.selectedPlan)?.name} está ativo.`,
         variant: 'default',
       });
       form.reset();
@@ -137,11 +140,24 @@ export default function JoinPage() {
     <div>
       <section className="mb-10 text-center">
         <h2 className="mb-2 text-3xl font-bold tracking-tight text-primary md:text-4xl">
-          Junte-se ao Clube Martins Prime
+          Junte-se ao Clube Guia Mais
         </h2>
         <p className="text-lg text-foreground/80">
           Escolha seu plano e comece a aproveitar vantagens exclusivas em Martins, RN!
         </p>
+      </section>
+
+      <section className="mb-12 text-center">
+        <div className="mb-8 rounded-lg border border-accent/30 bg-accent/10 p-6 shadow-md">
+          <h3 className="mb-3 text-2xl font-semibold text-accent flex items-center justify-center">
+            <Star className="mr-2 h-7 w-7 text-yellow-400" />
+            Descubra o melhor da cidade com o Guia Mais!
+          </h3>
+          <p className="text-md text-accent-foreground/90 max-w-xl mx-auto">
+            Assine um dos nossos planos e aproveite experiências exclusivas. 
+            Sua assinatura também ajuda a cidade a crescer e valoriza o comércio local. 💚
+          </p>
+        </div>
       </section>
 
       <div className="mb-12 grid grid-cols-1 gap-8 md:grid-cols-2">
@@ -184,7 +200,7 @@ export default function JoinPage() {
             Complete seu Cadastro
           </CardTitle>
           <CardDescription>
-            Preencha seus dados abaixo para se tornar um membro do Martins Prime.
+            Preencha seus dados abaixo para se tornar um membro do Guia Mais.
           </CardDescription>
         </CardHeader>
         <Form {...form}>
@@ -280,7 +296,7 @@ export default function JoinPage() {
                 name="selectedPlan"
                 render={({ field }) => (
                   <FormItem className="space-y-3">
-                    <FormLabel className="text-base">Escolha seu Plano Martins Prime</FormLabel>
+                    <FormLabel className="text-base">Escolha seu Plano Guia Mais</FormLabel>
                     <FormControl>
                       <RadioGroup
                         onValueChange={field.onChange}
@@ -318,7 +334,7 @@ export default function JoinPage() {
                     </FormControl>
                     <div className="space-y-1 leading-none">
                       <FormLabel htmlFor="agreeToTerms" className="cursor-pointer">
-                        Li e concordo com os Termos e Condições de Uso e a Política de Privacidade do Martins Prime.
+                        Li e concordo com os Termos e Condições de Uso e a Política de Privacidade do Guia Mais.
                       </FormLabel>
                       <FormDescription>
                         Ao marcar esta caixa, você confirma sua adesão ao clube.
@@ -347,3 +363,4 @@ export default function JoinPage() {
     </div>
   );
 }
+
