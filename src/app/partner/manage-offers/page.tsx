@@ -19,6 +19,8 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
 import { ArrowLeft, Tag, PlusCircle, ShieldAlert } from 'lucide-react';
+import { Skeleton } from '@/components/ui/skeleton'; // Added import for Skeleton
+import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert'; // Added for access denied
 
 const MOCK_PARTNER_EMAIL = 'partner@example.com'; // For demo purposes
 const MOCK_PARTNER_BUSINESS_ID = '1'; // Partner "owns" Restaurante Mirante da Serra
@@ -137,7 +139,7 @@ export default function ManagePartnerOffersPage() {
   if (authLoading || isLoadingBusiness) {
     return (
         <div className="p-4 md:p-6">
-            <Skeleton className="h-10 w-1/3 mb-6" />
+            <Skeleton className="mb-6 h-10 w-1/3" />
             <Skeleton className="h-96 w-full" />
         </div>
     );
@@ -151,7 +153,7 @@ export default function ManagePartnerOffersPage() {
     return (
       <div className="p-4 md:p-6 flex flex-col items-center justify-center min-h-[calc(100vh-200px)]">
         <Alert variant="destructive" className="max-w-md text-center">
-          <ShieldAlert className="h-6 w-6 mx-auto mb-2" />
+          <ShieldAlert className="mx-auto mb-2 h-6 w-6" />
           <AlertTitle>Acesso Negado</AlertTitle>
           <AlertDescription>
             Esta funcionalidade é exclusiva para parceiros.
