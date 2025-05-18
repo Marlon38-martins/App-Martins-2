@@ -17,13 +17,13 @@ const renderStars = (rating?: number) => {
   const stars = [];
 
   for (let i = 0; i < fullStars; i++) {
-    stars.push(<Star key={`full-${i}`} className="h-3 w-3 text-yellow-400 fill-yellow-400" />);
+    stars.push(<Star key={`full-${i}`} className="h-4 w-4 text-yellow-400 fill-yellow-400" />);
   }
   if (halfStar) {
-    stars.push(<Star key="half" className="h-3 w-3 text-yellow-400 fill-yellow-200" />);
+    stars.push(<Star key="half" className="h-4 w-4 text-yellow-400 fill-yellow-200" />);
   }
   for (let i = 0; i < (5 - fullStars - (halfStar ? 1 : 0)); i++) {
-    stars.push(<Star key={`empty-${i}-card`} className="h-3 w-3 text-muted-foreground/50" />);
+    stars.push(<Star key={`empty-${i}-card`} className="h-4 w-4 text-muted-foreground/50" />);
   }
   return <div className="flex items-center">{stars}</div>;
 };
@@ -69,3 +69,4 @@ export function BusinessCard({ business }: BusinessCardProps) {
     </Card>
   );
 }
+
