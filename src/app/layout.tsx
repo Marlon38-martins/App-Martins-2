@@ -28,7 +28,9 @@ import {
   Landmark as AttractionIcon, 
   Trees,
   LayoutGrid,
-  Info // Added Info icon
+  Info,
+  Briefcase, // For Partner Panel
+  Tag // For Manage Offers
 } from 'lucide-react'; 
 import { Header } from '@/components/layout/header';
 import { AuthProviderClient } from '@/hooks/use-auth-client';
@@ -55,7 +57,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'Martins Prime',
+  title: 'Guia Mais',
   description: 'Seu clube de vantagens em Martins, RN!',
 };
 
@@ -149,19 +151,48 @@ export default function RootLayout({
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
+
+                  {/* Partner/Admin Section */}
+                  <SidebarMenuItem>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <SidebarMenuButton tooltip={{content: "Painel do Parceiro", side:"right"}} className="w-full">
+                          <Briefcase />
+                          <span className="group-data-[collapsible=icon]:hidden">Painel do Parceiro</span>
+                        </SidebarMenuButton>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent 
+                        side="right" 
+                        align="start" 
+                        className="w-56 bg-popover text-popover-foreground ml-2 group-data-[collapsible=icon]:ml-0"
+                      >
+                        <DropdownMenuItem asChild>
+                          <Link href="/partner/dashboard" className="flex items-center cursor-pointer">
+                            <LayoutDashboard className="mr-2 h-4 w-4" />
+                            Meu Estabelecimento
+                          </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Link href="/partner/manage-offers" className="flex items-center cursor-pointer">
+                            <Tag className="mr-2 h-4 w-4" />
+                            Gerenciar Minhas Ofertas
+                          </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem asChild>
+                           <Link href="/admin/add-establishment" className="flex items-center cursor-pointer">
+                            <UserPlus className="mr-2 h-4 w-4" /> {/* Or BuildingPlus icon */}
+                            Adicionar Novo Estabelecimento
+                          </Link>
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </SidebarMenuItem>
                   
                   <CurrentUserDisplay />
                   
                 </SidebarMenu>
               </SidebarContent>
-                 <SidebarMenuItem>
-                    <SidebarMenuButton asChild tooltip={{content: "Administração", side:"right"}}>
-                      <Link href="/admin/add-establishment">
-                        <LayoutDashboard />
-                        <span className="group-data-[collapsible=icon]:hidden">Administração</span>
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
             </Sidebar>
 
             <SidebarInset>
@@ -171,7 +202,7 @@ export default function RootLayout({
               </main>
               <footer className="bg-background py-4 text-center text-sm text-muted-foreground border-t">
                 <div className="px-4">
-                  © {new Date().getFullYear()} Martins Prime. Todos os direitos reservados.
+                  © {new Date().getFullYear()} Guia Mais. Todos os direitos reservados.
                 </div>
               </footer>
             </SidebarInset>
