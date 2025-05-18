@@ -11,7 +11,7 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
-import { UserCircle, Bell, ShieldLock, CreditCard, LogOut } from 'lucide-react';
+import { UserCircle, Bell, Shield, CreditCard, LogOut } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/use-auth-client'; // Using the updated hook
 import { mockLogout } from '@/services/gramado-businesses'; // Directly use mockLogout for clarity
@@ -134,7 +134,7 @@ export default function SettingsPage() {
 
       <Card className="mb-8 shadow-md">
         <CardHeader>
-          <CardTitle className="flex items-center text-xl text-primary"><ShieldLock className="mr-2 h-6 w-6"/> Segurança</CardTitle>
+          <CardTitle className="flex items-center text-xl text-primary"><Shield className="mr-2 h-6 w-6"/> Segurança</CardTitle>
           <CardDescription>Gerencie as configurações de segurança da sua conta.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
