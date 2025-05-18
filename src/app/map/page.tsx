@@ -5,7 +5,7 @@ import type { GramadoBusiness} from '@/services/gramado-businesses';
 import { getGramadoBusinesses } from '@/services/gramado-businesses';
 import { useEffect, useState, useMemo } from 'react';
 import Link from 'next/link';
-import Image from 'next/image'; // Added import for Image
+import Image from 'next/image';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
@@ -42,10 +42,15 @@ export default function MapPage() {
   const mapPoints = useMemo((): MapPoint[] => {
     if (!businesses || businesses.length === 0) return [];
 
-    const latitudes = businesses.map(b => b.latitude).filter(lat => typeof lat === 'number');
-    const longitudes = businesses.map(b => b.longitude).filter(lon => typeof lon === 'number');
+    // Filter businesses that have valid latitude and longitude
+    const locatableBusinesses = businesses.filter(
+      b => typeof b.latitude === 'number' && typeof b.longitude === 'number'
+    );
 
-    if (latitudes.length === 0 || longitudes.length === 0) return [];
+    if (locatableBusinesses.length === 0) return [];
+
+    const latitudes = locatableBusinesses.map(b => b.latitude);
+    const longitudes = locatableBusinesses.map(b => b.longitude);
 
     const minLat = Math.min(...latitudes);
     const maxLat = Math.max(...latitudes);
@@ -55,15 +60,17 @@ export default function MapPage() {
     const latRange = maxLat - minLat;
     const lonRange = maxLon - minLon;
 
-    return businesses.map(business => {
+    // Map only locatable businesses to points
+    return locatableBusinesses.map(business => {
       let x = 50; // Default to center
       let y = 50; // Default to center
 
-      if (typeof business.longitude === 'number') {
-        x = lonRange > 0 ? ((business.longitude - minLon) / lonRange) * 90 + 5 : 50; // Scale to 5-95%
+      // Ensure longitude and latitude are numbers before calculation
+      if (lonRange > 0 && typeof business.longitude === 'number') {
+        x = ((business.longitude - minLon) / lonRange) * 90 + 5; // Scale to 5-95%
       }
-      if (typeof business.latitude === 'number') {
-        y = latRange > 0 ? (1 - (business.latitude - minLat) / latRange) * 90 + 5 : 50; // Scale to 5-95% and invert Y
+      if (latRange > 0 && typeof business.latitude === 'number') {
+        y = (1 - (business.latitude - minLat) / latRange) * 90 + 5; // Scale to 5-95% and invert Y
       }
       
       return { ...business, x, y };
@@ -101,7 +108,7 @@ export default function MapPage() {
             <MapPin className="mb-4 h-16 w-16 text-muted-foreground" />
             <h3 className="text-xl font-semibold text-foreground">Nenhum ponto para exibir no mapa</h3>
             <p className="text-muted-foreground">
-              Não encontramos estabelecimentos com dados de localização para exibir no mapa.
+              Não encontramos estabelecimentos com dados de localização válidos para exibir no mapa.
             </p>
           </div>
       )}
@@ -110,12 +117,12 @@ export default function MapPage() {
         <TooltipProvider>
           <div className="relative h-[500px] w-full rounded-lg border shadow-lg md:h-[700px] overflow-hidden">
             <Image 
-              src="https://picsum.photos/1200/900" 
+              src="https://placehold.co/1200x900.png" 
               alt="Mapa de fundo ilustrativo de Martins" 
               layout="fill" 
               objectFit="cover" 
               className="opacity-20 -z-10" 
-              data-ai-hint="map background"
+              data-ai-hint="map mountains"
             />
             
             {mapPoints.map((point) => (
@@ -134,7 +141,7 @@ export default function MapPage() {
                     </div>
                   </Link>
                 </TooltipTrigger>
-                <TooltipContent side="top" className="bg-background text-foreground border-border shadow-md">
+                <TooltipContent side="top" className="bg-popover text-popover-foreground border-border shadow-md">
                   <p className="font-semibold">{point.name}</p>
                   <p className="text-sm text-muted-foreground">{point.type}</p>
                 </TooltipContent>
@@ -167,6 +174,9 @@ export default function MapPage() {
              <div className="flex items-center gap-2">
               <BusinessTypeIcon type="Serviço" className="h-5 w-5 text-accent" /> <span>Serviço</span>
             </div>
+             <div className="flex items-center gap-2">
+              <BusinessTypeIcon type="Bar" className="h-5 w-5 text-accent" /> <span>Bar</span>
+            </div>
             <div className="flex items-center gap-2">
               <BusinessTypeIcon type="Default" className="h-5 w-5 text-accent" /> <span>Outro</span>
             </div>
@@ -175,4 +185,3 @@ export default function MapPage() {
     </div>
   );
 }
-
