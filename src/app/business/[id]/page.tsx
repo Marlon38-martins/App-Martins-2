@@ -1,3 +1,4 @@
+
 'use client';
 
 import { use, useEffect, useState, Suspense } from 'react';
@@ -22,7 +23,10 @@ import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { BusinessTypeIcon } from '@/components/icons';
-import { MapPin, Phone, Globe, ArrowLeft, TicketPercent, Frown, Star, Tag, UserCheck, AlertTriangle } from 'lucide-react';
+import { 
+  MapPin, Phone, Globe, ArrowLeft, TicketPercent, Frown, Star, Tag, UserCheck, AlertTriangle,
+  Instagram, Facebook, MessageCircle // Added social icons
+} from 'lucide-react';
 
 interface BusinessPageParams {
   id: string;
@@ -215,7 +219,31 @@ function BusinessPageContent({ params }: { params: BusinessPageParams }) {
                   <div className="flex items-center">
                     <Globe className="mr-3 h-5 w-5 shrink-0 text-accent" />
                     <a href={business.website.startsWith('http') ? business.website : `https://${business.website}`} target="_blank" rel="noopener noreferrer" className="text-foreground/80 hover:text-primary hover:underline">
-                      {business.website}
+                      Visitar Website
+                    </a>
+                  </div>
+                )}
+                {business.instagramUrl && (
+                  <div className="flex items-center">
+                    <Instagram className="mr-3 h-5 w-5 shrink-0 text-accent" />
+                    <a href={business.instagramUrl} target="_blank" rel="noopener noreferrer" className="text-foreground/80 hover:text-primary hover:underline">
+                      Ver Instagram
+                    </a>
+                  </div>
+                )}
+                {business.facebookUrl && (
+                  <div className="flex items-center">
+                    <Facebook className="mr-3 h-5 w-5 shrink-0 text-accent" />
+                    <a href={business.facebookUrl} target="_blank" rel="noopener noreferrer" className="text-foreground/80 hover:text-primary hover:underline">
+                      Ver Facebook
+                    </a>
+                  </div>
+                )}
+                {business.whatsappNumber && (
+                  <div className="flex items-center">
+                    <MessageCircle className="mr-3 h-5 w-5 shrink-0 text-accent" /> {/* Using MessageCircle for WhatsApp */}
+                    <a href={`https://wa.me/${business.whatsappNumber.replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer" className="text-foreground/80 hover:text-primary hover:underline">
+                      Conversar no WhatsApp
                     </a>
                   </div>
                 )}
@@ -308,7 +336,7 @@ function BusinessPageContent({ params }: { params: BusinessPageParams }) {
   );
 }
 
-export default function BusinessPage({ params: paramsPromise }: { params: Promise<BusinessPageParams> }) {
+export default function BusinessPageWrapper({ params: paramsPromise }: { params: Promise<BusinessPageParams> }) {
     const params = use(paramsPromise);
     return (
         <Suspense fallback={<div>Carregando detalhes do negócio...</div>}>
@@ -316,3 +344,4 @@ export default function BusinessPage({ params: paramsPromise }: { params: Promis
         </Suspense>
     );
 }
+

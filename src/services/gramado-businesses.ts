@@ -1,3 +1,4 @@
+
 import type { LucideIcon } from 'lucide-react';
 import type { User, Subscription } from '@/types/user'; // Placeholder for actual user/subscription types
 
@@ -36,7 +37,19 @@ export interface GramadoBusiness {
   /**
    * The website of the business.
    */
-  website: string;
+  website?: string; // Made optional to reflect reality
+  /**
+   * The Instagram URL of the business.
+   */
+  instagramUrl?: string;
+  /**
+   * The Facebook URL of the business.
+   */
+  facebookUrl?: string;
+  /**
+   * The WhatsApp number of the business (international format, e.g., 5584999999999).
+   */
+  whatsappNumber?: string;
   /**
    * The latitude of the business.
    */
@@ -63,7 +76,7 @@ export interface GramadoBusiness {
   reviewCount?: number;
 }
 
-// Define a type for LucideIcon names for better type safety if needed elsewhere.
+// Define a type for LucideIcon names for better type safety if not already global.
 export type LucideIconName =
   | 'UtensilsCrossed'
   | 'BedDouble'
@@ -123,7 +136,10 @@ const businesses: GramadoBusiness[] = [
     fullDescription: 'Saboreie pratos típicos do sertão potiguar enquanto aprecia uma vista deslumbrante da serra de Martins. Nosso cardápio celebra os ingredientes locais com um toque de sofisticação. Ambiente rústico e acolhedor.',
     address: 'Rua Dr. Abdon Abel, 150, Centro, Martins - RN',
     phoneNumber: '(84) 3391-0001',
-    website: 'www.mirantedaserramartins.com.br',
+    website: 'https://www.mirantedaserramartins.com.br',
+    instagramUrl: 'https://www.instagram.com/mirantedaserramartins',
+    facebookUrl: 'https://www.facebook.com/mirantedaserramartins',
+    whatsappNumber: '5584933910001',
     latitude: -6.0869, // Approximate latitude for Martins
     longitude: -37.9119, // Approximate longitude for Martins
     imageUrl: 'https://placehold.co/600x400.png',
@@ -139,7 +155,9 @@ const businesses: GramadoBusiness[] = [
     fullDescription: 'A Pousada Aconchego Serrano oferece acomodações confortáveis e charmosas, perfeitas para quem busca paz e contato com a natureza. Desfrute de nosso café da manhã regional e da hospitalidade martinense.',
     address: 'Sítio Recanto Verde, Zona Rural, Martins - RN',
     phoneNumber: '(84) 3391-0002',
-    website: 'www.aconchegoserrano.com.br',
+    website: 'https://www.aconchegoserrano.com.br',
+    instagramUrl: 'https://www.instagram.com/aconchegoserrano',
+    whatsappNumber: '5584933910002',
     latitude: -6.0900, // Approximate latitude
     longitude: -37.9150, // Approximate longitude
     imageUrl: 'https://placehold.co/600x400.png',
@@ -155,7 +173,8 @@ const businesses: GramadoBusiness[] = [
     fullDescription: 'Descubra a riqueza do artesanato de Martins em nossa loja. Peças em cerâmica, bordados, rendas e doces regionais. Leve um pedacinho da cultura serrana para casa.',
     address: 'Praça Almino Afonso, 50, Centro, Martins - RN',
     phoneNumber: '(84) 3391-0003',
-    website: 'www.maosdaserrart.com.br',
+    website: 'https://www.maosdaserrart.com.br',
+    instagramUrl: 'https://www.instagram.com/maosdaserraart',
     latitude: -6.0850, // Approximate latitude
     longitude: -37.9100, // Approximate longitude
     imageUrl: 'https://placehold.co/600x400.png',
@@ -171,7 +190,8 @@ const businesses: GramadoBusiness[] = [
     fullDescription: 'Explore a famosa Casa de Pedra em uma trilha ecológica guiada. Conheça as formações rochosas, a fauna e a flora locais, e aprenda sobre as lendas e a história da região. Necessário agendamento.',
     address: 'Ponto de Encontro: Posto de Informações Turísticas, Martins - RN',
     phoneNumber: '(84) 99999-0004',
-    website: 'www.martinsaventura.com.br/casadepedra',
+    website: 'https://www.martinsaventura.com.br/casadepedra',
+    whatsappNumber: '5584999990004',
     latitude: -6.0800, // Approximate latitude (Casa de Pedra is a bit outside)
     longitude: -37.9000, // Approximate longitude
     imageUrl: 'https://placehold.co/600x400.png',
@@ -187,7 +207,8 @@ const businesses: GramadoBusiness[] = [
     fullDescription: 'Um refúgio para os amantes de café. Oferecemos grãos selecionados, métodos de preparo variados, bolos caseiros, tapiocas e outras iguarias para acompanhar sua bebida. Ambiente charmoso no coração de Martins.',
     address: 'Rua Coronel Demétrio Lemos, 75, Centro, Martins - RN',
     phoneNumber: '(84) 3391-0005',
-    website: 'www.graoserrano.com.br',
+    website: 'https://www.graoserrano.com.br',
+    instagramUrl: 'https://www.instagram.com/graoserrano',
     latitude: -6.0860, // Approximate latitude
     longitude: -37.9110, // Approximate longitude
     imageUrl: 'https://placehold.co/600x400.png',
@@ -203,7 +224,7 @@ const businesses: GramadoBusiness[] = [
     fullDescription: 'O Mirante do Canto é um dos pontos mais altos de Martins, oferecendo uma vista panorâmica inesquecível, especialmente ao entardecer. Local ideal para contemplação e fotografias.',
     address: 'Acesso pela RN-076, Martins - RN',
     phoneNumber: 'N/A', // Often public access without a direct phone
-    website: 'turismo.martins.rn.gov.br/mirantedocanto',
+    website: 'https://turismo.martins.rn.gov.br/mirantedocanto',
     latitude: -6.0795, // Approximate latitude
     longitude: -37.9180, // Approximate longitude
     imageUrl: 'https://placehold.co/600x400.png',
@@ -219,7 +240,9 @@ const businesses: GramadoBusiness[] = [
     fullDescription: 'Bar tradicional no centro de Martins, com petiscos regionais, cerveja gelada e um ambiente animado. Perfeito para um happy hour ou para encontrar amigos.',
     address: 'Praça Central, 10, Centro, Martins - RN',
     phoneNumber: '(84) 3391-0007',
-    website: 'www.barcentralmartins.com.br',
+    website: 'https://www.barcentralmartins.com.br',
+    instagramUrl: 'https://www.instagram.com/barcentralmartins',
+    facebookUrl: 'https://www.facebook.com/barcentralmartins',
     latitude: -6.0855,
     longitude: -37.9105,
     imageUrl: 'https://placehold.co/600x400.png',
@@ -468,3 +491,4 @@ export function mockLogout() {
   }
 }
 // --- End Mocked Services ---
+
