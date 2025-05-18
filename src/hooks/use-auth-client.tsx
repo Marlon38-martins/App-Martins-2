@@ -2,17 +2,16 @@
 'use client';
 
 import type { User, Subscription } from '@/types/user';
-import { getCurrentUser, getMockUserSubscription, mockLogin, mockLogout } from '@/services/gramado-businesses';
-import type { LucideIcon } from 'lucide-react';
+import { getCurrentUser, getMockUserSubscription, mockLogout } from '@/services/gramado-businesses'; // Removed mockLogin as it's handled by service
 import { createContext, useContext, useEffect, useState, useCallback } from 'react';
 
 interface AuthContextType {
   user: User | null;
   subscription: Subscription | null;
   loading: boolean;
-  signInUser: (user: User, sub: Subscription) => void; // Simplified for mock
-  signOutUser: () => void; // Simplified for mock
-  isAdmin: boolean; // Placeholder
+  signInUser: (user: User, sub: Subscription) => void; 
+  signOutUser: () => Promise<void>; // Updated to Promise to align with async nature
+  isAdmin: boolean; 
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -25,7 +24,7 @@ export function AuthProviderClient({ children }: AuthProviderClientProps) {
   const [user, setUser] = useState<User | null>(null);
   const [subscription, setSubscription] = useState<Subscription | null>(null);
   const [loading, setLoading] = useState(true);
-  const [isAdmin, setIsAdmin] = useState(false); // Placeholder
+  const [isAdmin, setIsAdmin] = useState(false);
 
   const fetchAuthData = useCallback(async () => {
     setLoading(true);
@@ -35,7 +34,6 @@ export function AuthProviderClient({ children }: AuthProviderClientProps) {
       if (currentUser) {
         const subDetails = await getMockUserSubscription(currentUser.id);
         setSubscription(subDetails);
-        // Placeholder for admin check
         setIsAdmin(currentUser.email === 'admin@example.com'); 
       } else {
         setSubscription(null);
@@ -53,7 +51,6 @@ export function AuthProviderClient({ children }: AuthProviderClientProps) {
 
   useEffect(() => {
     fetchAuthData();
-    // Listen for custom event to refetch auth data if login/logout happens elsewhere
     const handleAuthChange = () => fetchAuthData();
     window.addEventListener('mockAuthChange', handleAuthChange);
     return () => {
@@ -62,17 +59,18 @@ export function AuthProviderClient({ children }: AuthProviderClientProps) {
   }, [fetchAuthData]);
 
   const signInUser = (loggedInUser: User, userSub: Subscription) => {
-    // This function is now primarily for updating context state after mockLogin is called elsewhere
     setUser(loggedInUser);
     setSubscription(userSub);
-    setIsAdmin(loggedInUser.email === 'admin@example.com'); // Placeholder
+    setIsAdmin(loggedInUser.email === 'admin@example.com');
     setLoading(false);
+    // localStorage is handled by the mockLogin service now.
+    // Dispatch event to ensure all parts of app are aware.
     window.dispatchEvent(new CustomEvent('mockAuthChange'));
   };
 
   const signOutUser = async () => {
     setLoading(true);
-    await mockLogout(); // Use the service's mockLogout
+    await mockLogout(); 
     setUser(null);
     setSubscription(null);
     setIsAdmin(false);

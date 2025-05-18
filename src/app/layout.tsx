@@ -29,12 +29,13 @@ import {
   Trees,
   LayoutGrid,
   Info,
-  Briefcase, // For Partner Panel
-  Tag, // For Manage Offers
-  Search as SearchIcon // Added SearchIcon
+  Briefcase, 
+  Tag, 
+  Search as SearchIcon,
+  Users // For "Listar Todos os Parceiros"
 } from 'lucide-react'; 
 import { Header } from '@/components/layout/header';
-import { AuthProviderClient } from '@/hooks/use-auth-client';
+import { AuthProviderClient } from '@/hooks/use-auth-client'; 
 import { AuthStateInitializer } from '@/components/auth/auth-state-initializer';
 import { CurrentUserDisplay } from '@/components/auth/current-user-display';
 import {
@@ -45,6 +46,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { slugify } from '@/lib/utils';
+import { PartnerPanelDropdown } from '@/components/layout/partner-panel-dropdown'; // Import the new component
 
 
 const geistSans = Geist({
@@ -71,6 +73,7 @@ const categoriesForMenu = [
   { name: 'Lazer', slug: slugify('Atração'), Icon: AttractionIcon },
   { name: 'Parques', slug: slugify('Parque'), Icon: Trees },
 ];
+
 
 export default function RootLayout({
   children,
@@ -164,39 +167,7 @@ export default function RootLayout({
 
                   {/* Partner/Admin Section */}
                   <SidebarMenuItem>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <SidebarMenuButton tooltip={{content: "Painel do Parceiro", side:"right"}} className="w-full">
-                          <Briefcase />
-                          <span className="group-data-[collapsible=icon]:hidden">Painel do Parceiro</span>
-                        </SidebarMenuButton>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent 
-                        side="right" 
-                        align="start" 
-                        className="w-56 bg-popover text-popover-foreground ml-2 group-data-[collapsible=icon]:ml-0"
-                      >
-                        <DropdownMenuItem asChild>
-                          <Link href="/partner/dashboard" className="flex items-center cursor-pointer">
-                            <LayoutDashboard className="mr-2 h-4 w-4" />
-                            Meu Estabelecimento
-                          </Link>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem asChild>
-                          <Link href="/partner/manage-offers" className="flex items-center cursor-pointer">
-                            <Tag className="mr-2 h-4 w-4" />
-                            Gerenciar Minhas Ofertas
-                          </Link>
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem asChild>
-                           <Link href="/admin/add-establishment" className="flex items-center cursor-pointer">
-                            <UserPlus className="mr-2 h-4 w-4" /> {/* Or BuildingPlus icon */}
-                            Adicionar Novo Estabelecimento
-                          </Link>
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
+                    <PartnerPanelDropdown />
                   </SidebarMenuItem>
                   
                   <CurrentUserDisplay />
