@@ -11,11 +11,25 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { BusinessTypeIcon } from '@/components/icons';
 import { Frown, MapPin } from 'lucide-react';
+import { slugify } from '@/lib/utils'; // Import slugify
 
 interface MapPoint extends GramadoBusiness {
   x: number; // Percentage
   y: number; // Percentage
 }
+
+const legendCategories = [
+  { name: 'Restaurante', iconType: 'Restaurante' as GramadoBusiness['icon'] },
+  { name: 'Hotel/Pousada', iconType: 'Hotel' as GramadoBusiness['icon'], slug: 'hotel' }, // Slug for Pousada/Hotel
+  { name: 'Loja', iconType: 'Loja' as GramadoBusiness['icon'] },
+  { name: 'Atração Turística', iconType: 'Atração' as GramadoBusiness['icon'], slug: 'atracao' },
+  { name: 'Café', iconType: 'Café' as GramadoBusiness['icon'] },
+  { name: 'Parque/Mirante', iconType: 'Parque' as GramadoBusiness['icon'], slug: 'parque' },
+  { name: 'Serviço', iconType: 'Serviço' as GramadoBusiness['icon'] },
+  { name: 'Bar', iconType: 'Bar' as GramadoBusiness['icon'] },
+  { name: 'Outro', iconType: 'Default' as GramadoBusiness['icon'], slug: 'outro' },
+];
+
 
 export default function MapPage() {
   const [businesses, setBusinesses] = useState<GramadoBusiness[]>([]);
@@ -153,35 +167,19 @@ export default function MapPage() {
        <div className="mt-8 p-4 border rounded-lg bg-card shadow">
           <h3 className="text-lg font-semibold text-primary mb-2">Legenda dos Ícones</h3>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 text-sm">
-            <div className="flex items-center gap-2">
-              <BusinessTypeIcon type="Restaurante" className="h-5 w-5 text-accent" /> <span>Restaurante</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <BusinessTypeIcon type="Hotel" className="h-5 w-5 text-accent" /> <span>Hotel/Pousada</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <BusinessTypeIcon type="Loja" className="h-5 w-5 text-accent" /> <span>Loja</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <BusinessTypeIcon type="Atração" className="h-5 w-5 text-accent" /> <span>Atração Turística</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <BusinessTypeIcon type="Café" className="h-5 w-5 text-accent" /> <span>Café</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <BusinessTypeIcon type="Parque" className="h-5 w-5 text-accent" /> <span>Parque/Mirante</span>
-            </div>
-             <div className="flex items-center gap-2">
-              <BusinessTypeIcon type="Serviço" className="h-5 w-5 text-accent" /> <span>Serviço</span>
-            </div>
-             <div className="flex items-center gap-2">
-              <BusinessTypeIcon type="Bar" className="h-5 w-5 text-accent" /> <span>Bar</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <BusinessTypeIcon type="Default" className="h-5 w-5 text-accent" /> <span>Outro</span>
-            </div>
+            {legendCategories.map(legend => (
+              <Link 
+                key={legend.name} 
+                href={`/services/${legend.slug || slugify(legend.name)}`} 
+                className="flex items-center gap-2 p-1 rounded-md hover:bg-muted/50 transition-colors group"
+              >
+                <BusinessTypeIcon type={legend.iconType || 'Default'} className="h-5 w-5 text-accent group-hover:text-primary" />
+                <span className="text-foreground group-hover:text-primary">{legend.name}</span>
+              </Link>
+            ))}
           </div>
         </div>
     </div>
   );
 }
+
