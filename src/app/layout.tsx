@@ -47,7 +47,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { slugify } from '@/lib/utils';
-import { PartnerPanelDropdown } from '@/components/layout/partner-panel-dropdown'; // Import the new component
+import { PartnerPanelDropdown } from '@/components/layout/partner-panel-dropdown';
 
 
 const geistSans = Geist({
@@ -98,6 +98,7 @@ export default function RootLayout({
               </SidebarHeader>
               <SidebarContent>
                 <SidebarMenu>
+                  {/* Main Navigation Items */}
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild tooltip={{content: "Início", side:"right"}}>
                       <Link href="/">
@@ -166,22 +167,22 @@ export default function RootLayout({
                     </SidebarMenuButton>
                   </SidebarMenuItem>
 
-                  {/* Auth Actions - moved up */}
+                  {/* User Authentication Section - Renders login/join or profile */}
+                  {/* CurrentUserDisplay itself applies mt-auto to its first item, so it will be at the bottom of this flow */}
                   <CurrentUserDisplay />
                   
-                  {/* Partner/Admin Section - moved down */}
-                  <SidebarMenuItem>
+                  {/* Partner Section - This will now be pushed to the very bottom, separated by a line */}
+                  <SidebarMenuItem className="mt-auto pt-4 border-t border-sidebar-border">
                     <PartnerPanelDropdown />
                   </SidebarMenuItem>
-                   <SidebarMenuItem>
-                      <SidebarMenuButton asChild tooltip={{content: "Seja Parceiro", side:"right"}}>
-                        <Link href="/partner-registration">
-                          <Briefcase />
-                          <span className="group-data-[collapsible=icon]:hidden">Seja Parceiro</span>
-                        </Link>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-                  
+                  <SidebarMenuItem>
+                    <SidebarMenuButton asChild tooltip={{content: "Seja Parceiro", side:"right"}}>
+                      <Link href="/partner-registration">
+                        <Briefcase />
+                        <span className="group-data-[collapsible=icon]:hidden">Seja Parceiro</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
                 </SidebarMenu>
               </SidebarContent>
             </Sidebar>
