@@ -170,7 +170,7 @@ export default function JoinPage() {
           Assinatura Premium Guia Mais
         </h1>
         <p className="text-lg text-foreground/80 max-w-2xl mx-auto">
-          Descubra o melhor da cidade com o plano Premium e aproveite experiências inesquecíveis!
+          🌟 Descubra o melhor da cidade com o Guia Mais! Assine o plano Premium e aproveite experiências inesquecíveis!
         </p>
       </section>
 
@@ -178,7 +178,7 @@ export default function JoinPage() {
         <h2 className="mb-6 text-center text-2xl font-semibold text-accent">Seus Benefícios Exclusivos:</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {premiumFeatures.slice(0, 4).map((benefit, index) => ( 
-            <Card key={index} className="text-center shadow-md hover:shadow-lg transition-shadow bg-card">
+            <Card key={index} className="text-center shadow-md hover:shadow-lg transition-all duration-300 ease-in-out bg-card">
               <CardContent className="pt-6">
                 <benefit.IconComp className="mx-auto h-12 w-12 text-primary mb-3" />
                 <p className="font-medium text-card-foreground">{benefit.text}</p>
@@ -270,7 +270,7 @@ export default function JoinPage() {
                           <FormItem 
                             key={plan.id} 
                             className={cn(
-                                "flex flex-col items-start space-y-1 rounded-md border p-4 transition-all cursor-pointer hover:border-primary",
+                                "flex flex-col items-start space-y-1 rounded-md border p-4 transition-all duration-300 ease-in-out cursor-pointer hover:border-primary hover:shadow-lg",
                                 field.value === plan.id && "border-2 border-primary ring-2 ring-primary ring-offset-2",
                                 plan.highlight && "border-accent hover:border-accent ring-accent"
                             )}
@@ -438,4 +438,3 @@ export default function JoinPage() {
     </div>
   );
 }
-

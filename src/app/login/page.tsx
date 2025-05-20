@@ -113,7 +113,7 @@ export default function LoginPage() {
           <div className="mx-auto mb-4">
             <MountainSnow className="h-16 w-16 text-primary" />
           </div>
-          <CardTitle className="text-3xl font-bold text-primary">Login Martins Prime</CardTitle>
+          <CardTitle className="text-3xl font-bold text-primary">Login Guia Mais</CardTitle>
           <CardDescription>Acesse sua conta para aproveitar os benefícios exclusivos.</CardDescription>
         </CardHeader>
         <Form {...form}>
@@ -163,7 +163,7 @@ export default function LoginPage() {
                 {isSubmitting ? 'Entrando...' : 'Entrar com Email'}
               </Button>
               
-              <div className="relative my-2 w-full">
+              <div className="relative my-4 w-full"> {/* Increased margin-top and margin-bottom */}
                 <div className="absolute inset-0 flex items-center">
                   <span className="w-full border-t" />
                 </div>

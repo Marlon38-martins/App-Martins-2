@@ -145,7 +145,7 @@ export default function SettingsPage() {
       <Card className="mb-8 shadow-md">
         <CardHeader>
           <CardTitle className="flex items-center text-xl text-primary"><CreditCard className="mr-2 h-6 w-6"/> Assinatura</CardTitle>
-          <CardDescription>Veja e gerencie seu plano Martins Prime.</CardDescription>
+          <CardDescription>Veja e gerencie seu plano Guia Mais.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
             <p className="text-muted-foreground">Detalhes da sua assinatura e opções de gerenciamento aparecerão aqui.</p>

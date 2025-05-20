@@ -14,12 +14,12 @@ interface DealCardProps {
 }
 
 export function DealCard({ deal, business }: DealCardProps) {
-  const businessName = business?.name || "Parceiro Martins Prime";
+  const businessName = business?.name || "Parceiro Guia Mais";
   const businessImage = business?.imageUrl || "https://picsum.photos/seed/deal-placeholder/300/200";
   const businessTypeIcon = business?.icon;
 
   return (
-    <Card className="flex h-full flex-col overflow-hidden shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl">
+    <Card className="flex h-full flex-col overflow-hidden shadow-lg transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-xl">
       {business && (
         <div className="relative aspect-[16/10] w-full overflow-hidden">
           <Image

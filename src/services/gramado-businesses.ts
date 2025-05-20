@@ -257,11 +257,11 @@ const deals: Deal[] = [
     id: 'deal-1',
     businessId: '1', // Restaurante Mirante da Serra
     title: 'Pague 1 Prato Principal, Leve 2',
-    description: 'Na compra de um prato principal selecionado, ganhe outro de igual ou menor valor. Válido para membros Prime.',
+    description: 'Na compra de um prato principal selecionado, ganhe outro de igual ou menor valor. Válido para membros Guia Mais.',
     discountPercentage: 0, // Not a direct discount, but P1G2
     isPay1Get2: true,
     usageLimitPerUser: 1,
-    termsAndConditions: 'Válido de segunda a quinta, exceto feriados. Necessário apresentar o card digital Martins Prime. Não cumulativo com outras promoções. Consulte pratos selecionados.',
+    termsAndConditions: 'Válido de segunda a quinta, exceto feriados. Necessário apresentar o card digital Guia Mais. Não cumulativo com outras promoções. Consulte pratos selecionados.',
   },
   {
     id: 'deal-2',
@@ -269,33 +269,33 @@ const deals: Deal[] = [
     title: 'Sobremesa Regional Cortesia',
     description: 'Grupos acima de 4 pessoas ganham uma sobremesa regional especial.',
     discountPercentage: 0,
-    termsAndConditions: 'Válido para grupos com 4 ou mais membros Prime. Uma sobremesa por grupo, conforme disponibilidade.',
+    termsAndConditions: 'Válido para grupos com 4 ou mais membros Guia Mais. Uma sobremesa por grupo, conforme disponibilidade.',
   },
   {
     id: 'deal-3',
     businessId: '2', // Pousada Aconchego Serrano
     title: 'Pague 2 Diárias, Fique 3',
-    description: 'Reserve duas diárias e ganhe a terceira noite como cortesia Martins Prime.',
+    description: 'Reserve duas diárias e ganhe a terceira noite como cortesia Guia Mais.',
     isPay1Get2: true, // Conceptually similar, pay X get Y
     usageLimitPerUser: 1,
-    termsAndConditions: 'Válido para reservas diretas com a pousada, mediante apresentação do card Martins Prime. Sujeito à disponibilidade. Não válido em alta temporada ou feriados prolongados.',
+    termsAndConditions: 'Válido para reservas diretas com a pousada, mediante apresentação do card Guia Mais. Sujeito à disponibilidade. Não válido em alta temporada ou feriados prolongados.',
   },
   {
     id: 'deal-4',
     businessId: '3', // Loja de Artesanato Mãos da Serra
     title: '15% OFF em Peças Selecionadas',
-    description: 'Desconto de 15% em todas as peças de cerâmica e bordados para membros Prime.',
+    description: 'Desconto de 15% em todas as peças de cerâmica e bordados para membros Guia Mais.',
     discountPercentage: 15,
-    termsAndConditions: 'Válido enquanto durarem os estoques. Apresentar card Martins Prime.',
+    termsAndConditions: 'Válido enquanto durarem os estoques. Apresentar card Guia Mais.',
   },
   {
     id: 'deal-5',
     businessId: '5', // Cafeteria Grão Serrano
-    title: 'Café em Dobro Prime',
-    description: 'Na compra de um café expresso, ganhe outro. Benefício exclusivo Martins Prime.',
+    title: 'Café em Dobro Guia Mais',
+    description: 'Na compra de um café expresso, ganhe outro. Benefício exclusivo Guia Mais.',
     isPay1Get2: true,
     usageLimitPerUser: 1, // Example: can use this specific P1G2 offer once
-    termsAndConditions: 'Válido de terça a quinta-feira, exceto feriados. Apresentar card Martins Prime. Não cumulativo.',
+    termsAndConditions: 'Válido de terça a quinta-feira, exceto feriados. Apresentar card Guia Mais. Não cumulativo.',
   },
   {
     id: 'deal-6',
@@ -311,16 +311,16 @@ const deals: Deal[] = [
     title: 'Aventura em Grupo com Desconto',
     description: '10% de desconto para grupos de 5 ou mais pessoas na Trilha da Casa de Pedra.',
     discountPercentage: 10,
-    termsAndConditions: 'Agendamento prévio obrigatório. Todos os participantes do grupo devem ser membros Martins Prime.',
+    termsAndConditions: 'Agendamento prévio obrigatório. Todos os participantes do grupo devem ser membros Guia Mais.',
   },
   {
     id: 'deal-8',
     businessId: '7', // Bar Central
     title: 'Rodada Dupla de Caipirinha',
-    description: 'Peça uma caipirinha e ganhe a segunda por conta da casa. Exclusivo para membros Martins Prime.',
+    description: 'Peça uma caipirinha e ganhe a segunda por conta da casa. Exclusivo para membros Guia Mais.',
     isPay1Get2: true,
     usageLimitPerUser: 1,
-    termsAndConditions: 'Válido às sextas-feiras, das 18h às 20h. Apresentar card Martins Prime.',
+    termsAndConditions: 'Válido às sextas-feiras, das 18h às 20h. Apresentar card Guia Mais.',
   }
 ];
 
@@ -395,7 +395,7 @@ export async function getCurrentUser(): Promise<User | null> {
         mockCurrentUser = {
             id: MOCK_USER_ID,
             email: 'membro.prime@example.com',
-            name: 'Membro Prime Teste',
+            name: 'Membro Guia Mais Teste',
             photoURL: `https://placehold.co/100x100.png`
         };
         localStorage.setItem('mockUser', JSON.stringify(mockCurrentUser));

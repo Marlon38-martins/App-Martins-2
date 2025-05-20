@@ -67,12 +67,12 @@ export default function ProfilePage() {
     );
   }
   
-  const userName = user.name || user.email?.split('@')[0] || 'Membro Prime';
+  const userName = user.name || user.email?.split('@')[0] || 'Membro Guia Mais';
   const userInitial = userName.charAt(0).toUpperCase();
 
   return (
     <div className="p-4 md:p-6">
-      <h1 className="text-3xl font-bold text-primary mb-6">Meu Perfil Martins Prime</h1>
+      <h1 className="text-3xl font-bold text-primary mb-6">Meu Perfil Guia Mais</h1>
       <Card className="shadow-lg">
         <CardHeader>
           <div className="flex flex-col sm:flex-row items-center gap-4">
@@ -94,7 +94,7 @@ export default function ProfilePage() {
                 <div className="flex items-center gap-2 mb-1">
                   {subscription.status === 'active' ? <ShieldCheck className="h-5 w-5 text-green-600" /> : <Star className="h-5 w-5 text-yellow-600" />}
                   <p className="font-medium text-foreground">
-                    Plano: <span className="font-bold text-primary">{subscription.planId === 'serrano_vip' ? 'Serrano VIP' : 'Explorador'}</span>
+                    Plano: <span className="font-bold text-primary">{subscription.planId === 'serrano_vip' ? 'Serrano VIP' : (subscription.planId === 'premium_anual' ? 'Premium Anual' : 'Premium Mensal')}</span>
                   </p>
                 </div>
                 <p className="text-sm text-muted-foreground">

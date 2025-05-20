@@ -83,7 +83,6 @@ export default function PartnerRegistrationPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               <div className="rounded-lg border bg-card p-6 shadow-sm">
                 <h3 className="mb-2 text-xl font-semibold text-accent">Assinatura Mensal</h3>
-                {/* <p className="mb-1 text-2xl font-bold text-primary">R$ 49 a R$ 199</p> */}
                 <p className="text-sm text-muted-foreground mb-3">Valor conforme o pacote de funcionalidades. Contate-nos para detalhes.</p>
                 <ul className="space-y-1 text-sm text-foreground/80">
                   <li><CheckCircle className="mr-2 inline h-4 w-4 text-green-500" />Visibilidade premium.</li>
@@ -141,7 +140,7 @@ export default function PartnerRegistrationPage() {
           </CardHeader>
           <CardContent className="text-center">
             <p className="mb-6 text-foreground/80">
-              Não perca a oportunidade de fazer parte do Guia Mais Martins e alcançar milhares de potenciais clientes.
+              Não perca a oportunidade de fazer parte do Guia Mais e alcançar milhares de potenciais clientes.
             </p>
             <div className="flex flex-col sm:flex-row justify-center gap-4">
               <Button size="lg" className="bg-accent hover:bg-accent/90 text-accent-foreground" asChild>

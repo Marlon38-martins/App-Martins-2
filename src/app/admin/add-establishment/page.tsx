@@ -84,7 +84,7 @@ export default function AddEstablishmentPage() {
       defaultOfferTitle: '',
       defaultOfferDescription: '',
       defaultOfferIsPay1Get2: true,
-      defaultOfferTerms: 'Válido conforme regras do clube Martins Prime. Apresente seu card de membro.',
+      defaultOfferTerms: 'Válido conforme regras do clube Guia Mais. Apresente seu card de membro.',
     },
   });
 
@@ -144,7 +144,7 @@ export default function AddEstablishmentPage() {
           Adicionar Novo Estabelecimento Parceiro
         </h2>
         <p className="text-lg text-foreground/80">
-          Preencha os dados abaixo para cadastrar um novo parceiro no Martins Prime.
+          Preencha os dados abaixo para cadastrar um novo parceiro no Guia Mais.
         </p>
       </section>
 
@@ -409,7 +409,7 @@ export default function AddEstablishmentPage() {
                         <FormItem>
                           <FormLabel>Termos e Condições da Oferta Padrão *</FormLabel>
                           <FormControl>
-                            <Textarea placeholder="Ex: Válido de segunda a quinta, exceto feriados. Apresente o card Martins Prime." {...field} />
+                            <Textarea placeholder="Ex: Válido de segunda a quinta, exceto feriados. Apresente o card Guia Mais." {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>

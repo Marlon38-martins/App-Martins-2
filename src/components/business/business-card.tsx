@@ -31,7 +31,7 @@ const renderStars = (rating?: number) => {
 
 export function BusinessCard({ business }: BusinessCardProps) {
   return (
-    <Card className="flex h-full flex-col overflow-hidden shadow-lg transition-shadow hover:shadow-xl group">
+    <Card className="flex h-full flex-col overflow-hidden shadow-lg transition-all duration-300 ease-in-out hover:shadow-xl group">
       <CardHeader className="pb-2">
         <div className="relative mb-2 aspect-[16/9] w-full overflow-hidden rounded-md">
           <Image
@@ -69,4 +69,3 @@ export function BusinessCard({ business }: BusinessCardProps) {
     </Card>
   );
 }
-

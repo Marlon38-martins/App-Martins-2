@@ -38,12 +38,12 @@ const getDealActivationDetails = (deal: Deal, businessType: string) => {
   }
   const lowerType = businessType.toLowerCase();
   if (lowerType.includes('hotel') || lowerType.includes('pousada')) {
-    return { text: 'Reservar com Benefício Prime', Icon: Tag, query: `?dealId=${deal.id}` };
+    return { text: 'Reservar com Benefício Guia Mais', Icon: Tag, query: `?dealId=${deal.id}` };
   }
   if (lowerType.includes('restaurante') || lowerType.includes('café')) {
-    return { text: 'Usar Benefício Prime Aqui', Icon: Tag, query: `?dealId=${deal.id}` };
+    return { text: 'Usar Benefício Guia Mais Aqui', Icon: Tag, query: `?dealId=${deal.id}` };
   }
-  return { text: 'Aproveitar Benefício Prime', Icon: Tag, query: `?dealId=${deal.id}` };
+  return { text: 'Aproveitar Benefício Guia Mais', Icon: Tag, query: `?dealId=${deal.id}` };
 };
 
 function BusinessPageContent({ params }: { params: BusinessPageParams }) {
@@ -256,23 +256,23 @@ function BusinessPageContent({ params }: { params: BusinessPageParams }) {
           <div className="mb-8">
             <h3 className="mb-4 flex items-center text-2xl font-semibold text-primary">
               <TicketPercent className="mr-2 h-7 w-7 text-accent" />
-              Ofertas Martins Prime
+              Ofertas Guia Mais
             </h3>
             {!authUser && (
                  <Alert variant="default" className="mb-4 bg-accent/10 border-accent/30">
                     <UserCheck className="h-5 w-5 text-accent" />
                     <AlertTitle className="text-accent">Faça Login para Vantagens!</AlertTitle>
                     <AlertDescription>
-                        <Link href="/login" className="font-semibold underline hover:text-accent/80">Faça login</Link> ou <Link href="/join" className="font-semibold underline hover:text-accent/80">associe-se</Link> para ver e usar os benefícios Martins Prime.
+                        <Link href="/login" className="font-semibold underline hover:text-accent/80">Faça login</Link> ou <Link href="/join" className="font-semibold underline hover:text-accent/80">associe-se</Link> para ver e usar os benefícios Guia Mais.
                     </AlertDescription>
                 </Alert>
             )}
             {authUser && !canUsePrimeBenefits && (
                  <Alert variant="default" className="mb-4 bg-accent/10 border-accent/30">
                     <AlertTriangle className="h-5 w-5 text-accent" />
-                    <AlertTitle className="text-accent">Assinatura Prime Necessária</AlertTitle>
+                    <AlertTitle className="text-accent">Assinatura Guia Mais Necessária</AlertTitle>
                     <AlertDescription>
-                        Sua assinatura Martins Prime não está ativa. <Link href="/join" className="font-semibold underline hover:text-accent/80">Renove ou associe-se</Link> para aproveitar!
+                        Sua assinatura Guia Mais não está ativa. <Link href="/join" className="font-semibold underline hover:text-accent/80">Renove ou associe-se</Link> para aproveitar!
                     </AlertDescription>
                 </Alert>
             )}
@@ -285,7 +285,7 @@ function BusinessPageContent({ params }: { params: BusinessPageParams }) {
                   const isP1G2Limited = deal.isPay1Get2 && deal.usageLimitPerUser === 1;
 
                   return (
-                    <Card key={deal.id} className={`bg-card shadow-lg ${hasRedeemedThisOffer && isP1G2Limited ? 'opacity-60' : ''}`}>
+                    <Card key={deal.id} className={`bg-card shadow-lg ${hasRedeemedThisOffer && isP1G2Limited ? 'opacity-60' : ''} transition-all duration-300 ease-in-out hover:shadow-xl`}>
                       <CardHeader className="pb-3">
                         <CardTitle className="text-lg text-accent">{deal.title}</CardTitle>
                         <CardDescription className="text-sm text-muted-foreground pt-1">{deal.description}</CardDescription>
@@ -302,7 +302,7 @@ function BusinessPageContent({ params }: { params: BusinessPageParams }) {
                                 Pague 1 Leve 2
                                 </Badge>
                             )}
-                            <Badge variant="outline">Exclusivo Prime</Badge>
+                            <Badge variant="outline">Exclusivo Guia Mais</Badge>
                         </div>
                         <p className="mt-2 text-xs text-muted-foreground">{deal.termsAndConditions}</p>
                         {isP1G2Limited && hasRedeemedThisOffer && (
@@ -326,7 +326,7 @@ function BusinessPageContent({ params }: { params: BusinessPageParams }) {
             ) : (
               <Card className="border-dashed bg-muted/50 p-6 text-center shadow-none">
                 <Star className="mx-auto mb-2 h-10 w-10 text-muted-foreground" />
-                <p className="text-muted-foreground">Nenhuma oferta Martins Prime específica divulgada para este estabelecimento no momento. Membros Prime ainda podem ter vantagens gerais!</p>
+                <p className="text-muted-foreground">Nenhuma oferta Guia Mais específica divulgada para este estabelecimento no momento. Membros Guia Mais ainda podem ter vantagens gerais!</p>
               </Card>
             )}
           </div>

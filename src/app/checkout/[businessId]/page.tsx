@@ -112,7 +112,7 @@ function CheckoutPageContent({ businessId }: { businessId: string }) {
           const sub = await getMockUserSubscription(user.id);
           setUserSubscription(sub);
           if (!sub || sub.status !== 'active') {
-            setError('Sua assinatura Martins Prime não está ativa. Por favor, renove ou associe-se.');
+            setError('Sua assinatura Guia Mais não está ativa. Por favor, renove ou associe-se.');
             setAuthCheckedAndEligible(false); // Not eligible
             setIsLoadingPage(false);
             return;
@@ -130,7 +130,7 @@ function CheckoutPageContent({ businessId }: { businessId: string }) {
           }
           setAuthCheckedAndEligible(true); // Eligible
         } else {
-          setError('Você precisa estar logado para usar um benefício Martins Prime.');
+          setError('Você precisa estar logado para usar um benefício Guia Mais.');
           setAuthCheckedAndEligible(false); // Not eligible
           setIsLoadingPage(false);
           return;
@@ -144,17 +144,17 @@ function CheckoutPageContent({ businessId }: { businessId: string }) {
       }
     }
     loadDataAndCheckAuth();
-  }, [businessId, dealId]); // Removed dependencies that caused re-runs with partial data
+  }, [businessId, dealId]); 
 
 
   const getActionName = () => {
     if (specificDeal) return specificDeal.title;
     if (!business) return "Benefício";
     const type = business.type.toLowerCase();
-    if (type.includes('hotel') || type.includes('pousada')) return "Reserva com Benefício Prime";
-    if (type.includes('restaurante') || type.includes('café')) return "Uso de Benefício Prime";
-    if (type.includes('loja') || type.includes('artesanato')) return "Compra com Desconto Prime";
-    return "Benefício Martins Prime";
+    if (type.includes('hotel') || type.includes('pousada')) return "Reserva com Benefício Guia Mais";
+    if (type.includes('restaurante') || type.includes('café')) return "Uso de Benefício Guia Mais";
+    if (type.includes('loja') || type.includes('artesanato')) return "Compra com Desconto Guia Mais";
+    return "Benefício Guia Mais";
   }
 
   const onSubmit: SubmitHandler<CheckoutFormValues> = async (data) => {
@@ -169,7 +169,7 @@ function CheckoutPageContent({ businessId }: { businessId: string }) {
 
     setIsSubmitting(true);
     try {
-      if (dealId && authUser) { // Ensure authUser is available
+      if (dealId && authUser) { 
         await recordUserOfferUsage(authUser.id, dealId, businessId);
       }
       await new Promise(resolve => setTimeout(resolve, 1000));
@@ -177,7 +177,7 @@ function CheckoutPageContent({ businessId }: { businessId: string }) {
       console.log('Offer Activation Data:', data, 'Deal ID:', dealId);
       toast({
         title: 'Benefício Confirmado!',
-        description: `Seu benefício Martins Prime em ${business?.name} (${getActionName()}) foi ativado. Apresente esta confirmação ou seu card de membro no estabelecimento.`,
+        description: `Seu benefício Guia Mais em ${business?.name} (${getActionName()}) foi ativado. Apresente esta confirmação ou seu card de membro no estabelecimento.`,
         variant: 'default', 
       });
       router.push(`/business/${businessId}`); 
@@ -273,7 +273,7 @@ function CheckoutPageContent({ businessId }: { businessId: string }) {
                 Seus Dados para Confirmação
               </CardTitle>
               <CardDescription>
-                Confirme seus dados para ativar o benefício Martins Prime. Estes dados são para registro interno.
+                Confirme seus dados para ativar o benefício Guia Mais. Estes dados são para registro interno.
               </CardDescription>
             </CardHeader>
             <Form {...form}>
@@ -284,7 +284,7 @@ function CheckoutPageContent({ businessId }: { businessId: string }) {
                     name="name"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel htmlFor="name">Nome Completo (como no cadastro Prime)</FormLabel>
+                        <FormLabel htmlFor="name">Nome Completo (como no cadastro Guia Mais)</FormLabel>
                         <FormControl>
                           <Input id="name" placeholder="Seu nome completo" {...field} disabled={!authCheckedAndEligible || isSubmitting}/>
                         </FormControl>
@@ -297,7 +297,7 @@ function CheckoutPageContent({ businessId }: { businessId: string }) {
                     name="email"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel htmlFor="email">Email (do cadastro Prime)</FormLabel>
+                        <FormLabel htmlFor="email">Email (do cadastro Guia Mais)</FormLabel>
                         <FormControl>
                           <Input id="email" type="email" placeholder="seuemail@exemplo.com" {...field} disabled={!authCheckedAndEligible || isSubmitting}/>
                         </FormControl>
@@ -371,7 +371,7 @@ function CheckoutPageContent({ businessId }: { businessId: string }) {
                )}
               
               <div className="mt-3 rounded-md border border-muted bg-muted/50 p-3 text-sm text-muted-foreground">
-                <strong>Importante:</strong> A confirmação aqui registra sua intenção de uso do benefício. O estabelecimento validará sua elegibilidade e aplicará as condições Martins Prime no local.
+                <strong>Importante:</strong> A confirmação aqui registra sua intenção de uso do benefício. O estabelecimento validará sua elegibilidade e aplicará as condições Guia Mais no local.
               </div>
             </CardContent>
           </Card>

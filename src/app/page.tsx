@@ -12,7 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
-import { Frown, Play, Tag, Award } from 'lucide-react'; // Added Award
+import { Frown, Play, Tag, Award, Sparkles, CheckCircle } from 'lucide-react'; 
 import { useToast } from '@/hooks/use-toast';
 import { RankingPanel } from '@/components/ranking/RankingPanel';
 
@@ -114,6 +114,21 @@ export default function HomePage() {
       <div>
         {/* Hero Skeleton */}
         <Skeleton className="relative mb-12 h-[400px] w-full rounded-lg md:h-[500px]" />
+
+        {/* Premium Section Skeleton */}
+        <section className="mb-12">
+          <Skeleton className="mb-6 h-9 w-3/4 mx-auto md:w-1/2" />
+          <div className="grid md:grid-cols-2 gap-8 items-center">
+            <div>
+              <Skeleton className="h-8 w-2/3 mb-4" />
+              <Skeleton className="h-4 w-full mb-2" />
+              <Skeleton className="h-4 w-full mb-2" />
+              <Skeleton className="h-4 w-5/6 mb-4" />
+              <Skeleton className="h-12 w-40 rounded-md" />
+            </div>
+            <Skeleton className="aspect-video w-full rounded-lg" />
+          </div>
+        </section>
 
         {/* Featured Deals Skeletons */}
         <section className="mb-12">
@@ -231,7 +246,7 @@ export default function HomePage() {
         />
         <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/40 p-4 text-center text-white">
           <h1 className="text-4xl font-bold tracking-tight md:text-6xl drop-shadow-lg">
-            Bem-vindo ao Martins Prime!
+            Bem-vindo ao Guia Mais!
           </h1>
           <p className="mt-4 max-w-2xl text-lg md:text-xl drop-shadow-md">
             Seu clube de vantagens exclusivo para curtir o melhor de Martins, RN. Descubra ofertas, explore e aproveite!
@@ -242,11 +257,48 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Section: Seja um Membro Premium */}
+      <section className="mb-16 py-12 bg-secondary/20 rounded-lg shadow-inner">
+        <div className="container mx-auto px-4">
+          <div className="grid md:grid-cols-2 gap-8 items-center">
+            <div className="text-center md:text-left">
+              <Sparkles className="h-12 w-12 text-primary mb-4 mx-auto md:mx-0" />
+              <h2 className="text-3xl font-bold tracking-tight text-primary md:text-4xl mb-4">
+                Seja um Membro Premium Guia Mais
+              </h2>
+              <p className="text-lg text-foreground/80 mb-6">
+                Desbloqueie um mundo de vantagens e experiências exclusivas em Martins.
+              </p>
+              <ul className="space-y-2 text-left mb-8 text-foreground/70">
+                <li className="flex items-center"><CheckCircle className="h-5 w-5 text-green-500 mr-2" /> Descontos incríveis em restaurantes, hotéis e lojas.</li>
+                <li className="flex items-center"><CheckCircle className="h-5 w-5 text-green-500 mr-2" /> Roteiros personalizados e acesso offline no app.</li>
+                <li className="flex items-center"><CheckCircle className="h-5 w-5 text-green-500 mr-2" /> Recompensas exclusivas por apoiar o comércio local.</li>
+              </ul>
+              <Button asChild size="lg" className="bg-accent hover:bg-accent/90 text-accent-foreground">
+                <Link href="/join">Conheça os Planos Premium</Link>
+              </Button>
+              <p className="mt-4 text-xs text-muted-foreground">
+                💚 Sua assinatura contribui para valorizar e fortalecer o turismo e comércio local!
+              </p>
+            </div>
+            <div className="relative aspect-square max-w-md mx-auto w-full overflow-hidden rounded-lg shadow-xl">
+                <Image
+                    src="https://placehold.co/600x600.png"
+                    alt="Membro Premium Guia Mais aproveitando a cidade"
+                    layout="fill"
+                    objectFit="cover"
+                    data-ai-hint="happy tourist enjoying city"
+                />
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Section 2: Featured Deals */}
       {featuredDeals.length > 0 && (
         <section className="mb-16">
           <h2 className="mb-2 text-center text-3xl font-bold tracking-tight text-primary md:text-4xl">
-            Ofertas Imperdíveis Martins Prime
+            Ofertas Imperdíveis Guia Mais
           </h2>
           <p className="mb-8 text-center text-lg text-foreground/80">
             Confira alguns dos benefícios exclusivos para membros do nosso clube!
@@ -268,7 +320,7 @@ export default function HomePage() {
             Destaques por Avaliação
           </h2>
           <p className="mb-8 text-center text-lg text-foreground/80">
-            Os locais mais bem avaliados pelos nossos exploradores Prime!
+            Os locais mais bem avaliados pelos nossos exploradores Guia Mais!
           </p>
           <RankingPanel rankedBusinessesByCategory={rankedBusinessesByCategory} />
         </section>
@@ -323,13 +375,29 @@ export default function HomePage() {
         </p>
       </section>
 
+      {/* Section: Horizontal Featured Partners */}
+      {otherServiceBusinesses.length > 0 && (
+        <section className="mb-16">
+          <h2 className="mb-6 text-center text-3xl font-bold tracking-tight text-primary md:text-4xl">
+            Parceiros em Destaque
+          </h2>
+          <div className="flex space-x-6 overflow-x-auto p-4 -m-4 scrollbar-thin scrollbar-thumb-muted scrollbar-track-transparent">
+            {otherServiceBusinesses.slice(0, 6).map(business => ( // Show up to 6 featured partners
+              <div key={business.id} className="min-w-[300px] sm:min-w-[320px] flex-shrink-0">
+                <BusinessCard business={business} />
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
       {/* Section 5: Explore Other Establishments */}
       <section className="mb-8 text-center">
         <h2 className="mb-2 text-3xl font-bold tracking-tight text-primary md:text-4xl">
           Explore Nossos Parceiros
         </h2>
         <p className="text-lg text-foreground/80">
-          Encontre restaurantes, hotéis, lojas e serviços em Martins com benefícios Prime.
+          Encontre restaurantes, hotéis, lojas e serviços em Martins com benefícios Guia Mais.
         </p>
       </section>
 
@@ -371,5 +439,3 @@ export default function HomePage() {
     </div>
   );
 }
-
-//mnbkzabdkdsb
