@@ -34,7 +34,7 @@ export default function InstitutionalPage() {
       <div className="space-y-8">
         <Card className="shadow-lg">
           <CardHeader>
-            <CardTitle className="flex items-center text-2xl text-accent">
+            <CardTitle className="flex items-center text-accent"> {/* Adjusted title size via CardTitle default */}
               <Info className="mr-3 h-7 w-7" />
               Sobre a Cidade de Martins
             </CardTitle>
@@ -47,7 +47,7 @@ export default function InstitutionalPage() {
                 alt="Vista panorâmica de Martins, RN"
                 layout="fill"
                 objectFit="cover"
-                data-ai-hint="Martins landscape"
+                data-ai-hint="Martins RN landscape"
               />
             </div>
             <p className="text-foreground/90 leading-relaxed">
@@ -71,7 +71,7 @@ export default function InstitutionalPage() {
 
         <Card className="shadow-lg">
           <CardHeader>
-            <CardTitle className="flex items-center text-2xl text-accent">
+            <CardTitle className="flex items-center text-accent">
               <MapPin className="mr-3 h-7 w-7" />
               Turismo em Martins
             </CardTitle>
@@ -101,7 +101,7 @@ export default function InstitutionalPage() {
 
         <Card className="shadow-lg">
           <CardHeader>
-            <CardTitle className="flex items-center text-2xl text-accent">
+            <CardTitle className="flex items-center text-accent">
               <CalendarDays className="mr-3 h-7 w-7" />
               Eventos Municipais e de Parceiros ({currentYear})
             </CardTitle>
@@ -141,7 +141,7 @@ export default function InstitutionalPage() {
 
         <Card className="shadow-lg">
           <CardHeader>
-            <CardTitle className="flex items-center text-2xl text-accent">
+            <CardTitle className="flex items-center text-accent">
               <Newspaper className="mr-3 h-7 w-7" />
               Notícias da Administração Pública ({currentYear})
             </CardTitle>
@@ -181,7 +181,7 @@ export default function InstitutionalPage() {
 
         <Card className="shadow-lg">
           <CardHeader>
-            <CardTitle className="flex items-center text-2xl text-accent">
+            <CardTitle className="flex items-center text-accent">
               <Briefcase className="mr-3 h-7 w-7" />
               Serviços Públicos Essenciais
             </CardTitle>
@@ -219,7 +219,7 @@ export default function InstitutionalPage() {
 
         <Card className="shadow-lg">
           <CardHeader>
-            <CardTitle className="flex items-center text-2xl text-accent">
+            <CardTitle className="flex items-center text-accent">
               <Phone className="mr-3 h-7 w-7" />
               Informações de Contato - Prefeitura
             </CardTitle>

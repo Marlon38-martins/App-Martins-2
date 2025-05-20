@@ -176,7 +176,7 @@ export default function JoinPage() {
 
       <section className="mb-12">
         <h2 className="mb-6 text-center text-2xl font-semibold text-accent">Seus Benefícios Exclusivos:</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"> {/* Reduced gap */}
           {premiumFeatures.slice(0, 4).map((benefit, index) => ( 
             <Card key={index} className="text-center shadow-md hover:shadow-lg transition-all duration-300 ease-in-out bg-card">
               <CardContent className="pt-6">
@@ -191,7 +191,7 @@ export default function JoinPage() {
       <section className="mb-12">
         <Card className="shadow-xl border-accent">
             <CardHeader>
-                <CardTitle className="text-2xl text-accent text-center">🔓 Grátis vs. 🔑 Premium</CardTitle>
+                <CardTitle className="text-accent text-center">🔓 Grátis vs. 🔑 Premium</CardTitle> {/* Adjusted title size */}
                 <CardDescription className="text-center">Veja a diferença e escolha o melhor para sua viagem!</CardDescription>
             </CardHeader>
             <CardContent>
@@ -226,7 +226,7 @@ export default function JoinPage() {
 
       <section className="mb-12 text-center">
         <Card className="bg-secondary/20 border-secondary p-6 shadow-md">
-          <CardTitle className="text-xl text-secondary-foreground mb-2 flex items-center justify-center">
+          <CardTitle className="text-secondary-foreground mb-2 flex items-center justify-center"> {/* Adjusted title size */}
             <Info className="mr-2 h-6 w-6"/> Experimente o Guia Mais!
           </CardTitle>
           <CardDescription className="text-secondary-foreground/90">
@@ -240,7 +240,7 @@ export default function JoinPage() {
 
       <Card className="shadow-xl">
         <CardHeader>
-          <CardTitle className="flex items-center text-2xl text-primary">
+          <CardTitle className="flex items-center text-primary"> {/* Adjusted title size */}
             <User className="mr-3 h-7 w-7 text-accent" />
             Complete seus Dados para Assinar
           </CardTitle>

@@ -133,7 +133,7 @@ export default function HomePage() {
         {/* Featured Deals Skeletons */}
         <section className="mb-12">
           <Skeleton className="mb-6 h-9 w-3/4 mx-auto md:w-1/2" /> {/* Title Skeleton */}
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4"> {/* Reduced gap */}
             {Array.from({ length: 4 }).map((_, index) => (
               <div key={index} className="flex flex-col space-y-3">
                 <Skeleton className="h-[200px] w-full rounded-xl" />
@@ -150,7 +150,7 @@ export default function HomePage() {
         {/* Ranking Panel Skeletons */}
         <section className="mb-12">
           <Skeleton className="mb-6 h-9 w-3/4 mx-auto md:w-1/2" /> {/* Title Skeleton */}
-           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"> {/* Reduced gap */}
             {Array.from({ length: 3 }).map((_, index) => (
               <div key={`rank-skeleton-${index}`} className="space-y-3 p-4 border rounded-lg">
                 <Skeleton className="h-6 w-1/2 mb-2" /> {/* Category Title */}
@@ -172,7 +172,7 @@ export default function HomePage() {
         {/* Featured Tourist Spots Skeletons */}
         <section className="mb-12">
           <Skeleton className="mb-6 h-9 w-3/4 mx-auto md:w-1/2" /> {/* Title Skeleton */}
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"> {/* Reduced gap */}
             {Array.from({ length: 3 }).map((_, index) => (
               <div key={index} className="flex flex-col space-y-3">
                 <Skeleton className="h-[200px] w-full rounded-xl" />
@@ -198,7 +198,7 @@ export default function HomePage() {
           <Skeleton className="h-12 w-full md:col-span-2 rounded-lg" />
           <Skeleton className="h-12 w-full rounded-lg" />
         </div>
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"> {/* Reduced gap */}
           {Array.from({ length: 4 }).map((_, index) => (
             <div key={index} className="flex flex-col space-y-3">
               <Skeleton className="h-[200px] w-full rounded-xl" />
@@ -242,7 +242,7 @@ export default function HomePage() {
           objectFit="cover"
           className="brightness-75"
           priority
-          data-ai-hint="mountain landscape city"
+          data-ai-hint="brazil mountain city"
         />
         <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/40 p-4 text-center text-white">
           <h1 className="text-4xl font-bold tracking-tight md:text-6xl drop-shadow-lg">
@@ -287,7 +287,7 @@ export default function HomePage() {
                     alt="Membro Premium Guia Mais aproveitando a cidade"
                     layout="fill"
                     objectFit="cover"
-                    data-ai-hint="happy tourist enjoying city"
+                    data-ai-hint="happy tourist city"
                 />
             </div>
           </div>
@@ -303,7 +303,7 @@ export default function HomePage() {
           <p className="mb-8 text-center text-lg text-foreground/80">
             Confira alguns dos benefícios exclusivos para membros do nosso clube!
           </p>
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"> {/* Reduced gap */}
             {featuredDeals.map(deal => {
               const businessForDeal = businesses.find(b => b.id === deal.businessId);
               return <DealCard key={deal.id} deal={deal} business={businessForDeal} />;
@@ -333,7 +333,7 @@ export default function HomePage() {
           <h2 className="mb-6 text-center text-3xl font-bold tracking-tight text-primary md:text-4xl">
             Conheça as Maravilhas de Martins
           </h2>
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"> {/* Reduced gap */}
             {touristSpots.map(spot => (
               <BusinessCard key={spot.id} business={spot} />
             ))}
@@ -353,7 +353,7 @@ export default function HomePage() {
               alt="Thumbnail de vídeo sobre as belezas de Martins"
               layout="fill"
               objectFit="cover"
-              data-ai-hint="nature travel video"
+              data-ai-hint="brazil travel video"
             />
             <div className="absolute inset-0 flex items-center justify-center bg-black/40 transition-opacity hover:opacity-75">
               <button
@@ -381,9 +381,9 @@ export default function HomePage() {
           <h2 className="mb-6 text-center text-3xl font-bold tracking-tight text-primary md:text-4xl">
             Parceiros em Destaque
           </h2>
-          <div className="flex space-x-6 overflow-x-auto p-4 -m-4 scrollbar-thin scrollbar-thumb-muted scrollbar-track-transparent">
+          <div className="flex space-x-4 overflow-x-auto p-4 -m-4 scrollbar-thin scrollbar-thumb-muted scrollbar-track-transparent"> {/* Reduced space-x */}
             {otherServiceBusinesses.slice(0, 6).map(business => ( // Show up to 6 featured partners
-              <div key={business.id} className="min-w-[300px] sm:min-w-[320px] flex-shrink-0">
+              <div key={business.id} className="min-w-[280px] sm:min-w-[300px] flex-shrink-0"> {/* Slightly reduced min-w */}
                 <BusinessCard business={business} />
               </div>
             ))}
@@ -430,7 +430,7 @@ export default function HomePage() {
       )}
 
       {filteredListedBusinesses.length > 0 && (
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"> {/* Reduced gap */}
           {filteredListedBusinesses.map(business => (
             <BusinessCard key={business.id} business={business} />
           ))}
