@@ -12,9 +12,27 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
-import { Frown, Play, Tag, Award, Sparkles, CheckCircle, MapIcon, Building, UserPlus, TicketPercent as OffersIcon } from 'lucide-react';
+import { 
+    Frown, Play, Tag, Award, Sparkles, CheckCircle, MapIcon, Building, UserPlus, TicketPercent as OffersIcon,
+    UtensilsCrossed, BedDouble, ShoppingBag, Coffee, Beer, Landmark as AttractionIcon, Trees, ChevronRight,
+    Navigation
+} from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { RankingPanel } from '@/components/ranking/RankingPanel';
+import { BusinessTypeIcon } from '@/components/icons';
+import { slugify } from '@/lib/utils';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
+
+
+const quickNavCategories = [
+  { name: 'Restaurantes', slug: slugify('Restaurante'), Icon: UtensilsCrossed },
+  { name: 'Hospedagem', slug: slugify('Hotel'), Icon: BedDouble },
+  { name: 'Bares', slug: slugify('Bar'), Icon: Beer },
+  { name: 'Cafés', slug: slugify('Café'), Icon: Coffee },
+  { name: 'Lojas', slug: slugify('Loja'), Icon: ShoppingBag }, // Changed Comércio to Lojas for brevity
+  { name: 'Lazer', slug: slugify('Atração'), Icon: AttractionIcon },
+  { name: 'Mapa', slug: 'map', Icon: MapIcon }, // Direct link to map
+];
 
 
 export default function HomePage() {
@@ -85,8 +103,8 @@ export default function HomePage() {
   const rankedBusinessesByCategory = useMemo(() => {
     if (!businesses.length) return {};
 
-    const categoriesToRank = ['Restaurante', 'Hotel', 'Atração']; // Define which categories to show rankings for
-    const topN = 3; // Show top N per category
+    const categoriesToRank = ['Restaurante', 'Hotel', 'Atração']; 
+    const topN = 3; 
 
     const result: Record<string, GramadoBusiness[]> = {};
 
@@ -97,7 +115,7 @@ export default function HomePage() {
           if (b.rating! !== a.rating!) {
             return b.rating! - a.rating!;
           }
-          return b.reviewCount! - a.reviewCount!; // Tie-breaker
+          return b.reviewCount! - a.reviewCount!; 
         })
         .slice(0, topN);
 
@@ -112,16 +130,17 @@ export default function HomePage() {
   if (isLoading) {
     return (
       <div className="space-y-6">
-        {/* Hero Skeleton */}
-        <Skeleton className="relative mb-8 h-[300px] w-full rounded-lg md:h-[350px]" />
-
-        {/* Quick Actions Skeleton */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8">
+        <Skeleton className="relative mb-12 h-[300px] w-full rounded-lg md:h-[350px]" />
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-12">
             {Array.from({length: 4}).map((_, i) => <Skeleton key={`qa-skel-${i}`} className="h-20 w-full rounded-lg" />)}
         </div>
-
-        {/* Premium Section Skeleton */}
-        <section className="mb-8">
+        <section className="mb-12">
+          <Skeleton className="mb-4 h-8 w-3/4 mx-auto md:w-1/2" />
+          <div className="flex space-x-4 overflow-x-auto p-2 -m-2">
+            {Array.from({ length: 5 }).map((_, i) => <Skeleton key={`hnav-skel-${i}`} className="h-24 w-32 shrink-0 rounded-lg" />)}
+          </div>
+        </section>
+        <section className="mb-12">
           <Skeleton className="mb-4 h-8 w-3/4 mx-auto md:w-1/2" />
           <div className="grid md:grid-cols-2 gap-6 items-center">
             <div>
@@ -134,10 +153,8 @@ export default function HomePage() {
             <Skeleton className="aspect-video w-full rounded-lg" />
           </div>
         </section>
-
-        {/* Featured Deals Skeletons */}
-        <section className="mb-8">
-          <Skeleton className="mb-4 h-8 w-3/4 mx-auto md:w-1/2" /> {/* Title Skeleton */}
+        <section className="mb-12">
+          <Skeleton className="mb-4 h-8 w-3/4 mx-auto md:w-1/2" />
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {Array.from({ length: 4 }).map((_, index) => (
               <div key={index} className="flex flex-col space-y-2">
@@ -151,14 +168,12 @@ export default function HomePage() {
             ))}
           </div>
         </section>
-
-        {/* Ranking Panel Skeletons */}
-        <section className="mb-8">
-          <Skeleton className="mb-4 h-8 w-3/4 mx-auto md:w-1/2" /> {/* Title Skeleton */}
-           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <section className="mb-12">
+          <Skeleton className="mb-4 h-8 w-3/4 mx-auto md:w-1/2" />
+           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {Array.from({ length: 3 }).map((_, index) => (
               <div key={`rank-skeleton-${index}`} className="space-y-2 p-3 border rounded-lg">
-                <Skeleton className="h-5 w-1/2 mb-2" /> {/* Category Title */}
+                <Skeleton className="h-5 w-1/2 mb-2" />
                 {Array.from({ length: 2 }).map((_, itemIndex) => (
                   <div key={`rank-item-skeleton-${itemIndex}`} className="flex items-start space-x-2 py-2 border-b last:border-none">
                     <Skeleton className="h-14 w-14 rounded-md shrink-0" />
@@ -173,11 +188,9 @@ export default function HomePage() {
             ))}
           </div>
         </section>
-
-        {/* Featured Tourist Spots Skeletons */}
-        <section className="mb-8">
-          <Skeleton className="mb-4 h-8 w-3/4 mx-auto md:w-1/2" /> {/* Title Skeleton */}
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <section className="mb-12">
+          <Skeleton className="mb-4 h-8 w-3/4 mx-auto md:w-1/2" />
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {Array.from({ length: 3 }).map((_, index) => (
               <div key={index} className="flex flex-col space-y-2">
                 <Skeleton className="h-[180px] w-full rounded-xl" />
@@ -189,21 +202,17 @@ export default function HomePage() {
             ))}
           </div>
         </section>
-
-        {/* Video Showcase Skeleton */}
-        <section className="mb-8">
-          <Skeleton className="mb-4 h-8 w-3/4 mx-auto md:w-1/2" /> {/* Title Skeleton */}
+        <section className="mb-12">
+          <Skeleton className="mb-4 h-8 w-3/4 mx-auto md:w-1/2" />
           <Skeleton className="aspect-video w-full max-w-3xl mx-auto rounded-lg" />
         </section>
-
-        {/* Explore Establishments Skeletons */}
-        <Skeleton className="mb-2 h-8 w-3/4 mx-auto md:w-1/2" /> {/* Title Skeleton */}
-        <Skeleton className="mb-6 h-5 w-full mx-auto md:w-3/4" /> {/* Subtitle Skeleton */}
+        <Skeleton className="mb-2 h-8 w-3/4 mx-auto md:w-1/2" />
+        <Skeleton className="mb-6 h-5 w-full mx-auto md:w-3/4" />
         <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-3">
           <Skeleton className="h-10 w-full md:col-span-2 rounded-lg" />
           <Skeleton className="h-10 w-full rounded-lg" />
         </div>
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {Array.from({ length: 4 }).map((_, index) => (
             <div key={index} className="flex flex-col space-y-2">
               <Skeleton className="h-[180px] w-full rounded-xl" />
@@ -237,9 +246,8 @@ export default function HomePage() {
   }
 
   return (
-    <div className="space-y-8">
-      {/* Section 1: Hero Image/Welcome */}
-      <section className="relative mb-8 h-[300px] w-full overflow-hidden rounded-lg shadow-xl md:h-[350px]">
+    <div className="space-y-12">
+      <section className="relative mb-12 h-[300px] w-full overflow-hidden rounded-lg shadow-xl md:h-[350px]">
         <Image
           src="https://placehold.co/1600x700.png"
           alt="Paisagem de Martins, RN"
@@ -251,7 +259,7 @@ export default function HomePage() {
         />
         <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/40 p-4 text-center text-white">
           <h1 className="text-3xl font-bold tracking-tight md:text-5xl drop-shadow-lg">
-            Guia Mais
+            Bem-vindo ao Guia Mais
           </h1>
           <p className="mt-3 max-w-xl text-md md:text-lg drop-shadow-md">
             Seu clube de vantagens exclusivo em Martins, RN. Descubra, explore e aproveite!
@@ -259,27 +267,26 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Quick Actions Bar */}
-      <section className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8">
-        <Button asChild variant="outline" size="lg" className="flex flex-col h-auto py-3 items-center justify-center text-center">
+      <section className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-12">
+        <Button asChild variant="outline" size="lg" className="flex flex-col h-auto py-2 items-center justify-center text-center">
           <Link href="/services" className="flex flex-col items-center">
             <OffersIcon className="h-6 w-6 mb-1" />
             Ofertas
           </Link>
         </Button>
-        <Button asChild variant="outline" size="lg" className="flex flex-col h-auto py-3 items-center justify-center text-center">
+        <Button asChild variant="outline" size="lg" className="flex flex-col h-auto py-2 items-center justify-center text-center">
           <Link href="/services" className="flex flex-col items-center">
             <Building className="h-6 w-6 mb-1" />
             Parceiros
           </Link>
         </Button>
-        <Button asChild variant="outline" size="lg" className="flex flex-col h-auto py-3 items-center justify-center text-center">
+        <Button asChild variant="outline" size="lg" className="flex flex-col h-auto py-2 items-center justify-center text-center">
           <Link href="/map" className="flex flex-col items-center">
             <MapIcon className="h-6 w-6 mb-1" />
             Mapa
           </Link>
         </Button>
-        <Button asChild variant="default" size="lg" className="bg-accent hover:bg-accent/90 text-accent-foreground flex flex-col h-auto py-3 items-center justify-center text-center">
+        <Button asChild variant="default" size="lg" className="bg-accent hover:bg-accent/90 text-accent-foreground flex flex-col h-auto py-2 items-center justify-center text-center">
           <Link href="/join" className="flex flex-col items-center">
             <UserPlus className="h-6 w-6 mb-1" />
             Assinar
@@ -287,8 +294,31 @@ export default function HomePage() {
         </Button>
       </section>
 
-      {/* Section: Seja um Membro Premium */}
-      <section className="mb-10 py-8 bg-secondary/20 rounded-lg shadow-inner">
+      {/* Horizontal Scrolling Quick Navigation Section */}
+      <section className="mb-12">
+        <h2 className="mb-4 text-center text-2xl font-bold tracking-tight text-primary md:text-3xl">
+          <Navigation className="inline-block h-7 w-7 mr-2 text-accent" />
+          Explore por Categoria
+        </h2>
+        <div className="flex space-x-4 overflow-x-auto p-2 -m-2 scrollbar-thin scrollbar-thumb-muted scrollbar-track-transparent">
+          {quickNavCategories.map((category) => (
+            <Link 
+              key={category.slug} 
+              href={category.slug === 'map' ? '/map' : `/services/${category.slug}`} 
+              className="shrink-0 w-36"
+            >
+              <Card className="group h-full hover:bg-accent/10 transition-colors duration-200 shadow-md hover:shadow-lg">
+                <CardContent className="flex flex-col items-center justify-center p-4 text-center">
+                  <category.Icon className="h-8 w-8 mb-2 text-primary group-hover:text-accent transition-colors" />
+                  <p className="text-sm font-medium text-foreground group-hover:text-accent transition-colors">{category.name}</p>
+                </CardContent>
+              </Card>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      <section className="mb-12 py-8 bg-secondary/20 rounded-lg shadow-inner">
         <div className="container mx-auto px-4">
           <div className="grid md:grid-cols-2 gap-6 items-center">
             <div className="text-center md:text-left">
@@ -324,16 +354,15 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Section: Featured Deals */}
       {featuredDeals.length > 0 && (
-        <section className="mb-10">
+        <section className="mb-12">
           <h2 className="mb-2 text-center text-2xl font-bold tracking-tight text-primary md:text-3xl">
             Ofertas em Destaque
           </h2>
           <p className="mb-6 text-center text-md text-foreground/80">
             Benefícios exclusivos para membros do nosso clube!
           </p>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {featuredDeals.map(deal => {
               const businessForDeal = businesses.find(b => b.id === deal.businessId);
               return <DealCard key={deal.id} deal={deal} business={businessForDeal} />;
@@ -342,9 +371,8 @@ export default function HomePage() {
         </section>
       )}
 
-      {/* Section: Ranking Panel */}
        {Object.keys(rankedBusinessesByCategory).length > 0 && (
-        <section className="mb-10">
+        <section className="mb-12">
           <h2 className="mb-2 text-center text-2xl font-bold tracking-tight text-primary md:text-3xl">
             <Award className="inline-block h-7 w-7 mr-2 text-accent" />
             Top Avaliados
@@ -356,13 +384,12 @@ export default function HomePage() {
         </section>
       )}
 
-      {/* Section: Featured Tourist Spots */}
       {touristSpots.length > 0 && (
-        <section className="mb-10">
+        <section className="mb-12">
           <h2 className="mb-4 text-center text-2xl font-bold tracking-tight text-primary md:text-3xl">
             Pontos Turísticos
           </h2>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {touristSpots.map(spot => (
               <BusinessCard key={spot.id} business={spot} />
             ))}
@@ -370,8 +397,7 @@ export default function HomePage() {
         </section>
       )}
 
-      {/* Section: Video Showcase */}
-      <section className="mb-10">
+      <section className="mb-12">
         <h2 className="mb-4 text-center text-2xl font-bold tracking-tight text-primary md:text-3xl">
           Descubra Martins
         </h2>
@@ -389,7 +415,7 @@ export default function HomePage() {
                 aria-label="Assistir vídeo sobre Martins"
                 className="group p-2 bg-background/80 rounded-full text-primary backdrop-blur-sm transition-all hover:bg-background hover:scale-110 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-black/50"
                 onClick={() => {
-                  const videoUrl = "https://www.youtube.com/watch?v=dQw4w9WgXcQ"; // Placeholder video
+                  const videoUrl = "https://www.youtube.com/watch?v=dQw4w9WgXcQ"; 
                   window.open(videoUrl, "_blank");
                   toast({ title: "Vídeo Demonstrativo", description: "Abrindo vídeo em nova aba..."});
                 }}
@@ -404,9 +430,8 @@ export default function HomePage() {
         </p>
       </section>
 
-      {/* Section: Horizontal Featured Partners */}
       {otherServiceBusinesses.length > 0 && (
-        <section className="mb-10">
+        <section className="mb-12">
           <h2 className="mb-4 text-center text-2xl font-bold tracking-tight text-primary md:text-3xl">
             Parceiros em Destaque
           </h2>
@@ -420,7 +445,6 @@ export default function HomePage() {
         </section>
       )}
 
-      {/* Section: Explore Other Establishments */}
       <section className="mb-6 text-center">
         <h2 className="mb-2 text-2xl font-bold tracking-tight text-primary md:text-3xl">
           Nossos Parceiros
@@ -459,7 +483,7 @@ export default function HomePage() {
       )}
 
       {filteredListedBusinesses.length > 0 && (
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {filteredListedBusinesses.map(business => (
             <BusinessCard key={business.id} business={business} />
           ))}

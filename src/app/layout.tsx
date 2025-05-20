@@ -33,7 +33,8 @@ import {
   Briefcase, 
   Tag, 
   Search as SearchIcon,
-  Users // For "Listar Todos os Parceiros"
+  Users, // For "Listar Todos os Parceiros"
+  HelpCircle, BookOpen, Handshake // For footer
 } from 'lucide-react'; 
 import { Header } from '@/components/layout/header';
 import { AuthProviderClient } from '@/hooks/use-auth-client'; 
@@ -70,7 +71,7 @@ const categoriesForMenu = [
   { name: 'Hospedagem', slug: slugify('Hotel'), Icon: BedDouble },
   { name: 'Bares', slug: slugify('Bar'), Icon: Beer },
   { name: 'Cafés', slug: slugify('Café'), Icon: Coffee },
-  { name: 'Comércio', slug: slugify('Loja'), Icon: ShoppingBag },
+  { name: 'Lojas', slug: slugify('Loja'), Icon: ShoppingBag }, // Changed Comércio to Lojas
   { name: 'Lazer', slug: slugify('Atração'), Icon: AttractionIcon },
   { name: 'Parques', slug: slugify('Parque'), Icon: Trees },
 ];
@@ -98,7 +99,6 @@ export default function RootLayout({
               </SidebarHeader>
               <SidebarContent>
                 <SidebarMenu>
-                  {/* Main Navigation Items */}
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild tooltip={{content: "Início", side:"right"}}>
                       <Link href="/">
@@ -167,10 +167,8 @@ export default function RootLayout({
                     </SidebarMenuButton>
                   </SidebarMenuItem>
 
-                  {/* User Authentication Section - Renders login/join or profile */}
                   <CurrentUserDisplay />
                   
-                  {/* Partner Section - This will now be pushed to the very bottom, separated by a line */}
                   <SidebarMenuItem className="mt-auto pt-4 border-t border-sidebar-border">
                     <PartnerPanelDropdown />
                   </SidebarMenuItem>
@@ -191,9 +189,22 @@ export default function RootLayout({
               <main className="flex-grow p-4 md:p-6 bg-background overflow-x-hidden">
                 {children}
               </main>
-              <footer className="bg-background py-4 text-center text-sm text-muted-foreground border-t">
-                <div className="px-4">
-                  © {new Date().getFullYear()} Guia Mais. Todos os direitos reservados.
+              <footer className="bg-background py-6 text-sm text-muted-foreground border-t">
+                <div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-4 text-center md:text-left">
+                  <div>
+                    <h4 className="font-semibold text-foreground mb-2">Guia Mais</h4>
+                    <p>© {new Date().getFullYear()} Guia Mais. Todos os direitos reservados.</p>
+                  </div>
+                  <nav className="space-y-1 md:justify-self-center">
+                    <Link href="/institutional" className="block hover:text-primary transition-colors">Sobre Guia Mais</Link>
+                    <Link href="/termos" className="block hover:text-primary transition-colors">Termos de Uso</Link>
+                    <Link href="/politica-de-privacidade" className="block hover:text-primary transition-colors">Política de Privacidade</Link>
+                  </nav>
+                  <nav className="space-y-1 md:justify-self-end">
+                     <Link href="/partner-registration" className="block hover:text-primary transition-colors">Seja um Parceiro</Link>
+                     <Link href="/contact" className="block hover:text-primary transition-colors">Fale Conosco</Link> 
+                     {/* Placeholder /contact page */}
+                  </nav>
                 </div>
               </footer>
             </SidebarInset>
