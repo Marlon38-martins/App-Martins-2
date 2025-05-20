@@ -168,7 +168,7 @@ export default function RootLayout({
                   </SidebarMenuItem>
 
                   <CurrentUserDisplay />
-                  
+                                    
                   <SidebarMenuItem className="mt-auto pt-4 border-t border-sidebar-border">
                     <PartnerPanelDropdown />
                   </SidebarMenuItem>
@@ -186,11 +186,11 @@ export default function RootLayout({
 
             <SidebarInset>
               <Header />
-              <main className="flex-grow p-4 bg-background overflow-x-hidden w-full max-w-sm mx-auto">
+              <main className="flex-grow p-4 bg-background overflow-x-hidden w-full">
                 {children}
               </main>
               <footer className="bg-background py-6 text-sm text-muted-foreground border-t">
-                <div className="w-full max-w-sm mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-4 text-center md:text-left">
+                <div className="w-full px-4 grid grid-cols-1 md:grid-cols-3 gap-4 text-center md:text-left">
                   <div>
                     <h4 className="font-semibold text-foreground mb-2">Guia Mais</h4>
                     <p>© {new Date().getFullYear()} Guia Mais. Todos os direitos reservados.</p>
@@ -214,5 +214,3 @@ export default function RootLayout({
     </html>
   );
 }
-
-    
