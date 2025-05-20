@@ -12,7 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
-import { Frown, Play, Tag, Award, Sparkles, CheckCircle } from 'lucide-react'; 
+import { Frown, Play, Tag, Award, Sparkles, CheckCircle, MapIcon, Building, UserPlus, TicketPercent as OffersIcon } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { RankingPanel } from '@/components/ranking/RankingPanel';
 
@@ -111,33 +111,38 @@ export default function HomePage() {
 
   if (isLoading) {
     return (
-      <div>
+      <div className="space-y-6">
         {/* Hero Skeleton */}
-        <Skeleton className="relative mb-12 h-[400px] w-full rounded-lg md:h-[500px]" />
+        <Skeleton className="relative mb-8 h-[300px] w-full rounded-lg md:h-[350px]" />
+
+        {/* Quick Actions Skeleton */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8">
+            {Array.from({length: 4}).map((_, i) => <Skeleton key={`qa-skel-${i}`} className="h-20 w-full rounded-lg" />)}
+        </div>
 
         {/* Premium Section Skeleton */}
-        <section className="mb-12">
-          <Skeleton className="mb-6 h-9 w-3/4 mx-auto md:w-1/2" />
-          <div className="grid md:grid-cols-2 gap-8 items-center">
+        <section className="mb-8">
+          <Skeleton className="mb-4 h-8 w-3/4 mx-auto md:w-1/2" />
+          <div className="grid md:grid-cols-2 gap-6 items-center">
             <div>
-              <Skeleton className="h-8 w-2/3 mb-4" />
+              <Skeleton className="h-7 w-2/3 mb-3" />
               <Skeleton className="h-4 w-full mb-2" />
               <Skeleton className="h-4 w-full mb-2" />
-              <Skeleton className="h-4 w-5/6 mb-4" />
-              <Skeleton className="h-12 w-40 rounded-md" />
+              <Skeleton className="h-4 w-5/6 mb-3" />
+              <Skeleton className="h-10 w-36 rounded-md" />
             </div>
             <Skeleton className="aspect-video w-full rounded-lg" />
           </div>
         </section>
 
         {/* Featured Deals Skeletons */}
-        <section className="mb-12">
-          <Skeleton className="mb-6 h-9 w-3/4 mx-auto md:w-1/2" /> {/* Title Skeleton */}
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4"> {/* Reduced gap */}
+        <section className="mb-8">
+          <Skeleton className="mb-4 h-8 w-3/4 mx-auto md:w-1/2" /> {/* Title Skeleton */}
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {Array.from({ length: 4 }).map((_, index) => (
-              <div key={index} className="flex flex-col space-y-3">
-                <Skeleton className="h-[200px] w-full rounded-xl" />
-                <div className="space-y-2">
+              <div key={index} className="flex flex-col space-y-2">
+                <Skeleton className="h-[180px] w-full rounded-xl" />
+                <div className="space-y-1">
                   <Skeleton className="h-4 w-full" />
                   <Skeleton className="h-4 w-3/4" />
                   <Skeleton className="h-8 w-full" />
@@ -148,16 +153,16 @@ export default function HomePage() {
         </section>
 
         {/* Ranking Panel Skeletons */}
-        <section className="mb-12">
-          <Skeleton className="mb-6 h-9 w-3/4 mx-auto md:w-1/2" /> {/* Title Skeleton */}
-           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"> {/* Reduced gap */}
+        <section className="mb-8">
+          <Skeleton className="mb-4 h-8 w-3/4 mx-auto md:w-1/2" /> {/* Title Skeleton */}
+           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {Array.from({ length: 3 }).map((_, index) => (
-              <div key={`rank-skeleton-${index}`} className="space-y-3 p-4 border rounded-lg">
-                <Skeleton className="h-6 w-1/2 mb-2" /> {/* Category Title */}
+              <div key={`rank-skeleton-${index}`} className="space-y-2 p-3 border rounded-lg">
+                <Skeleton className="h-5 w-1/2 mb-2" /> {/* Category Title */}
                 {Array.from({ length: 2 }).map((_, itemIndex) => (
-                  <div key={`rank-item-skeleton-${itemIndex}`} className="flex items-start space-x-3 py-2 border-b last:border-none">
-                    <Skeleton className="h-16 w-16 rounded-md shrink-0" />
-                    <div className="flex-1 space-y-2">
+                  <div key={`rank-item-skeleton-${itemIndex}`} className="flex items-start space-x-2 py-2 border-b last:border-none">
+                    <Skeleton className="h-14 w-14 rounded-md shrink-0" />
+                    <div className="flex-1 space-y-1">
                       <Skeleton className="h-4 w-3/4" />
                       <Skeleton className="h-3 w-1/2" />
                       <Skeleton className="h-3 w-1/4" />
@@ -170,13 +175,13 @@ export default function HomePage() {
         </section>
 
         {/* Featured Tourist Spots Skeletons */}
-        <section className="mb-12">
-          <Skeleton className="mb-6 h-9 w-3/4 mx-auto md:w-1/2" /> {/* Title Skeleton */}
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"> {/* Reduced gap */}
+        <section className="mb-8">
+          <Skeleton className="mb-4 h-8 w-3/4 mx-auto md:w-1/2" /> {/* Title Skeleton */}
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {Array.from({ length: 3 }).map((_, index) => (
-              <div key={index} className="flex flex-col space-y-3">
-                <Skeleton className="h-[200px] w-full rounded-xl" />
-                <div className="space-y-2">
+              <div key={index} className="flex flex-col space-y-2">
+                <Skeleton className="h-[180px] w-full rounded-xl" />
+                <div className="space-y-1">
                   <Skeleton className="h-4 w-3/4" />
                   <Skeleton className="h-4 w-1/2" />
                 </div>
@@ -186,23 +191,23 @@ export default function HomePage() {
         </section>
 
         {/* Video Showcase Skeleton */}
-        <section className="mb-12">
-          <Skeleton className="mb-6 h-9 w-3/4 mx-auto md:w-1/2" /> {/* Title Skeleton */}
+        <section className="mb-8">
+          <Skeleton className="mb-4 h-8 w-3/4 mx-auto md:w-1/2" /> {/* Title Skeleton */}
           <Skeleton className="aspect-video w-full max-w-3xl mx-auto rounded-lg" />
         </section>
 
         {/* Explore Establishments Skeletons */}
-        <Skeleton className="mb-2 h-9 w-3/4 mx-auto md:w-1/2" /> {/* Title Skeleton */}
-        <Skeleton className="mb-8 h-6 w-full mx-auto md:w-3/4" /> {/* Subtitle Skeleton */}
-        <div className="mb-8 grid grid-cols-1 gap-4 md:grid-cols-3">
-          <Skeleton className="h-12 w-full md:col-span-2 rounded-lg" />
-          <Skeleton className="h-12 w-full rounded-lg" />
+        <Skeleton className="mb-2 h-8 w-3/4 mx-auto md:w-1/2" /> {/* Title Skeleton */}
+        <Skeleton className="mb-6 h-5 w-full mx-auto md:w-3/4" /> {/* Subtitle Skeleton */}
+        <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-3">
+          <Skeleton className="h-10 w-full md:col-span-2 rounded-lg" />
+          <Skeleton className="h-10 w-full rounded-lg" />
         </div>
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"> {/* Reduced gap */}
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {Array.from({ length: 4 }).map((_, index) => (
-            <div key={index} className="flex flex-col space-y-3">
-              <Skeleton className="h-[200px] w-full rounded-xl" />
-              <div className="space-y-2">
+            <div key={index} className="flex flex-col space-y-2">
+              <Skeleton className="h-[180px] w-full rounded-xl" />
+              <div className="space-y-1">
                 <Skeleton className="h-4 w-3/4" />
                 <Skeleton className="h-4 w-1/2" />
                 <Skeleton className="h-8 w-full" />
@@ -232,12 +237,12 @@ export default function HomePage() {
   }
 
   return (
-    <div>
+    <div className="space-y-8">
       {/* Section 1: Hero Image/Welcome */}
-      <section className="relative mb-12 h-[400px] w-full overflow-hidden rounded-lg shadow-xl md:h-[500px]">
+      <section className="relative mb-8 h-[300px] w-full overflow-hidden rounded-lg shadow-xl md:h-[350px]">
         <Image
-          src="https://placehold.co/1600x900.png"
-          alt="Paisagem deslumbrante de Martins, RN"
+          src="https://placehold.co/1600x700.png"
+          alt="Paisagem de Martins, RN"
           layout="fill"
           objectFit="cover"
           className="brightness-75"
@@ -245,46 +250,71 @@ export default function HomePage() {
           data-ai-hint="brazil mountain city"
         />
         <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/40 p-4 text-center text-white">
-          <h1 className="text-4xl font-bold tracking-tight md:text-6xl drop-shadow-lg">
-            Bem-vindo ao Guia Mais!
+          <h1 className="text-3xl font-bold tracking-tight md:text-5xl drop-shadow-lg">
+            Guia Mais
           </h1>
-          <p className="mt-4 max-w-2xl text-lg md:text-xl drop-shadow-md">
-            Seu clube de vantagens exclusivo para curtir o melhor de Martins, RN. Descubra ofertas, explore e aproveite!
+          <p className="mt-3 max-w-xl text-md md:text-lg drop-shadow-md">
+            Seu clube de vantagens exclusivo em Martins, RN. Descubra, explore e aproveite!
           </p>
-          <Button asChild size="lg" className="mt-8 bg-accent hover:bg-accent/90 text-accent-foreground shadow-md">
-            <Link href="/join">Associe-se Agora!</Link>
-          </Button>
         </div>
       </section>
 
+      {/* Quick Actions Bar */}
+      <section className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8">
+        <Button asChild variant="outline" size="lg" className="flex flex-col h-auto py-3 items-center justify-center text-center">
+          <Link href="/services" className="flex flex-col items-center">
+            <OffersIcon className="h-6 w-6 mb-1" />
+            Ofertas
+          </Link>
+        </Button>
+        <Button asChild variant="outline" size="lg" className="flex flex-col h-auto py-3 items-center justify-center text-center">
+          <Link href="/services" className="flex flex-col items-center">
+            <Building className="h-6 w-6 mb-1" />
+            Parceiros
+          </Link>
+        </Button>
+        <Button asChild variant="outline" size="lg" className="flex flex-col h-auto py-3 items-center justify-center text-center">
+          <Link href="/map" className="flex flex-col items-center">
+            <MapIcon className="h-6 w-6 mb-1" />
+            Mapa
+          </Link>
+        </Button>
+        <Button asChild variant="default" size="lg" className="bg-accent hover:bg-accent/90 text-accent-foreground flex flex-col h-auto py-3 items-center justify-center text-center">
+          <Link href="/join" className="flex flex-col items-center">
+            <UserPlus className="h-6 w-6 mb-1" />
+            Assinar
+          </Link>
+        </Button>
+      </section>
+
       {/* Section: Seja um Membro Premium */}
-      <section className="mb-16 py-12 bg-secondary/20 rounded-lg shadow-inner">
+      <section className="mb-10 py-8 bg-secondary/20 rounded-lg shadow-inner">
         <div className="container mx-auto px-4">
-          <div className="grid md:grid-cols-2 gap-8 items-center">
+          <div className="grid md:grid-cols-2 gap-6 items-center">
             <div className="text-center md:text-left">
-              <Sparkles className="h-12 w-12 text-primary mb-4 mx-auto md:mx-0" />
-              <h2 className="text-3xl font-bold tracking-tight text-primary md:text-4xl mb-4">
-                Seja um Membro Premium Guia Mais
+              <Sparkles className="h-10 w-10 text-primary mb-3 mx-auto md:mx-0" />
+              <h2 className="text-2xl font-bold tracking-tight text-primary md:text-3xl mb-3">
+                Seja um Membro Guia Mais Premium
               </h2>
-              <p className="text-lg text-foreground/80 mb-6">
+              <p className="text-md text-foreground/80 mb-4">
                 Desbloqueie um mundo de vantagens e experiências exclusivas em Martins.
               </p>
-              <ul className="space-y-2 text-left mb-8 text-foreground/70">
-                <li className="flex items-center"><CheckCircle className="h-5 w-5 text-green-500 mr-2" /> Descontos incríveis em restaurantes, hotéis e lojas.</li>
-                <li className="flex items-center"><CheckCircle className="h-5 w-5 text-green-500 mr-2" /> Roteiros personalizados e acesso offline no app.</li>
-                <li className="flex items-center"><CheckCircle className="h-5 w-5 text-green-500 mr-2" /> Recompensas exclusivas por apoiar o comércio local.</li>
+              <ul className="space-y-1.5 text-left mb-6 text-foreground/70 text-sm">
+                <li className="flex items-center"><CheckCircle className="h-4 w-4 text-green-500 mr-2" /> Descontos incríveis em restaurantes, hotéis e lojas.</li>
+                <li className="flex items-center"><CheckCircle className="h-4 w-4 text-green-500 mr-2" /> Roteiros personalizados e acesso offline no app.</li>
+                <li className="flex items-center"><CheckCircle className="h-4 w-4 text-green-500 mr-2" /> Recompensas exclusivas por apoiar o comércio local.</li>
               </ul>
-              <Button asChild size="lg" className="bg-accent hover:bg-accent/90 text-accent-foreground">
+              <Button asChild size="default" className="bg-accent hover:bg-accent/90 text-accent-foreground">
                 <Link href="/join">Conheça os Planos Premium</Link>
               </Button>
-              <p className="mt-4 text-xs text-muted-foreground">
+              <p className="mt-3 text-xs text-muted-foreground">
                 💚 Sua assinatura contribui para valorizar e fortalecer o turismo e comércio local!
               </p>
             </div>
-            <div className="relative aspect-square max-w-md mx-auto w-full overflow-hidden rounded-lg shadow-xl">
+            <div className="relative aspect-square max-w-sm mx-auto w-full overflow-hidden rounded-lg shadow-xl">
                 <Image
-                    src="https://placehold.co/600x600.png"
-                    alt="Membro Premium Guia Mais aproveitando a cidade"
+                    src="https://placehold.co/500x500.png"
+                    alt="Membro Guia Mais aproveitando a cidade"
                     layout="fill"
                     objectFit="cover"
                     data-ai-hint="happy tourist city"
@@ -294,16 +324,16 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Section 2: Featured Deals */}
+      {/* Section: Featured Deals */}
       {featuredDeals.length > 0 && (
-        <section className="mb-16">
-          <h2 className="mb-2 text-center text-3xl font-bold tracking-tight text-primary md:text-4xl">
-            Ofertas Imperdíveis Guia Mais
+        <section className="mb-10">
+          <h2 className="mb-2 text-center text-2xl font-bold tracking-tight text-primary md:text-3xl">
+            Ofertas em Destaque
           </h2>
-          <p className="mb-8 text-center text-lg text-foreground/80">
-            Confira alguns dos benefícios exclusivos para membros do nosso clube!
+          <p className="mb-6 text-center text-md text-foreground/80">
+            Benefícios exclusivos para membros do nosso clube!
           </p>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"> {/* Reduced gap */}
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {featuredDeals.map(deal => {
               const businessForDeal = businesses.find(b => b.id === deal.businessId);
               return <DealCard key={deal.id} deal={deal} business={businessForDeal} />;
@@ -314,26 +344,25 @@ export default function HomePage() {
 
       {/* Section: Ranking Panel */}
        {Object.keys(rankedBusinessesByCategory).length > 0 && (
-        <section className="mb-16">
-          <h2 className="mb-2 text-center text-3xl font-bold tracking-tight text-primary md:text-4xl">
-            <Award className="inline-block h-8 w-8 mr-2 text-accent" />
-            Destaques por Avaliação
+        <section className="mb-10">
+          <h2 className="mb-2 text-center text-2xl font-bold tracking-tight text-primary md:text-3xl">
+            <Award className="inline-block h-7 w-7 mr-2 text-accent" />
+            Top Avaliados
           </h2>
-          <p className="mb-8 text-center text-lg text-foreground/80">
-            Os locais mais bem avaliados pelos nossos exploradores Guia Mais!
+          <p className="mb-6 text-center text-md text-foreground/80">
+            Os locais mais bem avaliados pelos nossos exploradores!
           </p>
           <RankingPanel rankedBusinessesByCategory={rankedBusinessesByCategory} />
         </section>
       )}
 
-
-      {/* Section 3: Featured Tourist Spots */}
+      {/* Section: Featured Tourist Spots */}
       {touristSpots.length > 0 && (
-        <section className="mb-16">
-          <h2 className="mb-6 text-center text-3xl font-bold tracking-tight text-primary md:text-4xl">
-            Conheça as Maravilhas de Martins
+        <section className="mb-10">
+          <h2 className="mb-4 text-center text-2xl font-bold tracking-tight text-primary md:text-3xl">
+            Pontos Turísticos
           </h2>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"> {/* Reduced gap */}
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {touristSpots.map(spot => (
               <BusinessCard key={spot.id} business={spot} />
             ))}
@@ -341,12 +370,12 @@ export default function HomePage() {
         </section>
       )}
 
-      {/* Section 4: Video Showcase */}
-      <section className="mb-16">
-        <h2 className="mb-6 text-center text-3xl font-bold tracking-tight text-primary md:text-4xl">
-          Martins em Movimento
+      {/* Section: Video Showcase */}
+      <section className="mb-10">
+        <h2 className="mb-4 text-center text-2xl font-bold tracking-tight text-primary md:text-3xl">
+          Descubra Martins
         </h2>
-        <div className="aspect-video w-full max-w-4xl mx-auto overflow-hidden rounded-lg shadow-xl bg-muted border border-border">
+        <div className="aspect-video w-full max-w-3xl mx-auto overflow-hidden rounded-lg shadow-xl bg-muted border border-border">
           <div className="relative h-full w-full">
             <Image
               src="https://placehold.co/1280x720.png"
@@ -358,32 +387,32 @@ export default function HomePage() {
             <div className="absolute inset-0 flex items-center justify-center bg-black/40 transition-opacity hover:opacity-75">
               <button
                 aria-label="Assistir vídeo sobre Martins"
-                className="group p-3 bg-background/80 rounded-full text-primary backdrop-blur-sm transition-all hover:bg-background hover:scale-110 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-black/50"
+                className="group p-2 bg-background/80 rounded-full text-primary backdrop-blur-sm transition-all hover:bg-background hover:scale-110 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-black/50"
                 onClick={() => {
                   const videoUrl = "https://www.youtube.com/watch?v=dQw4w9WgXcQ"; // Placeholder video
                   window.open(videoUrl, "_blank");
                   toast({ title: "Vídeo Demonstrativo", description: "Abrindo vídeo em nova aba..."});
                 }}
               >
-                <Play className="h-10 w-10 fill-primary md:h-12 md:w-12 transition-transform group-hover:scale-105" />
+                <Play className="h-8 w-8 fill-primary md:h-10 md:w-10 transition-transform group-hover:scale-105" />
               </button>
             </div>
           </div>
         </div>
-        <p className="mt-4 text-center text-sm text-muted-foreground">
-          Clique para assistir e encante-se com as paisagens e a cultura vibrante de Martins.
+        <p className="mt-3 text-center text-xs text-muted-foreground">
+          Clique para assistir e encante-se com as paisagens de Martins.
         </p>
       </section>
 
       {/* Section: Horizontal Featured Partners */}
       {otherServiceBusinesses.length > 0 && (
-        <section className="mb-16">
-          <h2 className="mb-6 text-center text-3xl font-bold tracking-tight text-primary md:text-4xl">
+        <section className="mb-10">
+          <h2 className="mb-4 text-center text-2xl font-bold tracking-tight text-primary md:text-3xl">
             Parceiros em Destaque
           </h2>
-          <div className="flex space-x-4 overflow-x-auto p-4 -m-4 scrollbar-thin scrollbar-thumb-muted scrollbar-track-transparent"> {/* Reduced space-x */}
-            {otherServiceBusinesses.slice(0, 6).map(business => ( // Show up to 6 featured partners
-              <div key={business.id} className="min-w-[280px] sm:min-w-[300px] flex-shrink-0"> {/* Slightly reduced min-w */}
+          <div className="flex space-x-4 overflow-x-auto p-4 -m-4 scrollbar-thin scrollbar-thumb-muted scrollbar-track-transparent">
+            {otherServiceBusinesses.slice(0, 6).map(business => ( 
+              <div key={business.id} className="min-w-[260px] sm:min-w-[280px] flex-shrink-0">
                 <BusinessCard business={business} />
               </div>
             ))}
@@ -391,22 +420,22 @@ export default function HomePage() {
         </section>
       )}
 
-      {/* Section 5: Explore Other Establishments */}
-      <section className="mb-8 text-center">
-        <h2 className="mb-2 text-3xl font-bold tracking-tight text-primary md:text-4xl">
-          Explore Nossos Parceiros
+      {/* Section: Explore Other Establishments */}
+      <section className="mb-6 text-center">
+        <h2 className="mb-2 text-2xl font-bold tracking-tight text-primary md:text-3xl">
+          Nossos Parceiros
         </h2>
-        <p className="text-lg text-foreground/80">
-          Encontre restaurantes, hotéis, lojas e serviços em Martins com benefícios Guia Mais.
+        <p className="text-md text-foreground/80">
+          Encontre restaurantes, hotéis, lojas e serviços com benefícios Guia Mais.
         </p>
       </section>
 
-      <div className="mb-8 grid grid-cols-1 gap-4 md:grid-cols-3">
+      <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-3">
         <div className="md:col-span-2">
           <SearchBar searchTerm={searchTerm} onSearchChange={setSearchTerm} placeholder="Buscar por nome, tipo ou descrição..." />
         </div>
         <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-          <SelectTrigger className="w-full rounded-lg bg-background py-3 text-base shadow-sm focus:ring-2 focus:ring-primary">
+          <SelectTrigger className="w-full rounded-lg bg-background py-2.5 text-sm shadow-sm focus:ring-2 focus:ring-primary">
             <SelectValue placeholder="Filtrar por categoria" />
           </SelectTrigger>
           <SelectContent>
@@ -420,17 +449,17 @@ export default function HomePage() {
       </div>
 
       {filteredListedBusinesses.length === 0 && !isLoading && (
-        <div className="mt-12 flex flex-col items-center justify-center text-center">
-            <Frown className="mb-4 h-16 w-16 text-muted-foreground" />
-            <h3 className="text-xl font-semibold text-foreground">Nenhum estabelecimento encontrado</h3>
-            <p className="text-muted-foreground">
+        <div className="mt-10 flex flex-col items-center justify-center text-center">
+            <Frown className="mb-3 h-14 w-14 text-muted-foreground" />
+            <h3 className="text-lg font-semibold text-foreground">Nenhum estabelecimento encontrado</h3>
+            <p className="text-sm text-muted-foreground">
               Tente ajustar seus filtros de busca ou categoria.
             </p>
           </div>
       )}
 
       {filteredListedBusinesses.length > 0 && (
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"> {/* Reduced gap */}
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {filteredListedBusinesses.map(business => (
             <BusinessCard key={business.id} business={business} />
           ))}
