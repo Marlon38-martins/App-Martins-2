@@ -167,15 +167,17 @@ export default function RootLayout({
                     </SidebarMenuButton>
                   </SidebarMenuItem>
 
-                  <CurrentUserDisplay />
+                  {/* User Authentication and Profile Links */}
+                  <CurrentUserDisplay /> 
                                     
+                  {/* Partner and Admin Panel Section - moved to bottom */}
                   <SidebarMenuItem className="mt-auto pt-4 border-t border-sidebar-border">
                     <PartnerPanelDropdown />
                   </SidebarMenuItem>
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild tooltip={{content: "Seja Parceiro", side:"right"}}>
                       <Link href="/partner-registration">
-                        <Briefcase />
+                        <Handshake />
                         <span className="group-data-[collapsible=icon]:hidden">Seja Parceiro</span>
                       </Link>
                     </SidebarMenuButton>
@@ -190,7 +192,7 @@ export default function RootLayout({
                 {children}
               </main>
               <footer className="bg-background py-6 text-sm text-muted-foreground border-t">
-                <div className="w-full px-4 grid grid-cols-1 md:grid-cols-3 gap-4 text-center md:text-left">
+                <div className="w-full max-w-sm mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-4 text-center md:text-left">
                   <div>
                     <h4 className="font-semibold text-foreground mb-2">Guia Mais</h4>
                     <p>© {new Date().getFullYear()} Guia Mais. Todos os direitos reservados.</p>
