@@ -168,7 +168,6 @@ export default function RootLayout({
                   </SidebarMenuItem>
 
                   {/* User Authentication Section - Renders login/join or profile */}
-                  {/* CurrentUserDisplay itself applies mt-auto to its first item, so it will be at the bottom of this flow */}
                   <CurrentUserDisplay />
                   
                   {/* Partner Section - This will now be pushed to the very bottom, separated by a line */}
@@ -189,7 +188,7 @@ export default function RootLayout({
 
             <SidebarInset>
               <Header />
-              <main className="flex-grow p-4 md:p-6 bg-background">
+              <main className="flex-grow p-4 md:p-6 bg-background overflow-x-hidden">
                 {children}
               </main>
               <footer className="bg-background py-4 text-center text-sm text-muted-foreground border-t">
