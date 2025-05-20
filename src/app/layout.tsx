@@ -33,8 +33,8 @@ import {
   Briefcase, 
   Tag, 
   Search as SearchIcon,
-  Users, // For "Listar Todos os Parceiros"
-  HelpCircle, BookOpen, Handshake // For footer
+  Users, 
+  HelpCircle, BookOpen, Handshake 
 } from 'lucide-react'; 
 import { Header } from '@/components/layout/header';
 import { AuthProviderClient } from '@/hooks/use-auth-client'; 
@@ -71,7 +71,7 @@ const categoriesForMenu = [
   { name: 'Hospedagem', slug: slugify('Hotel'), Icon: BedDouble },
   { name: 'Bares', slug: slugify('Bar'), Icon: Beer },
   { name: 'Cafés', slug: slugify('Café'), Icon: Coffee },
-  { name: 'Lojas', slug: slugify('Loja'), Icon: ShoppingBag }, // Changed Comércio to Lojas
+  { name: 'Lojas', slug: slugify('Loja'), Icon: ShoppingBag }, 
   { name: 'Lazer', slug: slugify('Atração'), Icon: AttractionIcon },
   { name: 'Parques', slug: slugify('Parque'), Icon: Trees },
 ];
@@ -186,11 +186,11 @@ export default function RootLayout({
 
             <SidebarInset>
               <Header />
-              <main className="flex-grow p-4 md:p-6 bg-background overflow-x-hidden">
+              <main className="flex-grow p-4 bg-background overflow-x-hidden w-full max-w-sm mx-auto">
                 {children}
               </main>
               <footer className="bg-background py-6 text-sm text-muted-foreground border-t">
-                <div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-4 text-center md:text-left">
+                <div className="w-full max-w-sm mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-4 text-center md:text-left">
                   <div>
                     <h4 className="font-semibold text-foreground mb-2">Guia Mais</h4>
                     <p>© {new Date().getFullYear()} Guia Mais. Todos os direitos reservados.</p>
@@ -203,7 +203,6 @@ export default function RootLayout({
                   <nav className="space-y-1 md:justify-self-end">
                      <Link href="/partner-registration" className="block hover:text-primary transition-colors">Seja um Parceiro</Link>
                      <Link href="/contact" className="block hover:text-primary transition-colors">Fale Conosco</Link> 
-                     {/* Placeholder /contact page */}
                   </nav>
                 </div>
               </footer>
@@ -215,3 +214,5 @@ export default function RootLayout({
     </html>
   );
 }
+
+    
