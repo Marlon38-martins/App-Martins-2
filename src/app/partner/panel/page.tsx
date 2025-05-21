@@ -13,10 +13,14 @@ import { ArrowLeft, ShieldAlert, LayoutDashboard, Tag, Edit3, Briefcase } from '
 
 const MOCK_PARTNER_EMAIL = 'partner@example.com';
 const MOCK_PARTNER_BUSINESS_ID = '1'; // For the edit link
+const ADMIN_EMAIL = 'admin@example.com';
 
 export default function PartnerPanelPage() {
-  const { user, loading: authLoading } = useAuth();
+  const { user, isAdmin, loading: authLoading } = useAuth();
   const router = useRouter();
+
+  const isDesignatedPartner = user?.email === MOCK_PARTNER_EMAIL;
+  const canAccess = isAdmin || isDesignatedPartner;
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -44,14 +48,14 @@ export default function PartnerPanelPage() {
     return <div className="p-6 text-center">Redirecionando para login...</div>;
   }
 
-  if (user.email !== MOCK_PARTNER_EMAIL) {
+  if (!canAccess) {
     return (
       <div className="p-4 md:p-6 flex flex-col items-center justify-center min-h-[calc(100vh-200px)]">
         <Alert variant="destructive" className="max-w-md text-center">
           <ShieldAlert className="h-6 w-6 mx-auto mb-2" />
           <AlertTitle>Acesso Negado</AlertTitle>
           <AlertDescription>
-            Esta área é exclusiva para parceiros.
+            Esta área é exclusiva para parceiros e administradores.
           </AlertDescription>
         </Alert>
         <Button asChild variant="outline" className="mt-6">
@@ -63,15 +67,24 @@ export default function PartnerPanelPage() {
     );
   }
 
+  // Admin users are redirected to their specific dashboard
+  if (isAdmin && user.email === ADMIN_EMAIL) {
+    router.push('/admin/list-all-partners');
+    return <div className="p-6 text-center">Redirecionando para o painel de administrador...</div>;
+  }
+  
+  // If the user is a designated partner but somehow also admin (and not the admin email), they get partner panel.
+  // If the user is only the designated partner, they get partner panel.
+
   return (
     <div className="p-4 md:p-6">
       <section className="mb-8">
         <h1 className="text-3xl font-bold text-primary mb-2 flex items-center">
             <Briefcase className="mr-3 h-8 w-8 text-accent" />
-            Painel de Controle do Parceiro
+            Portal do Parceiro Guia Mais
         </h1>
         <p className="text-lg text-foreground/80">
-          Bem-vindo(a), {user.name || user.email}! Gerencie seu estabelecimento e ofertas.
+          Bem-vindo(a), {user.name || user.email}! Gerencie seu estabelecimento, ofertas e veja seu desempenho.
         </p>
       </section>
 
@@ -80,13 +93,13 @@ export default function PartnerPanelPage() {
           <CardHeader>
             <CardTitle className="flex items-center text-xl text-accent">
               <LayoutDashboard className="mr-2 h-6 w-6" />
-              Painel do Estabelecimento
+              Meu Estabelecimento
             </CardTitle>
-            <CardDescription>Visualize o painel principal do seu negócio.</CardDescription>
+            <CardDescription>Visualize o painel principal do seu negócio com detalhes e estatísticas.</CardDescription>
           </CardHeader>
           <CardContent>
             <Button asChild className="w-full">
-              <Link href="/partner/dashboard">Ver Painel do Estabelecimento</Link>
+              <Link href="/partner/dashboard">Acessar Painel</Link>
             </Button>
           </CardContent>
         </Card>
@@ -97,11 +110,11 @@ export default function PartnerPanelPage() {
               <Tag className="mr-2 h-6 w-6" />
               Gerenciar Ofertas
             </CardTitle>
-            <CardDescription>Adicione ou modifique suas promoções.</CardDescription>
+            <CardDescription>Adicione ou modifique as promoções e descontos para seus clientes.</CardDescription>
           </CardHeader>
           <CardContent>
             <Button asChild className="w-full">
-              <Link href="/partner/manage-offers">Gerenciar Ofertas</Link>
+              <Link href="/partner/manage-offers">Gerenciar Minhas Ofertas</Link>
             </Button>
           </CardContent>
         </Card>
@@ -110,13 +123,13 @@ export default function PartnerPanelPage() {
           <CardHeader>
             <CardTitle className="flex items-center text-xl text-accent">
               <Edit3 className="mr-2 h-6 w-6" />
-              Editar Detalhes do Estabelecimento
+              Editar Detalhes
             </CardTitle>
-            <CardDescription>Atualize informações e imagem do seu estabelecimento.</CardDescription>
+            <CardDescription>Atualize informações, fotos e contatos do seu estabelecimento.</CardDescription>
           </CardHeader>
           <CardContent>
             <Button asChild className="w-full">
-              <Link href={`/partner/edit-business/${MOCK_PARTNER_BUSINESS_ID}`}>Editar Detalhes</Link>
+              <Link href={`/partner/edit-business/${MOCK_PARTNER_BUSINESS_ID}`}>Editar Dados do Negócio</Link>
             </Button>
           </CardContent>
         </Card>
