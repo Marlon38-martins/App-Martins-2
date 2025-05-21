@@ -1,12 +1,17 @@
 // src/app/partner-registration/page.tsx
 'use client';
 
+import { useEffect } from 'react'; // Added useEffect
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { CheckCircle, Award, MessageSquare, Briefcase, ArrowLeft, TrendingUp, Rocket, Handshake, BadgePercent, Eye, BarChart3, Settings2, UserPlus, Wrench } from 'lucide-react';
 
 export default function PartnerRegistrationPage() {
+  useEffect(() => {
+    document.title = "Seja um Parceiro - Guia Mais";
+  }, []);
+
   return (
     <div className="max-w-4xl mx-auto p-4 md:p-6">
       <Button asChild variant="outline" className="mb-8 print:hidden">

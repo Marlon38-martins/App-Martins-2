@@ -97,6 +97,9 @@ export default function JoinPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [currentSelectedPlanId, setCurrentSelectedPlanId] = useState<Plan['id']>(premiumPlans[0].id);
 
+  useEffect(() => {
+    document.title = "Assinatura Premium - Guia Mais";
+  }, []);
 
   const form = useForm<RegistrationFormValues>({
     resolver: zodResolver(registrationFormSchema),
