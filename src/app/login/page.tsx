@@ -1,3 +1,4 @@
+
 // src/app/login/page.tsx
 'use client';
 
@@ -48,7 +49,7 @@ export default function LoginPage() {
   });
 
   const handleMockLoginSuccess = (loggedInUser: User, userSub: Subscription) => {
-    signInUser(loggedInUser, userSub); // Update auth context
+    signInUser(loggedInUser, userSub); 
     toast({
       title: 'Login Bem-sucedido!',
       description: `Bem-vindo(a) de volta, ${loggedInUser.name || 'Usuário'}!`,
@@ -67,18 +68,18 @@ export default function LoginPage() {
       id: 'mock-user-' + Date.now(),
       email: data.email,
       name: data.email.split('@')[0], 
-      photoURL: `https://picsum.photos/seed/${data.email}/100/100`
+      photoURL: `https://placehold.co/100x100`
     };
     const mockSubscription: Subscription = {
       id: 'sub-mock-' + Date.now(),
       userId: mockUser.id,
-      planId: 'serrano_vip', 
+      planId: 'premium_mensal', 
       startDate: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
       endDate: new Date(Date.now() + 335 * 24 * 60 * 60 * 1000),
       status: 'active',
     };
     
-    mockLogin(mockUser, mockSubscription); // This service function sets localStorage
+    mockLogin(mockUser, mockSubscription); 
     setIsSubmitting(false);
     handleMockLoginSuccess(mockUser, mockSubscription);
   };
@@ -91,17 +92,17 @@ export default function LoginPage() {
       id: 'mock-google-user-' + Date.now(),
       email: 'google.user@example.com',
       name: 'Usuário Google',
-      photoURL: 'https://picsum.photos/seed/googleuser/100/100'
+      photoURL: 'https://placehold.co/100x100'
     };
     const mockSubscription: Subscription = {
       id: 'sub-mock-google-' + Date.now(),
       userId: mockUser.id,
-      planId: 'serrano_vip',
+      planId: 'premium_anual',
       startDate: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
       endDate: new Date(Date.now() + 335 * 24 * 60 * 60 * 1000),
       status: 'active',
     };
-    mockLogin(mockUser, mockSubscription); // This service function sets localStorage
+    mockLogin(mockUser, mockSubscription); 
     setIsGoogleSubmitting(false);
     handleMockLoginSuccess(mockUser, mockSubscription);
   };
@@ -128,7 +129,7 @@ export default function LoginPage() {
                     <FormControl>
                       <div className="relative">
                         <Mail className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
-                        <Input id="email" type="email" placeholder="seuemail@exemplo.com" {...field} className="pl-10" />
+                        <Input id="email" type="email" placeholder="seuemail@exemplo.com" {...field} value={field.value ?? ''} className="pl-10" />
                       </div>
                     </FormControl>
                     <FormMessage />
@@ -144,7 +145,7 @@ export default function LoginPage() {
                     <FormControl>
                        <div className="relative">
                         <Lock className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
-                        <Input id="password" type="password" placeholder="Sua senha" {...field} className="pl-10" />
+                        <Input id="password" type="password" placeholder="Sua senha" {...field} value={field.value ?? ''} className="pl-10" />
                       </div>
                     </FormControl>
                     <FormMessage />
@@ -163,7 +164,7 @@ export default function LoginPage() {
                 {isSubmitting ? 'Entrando...' : 'Entrar com Email'}
               </Button>
               
-              <div className="relative my-4 w-full"> {/* Increased margin-top and margin-bottom */}
+              <div className="relative my-4 w-full"> 
                 <div className="absolute inset-0 flex items-center">
                   <span className="w-full border-t" />
                 </div>

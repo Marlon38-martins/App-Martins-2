@@ -1,3 +1,4 @@
+
 // src/app/partner/manage-offers/page.tsx
 'use client';
 
@@ -19,11 +20,11 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
 import { ArrowLeft, Tag, PlusCircle, ShieldAlert } from 'lucide-react';
-import { Skeleton } from '@/components/ui/skeleton'; // Added import for Skeleton
-import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert'; // Added for access denied
+import { Skeleton } from '@/components/ui/skeleton';
+import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 
-const MOCK_PARTNER_EMAIL = 'partner@example.com'; // For demo purposes
-const MOCK_PARTNER_BUSINESS_ID = '1'; // Partner "owns" Restaurante Mirante da Serra
+const MOCK_PARTNER_EMAIL = 'partner@example.com'; 
+const MOCK_PARTNER_BUSINESS_ID = '1'; 
 
 const offerFormSchema = z.object({
   title: z.string().min(5, { message: 'Título da oferta é obrigatório (mínimo 5 caracteres).' }),
@@ -51,13 +52,13 @@ type OfferFormValues = z.infer<typeof offerFormSchema>;
 export default function ManagePartnerOffersPage() {
   const { toast } = useToast();
   const router = useRouter();
-  const { user, loading: authLoading } = useAuth();
+  const { user, isAdmin, loading: authLoading } = useAuth();
   
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [partnerBusiness, setPartnerBusiness] = useState<GramadoBusiness | null>(null);
   const [isLoadingBusiness, setIsLoadingBusiness] = useState(true);
 
-  const isPartner = user?.email === MOCK_PARTNER_EMAIL;
+  const canAccess = user && (user.email === MOCK_PARTNER_EMAIL || isAdmin);
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -66,18 +67,22 @@ export default function ManagePartnerOffersPage() {
   }, [authLoading, user, router]);
 
   useEffect(() => {
-    if (user && isPartner) {
+    if (user && canAccess) {
       async function loadBusiness() {
         setIsLoadingBusiness(true);
-        const business = await getGramadoBusinessById(MOCK_PARTNER_BUSINESS_ID);
+        // Admin might manage any, partner their own. For mock, always MOCK_PARTNER_BUSINESS_ID
+        const businessIdToLoad = isAdmin && process.env.NEXT_PUBLIC_ADMIN_MANAGES_BUSINESS_ID 
+                               ? process.env.NEXT_PUBLIC_ADMIN_MANAGES_BUSINESS_ID 
+                               : MOCK_PARTNER_BUSINESS_ID;
+        const business = await getGramadoBusinessById(businessIdToLoad);
         setPartnerBusiness(business || null);
         setIsLoadingBusiness(false);
       }
       loadBusiness();
-    } else if (user && !isPartner) {
+    } else if (user && !canAccess) {
       setIsLoadingBusiness(false);
     }
-  }, [user, isPartner]);
+  }, [user, canAccess, isAdmin]);
 
   const form = useForm<OfferFormValues>({
     resolver: zodResolver(offerFormSchema),
@@ -94,11 +99,10 @@ export default function ManagePartnerOffersPage() {
 
   const watchOfferType = form.watch('offerType');
   
-  // Sync isPay1Get2 checkbox with offerType
   useEffect(() => {
     if (watchOfferType === 'p1g2') {
       form.setValue('isPay1Get2', true);
-      form.setValue('discountPercentage', 0); // Clear discount if P1G2
+      form.setValue('discountPercentage', 0); 
     } else if (watchOfferType === 'discount') {
       form.setValue('isPay1Get2', false);
     }
@@ -111,10 +115,10 @@ export default function ManagePartnerOffersPage() {
         return;
     }
     setIsSubmitting(true);
-    await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate API call
+    await new Promise(resolve => setTimeout(resolve, 1000)); 
     
     const newDeal = {
-        id: `deal-${Date.now()}`, // mock ID
+        id: `deal-${Date.now()}`, 
         businessId: partnerBusiness.id,
         title: data.title,
         description: data.description,
@@ -125,7 +129,6 @@ export default function ManagePartnerOffersPage() {
     };
 
     console.log('New Partner Offer Data:', newDeal, 'For Business:', partnerBusiness.name);
-    // In a real app, you would send `newDeal` to your backend.
 
     toast({
       title: 'Oferta Cadastrada!',
@@ -149,14 +152,14 @@ export default function ManagePartnerOffersPage() {
     return <div className="p-6 text-center">Carregando informações do usuário...</div>;
   }
 
-  if (!isPartner) {
+  if (!canAccess) {
     return (
       <div className="p-4 md:p-6 flex flex-col items-center justify-center min-h-[calc(100vh-200px)]">
         <Alert variant="destructive" className="max-w-md text-center">
           <ShieldAlert className="mx-auto mb-2 h-6 w-6" />
           <AlertTitle>Acesso Negado</AlertTitle>
           <AlertDescription>
-            Esta funcionalidade é exclusiva para parceiros.
+            Esta funcionalidade é exclusiva para parceiros e administradores.
           </AlertDescription>
         </Alert>
          <Button asChild variant="outline" className="mt-6">
@@ -185,7 +188,7 @@ export default function ManagePartnerOffersPage() {
   return (
     <div className="p-4 md:p-6">
       <Button asChild variant="outline" className="mb-6">
-        <Link href="/partner/dashboard">
+        <Link href="/partner/panel">
           <ArrowLeft className="mr-2 h-4 w-4" />
           Voltar para o Painel
         </Link>
@@ -220,7 +223,7 @@ export default function ManagePartnerOffersPage() {
                   <FormItem>
                     <FormLabel htmlFor="title">Título da Oferta *</FormLabel>
                     <FormControl>
-                      <Input id="title" placeholder="Ex: Happy Hour Especial, Combo Família" {...field} />
+                      <Input id="title" placeholder="Ex: Happy Hour Especial, Combo Família" {...field} value={field.value ?? ''} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -233,7 +236,7 @@ export default function ManagePartnerOffersPage() {
                   <FormItem>
                     <FormLabel htmlFor="description">Descrição da Oferta *</FormLabel>
                     <FormControl>
-                      <Textarea id="description" placeholder="Descreva os detalhes da oferta, o que está incluído, etc." {...field} rows={3}/>
+                      <Textarea id="description" placeholder="Descreva os detalhes da oferta, o que está incluído, etc." {...field} value={field.value ?? ''} rows={3}/>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -270,7 +273,7 @@ export default function ManagePartnerOffersPage() {
                     <FormItem>
                       <FormLabel htmlFor="discountPercentage">Porcentagem de Desconto (%) *</FormLabel>
                       <FormControl>
-                        <Input id="discountPercentage" type="number" placeholder="Ex: 10 para 10% de desconto" {...field} />
+                        <Input id="discountPercentage" type="number" placeholder="Ex: 10 para 10% de desconto" {...field} value={field.value ?? ''} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -306,7 +309,7 @@ export default function ManagePartnerOffersPage() {
                   <FormItem>
                     <FormLabel htmlFor="usageLimitPerUser">Limite de Uso por Usuário Prime</FormLabel>
                     <FormControl>
-                      <Input id="usageLimitPerUser" type="number" placeholder="Ex: 1" {...field} />
+                      <Input id="usageLimitPerUser" type="number" placeholder="Ex: 1" {...field} value={field.value ?? ''} />
                     </FormControl>
                     <FormDescription>Quantas vezes um membro Prime pode usar esta oferta específica. Padrão é 1.</FormDescription>
                     <FormMessage />
@@ -321,7 +324,7 @@ export default function ManagePartnerOffersPage() {
                   <FormItem>
                     <FormLabel htmlFor="termsAndConditions">Termos e Condições da Oferta *</FormLabel>
                     <FormControl>
-                      <Textarea id="termsAndConditions" placeholder="Ex: Válido de segunda a quinta, exceto feriados. Apresente o card Guia Mais." {...field} rows={4}/>
+                      <Textarea id="termsAndConditions" placeholder="Ex: Válido de segunda a quinta, exceto feriados. Apresente o card Guia Mais." {...field} value={field.value ?? ''} rows={4}/>
                     </FormControl>
                     <FormMessage />
                   </FormItem>

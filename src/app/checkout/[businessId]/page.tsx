@@ -1,3 +1,4 @@
+
 // src/app/checkout/[businessId]/page.tsx
 'use client';
 
@@ -19,7 +20,7 @@ import {
     getCurrentUser,      
     getMockUserSubscription  
 } from '@/services/gramado-businesses';
-import type { User as AppUser, Subscription } from '@/types/user'; // Renamed User to AppUser to avoid conflict
+import type { User as AppUser, Subscription } from '@/types/user'; 
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -29,6 +30,7 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useToast } from '@/hooks/use-toast';
 import { ArrowLeft, User as UserIcon, Mail, Phone as PhoneIcon, ShieldCheck, ShoppingCart, Frown, Star, Tag, AlertTriangle } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
 
 const checkoutFormSchema = z.object({
   name: z.string().min(2, { message: 'Nome deve ter pelo menos 2 caracteres.' }),
@@ -54,7 +56,7 @@ function CheckoutPageContent({ businessId }: { businessId: string }) {
   const [userSubscription, setUserSubscription] = useState<Subscription | null>(null);
   const [hasUsedOffer, setHasUsedOffer] = useState(false);
   
-  const [isLoadingPage, setIsLoadingPage] = useState(true); // Overall page loading
+  const [isLoadingPage, setIsLoadingPage] = useState(true); 
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [authCheckedAndEligible, setAuthCheckedAndEligible] = useState(false);
@@ -73,7 +75,6 @@ function CheckoutPageContent({ businessId }: { businessId: string }) {
     if (authUser) {
       form.setValue('name', authUser.name || '');
       form.setValue('email', authUser.email || '');
-      // phone might not be available on authUser directly
     }
   }, [authUser, form]);
 
@@ -113,7 +114,7 @@ function CheckoutPageContent({ businessId }: { businessId: string }) {
           setUserSubscription(sub);
           if (!sub || sub.status !== 'active') {
             setError('Sua assinatura Guia Mais não está ativa. Por favor, renove ou associe-se.');
-            setAuthCheckedAndEligible(false); // Not eligible
+            setAuthCheckedAndEligible(false); 
             setIsLoadingPage(false);
             return;
           }
@@ -123,15 +124,15 @@ function CheckoutPageContent({ businessId }: { businessId: string }) {
             setHasUsedOffer(used);
             if (used) {
               setError(`Você já utilizou esta oferta "${currentDeal.title}" anteriormente.`);
-              setAuthCheckedAndEligible(false); // Not eligible
+              setAuthCheckedAndEligible(false); 
               setIsLoadingPage(false);
               return;
             }
           }
-          setAuthCheckedAndEligible(true); // Eligible
+          setAuthCheckedAndEligible(true); 
         } else {
           setError('Você precisa estar logado para usar um benefício Guia Mais.');
-          setAuthCheckedAndEligible(false); // Not eligible
+          setAuthCheckedAndEligible(false); 
           setIsLoadingPage(false);
           return;
         }
@@ -286,7 +287,7 @@ function CheckoutPageContent({ businessId }: { businessId: string }) {
                       <FormItem>
                         <FormLabel htmlFor="name">Nome Completo (como no cadastro Guia Mais)</FormLabel>
                         <FormControl>
-                          <Input id="name" placeholder="Seu nome completo" {...field} disabled={!authCheckedAndEligible || isSubmitting}/>
+                          <Input id="name" placeholder="Seu nome completo" {...field} value={field.value ?? ''} disabled={!authCheckedAndEligible || isSubmitting}/>
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -299,7 +300,7 @@ function CheckoutPageContent({ businessId }: { businessId: string }) {
                       <FormItem>
                         <FormLabel htmlFor="email">Email (do cadastro Guia Mais)</FormLabel>
                         <FormControl>
-                          <Input id="email" type="email" placeholder="seuemail@exemplo.com" {...field} disabled={!authCheckedAndEligible || isSubmitting}/>
+                          <Input id="email" type="email" placeholder="seuemail@exemplo.com" {...field} value={field.value ?? ''} disabled={!authCheckedAndEligible || isSubmitting}/>
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -312,7 +313,7 @@ function CheckoutPageContent({ businessId }: { businessId: string }) {
                       <FormItem>
                         <FormLabel htmlFor="phone">Telefone (opcional, para contato)</FormLabel>
                         <FormControl>
-                          <Input id="phone" type="tel" placeholder="(XX) XXXXX-XXXX" {...field} disabled={!authCheckedAndEligible || isSubmitting}/>
+                          <Input id="phone" type="tel" placeholder="(XX) XXXXX-XXXX" {...field} value={field.value ?? ''} disabled={!authCheckedAndEligible || isSubmitting}/>
                         </FormControl>
                         <FormMessage />
                       </FormItem>

@@ -1,3 +1,4 @@
+
 // src/app/admin/edit-partner-details/[id]/page.tsx
 'use client';
 
@@ -34,7 +35,6 @@ const iconNames: LucideIconName[] = [
   'Beer'
 ];
 
-// Schema identical to partner edit, but can diverge if admin has more fields
 const adminEditEstablishmentFormSchema = z.object({
   name: z.string().min(3, { message: 'Nome do estabelecimento é obrigatório (mínimo 3 caracteres).' }),
   type: z.string().min(3, { message: 'Tipo de estabelecimento é obrigatório (Ex: Restaurante, Hotel, Loja).' }),
@@ -107,8 +107,8 @@ export default function AdminEditPartnerDetailsPage() {
               longitude: businessData.longitude,
               imageUrl: businessData.imageUrl,
               icon: businessData.icon,
-              rating: businessData.rating,
-              reviewCount: businessData.reviewCount,
+              rating: businessData.rating ?? undefined, // Ensure undefined if null/undefined
+              reviewCount: businessData.reviewCount ?? undefined, // Ensure undefined if null/undefined
             });
           } else {
             setError('Estabelecimento não encontrado. Não é possível editar.');
@@ -138,10 +138,11 @@ export default function AdminEditPartnerDetailsPage() {
     const updatedBusiness = {
         ...business, 
         ...data,
+        rating: data.rating === undefined || isNaN(data.rating) ? undefined : data.rating, // Handle potential NaN
+        reviewCount: data.reviewCount === undefined || isNaN(data.reviewCount) ? undefined : data.reviewCount,
     };
 
     console.log('Admin Updated Establishment Data:', updatedBusiness);
-    // In a real app, save `updatedBusiness` to your backend.
 
     toast({
       title: 'Dados Atualizados pelo Admin!',
@@ -235,7 +236,6 @@ export default function AdminEditPartnerDetailsPage() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
-              {/* Form fields similar to partner edit */}
               <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                 <FormField
                   control={form.control}
@@ -243,7 +243,7 @@ export default function AdminEditPartnerDetailsPage() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Nome *</FormLabel>
-                      <FormControl><Input placeholder="Nome do Estabelecimento" {...field} /></FormControl>
+                      <FormControl><Input placeholder="Nome do Estabelecimento" {...field} value={field.value ?? ''} /></FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -254,7 +254,7 @@ export default function AdminEditPartnerDetailsPage() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Tipo *</FormLabel>
-                      <FormControl><Input placeholder="Ex: Hotel, Restaurante" {...field} /></FormControl>
+                      <FormControl><Input placeholder="Ex: Hotel, Restaurante" {...field} value={field.value ?? ''} /></FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -266,7 +266,7 @@ export default function AdminEditPartnerDetailsPage() {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Descrição Curta *</FormLabel>
-                    <FormControl><Input placeholder="Breve descrição (até 150 caracteres)" {...field} /></FormControl>
+                    <FormControl><Input placeholder="Breve descrição (até 150 caracteres)" {...field} value={field.value ?? ''} /></FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -277,7 +277,7 @@ export default function AdminEditPartnerDetailsPage() {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Descrição Completa *</FormLabel>
-                    <FormControl><Textarea placeholder="Descrição detalhada" {...field} rows={4}/></FormControl>
+                    <FormControl><Textarea placeholder="Descrição detalhada" {...field} value={field.value ?? ''} rows={4}/></FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -288,7 +288,7 @@ export default function AdminEditPartnerDetailsPage() {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Endereço Completo *</FormLabel>
-                    <FormControl><Input placeholder="Rua, Número, Bairro, Cidade" {...field} /></FormControl>
+                    <FormControl><Input placeholder="Rua, Número, Bairro, Cidade" {...field} value={field.value ?? ''} /></FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -300,7 +300,7 @@ export default function AdminEditPartnerDetailsPage() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Telefone</FormLabel>
-                      <FormControl><Input type="tel" placeholder="(XX) XXXXX-XXXX" {...field} /></FormControl>
+                      <FormControl><Input type="tel" placeholder="(XX) XXXXX-XXXX" {...field} value={field.value ?? ''} /></FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -311,23 +311,23 @@ export default function AdminEditPartnerDetailsPage() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Website</FormLabel>
-                      <FormControl><Input type="url" placeholder="https://www.exemplo.com" {...field} /></FormControl>
+                      <FormControl><Input type="url" placeholder="https://www.exemplo.com" {...field} value={field.value ?? ''} /></FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
               </div>
               <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-                 <FormField control={form.control} name="instagramUrl" render={({ field }) => (<FormItem><FormLabel>Instagram URL</FormLabel><FormControl><Input type="url" placeholder="https://instagram.com/seu_negocio" {...field} /></FormControl><FormMessage /></FormItem>)} />
-                 <FormField control={form.control} name="facebookUrl" render={({ field }) => (<FormItem><FormLabel>Facebook URL</FormLabel><FormControl><Input type="url" placeholder="https://facebook.com/seu_negocio" {...field} /></FormControl><FormMessage /></FormItem>)} />
-                 <FormField control={form.control} name="whatsappNumber" render={({ field }) => (<FormItem><FormLabel>WhatsApp</FormLabel><FormControl><Input type="tel" placeholder="5584912345678" {...field} /></FormControl><FormMessage /></FormItem>)} />
+                 <FormField control={form.control} name="instagramUrl" render={({ field }) => (<FormItem><FormLabel>Instagram URL</FormLabel><FormControl><Input type="url" placeholder="https://instagram.com/seu_negocio" {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>)} />
+                 <FormField control={form.control} name="facebookUrl" render={({ field }) => (<FormItem><FormLabel>Facebook URL</FormLabel><FormControl><Input type="url" placeholder="https://facebook.com/seu_negocio" {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>)} />
+                 <FormField control={form.control} name="whatsappNumber" render={({ field }) => (<FormItem><FormLabel>WhatsApp</FormLabel><FormControl><Input type="tel" placeholder="5584912345678" {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>)} />
               </div>
               <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-                <FormField control={form.control} name="latitude" render={({ field }) => (<FormItem><FormLabel>Latitude *</FormLabel><FormControl><Input type="number" step="any" placeholder="-6.0869" {...field} /></FormControl><FormMessage /></FormItem>)} />
-                <FormField control={form.control} name="longitude" render={({ field }) => (<FormItem><FormLabel>Longitude *</FormLabel><FormControl><Input type="number" step="any" placeholder="-37.9119" {...field} /></FormControl><FormMessage /></FormItem>)} />
+                <FormField control={form.control} name="latitude" render={({ field }) => (<FormItem><FormLabel>Latitude *</FormLabel><FormControl><Input type="number" step="any" placeholder="-6.0869" {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>)} />
+                <FormField control={form.control} name="longitude" render={({ field }) => (<FormItem><FormLabel>Longitude *</FormLabel><FormControl><Input type="number" step="any" placeholder="-37.9119" {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>)} />
               </div>
               <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-                <FormField control={form.control} name="imageUrl" render={({ field }) => (<FormItem><FormLabel>URL da Imagem *</FormLabel><FormControl><Input placeholder="https://picsum.photos/seed/nome/600/400" {...field} /></FormControl><FormMessage /></FormItem>)} />
+                <FormField control={form.control} name="imageUrl" render={({ field }) => (<FormItem><FormLabel>URL da Imagem *</FormLabel><FormControl><Input placeholder="https://placehold.co/seed/nome/600/400" {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>)} />
                 <FormField control={form.control} name="icon" render={({ field }) => (
                     <FormItem>
                       <FormLabel>Ícone *</FormLabel>
@@ -347,7 +347,7 @@ export default function AdminEditPartnerDetailsPage() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Avaliação (0-5)</FormLabel>
-                      <FormControl><Input type="number" step="0.1" placeholder="Ex: 4.5" {...field} /></FormControl>
+                      <FormControl><Input type="number" step="0.1" placeholder="Ex: 4.5" {...field} value={field.value ?? ''} /></FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -358,7 +358,7 @@ export default function AdminEditPartnerDetailsPage() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Contagem de Avaliações</FormLabel>
-                      <FormControl><Input type="number" placeholder="Ex: 120" {...field} /></FormControl>
+                      <FormControl><Input type="number" placeholder="Ex: 120" {...field} value={field.value ?? ''} /></FormControl>
                       <FormMessage />
                     </FormItem>
                   )}

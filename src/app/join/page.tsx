@@ -1,3 +1,4 @@
+
 // src/app/join/page.tsx
 'use client';
 
@@ -166,32 +167,32 @@ export default function JoinPage() {
   };
 
   return (
-    <div className="pb-20"> {/* Reduced bottom padding */}
-      <section className="mb-8 text-center"> {/* Reduced margin */}
-        <Sparkles className="mx-auto h-12 w-12 text-primary mb-3" /> {/* Reduced icon size and margin */}
-        <h1 className="mb-1.5 text-2xl font-bold tracking-tight text-primary md:text-3xl"> {/* Reduced font size and margin */}
+    <div className="pb-20"> 
+      <section className="mb-8 text-center"> 
+        <Sparkles className="mx-auto h-12 w-12 text-primary mb-3" /> 
+        <h1 className="mb-1.5 text-2xl font-bold tracking-tight text-primary md:text-3xl"> 
           Assinatura Premium Guia Mais
         </h1>
-        <p className="text-base text-foreground/80 max-w-xl mx-auto"> {/* Reduced font size */}
+        <p className="text-base text-foreground/80 max-w-xl mx-auto"> 
           🌟 Descubra o melhor da cidade com o Guia Mais! Assine o plano Premium e aproveite experiências inesquecíveis!
         </p>
       </section>
 
-      <section className="mb-10"> {/* Reduced margin */}
-        <h2 className="mb-4 text-center text-xl font-semibold text-accent">Seus Benefícios Exclusivos:</h2> {/* Reduced font size and margin */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3"> {/* Reduced gap */}
+      <section className="mb-10"> 
+        <h2 className="mb-4 text-center text-xl font-semibold text-accent">Seus Benefícios Exclusivos:</h2> 
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3"> 
           {premiumFeatures.slice(0, 4).map((benefit, index) => ( 
             <Card key={index} className="text-center shadow-sm hover:shadow-md transition-all duration-300 ease-in-out bg-card">
-              <CardContent className="pt-4"> {/* Reduced padding */}
-                <benefit.IconComp className="mx-auto h-10 w-10 text-primary mb-2" /> {/* Reduced icon size and margin */}
-                <p className="font-medium text-card-foreground text-sm">{benefit.text}</p> {/* Reduced font size */}
+              <CardContent className="pt-4"> 
+                <benefit.IconComp className="mx-auto h-10 w-10 text-primary mb-2" /> 
+                <p className="font-medium text-card-foreground text-sm">{benefit.text}</p> 
               </CardContent>
             </Card>
           ))}
         </div>
       </section>
 
-      <section className="mb-10"> {/* Reduced margin */}
+      <section className="mb-10"> 
         <Card className="shadow-lg border-accent">
             <CardHeader>
                 <CardTitle className="text-accent text-center">🔓 Grátis vs. 🔑 Premium</CardTitle>
@@ -201,7 +202,7 @@ export default function JoinPage() {
                 <Table>
                     <TableHeader>
                         <TableRow>
-                            <TableHead className="w-[60%] text-left text-xs">Recurso</TableHead> {/* Reduced font size */}
+                            <TableHead className="w-[60%] text-left text-xs">Recurso</TableHead> 
                             <TableHead className="text-center text-xs">Grátis</TableHead>
                             <TableHead className="text-center text-primary font-semibold text-xs">Premium</TableHead>
                         </TableRow>
@@ -209,7 +210,7 @@ export default function JoinPage() {
                     <TableBody>
                         {comparisonFeatures.map((feature) => (
                             <TableRow key={feature.name}>
-                                <TableCell className="font-medium text-left flex items-center text-xs"> {/* Reduced font size */}
+                                <TableCell className="font-medium text-left flex items-center text-xs"> 
                                   {feature.IconComp && <feature.IconComp className="mr-1.5 h-3.5 w-3.5 text-muted-foreground" />}
                                   {feature.name}
                                 </TableCell>
@@ -227,15 +228,15 @@ export default function JoinPage() {
         </Card>
       </section>
 
-      <section className="mb-10 text-center"> {/* Reduced margin */}
-        <Card className="bg-secondary/20 border-secondary p-4 shadow-sm"> {/* Reduced padding */}
+      <section className="mb-10 text-center"> 
+        <Card className="bg-secondary/20 border-secondary p-4 shadow-sm"> 
           <CardTitle className="text-secondary-foreground mb-1.5 flex items-center justify-center">
             <Info className="mr-1.5 h-5 w-5"/> Experimente o Guia Mais!
           </CardTitle>
           <CardDescription className="text-secondary-foreground/90 text-sm">
             “Veja um roteiro exclusivo gratuito por 24h!” (Funcionalidade de teste em breve)
           </CardDescription>
-          <Button variant="outline" size="sm" className="mt-3 border-secondary text-secondary-foreground hover:bg-secondary/30"> {/* Reduced size and margin */}
+          <Button variant="outline" size="sm" className="mt-3 border-secondary text-secondary-foreground hover:bg-secondary/30"> 
             Ativar Teste Gratuito (Simulado)
           </Button>
         </Card>
@@ -244,7 +245,7 @@ export default function JoinPage() {
       <Card className="shadow-xl">
         <CardHeader>
           <CardTitle className="flex items-center text-primary">
-            <User className="mr-2 h-6 w-6 text-accent" /> {/* Reduced icon margin */}
+            <User className="mr-2 h-6 w-6 text-accent" /> 
             Complete seus Dados para Assinar
           </CardTitle>
            <CardDescription>
@@ -253,13 +254,13 @@ export default function JoinPage() {
         </CardHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
-            <CardContent className="space-y-4"> {/* Reduced space */}
+            <CardContent className="space-y-4"> 
               <FormField
                 control={form.control}
                 name="selectedPlan"
                 render={({ field }) => (
-                  <FormItem className="space-y-2"> {/* Reduced space */}
-                    <FormLabel className="text-base font-semibold">Selecione seu Plano Premium:</FormLabel> {/* Reduced font size */}
+                  <FormItem className="space-y-2"> 
+                    <FormLabel className="text-base font-semibold">Selecione seu Plano Premium:</FormLabel> 
                     <FormControl>
                       <RadioGroup
                         onValueChange={(value) => {
@@ -267,13 +268,13 @@ export default function JoinPage() {
                             setCurrentSelectedPlanId(value as Plan['id']);
                         }}
                         value={field.value}
-                        className="grid grid-cols-1 md:grid-cols-2 gap-3" // Reduced gap
+                        className="grid grid-cols-1 md:grid-cols-2 gap-3" 
                       >
                         {premiumPlans.map((plan) => (
                           <FormItem 
                             key={plan.id} 
                             className={cn(
-                                "flex flex-col items-start space-y-0.5 rounded-md border p-3 transition-all duration-300 ease-in-out cursor-pointer hover:border-primary hover:shadow-lg", // Reduced padding and space
+                                "flex flex-col items-start space-y-0.5 rounded-md border p-3 transition-all duration-300 ease-in-out cursor-pointer hover:border-primary hover:shadow-lg", 
                                 field.value === plan.id && "border-2 border-primary ring-2 ring-primary ring-offset-2",
                                 plan.highlight && "border-accent hover:border-accent ring-accent"
                             )}
@@ -283,8 +284,8 @@ export default function JoinPage() {
                             }}
                           >
                             <div className="flex items-center justify-between w-full">
-                                <FormLabel className="font-semibold text-base flex items-center cursor-pointer"> {/* Reduced font size */}
-                                    {plan.Icon && <plan.Icon className={cn("mr-1.5 h-5 w-5", plan.textColor)} />} {/* Reduced icon size and margin */}
+                                <FormLabel className="font-semibold text-base flex items-center cursor-pointer"> 
+                                    {plan.Icon && <plan.Icon className={cn("mr-1.5 h-5 w-5", plan.textColor)} />} 
                                     {plan.name}
                                 </FormLabel>
                                 <FormControl>
@@ -292,12 +293,12 @@ export default function JoinPage() {
                                 </FormControl>
                                 {plan.highlight && <Badge variant="destructive" className="bg-accent text-accent-foreground text-xs">Melhor Valor!</Badge>}
                             </div>
-                            <p className={cn("text-xl font-bold", plan.textColor)}>{plan.price} <span className="text-xs font-normal text-muted-foreground">/{plan.billingCycle}</span></p> {/* Reduced font sizes */}
+                            <p className={cn("text-xl font-bold", plan.textColor)}>{plan.price} <span className="text-xs font-normal text-muted-foreground">/{plan.billingCycle}</span></p> 
                             {plan.annualEquivalentMonthlyPrice && <p className="text-xs text-muted-foreground">{plan.annualEquivalentMonthlyPrice}</p>}
-                             <ul className="mt-1.5 space-y-0.5 text-xs text-muted-foreground"> {/* Reduced margin and space */}
+                             <ul className="mt-1.5 space-y-0.5 text-xs text-muted-foreground"> 
                                 {plan.features.slice(0,2).map(feature => ( 
                                     <li key={feature.text} className="flex items-center">
-                                        <CheckCircle className="mr-1 h-3 w-3 text-green-500"/> {feature.text} {/* Reduced icon size and margin */}
+                                        <CheckCircle className="mr-1 h-3 w-3 text-green-500"/> {feature.text} 
                                     </li>
                                 ))}
                                 <li>& mais...</li>
@@ -311,7 +312,7 @@ export default function JoinPage() {
                 )}
               />
 
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-2"> {/* Reduced gap */}
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2"> 
                 <FormField
                   control={form.control}
                   name="name"
@@ -319,7 +320,7 @@ export default function JoinPage() {
                     <FormItem>
                       <FormLabel htmlFor="name">Nome Completo</FormLabel>
                       <FormControl>
-                        <Input id="name" placeholder="Seu nome completo" {...field} />
+                        <Input id="name" placeholder="Seu nome completo" {...field} value={field.value ?? ''} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -332,14 +333,14 @@ export default function JoinPage() {
                     <FormItem>
                       <FormLabel htmlFor="email">Email</FormLabel>
                       <FormControl>
-                        <Input id="email" type="email" placeholder="seuemail@exemplo.com" {...field} />
+                        <Input id="email" type="email" placeholder="seuemail@exemplo.com" {...field} value={field.value ?? ''} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
               </div>
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-2"> {/* Reduced gap */}
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2"> 
                 <FormField
                   control={form.control}
                   name="phone"
@@ -347,7 +348,7 @@ export default function JoinPage() {
                     <FormItem>
                       <FormLabel htmlFor="phone">Telefone (com DDD)</FormLabel>
                       <FormControl>
-                        <Input id="phone" type="tel" placeholder="(XX) XXXXX-XXXX" {...field} />
+                        <Input id="phone" type="tel" placeholder="(XX) XXXXX-XXXX" {...field} value={field.value ?? ''} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -360,14 +361,14 @@ export default function JoinPage() {
                     <FormItem>
                       <FormLabel htmlFor="cpf">CPF</FormLabel>
                       <FormControl>
-                        <Input id="cpf" placeholder="000.000.000-00" {...field} />
+                        <Input id="cpf" placeholder="000.000.000-00" {...field} value={field.value ?? ''} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
               </div>
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-2"> {/* Reduced gap */}
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2"> 
                 <FormField
                   control={form.control}
                   name="password"
@@ -375,7 +376,7 @@ export default function JoinPage() {
                     <FormItem>
                       <FormLabel htmlFor="password">Senha</FormLabel>
                       <FormControl>
-                        <Input id="password" type="password" placeholder="Crie uma senha segura" {...field} />
+                        <Input id="password" type="password" placeholder="Crie uma senha segura" {...field} value={field.value ?? ''} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -388,7 +389,7 @@ export default function JoinPage() {
                     <FormItem>
                       <FormLabel htmlFor="confirmPassword">Confirmar Senha</FormLabel>
                       <FormControl>
-                        <Input id="confirmPassword" type="password" placeholder="Repita sua senha" {...field} />
+                        <Input id="confirmPassword" type="password" placeholder="Repita sua senha" {...field} value={field.value ?? ''} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -400,7 +401,7 @@ export default function JoinPage() {
                 control={form.control}
                 name="agreeToTerms"
                 render={({ field }) => (
-                  <FormItem className="flex flex-row items-start space-x-2.5 space-y-0 rounded-md border p-3 shadow-sm"> {/* Reduced padding and space */}
+                  <FormItem className="flex flex-row items-start space-x-2.5 space-y-0 rounded-md border p-3 shadow-sm"> 
                     <FormControl>
                       <Checkbox
                         checked={field.value}
@@ -408,11 +409,11 @@ export default function JoinPage() {
                         id="agreeToTerms"
                       />
                     </FormControl>
-                    <div className="space-y-0.5 leading-none"> {/* Reduced space */}
-                      <FormLabel htmlFor="agreeToTerms" className="cursor-pointer text-xs"> {/* Reduced font size */}
+                    <div className="space-y-0.5 leading-none"> 
+                      <FormLabel htmlFor="agreeToTerms" className="cursor-pointer text-xs"> 
                         Li e concordo com os Termos e Condições de Uso e a Política de Privacidade do Guia Mais.
                       </FormLabel>
-                      <FormDescription className="text-xs"> {/* Reduced font size */}
+                      <FormDescription className="text-xs"> 
                         Ao marcar esta caixa, você confirma sua adesão ao clube.
                       </FormDescription>
                       <FormMessage />
@@ -421,14 +422,14 @@ export default function JoinPage() {
                 )}
               />
               
-              <p className="flex items-center text-xs text-muted-foreground pt-2"> {/* Reduced font size and padding */}
+              <p className="flex items-center text-xs text-muted-foreground pt-2"> 
                 <ShieldCheck className="mr-1.5 h-3.5 w-3.5 text-green-500" />
                 Seus dados estão seguros conosco. Pagamento seguro (Simulação).
               </p>
             </CardContent>
-            <div className="fixed bottom-0 left-0 right-0 z-50 bg-background/90 p-3 backdrop-blur-sm border-t border-border shadow-t-lg"> {/* Reduced padding */}
-                <Button type="submit" size="lg" className="w-full bg-accent hover:bg-accent/80 text-accent-foreground text-base py-2.5" disabled={isSubmitting}> {/* Reduced font size and padding */}
-                    <CheckCircle className="mr-1.5 h-5 w-5" /> {/* Reduced icon margin */}
+            <div className="fixed bottom-0 left-0 right-0 z-50 bg-background/90 p-3 backdrop-blur-sm border-t border-border shadow-t-lg"> 
+                <Button type="submit" size="lg" className="w-full bg-accent hover:bg-accent/80 text-accent-foreground text-base py-2.5" disabled={isSubmitting}> 
+                    <CheckCircle className="mr-1.5 h-5 w-5" /> 
                     {isSubmitting ? 'Processando...' : `Assinar Agora - ${selectedPlanDetails.price}/${selectedPlanDetails.billingCycle}`}
                 </Button>
                 <p className="mt-2 text-center text-xs text-muted-foreground">

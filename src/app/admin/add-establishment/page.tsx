@@ -1,3 +1,4 @@
+
 // src/app/admin/add-establishment/page.tsx
 'use client';
 
@@ -14,7 +15,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Checkbox } from '@/components/ui/checkbox'; // Added for P1G2 offer
+import { Checkbox } from '@/components/ui/checkbox'; 
 import { useToast } from '@/hooks/use-toast';
 import type { LucideIconName } from '@/services/gramado-businesses';
 import { ArrowLeft, Building, PlusCircle, Tag } from 'lucide-react';
@@ -42,7 +43,6 @@ const establishmentFormSchema = z.object({
   longitude: z.coerce.number({ invalid_type_error: 'Longitude deve ser um número.' }).min(-180, {message: "Longitude mínima é -180"}).max(180, {message: "Longitude máxima é 180"}),
   imageUrl: z.string().url({ message: 'URL da imagem inválida (ex: https://picsum.photos/seed/nomedaloja/600/400).' }),
   icon: z.enum(iconNames as [LucideIconName, ...LucideIconName[]], { required_error: "Ícone é obrigatório." }),
-  // Fields for a single default offer
   hasDefaultOffer: z.boolean().optional(),
   defaultOfferTitle: z.string().optional(),
   defaultOfferDescription: z.string().optional(),
@@ -55,7 +55,7 @@ const establishmentFormSchema = z.object({
   return true;
 }, {
   message: "Se uma oferta padrão for adicionada, título, descrição e termos são obrigatórios.",
-  path: ["defaultOfferTitle"], // Show error on one of the fields
+  path: ["defaultOfferTitle"], 
 });
 
 
@@ -76,9 +76,9 @@ export default function AddEstablishmentPage() {
       address: '',
       phoneNumber: '',
       website: '',
-      latitude: undefined, // Keep undefined for number inputs; react-hook-form handles it
-      longitude: undefined, // Keep undefined for number inputs
-      imageUrl: 'https://picsum.photos/seed/novo-estabelecimento/600/400',
+      latitude: undefined, 
+      longitude: undefined, 
+      imageUrl: 'https://placehold.co/seed/novo-estabelecimento/600/400',
       icon: undefined,
       hasDefaultOffer: false,
       defaultOfferTitle: '',
@@ -92,25 +92,24 @@ export default function AddEstablishmentPage() {
 
   const onSubmit: SubmitHandler<EstablishmentFormValues> = async (data) => {
     setIsSubmitting(true);
-    // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 1500));
     
     const newEstablishment = {
-        id: String(Date.now()), // mock ID
+        id: String(Date.now()), 
         ...data,
     };
     
     let newDeal = null;
     if (data.hasDefaultOffer && data.defaultOfferTitle && data.defaultOfferDescription && data.defaultOfferTerms) {
         newDeal = {
-            id: `deal-${Date.now()}`, // mock ID
+            id: `deal-${Date.now()}`, 
             businessId: newEstablishment.id,
             title: data.defaultOfferTitle,
             description: data.defaultOfferDescription,
             isPay1Get2: data.defaultOfferIsPay1Get2,
-            usageLimitPerUser: data.defaultOfferIsPay1Get2 ? 1 : undefined, // Default for P1G2
+            usageLimitPerUser: data.defaultOfferIsPay1Get2 ? 1 : undefined, 
             termsAndConditions: data.defaultOfferTerms,
-            discountPercentage: 0, // Default for new offer, can be changed later
+            discountPercentage: 0, 
         };
         console.log('New Default Offer:', newDeal);
     }
@@ -291,7 +290,7 @@ export default function AddEstablishmentPage() {
                         <FormItem>
                         <FormLabel htmlFor="imageUrl">URL da Imagem Principal *</FormLabel>
                         <FormControl>
-                            <Input id="imageUrl" placeholder="https://picsum.photos/seed/nome/600/400" {...field} value={field.value ?? ''} />
+                            <Input id="imageUrl" placeholder="https://placehold.co/seed/nome/600/400" {...field} value={field.value ?? ''} />
                         </FormControl>
                         <FormDescription>Use uma URL pública (ex: Picsum, Imgur).</FormDescription>
                         <FormMessage />

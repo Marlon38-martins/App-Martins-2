@@ -48,7 +48,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { slugify } from '@/lib/utils';
-import { PartnerPanelDropdown } from '@/components/layout/partner-panel-dropdown';
+import { PartnerAdminDirectLink } from '@/components/layout/partner-panel-dropdown'; // Corrected import
 
 
 const geistSans = Geist({
@@ -71,7 +71,7 @@ const categoriesForMenu = [
   { name: 'Hospedagem', slug: slugify('Hotel'), Icon: BedDouble },
   { name: 'Bares', slug: slugify('Bar'), Icon: Beer },
   { name: 'Cafés', slug: slugify('Café'), Icon: Coffee },
-  { name: 'Lojas', slug: slugify('Loja'), Icon: ShoppingBag }, 
+  { name: 'Lojas', slug: slugify('Comércio'), Icon: ShoppingBag }, 
   { name: 'Lazer', slug: slugify('Atração'), Icon: AttractionIcon },
   { name: 'Parques', slug: slugify('Parque'), Icon: Trees },
 ];
@@ -166,13 +166,11 @@ export default function RootLayout({
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
-
-                  {/* User Authentication and Profile Links */}
+                  
                   <CurrentUserDisplay /> 
                                     
-                  {/* Partner and Admin Panel Section - moved to bottom */}
                   <SidebarMenuItem className="mt-auto pt-4 border-t border-sidebar-border">
-                    <PartnerPanelDropdown />
+                     <PartnerAdminDirectLink />
                   </SidebarMenuItem>
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild tooltip={{content: "Seja Parceiro", side:"right"}}>
@@ -189,7 +187,9 @@ export default function RootLayout({
             <SidebarInset>
               <Header />
               <main className="flex-grow p-4 bg-background overflow-x-hidden w-full">
-                {children}
+                <div className="w-full max-w-sm mx-auto">
+                  {children}
+                </div>
               </main>
               <footer className="bg-background py-6 text-sm text-muted-foreground border-t">
                 <div className="w-full max-w-sm mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-4 text-center md:text-left">

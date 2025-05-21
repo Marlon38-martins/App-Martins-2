@@ -1,3 +1,4 @@
+
 // src/app/partner/edit-business/[id]/page.tsx
 'use client';
 
@@ -23,7 +24,6 @@ import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import { ArrowLeft, Building, Save, ShieldAlert } from 'lucide-react';
 
 const MOCK_PARTNER_EMAIL = 'partner@example.com'; 
-// const MOCK_PARTNER_BUSINESS_ID = '1'; // We'll use the ID from params
 
 const iconNames: LucideIconName[] = [
   'UtensilsCrossed', 
@@ -57,7 +57,7 @@ const editEstablishmentFormSchema = z.object({
 type EditEstablishmentFormValues = z.infer<typeof editEstablishmentFormSchema>;
 
 interface EditBusinessPageParams {
-  id: string; // Business ID from the URL
+  id: string; 
 }
 
 export default function EditPartnerBusinessPage() {
@@ -66,7 +66,7 @@ export default function EditPartnerBusinessPage() {
   const params = useParams() as EditBusinessPageParams;
   const businessId = params.id;
 
-  const { user, loading: authLoading } = useAuth();
+  const { user, isAdmin, loading: authLoading } = useAuth();
   const [business, setBusiness] = useState<GramadoBusiness | null>(null);
   const [isLoadingData, setIsLoadingData] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -74,10 +74,10 @@ export default function EditPartnerBusinessPage() {
   
   const form = useForm<EditEstablishmentFormValues>({
     resolver: zodResolver(editEstablishmentFormSchema),
-    defaultValues: {}, // Will be populated by useEffect
+    defaultValues: {}, 
   });
 
-  const isPartner = user?.email === MOCK_PARTNER_EMAIL;
+  const canAccess = user && (user.email === MOCK_PARTNER_EMAIL || isAdmin);
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -86,15 +86,15 @@ export default function EditPartnerBusinessPage() {
   }, [authLoading, user, router, businessId]);
 
   useEffect(() => {
-    if (user && isPartner && businessId) {
+    if (user && canAccess && businessId) {
       async function loadBusinessData() {
         setIsLoadingData(true);
         setError(null);
         try {
           const businessData = await getGramadoBusinessById(businessId);
-          if (businessData) {
+          // Ensure the partner can only edit THEIR designated business if not admin
+          if (businessData && (isAdmin || businessData.id === process.env.NEXT_PUBLIC_MOCK_PARTNER_BUSINESS_ID || businessId === process.env.NEXT_PUBLIC_MOCK_PARTNER_BUSINESS_ID)) {
             setBusiness(businessData);
-            // Populate form with existing data
             form.reset({
               name: businessData.name,
               type: businessData.type,
@@ -112,7 +112,7 @@ export default function EditPartnerBusinessPage() {
               icon: businessData.icon,
             });
           } else {
-            setError('Estabelecimento não encontrado. Não é possível editar.');
+            setError('Estabelecimento não encontrado ou você não tem permissão para editá-lo.');
           }
         } catch (err) {
           console.error("Error loading business data for editing:", err);
@@ -122,10 +122,10 @@ export default function EditPartnerBusinessPage() {
         }
       }
       loadBusinessData();
-    } else if (user && !isPartner) {
-      setIsLoadingData(false); // Not a partner, stop loading
+    } else if (user && !canAccess) {
+      setIsLoadingData(false); 
     }
-  }, [user, isPartner, businessId, form]);
+  }, [user, canAccess, isAdmin, businessId, form]);
 
 
   const onSubmit: SubmitHandler<EditEstablishmentFormValues> = async (data) => {
@@ -134,16 +134,14 @@ export default function EditPartnerBusinessPage() {
         return;
     }
     setIsSubmitting(true);
-    // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 1500));
     
     const updatedBusiness = {
-        ...business, // Keep existing ID and other non-form fields
+        ...business, 
         ...data,
     };
 
     console.log('Updated Establishment Data:', updatedBusiness);
-    // In a real app, you'd send `updatedBusiness` to your backend to save it.
 
     toast({
       title: 'Dados Atualizados!',
@@ -151,7 +149,7 @@ export default function EditPartnerBusinessPage() {
       variant: 'default', 
     });
     setIsSubmitting(false);
-    router.push('/partner/dashboard');
+    router.push('/partner/panel');
   };
   
   if (authLoading || isLoadingData) {
@@ -174,13 +172,13 @@ export default function EditPartnerBusinessPage() {
     return <div className="p-6 text-center">Redirecionando para login...</div>;
   }
 
-  if (!isPartner) {
+  if (!canAccess) {
     return (
       <div className="p-4 md:p-6 flex flex-col items-center justify-center min-h-[calc(100vh-200px)]">
         <Alert variant="destructive" className="max-w-md text-center">
           <ShieldAlert className="mx-auto mb-2 h-6 w-6" />
           <AlertTitle>Acesso Negado</AlertTitle>
-          <AlertDescription>Esta funcionalidade é exclusiva para parceiros.</AlertDescription>
+          <AlertDescription>Esta funcionalidade é exclusiva para parceiros e administradores.</AlertDescription>
         </Alert>
          <Button asChild variant="outline" className="mt-6">
           <Link href="/"> <ArrowLeft className="mr-2 h-4 w-4" /> Voltar para Início </Link>
@@ -198,7 +196,7 @@ export default function EditPartnerBusinessPage() {
           <AlertDescription>{error}</AlertDescription>
         </Alert>
         <Button asChild variant="outline" className="mt-6">
-          <Link href="/partner/dashboard"> <ArrowLeft className="mr-2 h-4 w-4" /> Voltar para o Painel </Link>
+          <Link href="/partner/panel"> <ArrowLeft className="mr-2 h-4 w-4" /> Voltar para o Painel </Link>
         </Button>
       </div>
     );
@@ -212,7 +210,7 @@ export default function EditPartnerBusinessPage() {
   return (
     <div className="p-4 md:p-6">
       <Button asChild variant="outline" className="mb-6">
-        <Link href="/partner/dashboard">
+        <Link href="/partner/panel">
           <ArrowLeft className="mr-2 h-4 w-4" />
           Voltar para o Painel
         </Link>
@@ -248,7 +246,7 @@ export default function EditPartnerBusinessPage() {
                     <FormItem>
                       <FormLabel htmlFor="name">Nome do Estabelecimento *</FormLabel>
                       <FormControl>
-                        <Input id="name" placeholder="Ex: Pousada Vista Linda" {...field} />
+                        <Input id="name" placeholder="Ex: Pousada Vista Linda" {...field} value={field.value ?? ''} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -261,7 +259,7 @@ export default function EditPartnerBusinessPage() {
                     <FormItem>
                       <FormLabel htmlFor="type">Tipo de Estabelecimento *</FormLabel>
                       <FormControl>
-                        <Input id="type" placeholder="Ex: Hotel, Restaurante, Loja de Artesanato" {...field} />
+                        <Input id="type" placeholder="Ex: Hotel, Restaurante, Loja de Artesanato" {...field} value={field.value ?? ''} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -276,7 +274,7 @@ export default function EditPartnerBusinessPage() {
                   <FormItem>
                     <FormLabel htmlFor="shortDescription">Descrição Curta (para cards) *</FormLabel>
                     <FormControl>
-                      <Input id="shortDescription" placeholder="Uma breve descrição (até 150 caracteres)" {...field} />
+                      <Input id="shortDescription" placeholder="Uma breve descrição (até 150 caracteres)" {...field} value={field.value ?? ''} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -289,7 +287,7 @@ export default function EditPartnerBusinessPage() {
                   <FormItem>
                     <FormLabel htmlFor="fullDescription">Descrição Completa *</FormLabel>
                     <FormControl>
-                      <Textarea id="fullDescription" placeholder="Descreva detalhadamente o estabelecimento, seus serviços e diferenciais." {...field} rows={4}/>
+                      <Textarea id="fullDescription" placeholder="Descreva detalhadamente o estabelecimento, seus serviços e diferenciais." {...field} value={field.value ?? ''} rows={4}/>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -302,7 +300,7 @@ export default function EditPartnerBusinessPage() {
                   <FormItem>
                     <FormLabel htmlFor="address">Endereço Completo *</FormLabel>
                     <FormControl>
-                      <Input id="address" placeholder="Rua, Número, Bairro, Cidade - Estado, CEP" {...field} />
+                      <Input id="address" placeholder="Rua, Número, Bairro, Cidade - Estado, CEP" {...field} value={field.value ?? ''} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -316,7 +314,7 @@ export default function EditPartnerBusinessPage() {
                     <FormItem>
                       <FormLabel htmlFor="phoneNumber">Telefone (com DDD)</FormLabel>
                       <FormControl>
-                        <Input id="phoneNumber" type="tel" placeholder="(XX) XXXXX-XXXX" {...field} />
+                        <Input id="phoneNumber" type="tel" placeholder="(XX) XXXXX-XXXX" {...field} value={field.value ?? ''} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -329,7 +327,7 @@ export default function EditPartnerBusinessPage() {
                     <FormItem>
                       <FormLabel htmlFor="website">Website</FormLabel>
                       <FormControl>
-                        <Input id="website" type="url" placeholder="https://www.exemplo.com.br" {...field} />
+                        <Input id="website" type="url" placeholder="https://www.exemplo.com.br" {...field} value={field.value ?? ''} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -344,7 +342,7 @@ export default function EditPartnerBusinessPage() {
                     <FormItem>
                       <FormLabel htmlFor="instagramUrl">Instagram URL</FormLabel>
                       <FormControl>
-                        <Input id="instagramUrl" type="url" placeholder="https://instagram.com/seu_negocio" {...field} />
+                        <Input id="instagramUrl" type="url" placeholder="https://instagram.com/seu_negocio" {...field} value={field.value ?? ''} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -357,7 +355,7 @@ export default function EditPartnerBusinessPage() {
                     <FormItem>
                       <FormLabel htmlFor="facebookUrl">Facebook URL</FormLabel>
                       <FormControl>
-                        <Input id="facebookUrl" type="url" placeholder="https://facebook.com/seu_negocio" {...field} />
+                        <Input id="facebookUrl" type="url" placeholder="https://facebook.com/seu_negocio" {...field} value={field.value ?? ''} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -370,7 +368,7 @@ export default function EditPartnerBusinessPage() {
                     <FormItem>
                       <FormLabel htmlFor="whatsappNumber">WhatsApp (com DDD e país)</FormLabel>
                       <FormControl>
-                        <Input id="whatsappNumber" type="tel" placeholder="5584912345678" {...field} />
+                        <Input id="whatsappNumber" type="tel" placeholder="5584912345678" {...field} value={field.value ?? ''} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -385,7 +383,7 @@ export default function EditPartnerBusinessPage() {
                     <FormItem>
                       <FormLabel htmlFor="latitude">Latitude *</FormLabel>
                       <FormControl>
-                        <Input id="latitude" type="number" step="any" placeholder="-6.0869" {...field} />
+                        <Input id="latitude" type="number" step="any" placeholder="-6.0869" {...field} value={field.value ?? ''} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -398,7 +396,7 @@ export default function EditPartnerBusinessPage() {
                     <FormItem>
                       <FormLabel htmlFor="longitude">Longitude *</FormLabel>
                       <FormControl>
-                        <Input id="longitude" type="number" step="any" placeholder="-37.9119" {...field} />
+                        <Input id="longitude" type="number" step="any" placeholder="-37.9119" {...field} value={field.value ?? ''} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -413,7 +411,7 @@ export default function EditPartnerBusinessPage() {
                         <FormItem>
                         <FormLabel htmlFor="imageUrl">URL da Imagem Principal *</FormLabel>
                         <FormControl>
-                            <Input id="imageUrl" placeholder="https://picsum.photos/seed/nome/600/400" {...field} />
+                            <Input id="imageUrl" placeholder="https://placehold.co/seed/nome/600/400" {...field} value={field.value ?? ''} />
                         </FormControl>
                         <FormDescription>Use uma URL pública (ex: Picsum, Imgur).</FormDescription>
                         <FormMessage />

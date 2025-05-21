@@ -1,3 +1,4 @@
+
 // src/app/settings/page.tsx
 'use client';
 
@@ -13,17 +14,15 @@ import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
 import { UserCircle, Bell, Shield, CreditCard, LogOut } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { useAuth } from '@/hooks/use-auth-client'; // Using the updated hook
-import { mockLogout } from '@/services/gramado-businesses'; // Directly use mockLogout for clarity
+import { useAuth } from '@/hooks/use-auth-client'; 
+import { mockLogout } from '@/services/gramado-businesses'; 
 
 export default function SettingsPage() {
   const router = useRouter();
   const { toast } = useToast();
-  const { user, loading, signOutUser: contextSignOutUser } = useAuth(); // Get user and loading state from context
+  const { user, loading, signOutUser: contextSignOutUser } = useAuth(); 
 
-  // Local form state for settings, can be initialized with user data
   const [name, setName] = useState('');
-  // Add other local states for settings as needed, e.g., notification preferences
 
   useEffect(() => {
     if (!loading && !user) {
@@ -34,20 +33,12 @@ export default function SettingsPage() {
   }, [user, loading, router]);
 
   const handleSaveChanges = () => {
-    // Here you would typically update the user's profile using a service call
-    // For now, it's a simulation
     toast({ title: "Simulação", description: `Dados salvos (simulado). Nome: ${name}` });
-    // Potentially update the user object in the AuthContext if name change is successful
-    // This would require modifying useAuth or having an updateUser function in the context
   };
   
   const handleSignOut = async () => {
     try {
-        await contextSignOutUser(); // Use signout from context
-        // Toast and redirect are now handled within CurrentUserDisplay/useAuth if needed globally
-        // or can be kept here for page-specific feedback
-        // toast({ title: "Logout Realizado", description: "Você foi desconectado com sucesso."});
-        // router.push('/login'); // Already handled by context listener or CurrentUserDisplay
+        await contextSignOutUser(); 
     } catch (error) {
         console.error("Error signing out from settings: ", error);
         toast({ title: "Erro no Logout", description: "Não foi possível fazer logout. Tente novamente.", variant: 'destructive' });
@@ -93,7 +84,7 @@ export default function SettingsPage() {
         <CardContent className="space-y-4">
           <div>
             <Label htmlFor="name">Nome</Label>
-            <Input id="name" value={name} onChange={(e) => setName(e.target.value)} placeholder="Seu nome completo" />
+            <Input id="name" value={name ?? ''} onChange={(e) => setName(e.target.value)} placeholder="Seu nome completo" />
           </div>
           <div>
             <Label htmlFor="email">Email</Label>
