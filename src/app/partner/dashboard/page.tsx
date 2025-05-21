@@ -28,16 +28,20 @@ import { BusinessTypeIcon } from '@/components/icons';
 
 const MOCK_PARTNER_EMAIL = 'partner@example.com'; // For demo purposes
 const MOCK_PARTNER_BUSINESS_ID = '1'; // Partner "owns" Restaurante Mirante da Serra
+const ADMIN_EMAIL = 'admin@example.com';
+
 
 export default function PartnerDashboardPage() {
-  const { user, loading: authLoading } = useAuth();
+  const { user, isAdmin, loading: authLoading } = useAuth();
   const router = useRouter();
   const [business, setBusiness] = useState<GramadoBusiness | null>(null);
   const [deals, setDeals] = useState<Deal[]>([]);
   const [isLoadingData, setIsLoadingData] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const isPartner = user?.email === MOCK_PARTNER_EMAIL;
+  const isDesignatedPartner = user?.email === MOCK_PARTNER_EMAIL;
+  const canAccess = isAdmin || isDesignatedPartner;
+
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -46,15 +50,19 @@ export default function PartnerDashboardPage() {
   }, [authLoading, user, router]);
 
   useEffect(() => {
-    if (user && isPartner) {
+    if (user && canAccess) {
+      // If admin, they might view any partner dashboard (not implemented here)
+      // For partner, it's their specific business.
+      const businessIdToLoad = isDesignatedPartner ? MOCK_PARTNER_BUSINESS_ID : MOCK_PARTNER_BUSINESS_ID; // Simplified for now
+
       async function loadPartnerData() {
         setIsLoadingData(true);
         setError(null);
         try {
-          const businessData = await getGramadoBusinessById(MOCK_PARTNER_BUSINESS_ID);
+          const businessData = await getGramadoBusinessById(businessIdToLoad);
           if (businessData) {
             setBusiness(businessData);
-            const dealsData = await getDealsForBusiness(MOCK_PARTNER_BUSINESS_ID);
+            const dealsData = await getDealsForBusiness(businessIdToLoad);
             setDeals(dealsData);
           } else {
             setError('Estabelecimento não encontrado. Contate o suporte.');
@@ -67,12 +75,12 @@ export default function PartnerDashboardPage() {
         }
       }
       loadPartnerData();
-    } else if (user && !isPartner) {
-      setIsLoadingData(false);
+    } else if (user && !canAccess) {
+      setIsLoadingData(false); // No access
     }
-  }, [user, isPartner]);
+  }, [user, canAccess, isDesignatedPartner, isAdmin]);
 
-  if (authLoading || isLoadingData) {
+  if (authLoading || (canAccess && isLoadingData)) {
     return (
       <div className="space-y-6 p-4 md:p-6">
         <Skeleton className="mb-6 h-10 w-2/3" />
@@ -110,14 +118,14 @@ export default function PartnerDashboardPage() {
     return <div className="p-6 text-center">Carregando informações do usuário...</div>;
   }
 
-  if (!isPartner) {
+  if (!canAccess) {
     return (
       <div className="p-4 md:p-6 flex flex-col items-center justify-center min-h-[calc(100vh-200px)]">
         <Alert variant="destructive" className="max-w-md text-center">
           <ShieldAlert className="h-6 w-6 mx-auto mb-2" />
           <AlertTitle>Acesso Negado</AlertTitle>
           <AlertDescription>
-            Esta área é exclusiva para parceiros cadastrados.
+            Esta área é exclusiva para parceiros e administradores.
           </AlertDescription>
         </Alert>
         <Button asChild variant="outline" className="mt-6">
@@ -129,7 +137,7 @@ export default function PartnerDashboardPage() {
       </div>
     );
   }
-
+  
   if (error) {
     return (
       <div className="p-4 md:p-6">
@@ -138,6 +146,9 @@ export default function PartnerDashboardPage() {
           <AlertTitle>Erro</AlertTitle>
           <AlertDescription>{error}</AlertDescription>
         </Alert>
+         <Button asChild variant="outline" className="mt-6">
+          <Link href="/partner/panel"><ArrowLeft className="mr-2 h-4 w-4"/> Voltar ao Painel</Link>
+        </Button>
       </div>
     );
   }
@@ -148,6 +159,13 @@ export default function PartnerDashboardPage() {
 
   return (
     <div className="p-4 md:p-6 space-y-8">
+      <Button asChild variant="outline" className="mb-2">
+        <Link href="/partner/panel">
+          <ArrowLeft className="mr-2 h-4 w-4" />
+          Voltar para o Painel do Parceiro
+        </Link>
+      </Button>
+
       <div className="mb-6">
         <h1 className="text-3xl font-bold text-primary">Painel do Meu Estabelecimento</h1>
         <p className="text-muted-foreground">Gerencie as informações e ofertas do seu negócio.</p>
@@ -253,11 +271,10 @@ export default function PartnerDashboardPage() {
                             <p className="text-sm text-muted-foreground line-clamp-2 mb-1">{deal.description}</p>
                             <div>
                                 {deal.isPay1Get2 && <Badge variant="destructive" className="mr-1 bg-accent text-accent-foreground">Pague 1 Leve 2</Badge>}
-                                {deal.discountPercentage && <Badge variant="default" className="bg-primary text-primary-foreground">{deal.discountPercentage}% OFF</Badge>}
+                                {deal.discountPercentage && deal.discountPercentage > 0 && <Badge variant="default" className="bg-primary text-primary-foreground">{deal.discountPercentage}% OFF</Badge>}
                             </div>
                         </div>
                         <div className="mt-2 sm:mt-0 sm:ml-auto flex-shrink-0">
-                            {/* Placeholder for editing a specific deal. In a real app, this would link to /partner/edit-offer/[dealId] */}
                             <Button variant="outline" size="sm" disabled title="Funcionalidade de edição de oferta em breve">
                                 <Settings2 className="mr-2 h-4 w-4" /> Editar Oferta
                             </Button>
