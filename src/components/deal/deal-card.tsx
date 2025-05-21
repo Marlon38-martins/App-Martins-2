@@ -66,9 +66,11 @@ export function DealCard({ deal, business }: DealCardProps) {
         <Button asChild variant="default" className="w-full bg-accent hover:bg-accent/90 text-accent-foreground">
           {/* Link to checkout page with businessId and dealId */}
           <Link href={`/checkout/${deal.businessId}?dealId=${deal.id}`}>
-            <Tag className="mr-2 h-4 w-4" />
-            Ver Detalhes da Oferta
-            <ArrowRight className="ml-auto h-4 w-4" />
+            <span className="flex items-center justify-between w-full"> {/* Ensure span takes full width for justify-between */}
+              <Tag className="mr-2 h-4 w-4" />
+              Ver Detalhes da Oferta
+              <ArrowRight className="ml-auto h-4 w-4" />
+            </span>
           </Link>
         </Button>
       </CardFooter>

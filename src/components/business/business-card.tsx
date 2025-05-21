@@ -61,8 +61,10 @@ export function BusinessCard({ business }: BusinessCardProps) {
       <CardFooter>
         <Button asChild variant="default" className="w-full bg-primary hover:bg-primary/90">
           <Link href={`/business/${business.id}`}>
-            Ver Detalhes e Ofertas
-            <ArrowRight className="ml-2 h-4 w-4" />
+            <span className="flex items-center justify-center w-full"> {/* Ensure span takes full width for justify-center if needed */}
+              Ver Detalhes e Ofertas
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </span>
           </Link>
         </Button>
       </CardFooter>
