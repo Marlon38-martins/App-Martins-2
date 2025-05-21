@@ -48,7 +48,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { slugify } from '@/lib/utils';
-import { PartnerAdminDirectLink } from '@/components/layout/partner-panel-dropdown'; // Corrected import
+import { DynamicPartnerLink } from '@/components/layout/partner-panel-dropdown'; // Updated import
 
 
 const geistSans = Geist({
@@ -170,7 +170,7 @@ export default function RootLayout({
                   <CurrentUserDisplay /> 
                                     
                   <SidebarMenuItem className="mt-auto pt-4 border-t border-sidebar-border">
-                     <PartnerAdminDirectLink />
+                     <DynamicPartnerLink />
                   </SidebarMenuItem>
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild tooltip={{content: "Seja Parceiro", side:"right"}}>
