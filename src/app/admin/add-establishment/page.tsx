@@ -76,8 +76,8 @@ export default function AddEstablishmentPage() {
       address: '',
       phoneNumber: '',
       website: '',
-      latitude: undefined,
-      longitude: undefined,
+      latitude: undefined, // Keep undefined for number inputs; react-hook-form handles it
+      longitude: undefined, // Keep undefined for number inputs
       imageUrl: 'https://picsum.photos/seed/novo-estabelecimento/600/400',
       icon: undefined,
       hasDefaultOffer: false,
@@ -95,7 +95,6 @@ export default function AddEstablishmentPage() {
     // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 1500));
     
-    // Log the data including the offer details if provided
     const newEstablishment = {
         id: String(Date.now()), // mock ID
         ...data,
@@ -116,9 +115,7 @@ export default function AddEstablishmentPage() {
         console.log('New Default Offer:', newDeal);
     }
 
-
     console.log('New Establishment Data:', newEstablishment);
-    // Here you would typically send `newEstablishment` and `newDeal` to your backend to save them.
 
     toast({
       title: 'Solicitação de Cadastro Enviada!',
@@ -127,7 +124,6 @@ export default function AddEstablishmentPage() {
     });
     setIsSubmitting(false);
     form.reset(); 
-    // Potentially redirect: router.push('/admin/dashboard');
   };
 
   return (
@@ -152,7 +148,7 @@ export default function AddEstablishmentPage() {
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <CardHeader>
-              <CardTitle className="flex items-center text-2xl text-primary">
+              <CardTitle className="flex items-center text-xl text-primary">
                 <Building className="mr-3 h-7 w-7 text-accent" />
                 Detalhes do Estabelecimento
               </CardTitle>
@@ -161,7 +157,6 @@ export default function AddEstablishmentPage() {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
-              {/* ... existing establishment fields ... */}
               <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                 <FormField
                   control={form.control}
@@ -170,7 +165,7 @@ export default function AddEstablishmentPage() {
                     <FormItem>
                       <FormLabel htmlFor="name">Nome do Estabelecimento *</FormLabel>
                       <FormControl>
-                        <Input id="name" placeholder="Ex: Pousada Vista Linda" {...field} />
+                        <Input id="name" placeholder="Ex: Pousada Vista Linda" {...field} value={field.value ?? ''} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -183,7 +178,7 @@ export default function AddEstablishmentPage() {
                     <FormItem>
                       <FormLabel htmlFor="type">Tipo de Estabelecimento *</FormLabel>
                       <FormControl>
-                        <Input id="type" placeholder="Ex: Hotel, Restaurante, Loja de Artesanato" {...field} />
+                        <Input id="type" placeholder="Ex: Hotel, Restaurante, Loja de Artesanato" {...field} value={field.value ?? ''} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -198,7 +193,7 @@ export default function AddEstablishmentPage() {
                   <FormItem>
                     <FormLabel htmlFor="shortDescription">Descrição Curta (para cards) *</FormLabel>
                     <FormControl>
-                      <Input id="shortDescription" placeholder="Uma breve descrição (até 150 caracteres)" {...field} />
+                      <Input id="shortDescription" placeholder="Uma breve descrição (até 150 caracteres)" {...field} value={field.value ?? ''} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -211,7 +206,7 @@ export default function AddEstablishmentPage() {
                   <FormItem>
                     <FormLabel htmlFor="fullDescription">Descrição Completa *</FormLabel>
                     <FormControl>
-                      <Textarea id="fullDescription" placeholder="Descreva detalhadamente o estabelecimento, seus serviços e diferenciais." {...field} rows={4}/>
+                      <Textarea id="fullDescription" placeholder="Descreva detalhadamente o estabelecimento, seus serviços e diferenciais." {...field} value={field.value ?? ''} rows={4}/>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -224,7 +219,7 @@ export default function AddEstablishmentPage() {
                   <FormItem>
                     <FormLabel htmlFor="address">Endereço Completo *</FormLabel>
                     <FormControl>
-                      <Input id="address" placeholder="Rua, Número, Bairro, Cidade - Estado, CEP" {...field} />
+                      <Input id="address" placeholder="Rua, Número, Bairro, Cidade - Estado, CEP" {...field} value={field.value ?? ''} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -238,7 +233,7 @@ export default function AddEstablishmentPage() {
                     <FormItem>
                       <FormLabel htmlFor="phoneNumber">Telefone (com DDD)</FormLabel>
                       <FormControl>
-                        <Input id="phoneNumber" type="tel" placeholder="(XX) XXXXX-XXXX" {...field} />
+                        <Input id="phoneNumber" type="tel" placeholder="(XX) XXXXX-XXXX" {...field} value={field.value ?? ''} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -251,7 +246,7 @@ export default function AddEstablishmentPage() {
                     <FormItem>
                       <FormLabel htmlFor="website">Website</FormLabel>
                       <FormControl>
-                        <Input id="website" type="url" placeholder="https://www.exemplo.com.br" {...field} />
+                        <Input id="website" type="url" placeholder="https://www.exemplo.com.br" {...field} value={field.value ?? ''} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -266,7 +261,7 @@ export default function AddEstablishmentPage() {
                     <FormItem>
                       <FormLabel htmlFor="latitude">Latitude *</FormLabel>
                       <FormControl>
-                        <Input id="latitude" type="number" step="any" placeholder="-6.0869" {...field} />
+                        <Input id="latitude" type="number" step="any" placeholder="-6.0869" {...field} value={field.value ?? ''} />
                       </FormControl>
                       <FormDescription>Coordenada geográfica (ex: -6.0869).</FormDescription>
                       <FormMessage />
@@ -280,7 +275,7 @@ export default function AddEstablishmentPage() {
                     <FormItem>
                       <FormLabel htmlFor="longitude">Longitude *</FormLabel>
                       <FormControl>
-                        <Input id="longitude" type="number" step="any" placeholder="-37.9119" {...field} />
+                        <Input id="longitude" type="number" step="any" placeholder="-37.9119" {...field} value={field.value ?? ''} />
                       </FormControl>
                       <FormDescription>Coordenada geográfica (ex: -37.9119).</FormDescription>
                       <FormMessage />
@@ -296,7 +291,7 @@ export default function AddEstablishmentPage() {
                         <FormItem>
                         <FormLabel htmlFor="imageUrl">URL da Imagem Principal *</FormLabel>
                         <FormControl>
-                            <Input id="imageUrl" placeholder="https://picsum.photos/seed/nome/600/400" {...field} />
+                            <Input id="imageUrl" placeholder="https://picsum.photos/seed/nome/600/400" {...field} value={field.value ?? ''} />
                         </FormControl>
                         <FormDescription>Use uma URL pública (ex: Picsum, Imgur).</FormDescription>
                         <FormMessage />
@@ -330,7 +325,6 @@ export default function AddEstablishmentPage() {
                 />
               </div>
 
-              {/* Default Offer Section */}
               <div className="space-y-4 rounded-md border border-dashed p-4">
                 <FormField
                   control={form.control}
@@ -365,7 +359,7 @@ export default function AddEstablishmentPage() {
                         <FormItem>
                           <FormLabel>Título da Oferta Padrão *</FormLabel>
                           <FormControl>
-                            <Input placeholder="Ex: Prato Principal em Dobro" {...field} />
+                            <Input placeholder="Ex: Prato Principal em Dobro" {...field} value={field.value ?? ''} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -378,7 +372,7 @@ export default function AddEstablishmentPage() {
                         <FormItem>
                           <FormLabel>Descrição da Oferta Padrão *</FormLabel>
                           <FormControl>
-                            <Textarea placeholder="Descreva a oferta. Ex: Compre um prato principal e ganhe outro de igual ou menor valor." {...field} />
+                            <Textarea placeholder="Descreva a oferta. Ex: Compre um prato principal e ganhe outro de igual ou menor valor." {...field} value={field.value ?? ''} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -409,7 +403,7 @@ export default function AddEstablishmentPage() {
                         <FormItem>
                           <FormLabel>Termos e Condições da Oferta Padrão *</FormLabel>
                           <FormControl>
-                            <Textarea placeholder="Ex: Válido de segunda a quinta, exceto feriados. Apresente o card Guia Mais." {...field} />
+                            <Textarea placeholder="Ex: Válido de segunda a quinta, exceto feriados. Apresente o card Guia Mais." {...field} value={field.value ?? ''} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -418,8 +412,6 @@ export default function AddEstablishmentPage() {
                   </div>
                 )}
               </div>
-
-
             </CardContent>
             <CardFooter>
               <Button type="submit" size="lg" className="w-full bg-primary hover:bg-primary/90" disabled={isSubmitting}>
