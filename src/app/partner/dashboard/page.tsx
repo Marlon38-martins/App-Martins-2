@@ -5,8 +5,8 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
-import { useAuth } from '@/hooks/use-auth-client';
+// import { useRouter } from 'next/navigation'; // Not needed for public access
+// import { useAuth } from '@/hooks/use-auth-client'; // Not needed for public access
 import { getGramadoBusinessById, getDealsForBusiness, type GramadoBusiness, type Deal } from '@/services/gramado-businesses';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -33,72 +33,57 @@ import {
     Eye, 
     BarChart3, 
     Settings2,
-    ShieldAlert,
-    QrCode as QrCodeIcon // Added QrCodeIcon
+    // ShieldAlert, // No longer needed for access control
+    QrCode as QrCodeIcon
 } from 'lucide-react';
 import { BusinessTypeIcon } from '@/components/icons';
 
-const MOCK_PARTNER_EMAIL = 'partner@example.com';
+// const MOCK_PARTNER_EMAIL = 'partner@example.com'; // Not used for access control
 const MOCK_PARTNER_BUSINESS_ID = '1'; 
-const ADMIN_EMAIL = 'admin@example.com';
+// const ADMIN_EMAIL = 'admin@example.com'; // Not used for access control
 
 
 export default function PartnerDashboardPage() {
-  const { user, isAdmin, loading: authLoading } = useAuth();
-  const router = useRouter();
+  // const { user, isAdmin, loading: authLoading } = useAuth(); // Auth checks removed
+  // const router = useRouter(); // Not needed for auth redirection
   const [business, setBusiness] = useState<GramadoBusiness | null>(null);
   const [deals, setDeals] = useState<Deal[]>([]);
   const [isLoadingData, setIsLoadingData] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [canAccess, setCanAccess] = useState(false);
+  // const [canAccess, setCanAccess] = useState(false); // Access is now public
 
   useEffect(() => {
-    if (!authLoading) {
-      if (!user) {
-        router.push('/login?redirect=/partner/dashboard');
-      } else {
-        const isMockPartner = user.email === MOCK_PARTNER_EMAIL;
-        if (isAdmin || isMockPartner) {
-          setCanAccess(true);
-          const businessIdToLoad = isMockPartner ? MOCK_PARTNER_BUSINESS_ID : (isAdmin ? MOCK_PARTNER_BUSINESS_ID : null); // Admin can see mock partner's dash for now
+    // Public access: no need for auth checks before loading data
+    const businessIdToLoad = MOCK_PARTNER_BUSINESS_ID; 
 
-          if (businessIdToLoad) {
-            async function loadPartnerData() {
-              setIsLoadingData(true);
-              setError(null);
-              try {
-                const businessData = await getGramadoBusinessById(businessIdToLoad);
-                if (businessData) {
-                  setBusiness(businessData);
-                  const dealsData = await getDealsForBusiness(businessIdToLoad);
-                  setDeals(dealsData);
-                } else {
-                  setError('Estabelecimento não encontrado. Contate o suporte.');
-                }
-              } catch (err) {
-                console.error("Error loading partner data:", err);
-                setError('Falha ao carregar dados do estabelecimento.');
-              } finally {
-                setIsLoadingData(false);
-              }
-            }
-            loadPartnerData();
-          } else if (isAdmin && !businessIdToLoad){ // Admin but no specific business to show
-            setIsLoadingData(false);
-            setError("Como administrador, por favor selecione um parceiro para ver o painel detalhado a partir da lista de parceiros.");
+    if (businessIdToLoad) {
+      async function loadPartnerData() {
+        setIsLoadingData(true);
+        setError(null);
+        try {
+          const businessData = await getGramadoBusinessById(businessIdToLoad);
+          if (businessData) {
+            setBusiness(businessData);
+            const dealsData = await getDealsForBusiness(businessIdToLoad);
+            setDeals(dealsData);
           } else {
-             setIsLoadingData(false);
-             setError("ID do estabelecimento do parceiro não definido.");
+            setError('Estabelecimento não encontrado. Contate o suporte.');
           }
-        } else {
-          setCanAccess(false);
+        } catch (err) {
+          console.error("Error loading partner data:", err);
+          setError('Falha ao carregar dados do estabelecimento.');
+        } finally {
           setIsLoadingData(false);
         }
       }
+      loadPartnerData();
+    } else {
+        setIsLoadingData(false);
+        setError("ID do estabelecimento do parceiro não definido.");
     }
-  }, [user, isAdmin, authLoading, router]);
+  }, []);
 
-  if (authLoading || isLoadingData) {
+  if (isLoadingData) {
     return (
       <div className="space-y-6 p-4 md:p-6">
         <Skeleton className="mb-4 h-8 w-2/3" />
@@ -132,28 +117,11 @@ export default function PartnerDashboardPage() {
     );
   }
   
-  if (!canAccess && !authLoading) {
-    return (
-      <div className="p-4 md:p-6 flex flex-col items-center justify-center min-h-[calc(100vh-200px)]">
-        <Alert variant="destructive" className="max-w-md text-center">
-          <ShieldAlert className="h-6 w-6 mx-auto mb-2" />
-          <AlertTitle>Acesso Negado</AlertTitle>
-          <AlertDescription>
-            Você não tem permissão para acessar esta área.
-          </AlertDescription>
-        </Alert>
-        <Button asChild variant="outline" className="mt-6">
-          <Link href="/"><ArrowLeft className="mr-2 h-4 w-4"/> Voltar para Início</Link>
-        </Button>
-      </div>
-    );
-  }
-  
   if (error) {
     return (
       <div className="p-4 md:p-6">
         <Alert variant="destructive">
-          <ShieldAlert className="h-5 w-5" />
+          {/* <ShieldAlert className="h-5 w-5" /> */}
           <AlertTitle>Erro</AlertTitle>
           <AlertDescription>{error}</AlertDescription>
         </Alert>

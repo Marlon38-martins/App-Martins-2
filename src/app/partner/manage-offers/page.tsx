@@ -7,8 +7,8 @@ import { useForm, type SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { useAuth } from '@/hooks/use-auth-client';
+// import { useRouter } from 'next/navigation'; // Not needed for public access
+// import { useAuth } from '@/hooks/use-auth-client'; // Not needed for public access
 import { getGramadoBusinessById, type GramadoBusiness } from '@/services/gramado-businesses';
 
 import { Button } from '@/components/ui/button';
@@ -19,13 +19,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
-import { ArrowLeft, Tag, PlusCircle, ShieldAlert } from 'lucide-react';
+import { ArrowLeft, Tag, PlusCircle } from 'lucide-react'; // ShieldAlert removed
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 
-const MOCK_PARTNER_EMAIL = 'partner@example.com';
+// const MOCK_PARTNER_EMAIL = 'partner@example.com'; // Not used for access control
 const MOCK_PARTNER_BUSINESS_ID = '1'; 
-const ADMIN_EMAIL = 'admin@example.com';
+// const ADMIN_EMAIL = 'admin@example.com'; // Not used for access control
 
 const offerFormSchema = z.object({
   title: z.string().min(5, { message: 'Título da oferta é obrigatório (mínimo 5 caracteres).' }),
@@ -52,45 +52,30 @@ type OfferFormValues = z.infer<typeof offerFormSchema>;
 
 export default function ManagePartnerOffersPage() {
   const { toast } = useToast();
-  const router = useRouter();
-  const { user, isAdmin, loading: authLoading } = useAuth();
+  // const router = useRouter(); // Not needed for public access
+  // const { user, isAdmin, loading: authLoading } = useAuth(); // Not needed for public access
   
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [partnerBusiness, setPartnerBusiness] = useState<GramadoBusiness | null>(null);
   const [isLoadingBusiness, setIsLoadingBusiness] = useState(true);
-  const [canAccess, setCanAccess] = useState(false);
+  // const [canAccess, setCanAccess] = useState(false); // Access is now public
 
   useEffect(() => {
-    if (!authLoading) {
-      if (!user) {
-        router.push('/login?redirect=/partner/manage-offers');
-      } else {
-        const isMockPartner = user.email === MOCK_PARTNER_EMAIL;
-        if (isAdmin || isMockPartner) {
-          setCanAccess(true);
-          const businessIdToLoad = isMockPartner ? MOCK_PARTNER_BUSINESS_ID : (isAdmin ? MOCK_PARTNER_BUSINESS_ID : null); // Admin can also manage offers for mock partner
-
-          if (businessIdToLoad) {
-            async function loadBusiness() {
-              setIsLoadingBusiness(true);
-              const business = await getGramadoBusinessById(businessIdToLoad);
-              setPartnerBusiness(business || null);
-              setIsLoadingBusiness(false);
-            }
-            loadBusiness();
-          } else {
-            setIsLoadingBusiness(false);
-            // For admin, if no specific partner business is contextually loaded, they might need a selector
-            // For now, this page assumes admin is operating on the mock partner's business if directly accessed
-            setPartnerBusiness(null); // Or handle differently
-          }
-        } else {
-          setCanAccess(false);
-          setIsLoadingBusiness(false);
-        }
+    // Public access: load business data directly
+    const businessIdToLoad = MOCK_PARTNER_BUSINESS_ID; 
+    if (businessIdToLoad) {
+      async function loadBusiness() {
+        setIsLoadingBusiness(true);
+        const business = await getGramadoBusinessById(businessIdToLoad);
+        setPartnerBusiness(business || null);
+        setIsLoadingBusiness(false);
       }
+      loadBusiness();
+    } else {
+      setIsLoadingBusiness(false);
+      setPartnerBusiness(null); 
     }
-  }, [user, isAdmin, authLoading, router]);
+  }, []);
 
   const form = useForm<OfferFormValues>({
     resolver: zodResolver(offerFormSchema),
@@ -147,7 +132,7 @@ export default function ManagePartnerOffersPage() {
     form.reset(); 
   };
 
-  if (authLoading || isLoadingBusiness) {
+  if (isLoadingBusiness) { // Simplified loading state
     return (
         <div className="p-4 md:p-6">
             <Skeleton className="mb-6 h-10 w-1/3" />
@@ -156,30 +141,13 @@ export default function ManagePartnerOffersPage() {
     );
   }
 
-  if (!canAccess && !authLoading) {
-    return (
-      <div className="p-4 md:p-6 flex flex-col items-center justify-center min-h-[calc(100vh-200px)]">
-        <Alert variant="destructive" className="max-w-md text-center">
-          <ShieldAlert className="h-6 w-6 mx-auto mb-2" />
-          <AlertTitle>Acesso Negado</AlertTitle>
-          <AlertDescription>
-            Você não tem permissão para acessar esta área.
-          </AlertDescription>
-        </Alert>
-        <Button asChild variant="outline" className="mt-6">
-          <Link href="/"><ArrowLeft className="mr-2 h-4 w-4"/> Voltar para Início</Link>
-        </Button>
-      </div>
-    );
-  }
-
-  if (!partnerBusiness && canAccess) {
+  if (!partnerBusiness) { // If business couldn't be loaded
     return (
          <div className="p-4 md:p-6">
             <Alert variant="destructive">
-                <ShieldAlert className="h-5 w-5" />
+                {/* <ShieldAlert className="h-5 w-5" /> */}
                 <AlertTitle>Erro</AlertTitle>
-                <AlertDescription>Não foi possível carregar os dados do seu estabelecimento. Contate o suporte ou selecione um estabelecimento (Admin).</AlertDescription>
+                <AlertDescription>Não foi possível carregar os dados do estabelecimento para adicionar ofertas. Tente voltar e acessar novamente.</AlertDescription>
             </Alert>
             <Button asChild variant="outline" className="mt-6">
               <Link href="/partner/panel">

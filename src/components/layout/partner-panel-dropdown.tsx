@@ -74,7 +74,7 @@ export function DynamicPartnerLink() {
     );
   }
 
-  // Always show "Painel do Parceiro" link if not admin (accessible without login)
+  // Always show "Painel do Parceiro" link, accessible without login
   return (
     <SidebarMenuButton asChild tooltip={{content: "Painel do Parceiro", side:"right"}}>
       <Link href="/partner/panel">
