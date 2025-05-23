@@ -1,4 +1,4 @@
-// src/app/partner/add-vip-offer/page.tsx
+// src/app/partner/add-normal-offer/page.tsx
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -16,7 +16,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
-import { ArrowLeft, Star, PlusCircle, Loader2, AlertCircle } from 'lucide-react';
+import { ArrowLeft, Tag, PlusCircle, Loader2, AlertCircle } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 
@@ -28,7 +28,7 @@ const offerFormSchema = z.object({
   offerType: z.enum(['discount', 'p1g2'], { required_error: "Tipo da oferta é obrigatório."}),
   discountPercentage: z.coerce.number().min(0).max(100).optional(),
   isPay1Get2: z.boolean().optional(),
-  isVipOffer: z.boolean().optional().default(true), // Default to true for VIP offer page
+  // isVipOffer is intentionally omitted for normal offers
   usageLimitPerUser: z.coerce.number().min(1, {message: "Limite de uso deve ser ao menos 1."}).optional().default(1),
   termsAndConditions: z.string().min(10, { message: 'Termos e condições são obrigatórios (mínimo 10 caracteres).' }),
 }).refine(data => {
@@ -46,7 +46,7 @@ const offerFormSchema = z.object({
 
 type OfferFormValues = z.infer<typeof offerFormSchema>;
 
-export default function AddVipOfferPage() {
+export default function AddNormalOfferPage() {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [partnerBusiness, setPartnerBusiness] = useState<GramadoBusiness | null>(null);
@@ -76,9 +76,8 @@ export default function AddVipOfferPage() {
       offerType: undefined,
       discountPercentage: 0,
       isPay1Get2: false,
-      isVipOffer: true, // Default to true for VIP offers
       usageLimitPerUser: 1,
-      termsAndConditions: 'Válido conforme regras do clube Guia Mais. Apresente seu card de membro VIP.',
+      termsAndConditions: 'Válido conforme regras do clube Guia Mais. Apresente seu card de membro.',
     },
   });
 
@@ -102,22 +101,22 @@ export default function AddVipOfferPage() {
     await new Promise(resolve => setTimeout(resolve, 1000)); 
     
     const newDeal = {
-        id: `deal-vip-${Date.now()}`, 
+        id: `deal-normal-${Date.now()}`, 
         businessId: partnerBusiness.id,
         title: data.title,
         description: data.description,
         isPay1Get2: data.offerType === 'p1g2' ? true : false, // Ensure boolean
         discountPercentage: data.offerType === 'discount' ? data.discountPercentage : 0, // Ensure number
-        isVipOffer: data.isVipOffer,
+        isVipOffer: false, // Explicitly false for normal offers
         usageLimitPerUser: data.usageLimitPerUser,
         termsAndConditions: data.termsAndConditions,
     };
 
-    console.log('New Partner VIP Offer Data:', newDeal, 'For Business:', partnerBusiness.name);
+    console.log('New Partner Normal Offer Data:', newDeal, 'For Business:', partnerBusiness.name);
 
     toast({
-      title: 'Oferta VIP Cadastrada!',
-      description: `A oferta VIP "${data.title}" foi adicionada para ${partnerBusiness.name}. Um QR Code para esta oferta foi gerado (simulação).`,
+      title: 'Oferta Normal Cadastrada!',
+      description: `A oferta "${data.title}" foi adicionada para ${partnerBusiness.name}. Um QR Code foi gerado (simulação).`,
       variant: 'default', 
     });
     setIsSubmitting(false);
@@ -131,7 +130,7 @@ export default function AddVipOfferPage() {
              <Card className="shadow-md">
                 <CardHeader className="p-3"><Skeleton className="h-6 w-1/2" /></CardHeader>
                 <CardContent className="space-y-2.5 p-3">
-                    {Array(6).fill(0).map((_, i) => <Skeleton key={i} className="h-8 w-full" />)}
+                    {Array(5).fill(0).map((_, i) => <Skeleton key={i} className="h-8 w-full" />)}
                 </CardContent>
                 <CardFooter className="p-3"><Skeleton className="h-9 w-full" /></CardFooter>
             </Card>
@@ -145,7 +144,7 @@ export default function AddVipOfferPage() {
             <Alert variant="destructive">
                 <AlertCircle className="h-4 w-4" />
                 <AlertTitle className="text-sm">Erro</AlertTitle>
-                <AlertDescription className="text-xs">Não foi possível carregar os dados do estabelecimento para adicionar ofertas VIP. Tente voltar e acessar novamente.</AlertDescription>
+                <AlertDescription className="text-xs">Não foi possível carregar os dados do estabelecimento para adicionar ofertas. Tente voltar e acessar novamente.</AlertDescription>
             </Alert>
             <Button asChild variant="outline" size="sm" className="mt-3 text-xs">
               <Link href="/partner/panel">
@@ -168,10 +167,10 @@ export default function AddVipOfferPage() {
 
       <section className="mb-5">
         <h2 className="mb-1.5 text-lg font-bold tracking-tight text-primary md:text-xl">
-          Criar Nova Oferta VIP Especial
+          Criar Nova Oferta Normal
         </h2>
         <p className="text-xs text-foreground/80 md:text-sm">
-          Adicione promoções exclusivas para membros VIP em: <span className="font-semibold text-accent">{partnerBusiness.name}</span>.
+          Adicione promoções e descontos para todos os membros em: <span className="font-semibold text-accent">{partnerBusiness.name}</span>.
         </p>
       </section>
 
@@ -180,8 +179,8 @@ export default function AddVipOfferPage() {
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <CardHeader className="p-3">
               <CardTitle className="flex items-center text-base text-primary md:text-lg">
-                <Star className="mr-2 h-4 w-4 md:h-5 md:w-5 text-yellow-400 fill-yellow-400" />
-                Detalhes da Nova Oferta VIP
+                <Tag className="mr-2 h-4 w-4 md:h-5 md:w-5 text-accent" />
+                Detalhes da Nova Oferta Normal
               </CardTitle>
               <CardDescription className="text-xs md:text-sm">
                 Preencha os campos abaixo. QR Code gerado automaticamente.
@@ -193,9 +192,9 @@ export default function AddVipOfferPage() {
                 name="title"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel htmlFor="title" className="text-xs">Título da Oferta VIP *</FormLabel>
+                    <FormLabel htmlFor="title" className="text-xs">Título da Oferta *</FormLabel>
                     <FormControl>
-                      <Input id="title" placeholder="Ex: Acesso VIP Exclusivo" {...field} value={field.value ?? ''} className="text-sm h-9"/>
+                      <Input id="title" placeholder="Ex: Desconto Especial Guia Mais" {...field} value={field.value ?? ''} className="text-sm h-9"/>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -206,9 +205,9 @@ export default function AddVipOfferPage() {
                 name="description"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel htmlFor="description" className="text-xs">Descrição da Oferta VIP *</FormLabel>
+                    <FormLabel htmlFor="description" className="text-xs">Descrição da Oferta *</FormLabel>
                     <FormControl>
-                      <Textarea id="description" placeholder="Descreva os detalhes da oferta VIP..." {...field} value={field.value ?? ''} rows={2} className="text-sm min-h-[60px]"/>
+                      <Textarea id="description" placeholder="Descreva os detalhes da oferta..." {...field} value={field.value ?? ''} rows={2} className="text-sm min-h-[60px]"/>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -220,16 +219,16 @@ export default function AddVipOfferPage() {
                 name="offerType"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-xs">Tipo de Oferta VIP *</FormLabel>
+                    <FormLabel className="text-xs">Tipo de Oferta *</FormLabel>
                     <Select onValueChange={field.onChange} value={field.value}>
                       <FormControl>
                         <SelectTrigger className="text-sm h-9">
-                          <SelectValue placeholder="Selecione o tipo da oferta VIP" />
+                          <SelectValue placeholder="Selecione o tipo da oferta" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="discount">Desconto Percentual VIP</SelectItem>
-                        <SelectItem value="p1g2">Benefício Especial VIP (Ex: Pague 1 Leve 2)</SelectItem>
+                        <SelectItem value="discount">Desconto Percentual</SelectItem>
+                        <SelectItem value="p1g2">Pague 1 Leve 2 (ou similar)</SelectItem>
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -243,9 +242,9 @@ export default function AddVipOfferPage() {
                   name="discountPercentage"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel htmlFor="discountPercentage" className="text-xs">Porcentagem de Desconto VIP (%) *</FormLabel>
+                      <FormLabel htmlFor="discountPercentage" className="text-xs">Porcentagem de Desconto (%) *</FormLabel>
                       <FormControl>
-                        <Input id="discountPercentage" type="number" placeholder="Ex: 20" {...field} value={field.value ?? ''} className="text-sm h-9"/>
+                        <Input id="discountPercentage" type="number" placeholder="Ex: 10" {...field} value={field.value ?? ''} className="text-sm h-9"/>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -267,40 +266,19 @@ export default function AddVipOfferPage() {
                             />
                         </FormControl>
                         <FormLabel htmlFor="isPay1Get2" className="text-xs font-normal cursor-pointer">
-                            Confirmar como benefício "Pague 1 Leve 2" (ou similar)
+                            Confirmar como oferta "Pague 1 Leve 2" (ou similar)
                         </FormLabel>
                         </FormItem>
                     )}
                 />
               )}
-
-              <FormField
-                control={form.control}
-                name="isVipOffer"
-                render={({ field }) => (
-                  <FormItem className="flex flex-row items-center space-x-2 space-y-0 rounded-md border p-2 bg-purple-500/10">
-                    <FormControl>
-                      <Checkbox
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                        id="isVipOffer"
-                        className="border-purple-500 data-[state=checked]:bg-purple-600 data-[state=checked]:text-purple-50"
-                      />
-                    </FormControl>
-                    <FormLabel htmlFor="isVipOffer" className="text-xs font-normal cursor-pointer flex items-center text-purple-700">
-                      <Star className="mr-1.5 h-3 w-3 text-yellow-400 fill-yellow-400" />
-                      Marcar como Oferta Exclusiva para Membros VIP
-                    </FormLabel>
-                  </FormItem>
-                )}
-              />
               
               <FormField
                 control={form.control}
                 name="usageLimitPerUser"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel htmlFor="usageLimitPerUser" className="text-xs">Limite de Uso por Membro VIP</FormLabel>
+                    <FormLabel htmlFor="usageLimitPerUser" className="text-xs">Limite de Uso por Usuário</FormLabel>
                     <FormControl>
                       <Input id="usageLimitPerUser" type="number" placeholder="Ex: 1" {...field} value={field.value ?? ''} className="text-sm h-9"/>
                     </FormControl>
@@ -315,22 +293,22 @@ export default function AddVipOfferPage() {
                 name="termsAndConditions"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel htmlFor="termsAndConditions" className="text-xs">Termos e Condições da Oferta VIP *</FormLabel>
+                    <FormLabel htmlFor="termsAndConditions" className="text-xs">Termos e Condições da Oferta *</FormLabel>
                     <FormControl>
-                      <Textarea id="termsAndConditions" placeholder="Ex: Válido apenas para membros VIP..." {...field} value={field.value ?? ''} rows={2} className="text-sm min-h-[60px]"/>
+                      <Textarea id="termsAndConditions" placeholder="Ex: Válido de segunda a quinta..." {...field} value={field.value ?? ''} rows={2} className="text-sm min-h-[60px]"/>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
               <p className="text-xs text-muted-foreground pt-1">
-                Ofertas VIP devem ser realmente especiais para valorizar seus clientes!
+                Lembre-se: ofertas claras e atrativas geram mais engajamento!
               </p>
             </CardContent>
             <CardFooter className="p-3">
-              <Button type="submit" size="sm" className="w-full bg-purple-600 hover:bg-purple-700 text-white text-xs" disabled={isSubmitting}>
+              <Button type="submit" size="sm" className="w-full bg-primary hover:bg-primary/90 text-xs" disabled={isSubmitting}>
                  {isSubmitting ? <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" /> : <PlusCircle className="mr-1.5 h-3.5 w-3.5" />}
-                {isSubmitting ? 'Criando Oferta VIP...' : 'Criar Nova Oferta VIP'}
+                {isSubmitting ? 'Criando Oferta...' : 'Criar Nova Oferta Normal'}
               </Button>
             </CardFooter>
           </form>
