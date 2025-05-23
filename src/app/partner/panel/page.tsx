@@ -4,7 +4,7 @@
 import Link from 'next/link';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Briefcase, LayoutDashboard, Tag, Edit3, BarChart3, ImageIcon, Users, Building, PlusCircle, Star } from 'lucide-react';
+import { Briefcase, LayoutDashboard, Tag, Edit3, BarChart3, ImageIcon, PlusCircle, Star } from 'lucide-react';
 
 export default function PartnerPanelPage() {
   // This page is publicly accessible as per previous requests
@@ -29,11 +29,13 @@ export default function PartnerPanelPage() {
               <LayoutDashboard className="mr-2 h-4 w-4 md:h-5 md:w-5" />
               Meu Painel
             </CardTitle>
-            <CardDescription className="text-xs md:text-sm">Visualize detalhes e estatísticas do seu negócio.</CardDescription>
+            <CardDescription className="text-xs md:text-sm">Visualize o painel principal do seu negócio.</CardDescription>
           </CardHeader>
           <CardContent className="p-3">
             <Button asChild className="w-full text-xs md:text-sm" size="sm">
-              <Link href="/partner/dashboard">Acessar Painel do Estabelecimento</Link>
+              <Link href="/partner/dashboard">
+                <span className="flex items-center justify-center">Acessar Painel do Estabelecimento</span>
+              </Link>
             </Button>
           </CardContent>
         </Card>
@@ -48,7 +50,9 @@ export default function PartnerPanelPage() {
           </CardHeader>
           <CardContent className="p-3">
             <Button asChild className="w-full text-xs md:text-sm" size="sm">
-              <Link href={`/partner/edit-business/1`}>Editar Meu Estabelecimento</Link> {/* MOCK_PARTNER_BUSINESS_ID is 1 */}
+              <Link href={`/partner/edit-business/1`}>
+                <span className="flex items-center justify-center">Editar Meu Estabelecimento</span>
+              </Link>
             </Button>
           </CardContent>
         </Card>
@@ -63,10 +67,18 @@ export default function PartnerPanelPage() {
           </CardHeader>
           <CardContent className="p-3 grid grid-cols-1 sm:grid-cols-2 gap-2">
             <Button asChild className="w-full text-xs md:text-sm" size="sm">
-              <Link href="/partner/add-normal-offer"><PlusCircle className="mr-1.5 h-3.5 w-3.5"/>Adicionar Oferta Normal</Link>
+              <Link href="/partner/add-normal-offer">
+                <span className="flex items-center justify-center">
+                  <PlusCircle className="mr-1.5 h-3.5 w-3.5"/>Adicionar Oferta Normal
+                </span>
+              </Link>
             </Button>
             <Button asChild variant="outline" className="w-full text-xs md:text-sm border-purple-500 text-purple-600 hover:bg-purple-500/10 hover:text-purple-700" size="sm">
-              <Link href="/partner/add-vip-offer"><Star className="mr-1.5 h-3.5 w-3.5 text-yellow-400 fill-yellow-400"/>Adicionar Oferta VIP</Link>
+              <Link href="/partner/add-vip-offer">
+                <span className="flex items-center justify-center">
+                  <Star className="mr-1.5 h-3.5 w-3.5 text-yellow-400 fill-yellow-400"/>Adicionar Oferta VIP
+                </span>
+              </Link>
             </Button>
           </CardContent>
         </Card>
@@ -81,7 +93,9 @@ export default function PartnerPanelPage() {
           </CardHeader>
           <CardContent className="p-3">
             <Button asChild className="w-full text-xs md:text-sm" size="sm">
-              <Link href="/partner/analytics">Ver Desempenho</Link>
+              <Link href="/partner/analytics">
+                 <span className="flex items-center justify-center">Ver Desempenho</span>
+              </Link>
             </Button>
           </CardContent>
         </Card>
@@ -96,7 +110,9 @@ export default function PartnerPanelPage() {
           </CardHeader>
           <CardContent className="p-3">
             <Button asChild className="w-full text-xs md:text-sm" size="sm">
-              <Link href="/partner/gallery">Gerenciar Imagens</Link>
+              <Link href="/partner/gallery">
+                 <span className="flex items-center justify-center">Gerenciar Imagens</span>
+              </Link>
             </Button>
           </CardContent>
         </Card>
@@ -104,5 +120,3 @@ export default function PartnerPanelPage() {
     </div>
   );
 }
-
-    
