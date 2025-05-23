@@ -30,11 +30,8 @@ import {
   Trees,
   LayoutGrid,
   Info,
-  Briefcase, 
-  Tag, 
   Search as SearchIcon,
-  Users, 
-  HelpCircle, BookOpen, Handshake 
+  Handshake,
 } from 'lucide-react'; 
 import { Header } from '@/components/layout/header';
 import { AuthProviderClient } from '@/hooks/use-auth-client'; 
@@ -48,7 +45,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { slugify } from '@/lib/utils';
-import { DynamicPartnerLink } from '@/components/layout/partner-panel-dropdown'; // Updated import
+import { DynamicPartnerLink } from '@/components/layout/partner-panel-dropdown';
 
 
 const geistSans = Geist({
@@ -89,7 +86,7 @@ export default function RootLayout({
           <AuthStateInitializer />
           <SidebarProvider defaultOpen={true}>
             <Sidebar collapsible="icon">
-              <SidebarHeader className="p-4">
+              <SidebarHeader className="p-1.5">
                 <Link href="/" className="flex items-center gap-2">
                   <MountainSnow className="h-7 w-7 text-sidebar-primary" />
                   <span className="text-xl font-bold tracking-tight text-sidebar-foreground group-data-[collapsible=icon]:hidden">
@@ -102,8 +99,10 @@ export default function RootLayout({
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild tooltip={{content: "Início", side:"right"}}>
                       <Link href="/">
-                        <HomeIcon />
-                        <span className="group-data-[collapsible=icon]:hidden">Início</span>
+                        <span className="flex items-center gap-1.5">
+                          <HomeIcon />
+                          <span className="group-data-[collapsible=icon]:hidden">Início</span>
+                        </span>
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
@@ -112,8 +111,10 @@ export default function RootLayout({
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <SidebarMenuButton tooltip={{content: "Parceiros & Categorias", side:"right"}} className="w-full">
-                          <ServicesIcon />
-                          <span className="group-data-[collapsible=icon]:hidden">Parceiros</span>
+                           <span className="flex items-center gap-1.5">
+                            <ServicesIcon />
+                            <span className="group-data-[collapsible=icon]:hidden">Parceiros</span>
+                          </span>
                         </SidebarMenuButton>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent 
@@ -124,16 +125,20 @@ export default function RootLayout({
                         {categoriesForMenu.map(category => (
                           <DropdownMenuItem key={category.slug} asChild>
                             <Link href={`/services/${category.slug}`} className="flex items-center cursor-pointer">
-                              <category.Icon className="mr-2 h-4 w-4" />
-                              {category.name}
+                              <span className="flex items-center gap-1.5">
+                                <category.Icon className="h-4 w-4" />
+                                {category.name}
+                              </span>
                             </Link>
                           </DropdownMenuItem>
                         ))}
                         <DropdownMenuSeparator />
                         <DropdownMenuItem asChild>
                           <Link href="/services" className="flex items-center cursor-pointer">
-                            <LayoutGrid className="mr-2 h-4 w-4" />
-                            Ver Todas as Categorias
+                             <span className="flex items-center gap-1.5">
+                              <LayoutGrid className="h-4 w-4" />
+                              Ver Todas as Categorias
+                            </span>
                           </Link>
                         </DropdownMenuItem>
                       </DropdownMenuContent>
@@ -143,8 +148,10 @@ export default function RootLayout({
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild tooltip={{content: "Mapa", side:"right"}}>
                       <Link href="/map">
-                        <MapIcon />
-                        <span className="group-data-[collapsible=icon]:hidden">Mapa</span>
+                        <span className="flex items-center gap-1.5">
+                          <MapIcon />
+                          <span className="group-data-[collapsible=icon]:hidden">Mapa</span>
+                        </span>
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
@@ -152,8 +159,10 @@ export default function RootLayout({
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild tooltip={{content: "Buscar", side:"right"}}>
                       <Link href="/search">
-                        <SearchIcon />
-                        <span className="group-data-[collapsible=icon]:hidden">Buscar</span>
+                         <span className="flex items-center gap-1.5">
+                          <SearchIcon />
+                          <span className="group-data-[collapsible=icon]:hidden">Buscar</span>
+                        </span>
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
@@ -161,22 +170,26 @@ export default function RootLayout({
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild tooltip={{content: "Institucional", side:"right"}}>
                       <Link href="/institutional">
-                        <Info />
-                        <span className="group-data-[collapsible=icon]:hidden">Institucional</span>
+                        <span className="flex items-center gap-1.5">
+                          <Info />
+                          <span className="group-data-[collapsible=icon]:hidden">Institucional</span>
+                        </span>
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                   
                   <CurrentUserDisplay /> 
                                     
-                  <SidebarMenuItem className="mt-auto pt-4 border-t border-sidebar-border">
+                  <SidebarMenuItem className="mt-auto pt-3 border-t border-sidebar-border">
                      <DynamicPartnerLink />
                   </SidebarMenuItem>
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild tooltip={{content: "Seja Parceiro", side:"right"}}>
                       <Link href="/partner-registration">
-                        <Handshake />
-                        <span className="group-data-[collapsible=icon]:hidden">Seja Parceiro</span>
+                        <span className="flex items-center gap-1.5">
+                          <Handshake />
+                          <span className="group-data-[collapsible=icon]:hidden">Seja Parceiro</span>
+                        </span>
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
@@ -191,18 +204,18 @@ export default function RootLayout({
                   {children}
                 </div>
               </main>
-              <footer className="bg-background py-6 text-sm text-muted-foreground border-t">
-                <div className="w-full max-w-sm mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-4 text-center md:text-left">
+              <footer className="bg-background py-4 text-sm text-muted-foreground border-t">
+                <div className="w-full max-w-sm mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-3 text-center md:text-left">
                   <div>
-                    <h4 className="font-semibold text-foreground mb-2">Guia Mais</h4>
+                    <h4 className="font-semibold text-foreground mb-1">Guia Mais</h4>
                     <p>© {new Date().getFullYear()} Guia Mais. Todos os direitos reservados.</p>
                   </div>
-                  <nav className="space-y-1 md:justify-self-center">
+                  <nav className="space-y-0.5 md:justify-self-center">
                     <Link href="/institutional" className="block hover:text-primary transition-colors">Sobre Guia Mais</Link>
                     <Link href="/termos" className="block hover:text-primary transition-colors">Termos de Uso</Link>
                     <Link href="/politica-de-privacidade" className="block hover:text-primary transition-colors">Política de Privacidade</Link>
                   </nav>
-                  <nav className="space-y-1 md:justify-self-end">
+                  <nav className="space-y-0.5 md:justify-self-end">
                      <Link href="/partner-registration" className="block hover:text-primary transition-colors">Seja um Parceiro</Link>
                      <Link href="/contact" className="block hover:text-primary transition-colors">Fale Conosco</Link> 
                   </nav>

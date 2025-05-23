@@ -1,3 +1,4 @@
+
 // src/components/deal/deal-card.tsx
 import Image from 'next/image';
 import Link from 'next/link';
@@ -10,7 +11,7 @@ import { ArrowRight, Tag } from 'lucide-react';
 
 interface DealCardProps {
   deal: Deal;
-  business?: GramadoBusiness; 
+  business?: GramadoBusiness;
 }
 
 export function DealCard({ deal, business }: DealCardProps) {
@@ -32,7 +33,7 @@ export function DealCard({ deal, business }: DealCardProps) {
           <div className="absolute right-2 top-2 flex flex-col items-end gap-1">
             {deal.discountPercentage && deal.discountPercentage > 0 && (
               <Badge
-                variant="default" // Changed from destructive to default for better contrast with accent below
+                variant="default"
                 className="bg-primary text-primary-foreground shadow-md"
               >
                 {deal.discountPercentage}% OFF
@@ -40,7 +41,7 @@ export function DealCard({ deal, business }: DealCardProps) {
             )}
             {deal.isPay1Get2 && (
                 <Badge
-                 variant="destructive" // Keep accent for P1G2
+                 variant="destructive"
                  className="bg-accent text-accent-foreground shadow-md"
                 >
                     Pague 1 Leve 2
@@ -49,27 +50,26 @@ export function DealCard({ deal, business }: DealCardProps) {
           </div>
         </div>
       )}
-      <CardHeader className="pb-2 pt-3">
+      <CardHeader className="p-3 space-y-1 pb-2 pt-3">
         <CardTitle className="text-lg font-semibold text-primary">{deal.title}</CardTitle>
         {business && (
-            <div className="flex items-center justify-between text-sm text-muted-foreground">
+            <div className="flex items-center justify-between text-xs text-muted-foreground">
                 <span>{business.name}</span>
                 {businessTypeIcon && <BusinessTypeIcon type={businessTypeIcon} className="h-4 w-4" />}
             </div>
         )}
-        <CardDescription className="text-sm text-foreground/80 line-clamp-2 pt-1">{deal.description}</CardDescription>
+        <CardDescription className="text-xs text-foreground/80 line-clamp-2 pt-1">{deal.description}</CardDescription>
       </CardHeader>
-      <CardContent className="flex-grow pb-3 pt-0">
+      <CardContent className="flex-grow p-3 pt-0 pb-3">
         <p className="text-xs text-muted-foreground line-clamp-2">{deal.termsAndConditions}</p>
       </CardContent>
-      <CardFooter>
-        <Button asChild variant="default" className="w-full bg-accent hover:bg-accent/90 text-accent-foreground">
-          {/* Link to checkout page with businessId and dealId */}
+      <CardFooter className="p-3 pt-0">
+        <Button asChild variant="default" className="w-full bg-accent hover:bg-accent/90 text-accent-foreground h-9 px-3 py-1.5">
           <Link href={`/checkout/${deal.businessId}?dealId=${deal.id}`}>
-            <span className="flex items-center justify-between w-full"> {/* Ensure span takes full width for justify-between */}
-              <Tag className="mr-2 h-4 w-4" />
+            <span className="flex items-center justify-center w-full">
+              <Tag className="mr-1.5 h-3.5 w-3.5" />
               Ver Detalhes da Oferta
-              <ArrowRight className="ml-auto h-4 w-4" />
+              <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
             </span>
           </Link>
         </Button>
