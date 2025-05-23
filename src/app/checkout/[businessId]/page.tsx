@@ -29,7 +29,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useToast } from '@/hooks/use-toast';
-import { ArrowLeft, User as UserIcon, Mail, Phone as PhoneIcon, ShieldCheck, ShoppingCart, Frown, Star, Tag, AlertTriangle } from 'lucide-react';
+import { ArrowLeft, User as UserIcon, Mail, Phone as PhoneIcon, ShieldCheck, ShoppingCart, Frown, Star, Tag, AlertTriangle, Crown } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 
 const checkoutFormSchema = z.object({
@@ -61,7 +61,6 @@ function CheckoutPageContent({ businessId }: { businessId: string }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [authCheckedAndEligible, setAuthCheckedAndEligible] = useState(false);
 
-
   const form = useForm<CheckoutFormValues>({
     resolver: zodResolver(checkoutFormSchema),
     defaultValues: {
@@ -82,6 +81,7 @@ function CheckoutPageContent({ businessId }: { businessId: string }) {
   useEffect(() => {
     if (!businessId) {
         setIsLoadingPage(false);
+        setError("ID do estabelecimento não fornecido.");
         return;
     };
 
@@ -106,7 +106,16 @@ function CheckoutPageContent({ businessId }: { businessId: string }) {
         if (dealId) {
           const allDeals = await getDealsForBusiness(businessId);
           currentDeal = allDeals.find(d => d.id === dealId) || null;
+          if (!currentDeal) {
+            setError('Oferta não encontrada para este estabelecimento.');
+            setIsLoadingPage(false);
+            return;
+          }
           setSpecificDeal(currentDeal);
+        } else {
+            setError('ID da oferta não especificado na URL.');
+            setIsLoadingPage(false);
+            return;
         }
         
         if (user) {
@@ -119,7 +128,17 @@ function CheckoutPageContent({ businessId }: { businessId: string }) {
             return;
           }
 
-          if (dealId && currentDeal?.isPay1Get2 && currentDeal?.usageLimitPerUser === 1) {
+          // Check for VIP offer eligibility
+          if (currentDeal?.isVipOffer) {
+            if (sub.planId !== 'serrano_vip') { // Ensure this matches your VIP plan ID
+              setError('Esta oferta é exclusiva para membros VIP. Faça um upgrade para aproveitar!');
+              setAuthCheckedAndEligible(false);
+              setIsLoadingPage(false);
+              return;
+            }
+          }
+
+          if (currentDeal?.isPay1Get2 && currentDeal?.usageLimitPerUser === 1) {
             const used = await checkUserOfferUsage(user.id, dealId);
             setHasUsedOffer(used);
             if (used) {
@@ -159,14 +178,19 @@ function CheckoutPageContent({ businessId }: { businessId: string }) {
   }
 
   const onSubmit: SubmitHandler<CheckoutFormValues> = async (data) => {
-    if (!authUser || !userSubscription || userSubscription.status !== 'active') {
-        toast({ title: "Não Elegível", description: "Você não está elegível para usar este benefício.", variant: "destructive" });
+    if (!authUser || !userSubscription || userSubscription.status !== 'active' || !authCheckedAndEligible) {
+        toast({ title: "Não Elegível", description: "Você não está elegível para usar este benefício no momento.", variant: "destructive" });
         return;
     }
     if (specificDeal?.isPay1Get2 && specificDeal?.usageLimitPerUser === 1 && hasUsedOffer) {
         toast({ title: "Oferta Já Utilizada", description: "Você já utilizou esta oferta Pague 1 Leve 2.", variant: "destructive" });
         return;
     }
+    if (specificDeal?.isVipOffer && userSubscription?.planId !== 'serrano_vip') {
+        toast({ title: "Oferta VIP", description: "Esta oferta é exclusiva para membros VIP.", variant: "destructive" });
+        return;
+    }
+
 
     setIsSubmitting(true);
     try {
@@ -213,7 +237,7 @@ function CheckoutPageContent({ businessId }: { businessId: string }) {
     return (
       <div className="flex min-h-[calc(100vh-250px)] flex-col items-center justify-center">
         <Alert variant="destructive" className="w-full max-w-md">
-          <Frown className="h-5 w-5" />
+          { specificDeal?.isVipOffer ? <Crown className="h-5 w-5 text-destructive-foreground" /> : <Frown className="h-5 w-5" /> }
           <AlertTitle>Não é possível prosseguir</AlertTitle>
           <AlertDescription>{error}</AlertDescription>
         </Alert>
@@ -223,6 +247,13 @@ function CheckoutPageContent({ businessId }: { businessId: string }) {
             Voltar
           </Link>
         </Button>
+         {specificDeal?.isVipOffer && !isVipUser && authUser && (
+          <Button asChild className="mt-4 bg-purple-600 hover:bg-purple-700 text-white">
+            <Link href="/join">
+              <Star className="mr-2 h-4 w-4" /> Fazer Upgrade para VIP
+            </Link>
+          </Button>
+        )}
       </div>
     );
   }
@@ -279,7 +310,7 @@ function CheckoutPageContent({ businessId }: { businessId: string }) {
             </CardHeader>
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)}>
-                <CardContent className="space-y-6">
+                <CardContent className="space-y-4">
                   <FormField
                     control={form.control}
                     name="name"
@@ -320,7 +351,7 @@ function CheckoutPageContent({ businessId }: { businessId: string }) {
                     )}
                   />
                   
-                  <p className="flex items-center text-sm text-muted-foreground pt-4">
+                  <p className="flex items-center text-sm text-muted-foreground pt-3">
                     <ShieldCheck className="mr-2 h-4 w-4 text-green-500" />
                     Ao confirmar, seu benefício será registrado para uso no estabelecimento.
                   </p>
@@ -359,14 +390,15 @@ function CheckoutPageContent({ businessId }: { businessId: string }) {
                 <p className="text-sm text-muted-foreground">{business.type}</p>
               </div>
                {specificDeal && (
-                <div className="mt-3 rounded-md border border-accent/50 bg-accent/10 p-3 text-sm">
-                    <p className="flex items-center font-semibold text-accent">
-                        <Star className="mr-2 h-4 w-4 text-yellow-400" />
+                <div className={`mt-3 rounded-md border p-3 text-sm ${specificDeal.isVipOffer ? 'border-purple-500/50 bg-purple-500/10' : 'border-accent/50 bg-accent/10'}`}>
+                    <p className={`flex items-center font-semibold ${specificDeal.isVipOffer ? 'text-purple-700' : 'text-accent'}`}>
+                        {specificDeal.isVipOffer ? <Crown className="mr-2 h-4 w-4 text-yellow-400" /> : <Star className="mr-2 h-4 w-4 text-yellow-400" /> }
                         Oferta Selecionada: {specificDeal.title}
                     </p>
                     <p className="mt-1 text-xs text-accent-foreground/90">
                         {specificDeal.description}
                     </p>
+                     {specificDeal.isVipOffer && <Badge variant="default" className="mt-1 bg-purple-600 hover:bg-purple-700 text-purple-50 text-xs"><Star className="mr-1 h-3 w-3"/> VIP</Badge>}
                     {specificDeal.isPay1Get2 && <Badge className="mt-1 bg-accent text-accent-foreground">Pague 1 Leve 2</Badge>}
                 </div>
                )}

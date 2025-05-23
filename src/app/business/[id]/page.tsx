@@ -11,9 +11,9 @@ import {
     getDealsForBusiness, 
     type GramadoBusiness, 
     type Deal, 
-    getCurrentUser, // Mocked
-    getMockUserSubscription, // Mocked
-    checkUserOfferUsage // Mocked
+    getCurrentUser, 
+    getMockUserSubscription, 
+    checkUserOfferUsage 
 } from '@/services/gramado-businesses';
 import type { User, Subscription } from '@/types/user';
 
@@ -23,9 +23,10 @@ import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { BusinessTypeIcon } from '@/components/icons';
+import { DealCard } from '@/components/deal/deal-card'; // Import DealCard
 import { 
   MapPin, Phone, Globe, ArrowLeft, TicketPercent, Frown, Star, Tag, UserCheck, AlertTriangle,
-  Instagram, Facebook, MessageCircle // Added social icons
+  Instagram, Facebook, MessageCircle
 } from 'lucide-react';
 
 interface BusinessPageParams {
@@ -51,7 +52,7 @@ function BusinessPageContent({ params }: { params: BusinessPageParams }) {
   
   const [authUser, setAuthUser] = useState<User | null>(null);
   const [business, setBusiness] = useState<GramadoBusiness | null>(null);
-  const [deals, setDeals] = useState<Deal[]>([]);
+  const [allDealsForBusiness, setAllDealsForBusiness] = useState<Deal[]>([]);
   const [userSubscription, setUserSubscription] = useState<Subscription | null>(null);
   const [userRedemptions, setUserRedemptions] = useState<Record<string, boolean>>({});
 
@@ -59,21 +60,22 @@ function BusinessPageContent({ params }: { params: BusinessPageParams }) {
   const [error, setError] = useState<string | null>(null);
   const [authChecked, setAuthChecked] = useState(false);
 
-
   useEffect(() => {
     if (!id) return;
-
     async function loadInitialAuth() {
         const user = await getCurrentUser();
         setAuthUser(user);
+        if (user) {
+            const sub = await getMockUserSubscription(user.id);
+            setUserSubscription(sub);
+        }
         setAuthChecked(true);
     }
     loadInitialAuth();
   }, [id]);
 
-
   useEffect(() => {
-    if (!id || !authChecked) return; // Wait for auth check
+    if (!id || !authChecked) return; 
 
     async function loadBusinessData() {
       setIsLoading(true);
@@ -83,21 +85,17 @@ function BusinessPageContent({ params }: { params: BusinessPageParams }) {
         if (businessData) {
           setBusiness(businessData);
           const dealsData = await getDealsForBusiness(id as string);
-          setDeals(dealsData);
+          setAllDealsForBusiness(dealsData);
 
           if (authUser) { 
-            const sub = await getMockUserSubscription(authUser.uid);
-            setUserSubscription(sub);
-            
             const redemptions: Record<string, boolean> = {};
             for (const deal of dealsData) {
                 if (deal.isPay1Get2 && deal.usageLimitPerUser === 1) { 
-                    redemptions[deal.id] = await checkUserOfferUsage(authUser.uid, deal.id);
+                    redemptions[deal.id] = await checkUserOfferUsage(authUser.id, deal.id);
                 }
             }
             setUserRedemptions(redemptions);
           }
-
         } else {
           setError('Estabelecimento não encontrado.');
         }
@@ -110,6 +108,17 @@ function BusinessPageContent({ params }: { params: BusinessPageParams }) {
     }
     loadBusinessData();
   }, [id, authUser, authChecked]); 
+
+  const canUsePrimeBenefits = authUser && userSubscription && userSubscription.status === 'active';
+  const isVipUser = canUsePrimeBenefits && userSubscription?.planId === 'serrano_vip';
+
+  const displayedDeals = useMemo(() => {
+    if (isVipUser) {
+      return allDealsForBusiness; // VIP users see all offers
+    }
+    // Non-VIP users or non-logged-in users see only non-VIP offers
+    return allDealsForBusiness.filter(deal => !deal.isVipOffer);
+  }, [allDealsForBusiness, isVipUser]);
 
   if (isLoading || !authChecked) {
     return (
@@ -169,8 +178,6 @@ function BusinessPageContent({ params }: { params: BusinessPageParams }) {
     );
   }
   
-  const canUsePrimeBenefits = authUser && userSubscription && userSubscription.status === 'active';
-
   return (
     <div> 
       <Button asChild variant="outline" className="mb-6">
@@ -241,7 +248,7 @@ function BusinessPageContent({ params }: { params: BusinessPageParams }) {
                 )}
                 {business.whatsappNumber && (
                   <div className="flex items-center">
-                    <MessageCircle className="mr-3 h-5 w-5 shrink-0 text-accent" /> {/* Using MessageCircle for WhatsApp */}
+                    <MessageCircle className="mr-3 h-5 w-5 shrink-0 text-accent" /> 
                     <a href={`https://wa.me/${business.whatsappNumber.replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer" className="text-foreground/80 hover:text-primary hover:underline">
                       Conversar no WhatsApp
                     </a>
@@ -276,57 +283,49 @@ function BusinessPageContent({ params }: { params: BusinessPageParams }) {
                     </AlertDescription>
                 </Alert>
             )}
+             {authUser && canUsePrimeBenefits && !isVipUser && allDealsForBusiness.some(d => d.isVipOffer) && (
+              <Alert variant="default" className="mb-4 bg-purple-500/10 border-purple-500/30">
+                <Star className="h-5 w-5 text-purple-600" />
+                <AlertTitle className="text-purple-700">Ofertas VIP Disponíveis!</AlertTitle>
+                <AlertDescription>
+                  Este parceiro tem ofertas exclusivas para membros Serrano VIP. 
+                  <Link href="/join" className="font-semibold underline hover:text-purple-700/80"> Faça um upgrade</Link> para acesso total!
+                </AlertDescription>
+              </Alert>
+            )}
 
-            {deals.length > 0 ? (
+
+            {displayedDeals.length > 0 ? (
               <div className="space-y-4">
-                {deals.map(deal => {
-                  const { text: benefitButtonText, Icon: BenefitButtonIcon, query: dealQuery } = getDealActivationDetails(deal, business.type);
+                {displayedDeals.map(deal => {
                   const hasRedeemedThisOffer = userRedemptions[deal.id] || false;
                   const isP1G2Limited = deal.isPay1Get2 && deal.usageLimitPerUser === 1;
+                  const isLinkDisabled = !canUsePrimeBenefits || (isP1G2Limited && hasRedeemedThisOffer);
+                  // For VIP offers, ensure user is VIP
+                  const canAccessThisDeal = deal.isVipOffer ? isVipUser : canUsePrimeBenefits;
 
                   return (
-                    <Card key={deal.id} className={`bg-card shadow-lg ${hasRedeemedThisOffer && isP1G2Limited ? 'opacity-60' : ''} transition-all duration-300 ease-in-out hover:shadow-xl`}>
-                      <CardHeader className="pb-3">
-                        <CardTitle className="text-lg text-accent">{deal.title}</CardTitle>
-                        <CardDescription className="text-sm text-muted-foreground pt-1">{deal.description}</CardDescription>
-                      </CardHeader>
-                      <CardContent className="pb-4">
-                        <div className="flex flex-wrap gap-2 mb-2">
-                            {deal.discountPercentage && deal.discountPercentage > 0 && (
-                                <Badge variant="default" className="bg-primary text-primary-foreground">
-                                {deal.discountPercentage}% OFF
-                                </Badge>
-                            )}
-                            {deal.isPay1Get2 && (
-                                <Badge variant="destructive" className="bg-accent text-accent-foreground">
-                                Pague 1 Leve 2
-                                </Badge>
-                            )}
-                            <Badge variant="outline">Exclusivo Guia Mais</Badge>
-                        </div>
-                        <p className="mt-2 text-xs text-muted-foreground">{deal.termsAndConditions}</p>
-                        {isP1G2Limited && hasRedeemedThisOffer && (
-                            <p className="mt-2 text-xs font-semibold text-destructive">Você já utilizou esta oferta "Pague 1 Leve 2".</p>
-                        )}
-                      </CardContent>
-                      {canUsePrimeBenefits && (!isP1G2Limited || !hasRedeemedThisOffer) && (
-                        <CardFooter>
-                           <Button asChild size="default" className="w-full bg-primary hover:bg-primary/90" disabled={!canUsePrimeBenefits || (isP1G2Limited && hasRedeemedThisOffer)}>
-                            <Link href={`/checkout/${business.id}${dealQuery}`}>
-                              <BenefitButtonIcon className="mr-2 h-5 w-5" />
-                              {benefitButtonText}
-                            </Link>
-                          </Button>
-                        </CardFooter>
-                      )}
-                    </Card>
+                    <DealCard 
+                        key={deal.id} 
+                        deal={deal} 
+                        business={business}
+                        isRedeemed={isP1G2Limited && hasRedeemedThisOffer}
+                        canAccess={canAccessThisDeal}
+                    />
                   );
                 })}
               </div>
             ) : (
               <Card className="border-dashed bg-muted/50 p-6 text-center shadow-none">
                 <Star className="mx-auto mb-2 h-10 w-10 text-muted-foreground" />
-                <p className="text-muted-foreground">Nenhuma oferta Guia Mais específica divulgada para este estabelecimento no momento. Membros Guia Mais ainda podem ter vantagens gerais!</p>
+                <p className="text-muted-foreground">
+                  {isVipUser ? "Nenhuma oferta Guia Mais divulgada para este estabelecimento no momento." : "Nenhuma oferta Guia Mais disponível para seu nível de assinatura no momento."}
+                </p>
+                {!isVipUser && allDealsForBusiness.some(d => d.isVipOffer) && (
+                     <p className="mt-2 text-sm text-purple-700">
+                        Existem ofertas VIP! <Link href="/join" className="font-semibold underline">Faça upgrade</Link> para ver.
+                    </p>
+                )}
               </Card>
             )}
           </div>
