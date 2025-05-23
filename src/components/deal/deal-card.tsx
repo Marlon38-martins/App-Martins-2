@@ -50,26 +50,26 @@ export function DealCard({ deal, business }: DealCardProps) {
           </div>
         </div>
       )}
-      <CardHeader className="p-3 space-y-1 pb-2 pt-3">
-        <CardTitle className="text-lg font-semibold text-primary">{deal.title}</CardTitle>
+      <CardHeader className="space-y-1 pb-2 pt-3">
+        <CardTitle className="text-primary">{deal.title}</CardTitle>
         {business && (
-            <div className="flex items-center justify-between text-xs text-muted-foreground">
+            <div className="flex items-center justify-between text-sm text-muted-foreground">
                 <span>{business.name}</span>
                 {businessTypeIcon && <BusinessTypeIcon type={businessTypeIcon} className="h-4 w-4" />}
             </div>
         )}
-        <CardDescription className="text-xs text-foreground/80 line-clamp-2 pt-1">{deal.description}</CardDescription>
+        <CardDescription className="text-sm text-foreground/80 line-clamp-2 pt-1">{deal.description}</CardDescription>
       </CardHeader>
-      <CardContent className="flex-grow p-3 pt-0 pb-3">
+      <CardContent className="flex-grow pt-0 pb-3">
         <p className="text-xs text-muted-foreground line-clamp-2">{deal.termsAndConditions}</p>
       </CardContent>
-      <CardFooter className="p-3 pt-0">
-        <Button asChild variant="default" className="w-full bg-accent hover:bg-accent/90 text-accent-foreground h-9 px-3 py-1.5">
+      <CardFooter className="pt-0">
+        <Button asChild variant="default" className="w-full bg-accent hover:bg-accent/90 text-accent-foreground">
           <Link href={`/checkout/${deal.businessId}?dealId=${deal.id}`}>
-            <span className="flex items-center justify-center w-full">
-              <Tag className="mr-1.5 h-3.5 w-3.5" />
+            <span className="flex items-center justify-center w-full"> {/* Ensures single child for Link */}
+              <Tag className="mr-2 h-4 w-4" />
               Ver Detalhes da Oferta
-              <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
+              <ArrowRight className="ml-2 h-4 w-4" />
             </span>
           </Link>
         </Button>
