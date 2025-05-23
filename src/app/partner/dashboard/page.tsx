@@ -1,4 +1,3 @@
-
 // src/app/partner/dashboard/page.tsx
 'use client';
 
@@ -88,30 +87,30 @@ export default function PartnerDashboardPage() {
       <div className="space-y-6 p-4 md:p-6">
         <Skeleton className="mb-4 h-8 w-2/3" />
         <Card className="shadow-md">
-          <CardHeader><Skeleton className="h-7 w-1/2" /></CardHeader>
-          <CardContent className="space-y-3">
-            <div className="grid md:grid-cols-3 gap-4">
-                <Skeleton className="h-40 w-full md:col-span-1 rounded-md" />
-                <div className="md:col-span-2 space-y-2">
-                    <Skeleton className="h-5 w-3/4" />
-                    <Skeleton className="h-4 w-full" />
-                    <Skeleton className="h-4 w-5/6" />
-                    <Skeleton className="h-4 w-1/2" />
+          <CardHeader className="p-3"><Skeleton className="h-7 w-1/2" /></CardHeader>
+          <CardContent className="space-y-3 p-3">
+            <div className="grid md:grid-cols-3 gap-3">
+                <Skeleton className="h-32 w-full md:col-span-1 rounded-md" />
+                <div className="md:col-span-2 space-y-1.5">
+                    <Skeleton className="h-4 w-3/4" />
+                    <Skeleton className="h-3 w-full" />
+                    <Skeleton className="h-3 w-5/6" />
+                    <Skeleton className="h-3 w-1/2" />
                 </div>
             </div>
-            <Skeleton className="mt-2 h-9 w-1/3" />
+            <Skeleton className="mt-1.5 h-8 w-1/3" />
           </CardContent>
         </Card>
          <Card className="shadow-md">
-          <CardHeader><Skeleton className="h-7 w-1/2" /></CardHeader>
-          <CardContent className="space-y-3">
-            <Skeleton className="h-16 w-full rounded-md" />
-            <Skeleton className="h-16 w-full rounded-md" />
+          <CardHeader className="p-3"><Skeleton className="h-7 w-1/2" /></CardHeader>
+          <CardContent className="space-y-3 p-3">
+            <Skeleton className="h-14 w-full rounded-md" />
+            <Skeleton className="h-14 w-full rounded-md" />
           </CardContent>
         </Card>
         <Card className="shadow-md">
-          <CardHeader><Skeleton className="h-7 w-1/2" /></CardHeader>
-          <CardContent><Skeleton className="h-9 w-full" /></CardContent>
+          <CardHeader className="p-3"><Skeleton className="h-7 w-1/2" /></CardHeader>
+          <CardContent className="p-3"><Skeleton className="h-8 w-full" /></CardContent>
         </Card>
       </div>
     );
@@ -151,28 +150,28 @@ export default function PartnerDashboardPage() {
       </div>
 
       <Card className="shadow-md">
-        <CardHeader className="p-4">
+        <CardHeader className="p-3">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
             <div className="flex items-center">
-              {business.icon && <BusinessTypeIcon type={business.icon} className="mr-2 h-6 w-6 text-accent hidden sm:block" />}
-              <CardTitle className="text-lg text-accent md:text-xl">{business.name}</CardTitle>
+              {business.icon && <BusinessTypeIcon type={business.icon} className="mr-2 h-5 w-5 text-accent hidden sm:block" />}
+              <CardTitle className="text-md text-accent md:text-lg">{business.name}</CardTitle>
             </div>
             <div className="flex flex-wrap gap-2 mt-2 sm:mt-0">
-                <Button variant="outline" size="sm" asChild className="text-xs h-8">
+                <Button variant="outline" size="sm" asChild className="text-xs h-7 px-2">
                     <Link href={`/partner/edit-business/${business.id}`}> 
-                        <Edit3 className="mr-1.5 h-3.5 w-3.5" /> Editar Detalhes
+                        <Edit3 className="mr-1.5 h-3 w-3" /> Editar Detalhes
                     </Link>
                 </Button>
-                <Button variant="default" size="sm" asChild className="text-xs h-8">
+                <Button variant="default" size="sm" asChild className="text-xs h-7 px-2">
                     <Link href={`/business/${business.id}`} target="_blank">
-                        <Eye className="mr-1.5 h-3.5 w-3.5" /> Ver Página
+                        <Eye className="mr-1.5 h-3 w-3" /> Ver Página
                     </Link>
                 </Button>
             </div>
           </div>
           <CardDescription className="text-xs mt-1">Visualize e atualize os dados do seu estabelecimento.</CardDescription>
         </CardHeader>
-        <CardContent className="p-4 grid grid-cols-1 md:grid-cols-3 gap-4">
+        <CardContent className="p-3 grid grid-cols-1 md:grid-cols-3 gap-3">
           <div className="md:col-span-1">
             <div className="relative aspect-video w-full rounded-md border overflow-hidden shadow-sm">
               <Image 
@@ -185,19 +184,19 @@ export default function PartnerDashboardPage() {
             </div>
              <p className="text-xs text-muted-foreground mt-1 text-center">Imagem principal.</p>
           </div>
-          <div className="md:col-span-2 space-y-1.5">
+          <div className="md:col-span-2 space-y-1">
             <div>
                 <p className="text-xs font-medium text-muted-foreground">Tipo</p>
                 <p className="text-sm text-foreground">{business.type}</p>
             </div>
-             <Separator className="my-1.5"/>
+             <Separator className="my-1"/>
             <div>
                 <p className="text-xs font-medium text-muted-foreground">Endereço</p>
                 <p className="text-foreground text-sm">{business.address}</p>
             </div>
             {business.phoneNumber && (
                 <>
-                    <Separator className="my-1.5"/>
+                    <Separator className="my-1"/>
                     <div>
                         <p className="text-xs font-medium text-muted-foreground">Telefone</p>
                         <p className="text-foreground text-sm">{business.phoneNumber}</p>
@@ -206,7 +205,7 @@ export default function PartnerDashboardPage() {
             )}
             {business.website && (
                  <>
-                    <Separator className="my-1.5"/>
+                    <Separator className="my-1"/>
                     <div>
                         <p className="text-xs font-medium text-muted-foreground">Website</p>
                         <a href={business.website.startsWith('http') ? business.website : `https://${business.website}`} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline block truncate text-sm">
@@ -215,7 +214,7 @@ export default function PartnerDashboardPage() {
                     </div>
                 </>
             )}
-            <Separator className="my-1.5"/>
+            <Separator className="my-1"/>
             <div>
                 <p className="text-xs font-medium text-muted-foreground">Descrição Completa</p>
                 <p className="text-foreground/90 text-xs leading-relaxed line-clamp-3">{business.fullDescription}</p>
@@ -225,25 +224,25 @@ export default function PartnerDashboardPage() {
       </Card>
 
       <Card className="shadow-md">
-        <CardHeader className="p-4">
+        <CardHeader className="p-3">
           <div className="flex items-center justify-between flex-wrap gap-2">
-            <CardTitle className="text-lg text-accent flex items-center md:text-xl">
-              <Tag className="mr-2 h-5 w-5 md:h-6 md:w-6" />
+            <CardTitle className="text-md text-accent flex items-center md:text-lg">
+              <Tag className="mr-2 h-4 w-4 md:h-5 md:w-5" />
               Minhas Ofertas Atuais ({deals.length})
             </CardTitle>
-            <Button asChild size="sm" className="text-xs h-8">
+            <Button asChild size="sm" className="text-xs h-7 px-2">
               <Link href="/partner/manage-offers">
-                <PlusCircle className="mr-1.5 h-3.5 w-3.5" /> Adicionar Oferta
+                <PlusCircle className="mr-1.5 h-3 w-3" /> Adicionar Oferta
               </Link>
             </Button>
           </div>
           <CardDescription className="text-xs mt-1">Gerencie as promoções ativas para seu estabelecimento.</CardDescription>
         </CardHeader>
-        <CardContent className="p-4">
+        <CardContent className="p-3">
           {deals.length > 0 ? (
             <div className="space-y-3">
               {deals.map(deal => (
-                <Card key={deal.id} className="bg-muted/30 p-3">
+                <Card key={deal.id} className="bg-muted/30 p-2.5">
                     <div className="flex flex-col sm:flex-row justify-between items-start gap-2">
                         <div>
                             <h4 className="font-semibold text-sm text-primary md:text-base">{deal.title}</h4>
@@ -269,7 +268,7 @@ export default function PartnerDashboardPage() {
                                 </AlertDialogHeader>
                                 <div className="flex justify-center my-4">
                                   <Image
-                                    src={`https://placehold.co/200x200.png?text=QR+${deal.id}`}
+                                    src={`https://placehold.co/200x200.png?text=QR+${deal.id.substring(0,10)}`}
                                     alt={`QR Code para ${deal.title}`}
                                     width={200}
                                     height={200}
@@ -281,12 +280,14 @@ export default function PartnerDashboardPage() {
                                 </AlertDialogFooter>
                               </AlertDialogContent>
                             </AlertDialog>
-                            <Button variant="outline" size="sm" className="text-xs h-7 px-2 py-1" disabled title="Funcionalidade de edição de oferta em breve">
-                                <Settings2 className="mr-1.5 h-3 w-3" /> Editar
+                             <Button asChild variant="outline" size="sm" className="text-xs h-7 px-2 py-1">
+                                <Link href={`/partner/edit-offer/${deal.id}`}>
+                                  <Settings2 className="mr-1.5 h-3 w-3" /> Editar
+                                </Link>
                             </Button>
                         </div>
                     </div>
-                     <Separator className="my-2"/>
+                     <Separator className="my-1.5"/>
                     <p className="text-xs text-muted-foreground"><strong>Termos:</strong> {deal.termsAndConditions}</p>
                 </Card>
               ))}
@@ -299,7 +300,7 @@ export default function PartnerDashboardPage() {
             </Alert>
           )}
         </CardContent>
-        <CardFooter className="p-4">
+        <CardFooter className="p-3">
             <p className="text-xs text-muted-foreground">
                 Mantenha suas ofertas atualizadas e atrativas! QR Codes são gerados automaticamente.
             </p>
@@ -307,14 +308,14 @@ export default function PartnerDashboardPage() {
       </Card>
 
       <Card className="shadow-md">
-        <CardHeader className="p-4">
-            <CardTitle className="text-lg text-accent flex items-center md:text-xl">
-                <BarChart3 className="mr-2 h-5 w-5 md:h-6 md:w-6" />
+        <CardHeader className="p-3">
+            <CardTitle className="text-md text-accent flex items-center md:text-lg">
+                <BarChart3 className="mr-2 h-4 w-4 md:h-5 md:w-5" />
                 Visão Geral do Desempenho
             </CardTitle>
             <CardDescription className="text-xs mt-1">Acompanhe o impacto do Guia Mais no seu negócio.</CardDescription>
         </CardHeader>
-        <CardContent className="p-4">
+        <CardContent className="p-3">
             <Alert variant="default" className="bg-secondary/20 border-secondary text-xs">
                 <BarChart3 className="h-4 w-4 text-secondary-foreground"/>
                 <AlertTitle className="text-secondary-foreground">Em Breve!</AlertTitle>
@@ -323,7 +324,7 @@ export default function PartnerDashboardPage() {
                 </AlertDescription>
             </Alert>
         </CardContent>
-         <CardFooter className="p-4">
+         <CardFooter className="p-3">
             <p className="text-xs text-muted-foreground">
                 Utilize esses dados para otimizar suas estratégias.
             </p>
@@ -332,4 +333,3 @@ export default function PartnerDashboardPage() {
     </div>
   );
 }
-

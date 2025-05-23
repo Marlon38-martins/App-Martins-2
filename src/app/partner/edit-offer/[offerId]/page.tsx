@@ -1,4 +1,4 @@
-// src/app/partner/manage-offers/page.tsx
+// src/app/partner/edit-offer/[offerId]/page.tsx
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -6,9 +6,8 @@ import { useForm, type SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import Link from 'next/link';
-// import { useRouter } from 'next/navigation'; // Not needed for public access
-// import { useAuth } from '@/hooks/use-auth-client'; // Not needed for public access
-import { getGramadoBusinessById, type GramadoBusiness } from '@/services/gramado-businesses';
+import { useParams, useRouter } from 'next/navigation';
+import { getDealsForBusiness, getGramadoBusinessById, type Deal, type GramadoBusiness } from '@/services/gramado-businesses';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -18,13 +17,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
-import { ArrowLeft, Tag, PlusCircle, Loader2, AlertCircle } from 'lucide-react'; // ShieldAlert removed
+import { ArrowLeft, Tag, Save, Loader2, AlertCircle } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 
-// const MOCK_PARTNER_EMAIL = 'partner@example.com'; // Not used for access control
-const MOCK_PARTNER_BUSINESS_ID = '1'; 
-// const ADMIN_EMAIL = 'admin@example.com'; // Not used for access control
+const MOCK_PARTNER_BUSINESS_ID = '1'; // Assuming this is the business context for the partner
 
 const offerFormSchema = z.object({
   title: z.string().min(5, { message: 'Título da oferta é obrigatório (mínimo 5 caracteres).' }),
@@ -49,45 +46,63 @@ const offerFormSchema = z.object({
 
 type OfferFormValues = z.infer<typeof offerFormSchema>;
 
-export default function ManagePartnerOffersPage() {
+interface EditOfferPageParams {
+  offerId: string;
+}
+
+export default function EditPartnerOfferPage() {
   const { toast } = useToast();
-  // const router = useRouter(); // Not needed for public access
-  // const { user, isAdmin, loading: authLoading } = useAuth(); // Not needed for public access
+  const router = useRouter();
+  const params = useParams() as EditOfferPageParams;
+  const offerId = params.offerId;
   
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [partnerBusiness, setPartnerBusiness] = useState<GramadoBusiness | null>(null);
-  const [isLoadingBusiness, setIsLoadingBusiness] = useState(true);
-  // const [canAccess, setCanAccess] = useState(false); // Access is now public
-
-  useEffect(() => {
-    // Public access: load business data directly
-    const businessIdToLoad = MOCK_PARTNER_BUSINESS_ID; 
-    if (businessIdToLoad) {
-      async function loadBusiness() {
-        setIsLoadingBusiness(true);
-        const business = await getGramadoBusinessById(businessIdToLoad);
-        setPartnerBusiness(business || null);
-        setIsLoadingBusiness(false);
-      }
-      loadBusiness();
-    } else {
-      setIsLoadingBusiness(false);
-      setPartnerBusiness(null); 
-    }
-  }, []);
+  const [isLoadingOffer, setIsLoadingOffer] = useState(true);
+  const [offerToEdit, setOfferToEdit] = useState<Deal | null>(null);
+  const [businessName, setBusinessName] = useState<string>('');
+  const [error, setError] = useState<string | null>(null);
 
   const form = useForm<OfferFormValues>({
     resolver: zodResolver(offerFormSchema),
-    defaultValues: {
-      title: '',
-      description: '',
-      offerType: undefined,
-      discountPercentage: 0,
-      isPay1Get2: false,
-      usageLimitPerUser: 1,
-      termsAndConditions: 'Válido conforme regras do clube Guia Mais. Apresente seu card de membro.',
-    },
+    defaultValues: {},
   });
+
+  useEffect(() => {
+    async function loadOffer() {
+      if (!offerId) {
+        setError("ID da oferta não encontrado.");
+        setIsLoadingOffer(false);
+        return;
+      }
+      try {
+        const business = await getGramadoBusinessById(MOCK_PARTNER_BUSINESS_ID);
+        setBusinessName(business?.name || 'seu estabelecimento');
+
+        const deals = await getDealsForBusiness(MOCK_PARTNER_BUSINESS_ID);
+        const currentOffer = deals.find(deal => deal.id === offerId);
+        if (currentOffer) {
+          setOfferToEdit(currentOffer);
+          form.reset({
+            title: currentOffer.title,
+            description: currentOffer.description,
+            offerType: currentOffer.isPay1Get2 ? 'p1g2' : 'discount',
+            discountPercentage: currentOffer.discountPercentage || 0,
+            isPay1Get2: currentOffer.isPay1Get2 || false,
+            usageLimitPerUser: currentOffer.usageLimitPerUser || 1,
+            termsAndConditions: currentOffer.termsAndConditions,
+          });
+        } else {
+          setError('Oferta não encontrada ou não pertence ao seu estabelecimento.');
+        }
+      } catch (e) {
+        setError('Falha ao carregar dados da oferta.');
+        console.error(e);
+      } finally {
+        setIsLoadingOffer(false);
+      }
+    }
+    loadOffer();
+  }, [offerId, form]);
 
   const watchOfferType = form.watch('offerType');
   
@@ -100,18 +115,16 @@ export default function ManagePartnerOffersPage() {
     }
   }, [watchOfferType, form]);
 
-
   const onSubmit: SubmitHandler<OfferFormValues> = async (data) => {
-    if (!partnerBusiness) {
-        toast({ title: "Erro", description: "Estabelecimento do parceiro não carregado.", variant: "destructive"});
+    if (!offerToEdit) {
+        toast({ title: "Erro", description: "Oferta não carregada para edição.", variant: "destructive"});
         return;
     }
     setIsSubmitting(true);
     await new Promise(resolve => setTimeout(resolve, 1000)); 
     
-    const newDeal = {
-        id: `deal-${Date.now()}`, 
-        businessId: partnerBusiness.id,
+    const updatedDeal = {
+        ...offerToEdit,
         title: data.title,
         description: data.description,
         isPay1Get2: data.offerType === 'p1g2' ? true : undefined,
@@ -120,42 +133,60 @@ export default function ManagePartnerOffersPage() {
         termsAndConditions: data.termsAndConditions,
     };
 
-    console.log('New Partner Offer Data:', newDeal, 'For Business:', partnerBusiness.name);
+    console.log('Updated Partner Offer Data:', updatedDeal, 'For Business:', businessName);
 
     toast({
-      title: 'Oferta Cadastrada!',
-      description: `A oferta "${data.title}" foi adicionada para ${partnerBusiness.name}. Um QR Code para esta oferta foi gerado (simulação).`,
+      title: 'Oferta Atualizada!',
+      description: `A oferta "${data.title}" foi atualizada para ${businessName}. O QR Code associado foi atualizado (simulação).`,
       variant: 'default', 
     });
     setIsSubmitting(false);
-    form.reset(); 
+    router.push('/partner/dashboard'); 
   };
 
-  if (isLoadingBusiness) { 
+  if (isLoadingOffer) {
     return (
         <div className="p-4 md:p-6">
             <Skeleton className="h-8 w-1/3 mb-6" />
-             <Card className="shadow-xl">
-                <CardHeader className="p-3"><Skeleton className="h-7 w-1/2" /></CardHeader>
-                <CardContent className="space-y-3 p-3">
-                    {Array(5).fill(0).map((_, i) => <Skeleton key={i} className="h-9 w-full" />)}
+            <Card className="shadow-xl">
+                <CardHeader className="p-4"><Skeleton className="h-7 w-1/2" /></CardHeader>
+                <CardContent className="space-y-4 p-4">
+                    {Array(5).fill(0).map((_, i) => <Skeleton key={i} className="h-10 w-full" />)}
                 </CardContent>
-                <CardFooter className="p-3"><Skeleton className="h-9 w-full" /></CardFooter>
+                <CardFooter className="p-4"><Skeleton className="h-10 w-full" /></CardFooter>
             </Card>
         </div>
     );
   }
 
-  if (!partnerBusiness) { 
+  if (error) {
     return (
          <div className="p-4 md:p-6">
             <Alert variant="destructive">
                 <AlertCircle className="h-5 w-5" />
-                <AlertTitle>Erro</AlertTitle>
-                <AlertDescription>Não foi possível carregar os dados do estabelecimento para adicionar ofertas. Tente voltar e acessar novamente.</AlertDescription>
+                <AlertTitle>Erro ao Carregar Oferta</AlertTitle>
+                <AlertDescription>{error}</AlertDescription>
             </Alert>
             <Button asChild variant="outline" className="mt-6">
-              <Link href="/partner/panel">
+              <Link href="/partner/dashboard">
+                <ArrowLeft className="mr-2 h-4 w-4" />
+                Voltar para o Painel
+              </Link>
+            </Button>
+        </div>
+    );
+  }
+  
+  if (!offerToEdit) {
+     return (
+         <div className="p-4 md:p-6">
+            <Alert variant="destructive">
+                <AlertCircle className="h-5 w-5" />
+                <AlertTitle>Oferta Não Encontrada</AlertTitle>
+                <AlertDescription>A oferta que você está tentando editar não foi encontrada.</AlertDescription>
+            </Alert>
+             <Button asChild variant="outline" className="mt-6">
+              <Link href="/partner/dashboard">
                 <ArrowLeft className="mr-2 h-4 w-4" />
                 Voltar para o Painel
               </Link>
@@ -164,38 +195,37 @@ export default function ManagePartnerOffersPage() {
     );
   }
 
-
   return (
     <div className="p-4 md:p-6">
       <Button asChild variant="outline" className="mb-6">
-        <Link href="/partner/panel">
+        <Link href="/partner/dashboard">
           <ArrowLeft className="mr-2 h-4 w-4" />
-          Voltar para o Painel do Parceiro
+          Voltar para o Painel de Ofertas
         </Link>
       </Button>
 
       <section className="mb-8">
         <h2 className="mb-2 text-xl font-bold tracking-tight text-primary md:text-2xl">
-          Criar Nova Oferta Especial
+          Editar Oferta Especial
         </h2>
         <p className="text-sm text-foreground/80 md:text-base">
-          Adicione novas promoções e descontos exclusivos para: <span className="font-semibold text-accent">{partnerBusiness.name}</span>.
+          Modifique os detalhes da oferta para: <span className="font-semibold text-accent">{businessName}</span>.
         </p>
       </section>
 
       <Card className="shadow-xl">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
-            <CardHeader className="p-3">
+            <CardHeader className="p-4">
               <CardTitle className="flex items-center text-lg text-primary md:text-xl">
                 <Tag className="mr-2 h-5 w-5 md:h-6 md:w-6 text-accent" />
-                Detalhes da Nova Oferta
+                Detalhes da Oferta: {offerToEdit.title}
               </CardTitle>
               <CardDescription className="text-xs md:text-sm">
-                Preencha os campos abaixo. Um QR Code será gerado automaticamente para esta oferta.
+                Altere os campos abaixo e salve. O QR Code será atualizado com as novas informações.
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-3 p-3">
+            <CardContent className="space-y-4 p-4">
               <FormField
                 control={form.control}
                 name="title"
@@ -203,7 +233,7 @@ export default function ManagePartnerOffersPage() {
                   <FormItem>
                     <FormLabel htmlFor="title" className="text-sm">Título da Oferta *</FormLabel>
                     <FormControl>
-                      <Input id="title" placeholder="Ex: Desconto Exclusivo Guia Mais" {...field} value={field.value ?? ''} />
+                      <Input id="title" placeholder="Ex: Happy Hour Especial" {...field} value={field.value ?? ''} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -229,7 +259,7 @@ export default function ManagePartnerOffersPage() {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-sm">Tipo de Oferta *</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <Select onValueChange={field.onChange} value={field.value}>
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue placeholder="Selecione o tipo da oferta" />
@@ -266,7 +296,7 @@ export default function ManagePartnerOffersPage() {
                     control={form.control}
                     name="isPay1Get2"
                     render={({ field }) => (
-                        <FormItem className="flex flex-row items-center space-x-2 space-y-0 rounded-md border p-2.5">
+                        <FormItem className="flex flex-row items-center space-x-2 space-y-0 rounded-md border p-3">
                         <FormControl>
                             <Checkbox
                             checked={field.value}
@@ -291,7 +321,7 @@ export default function ManagePartnerOffersPage() {
                     <FormControl>
                       <Input id="usageLimitPerUser" type="number" placeholder="Ex: 1" {...field} value={field.value ?? ''} />
                     </FormControl>
-                    <FormDescription className="text-xs">Quantas vezes um membro Prime pode usar esta oferta. Padrão é 1.</FormDescription>
+                    <FormDescription className="text-xs">Quantas vezes um membro Prime pode usar esta oferta.</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -310,14 +340,11 @@ export default function ManagePartnerOffersPage() {
                   </FormItem>
                 )}
               />
-              <p className="text-xs text-muted-foreground pt-1.5">
-                Lembre-se: ofertas claras e atrativas geram mais engajamento!
-              </p>
             </CardContent>
-            <CardFooter className="p-3">
+            <CardFooter className="p-4">
               <Button type="submit" size="default" className="w-full bg-primary hover:bg-primary/90 text-sm" disabled={isSubmitting}>
-                 {isSubmitting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <PlusCircle className="mr-2 h-4 w-4" />}
-                {isSubmitting ? 'Criando Oferta...' : 'Criar Nova Oferta Especial'}
+                {isSubmitting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}
+                {isSubmitting ? 'Salvando Alterações...' : 'Salvar Alterações na Oferta'}
               </Button>
             </CardFooter>
           </form>
