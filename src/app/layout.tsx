@@ -32,6 +32,7 @@ import {
   Info,
   Search as SearchIcon,
   Handshake,
+  QrCode, // Added QrCode
 } from 'lucide-react'; 
 import { Header } from '@/components/layout/header';
 import { AuthProviderClient } from '@/hooks/use-auth-client'; 
@@ -88,9 +89,11 @@ export default function RootLayout({
             <Sidebar collapsible="icon">
               <SidebarHeader className="p-1.5">
                 <Link href="/" className="flex items-center gap-2">
-                  <MountainSnow className="h-7 w-7 text-sidebar-primary" />
-                  <span className="text-xl font-bold tracking-tight text-sidebar-foreground group-data-[collapsible=icon]:hidden">
-                    Guia Mais
+                  <span className="flex items-center gap-2">
+                    <MountainSnow className="h-7 w-7 text-sidebar-primary" />
+                    <span className="text-xl font-bold tracking-tight text-sidebar-foreground group-data-[collapsible=icon]:hidden">
+                      Guia Mais
+                    </span>
                   </span>
                 </Link>
               </SidebarHeader>
@@ -162,6 +165,17 @@ export default function RootLayout({
                          <span className="flex items-center gap-1.5">
                           <SearchIcon />
                           <span className="group-data-[collapsible=icon]:hidden">Buscar</span>
+                        </span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+
+                  <SidebarMenuItem>
+                    <SidebarMenuButton asChild tooltip={{content: "Escanear Cupom", side:"right"}}>
+                      <Link href="/scan-offer">
+                         <span className="flex items-center gap-1.5">
+                          <QrCode />
+                          <span className="group-data-[collapsible=icon]:hidden">Escanear Cupom</span>
                         </span>
                       </Link>
                     </SidebarMenuButton>
