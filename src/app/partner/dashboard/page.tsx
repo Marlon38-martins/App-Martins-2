@@ -33,7 +33,8 @@ import {
     BarChart3, 
     Settings2,
     // ShieldAlert, // No longer needed for access control
-    QrCode as QrCodeIcon
+    QrCode as QrCodeIcon,
+    Star // Added Star for VIP badge
 } from 'lucide-react';
 import { BusinessTypeIcon } from '@/components/icons';
 
@@ -245,7 +246,14 @@ export default function PartnerDashboardPage() {
                 <Card key={deal.id} className="bg-muted/30 p-2.5">
                     <div className="flex flex-col sm:flex-row justify-between items-start gap-2">
                         <div>
-                            <h4 className="font-semibold text-sm text-primary md:text-base">{deal.title}</h4>
+                            <div className="flex items-center gap-2">
+                                <h4 className="font-semibold text-sm text-primary md:text-base">{deal.title}</h4>
+                                {deal.isVipOffer && (
+                                    <Badge variant="default" className="bg-purple-600 hover:bg-purple-700 text-white text-xs px-1.5 py-0.5">
+                                        <Star className="mr-1 h-3 w-3" /> VIP
+                                    </Badge>
+                                )}
+                            </div>
                             <p className="text-xs text-muted-foreground line-clamp-2 mb-1">{deal.description}</p>
                             <div className="flex flex-wrap gap-1">
                                 {deal.isPay1Get2 && <Badge variant="destructive" className="bg-accent text-accent-foreground text-xs">Pague 1 Leve 2</Badge>}

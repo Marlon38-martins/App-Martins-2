@@ -125,6 +125,10 @@ export interface Deal {
    * How many times a single user can redeem this offer. Defaults to 1 for P1G2.
    */
   usageLimitPerUser?: number;
+  /**
+   * Indicates if this offer is exclusive to VIP members.
+   */
+  isVipOffer?: boolean;
 }
 
 const businesses: GramadoBusiness[] = [
@@ -262,14 +266,16 @@ const deals: Deal[] = [
     isPay1Get2: true,
     usageLimitPerUser: 1,
     termsAndConditions: 'Válido de segunda a quinta, exceto feriados. Necessário apresentar o card digital Guia Mais. Não cumulativo com outras promoções. Consulte pratos selecionados.',
+    isVipOffer: false,
   },
   {
     id: 'deal-2',
     businessId: '1', // Restaurante Mirante da Serra
-    title: 'Sobremesa Regional Cortesia',
-    description: 'Grupos acima de 4 pessoas ganham uma sobremesa regional especial.',
+    title: 'Sobremesa Regional VIP Cortesia',
+    description: 'Grupos acima de 4 pessoas VIP ganham uma sobremesa regional especial.',
     discountPercentage: 0,
-    termsAndConditions: 'Válido para grupos com 4 ou mais membros Guia Mais. Uma sobremesa por grupo, conforme disponibilidade.',
+    termsAndConditions: 'Válido para grupos com 4 ou mais membros Guia Mais VIP. Uma sobremesa por grupo, conforme disponibilidade.',
+    isVipOffer: true,
   },
   {
     id: 'deal-3',
@@ -279,6 +285,7 @@ const deals: Deal[] = [
     isPay1Get2: true, // Conceptually similar, pay X get Y
     usageLimitPerUser: 1,
     termsAndConditions: 'Válido para reservas diretas com a pousada, mediante apresentação do card Guia Mais. Sujeito à disponibilidade. Não válido em alta temporada ou feriados prolongados.',
+    isVipOffer: false,
   },
   {
     id: 'deal-4',
@@ -287,15 +294,17 @@ const deals: Deal[] = [
     description: 'Desconto de 15% em todas as peças de cerâmica e bordados para membros Guia Mais.',
     discountPercentage: 15,
     termsAndConditions: 'Válido enquanto durarem os estoques. Apresentar card Guia Mais.',
+    isVipOffer: false,
   },
   {
     id: 'deal-5',
     businessId: '5', // Cafeteria Grão Serrano
-    title: 'Café em Dobro Guia Mais',
-    description: 'Na compra de um café expresso, ganhe outro. Benefício exclusivo Guia Mais.',
+    title: 'Café VIP em Dobro',
+    description: 'Na compra de um café expresso, membros VIP ganham outro. Benefício exclusivo Guia Mais VIP.',
     isPay1Get2: true,
-    usageLimitPerUser: 1, // Example: can use this specific P1G2 offer once
-    termsAndConditions: 'Válido de terça a quinta-feira, exceto feriados. Apresentar card Guia Mais. Não cumulativo.',
+    usageLimitPerUser: 1, 
+    termsAndConditions: 'Válido de terça a quinta-feira, exceto feriados. Apresentar card Guia Mais VIP. Não cumulativo.',
+    isVipOffer: true,
   },
   {
     id: 'deal-6',
@@ -304,6 +313,7 @@ const deals: Deal[] = [
     description: 'Membros Serrano VIP podem solicitar early check-in gratuito (sujeito à disponibilidade).',
     discountPercentage: 0,
     termsAndConditions: 'Exclusivo para membros do plano Serrano VIP. Solicitar no momento da reserva. Sujeito à disponibilidade da pousada.',
+    isVipOffer: true,
   },
   {
     id: 'deal-7',
@@ -312,15 +322,17 @@ const deals: Deal[] = [
     description: '10% de desconto para grupos de 5 ou mais pessoas na Trilha da Casa de Pedra.',
     discountPercentage: 10,
     termsAndConditions: 'Agendamento prévio obrigatório. Todos os participantes do grupo devem ser membros Guia Mais.',
+    isVipOffer: false,
   },
   {
     id: 'deal-8',
     businessId: '7', // Bar Central
-    title: 'Rodada Dupla de Caipirinha',
+    title: 'Rodada Dupla de Caipirinha (Normal)',
     description: 'Peça uma caipirinha e ganhe a segunda por conta da casa. Exclusivo para membros Guia Mais.',
     isPay1Get2: true,
     usageLimitPerUser: 1,
     termsAndConditions: 'Válido às sextas-feiras, das 18h às 20h. Apresentar card Guia Mais.',
+    isVipOffer: false,
   }
 ];
 

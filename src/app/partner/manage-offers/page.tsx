@@ -18,7 +18,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
-import { ArrowLeft, Tag, PlusCircle, Loader2, AlertCircle } from 'lucide-react'; // ShieldAlert removed
+import { ArrowLeft, Tag, PlusCircle, Loader2, AlertCircle, Star } from 'lucide-react'; // ShieldAlert removed, Added Star
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 
@@ -32,6 +32,7 @@ const offerFormSchema = z.object({
   offerType: z.enum(['discount', 'p1g2'], { required_error: "Tipo da oferta é obrigatório."}),
   discountPercentage: z.coerce.number().min(0).max(100).optional(),
   isPay1Get2: z.boolean().optional(),
+  isVipOffer: z.boolean().optional().default(false), // Added VIP offer flag
   usageLimitPerUser: z.coerce.number().min(1, {message: "Limite de uso deve ser ao menos 1."}).optional().default(1),
   termsAndConditions: z.string().min(10, { message: 'Termos e condições são obrigatórios (mínimo 10 caracteres).' }),
 }).refine(data => {
@@ -84,6 +85,7 @@ export default function ManagePartnerOffersPage() {
       offerType: undefined,
       discountPercentage: 0,
       isPay1Get2: false,
+      isVipOffer: false,
       usageLimitPerUser: 1,
       termsAndConditions: 'Válido conforme regras do clube Guia Mais. Apresente seu card de membro.',
     },
@@ -116,6 +118,7 @@ export default function ManagePartnerOffersPage() {
         description: data.description,
         isPay1Get2: data.offerType === 'p1g2' ? true : undefined,
         discountPercentage: data.offerType === 'discount' ? data.discountPercentage : undefined,
+        isVipOffer: data.isVipOffer,
         usageLimitPerUser: data.usageLimitPerUser,
         termsAndConditions: data.termsAndConditions,
     };
@@ -179,7 +182,7 @@ export default function ManagePartnerOffersPage() {
           Criar Nova Oferta Especial
         </h2>
         <p className="text-sm text-foreground/80 md:text-base">
-          Adicione novas promoções e descontos exclusivos para: <span className="font-semibold text-accent">{partnerBusiness.name}</span>.
+          Adicione novas promoções e descontos para: <span className="font-semibold text-accent">{partnerBusiness.name}</span>.
         </p>
       </section>
 
@@ -281,6 +284,26 @@ export default function ManagePartnerOffersPage() {
                     )}
                 />
               )}
+
+              <FormField
+                control={form.control}
+                name="isVipOffer"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-center space-x-2 space-y-0 rounded-md border p-2.5">
+                    <FormControl>
+                      <Checkbox
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                        id="isVipOffer"
+                      />
+                    </FormControl>
+                    <FormLabel htmlFor="isVipOffer" className="text-sm font-normal cursor-pointer flex items-center">
+                      <Star className="mr-1.5 h-4 w-4 text-yellow-400" />
+                      Esta é uma oferta exclusiva para membros VIP?
+                    </FormLabel>
+                  </FormItem>
+                )}
+              />
               
               <FormField
                 control={form.control}
