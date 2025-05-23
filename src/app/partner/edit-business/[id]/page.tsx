@@ -1,4 +1,3 @@
-
 // src/app/partner/edit-business/[id]/page.tsx
 'use client';
 
@@ -9,7 +8,7 @@ import { useForm, type SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 
-import { useAuth } from '@/hooks/use-auth-client';
+// import { useAuth } from '@/hooks/use-auth-client'; // No longer needed
 import { getGramadoBusinessById, type GramadoBusiness, type LucideIconName } from '@/services/gramado-businesses';
 
 import { Button } from '@/components/ui/button';
@@ -21,9 +20,9 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { useToast } from '@/hooks/use-toast';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
-import { ArrowLeft, Building, Save, ShieldAlert } from 'lucide-react';
+import { ArrowLeft, Building, Save } from 'lucide-react'; // ShieldAlert removed
 
-const MOCK_PARTNER_EMAIL = 'partner@example.com'; 
+// const MOCK_PARTNER_EMAIL = 'partner@example.com'; // Not used for access control anymore
 
 const iconNames: LucideIconName[] = [
   'UtensilsCrossed', 
@@ -66,7 +65,7 @@ export default function EditPartnerBusinessPage() {
   const params = useParams() as EditBusinessPageParams;
   const businessId = params.id;
 
-  const { user, isAdmin, loading: authLoading } = useAuth();
+  // const { user, isAdmin, loading: authLoading } = useAuth(); // Auth checks removed
   const [business, setBusiness] = useState<GramadoBusiness | null>(null);
   const [isLoadingData, setIsLoadingData] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -77,23 +76,16 @@ export default function EditPartnerBusinessPage() {
     defaultValues: {}, 
   });
 
-  const canAccess = user && (user.email === MOCK_PARTNER_EMAIL || isAdmin);
-
+  // Access is now public, auth checks removed from useEffect
   useEffect(() => {
-    if (!authLoading && !user) {
-      router.push(`/login?redirect=/partner/edit-business/${businessId}`);
-    }
-  }, [authLoading, user, router, businessId]);
-
-  useEffect(() => {
-    if (user && canAccess && businessId) {
+    if (businessId) {
       async function loadBusinessData() {
         setIsLoadingData(true);
         setError(null);
         try {
           const businessData = await getGramadoBusinessById(businessId);
-          // Ensure the partner can only edit THEIR designated business if not admin
-          if (businessData && (isAdmin || businessData.id === process.env.NEXT_PUBLIC_MOCK_PARTNER_BUSINESS_ID || businessId === process.env.NEXT_PUBLIC_MOCK_PARTNER_BUSINESS_ID)) {
+          // No longer need to check if partner owns this specific business for access here
+          if (businessData) {
             setBusiness(businessData);
             form.reset({
               name: businessData.name,
@@ -112,7 +104,7 @@ export default function EditPartnerBusinessPage() {
               icon: businessData.icon,
             });
           } else {
-            setError('Estabelecimento não encontrado ou você não tem permissão para editá-lo.');
+            setError('Estabelecimento não encontrado.');
           }
         } catch (err) {
           console.error("Error loading business data for editing:", err);
@@ -122,10 +114,8 @@ export default function EditPartnerBusinessPage() {
         }
       }
       loadBusinessData();
-    } else if (user && !canAccess) {
-      setIsLoadingData(false); 
     }
-  }, [user, canAccess, isAdmin, businessId, form]);
+  }, [businessId, form]);
 
 
   const onSubmit: SubmitHandler<EditEstablishmentFormValues> = async (data) => {
@@ -152,7 +142,7 @@ export default function EditPartnerBusinessPage() {
     router.push('/partner/panel');
   };
   
-  if (authLoading || isLoadingData) {
+  if (isLoadingData) { // Simplified loading check
     return (
       <div className="p-4 md:p-6">
         <Skeleton className="mb-6 h-10 w-1/3" />
@@ -167,31 +157,12 @@ export default function EditPartnerBusinessPage() {
       </div>
     );
   }
-
-  if (!user) {
-    return <div className="p-6 text-center">Redirecionando para login...</div>;
-  }
-
-  if (!canAccess) {
-    return (
-      <div className="p-4 md:p-6 flex flex-col items-center justify-center min-h-[calc(100vh-200px)]">
-        <Alert variant="destructive" className="max-w-md text-center">
-          <ShieldAlert className="mx-auto mb-2 h-6 w-6" />
-          <AlertTitle>Acesso Negado</AlertTitle>
-          <AlertDescription>Esta funcionalidade é exclusiva para parceiros e administradores.</AlertDescription>
-        </Alert>
-         <Button asChild variant="outline" className="mt-6">
-          <Link href="/"> <ArrowLeft className="mr-2 h-4 w-4" /> Voltar para Início </Link>
-        </Button>
-      </div>
-    );
-  }
   
   if (error) {
     return (
       <div className="p-4 md:p-6">
         <Alert variant="destructive">
-          <ShieldAlert className="h-5 w-5" />
+          {/* <ShieldAlert className="h-5 w-5" /> */}
           <AlertTitle>Erro</AlertTitle>
           <AlertDescription>{error}</AlertDescription>
         </Alert>

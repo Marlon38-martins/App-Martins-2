@@ -1,4 +1,3 @@
-
 // src/app/partner/manage-offers/page.tsx
 'use client';
 
@@ -7,8 +6,8 @@ import { useForm, type SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { useAuth } from '@/hooks/use-auth-client';
+// import { useRouter } from 'next/navigation'; // No longer needed for auth redirection
+// import { useAuth } from '@/hooks/use-auth-client'; // No longer needed
 import { getGramadoBusinessById, type GramadoBusiness } from '@/services/gramado-businesses';
 
 import { Button } from '@/components/ui/button';
@@ -19,11 +18,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
-import { ArrowLeft, Tag, PlusCircle, ShieldAlert } from 'lucide-react';
+import { ArrowLeft, Tag, PlusCircle } from 'lucide-react'; // ShieldAlert removed
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 
-const MOCK_PARTNER_EMAIL = 'partner@example.com'; 
+// const MOCK_PARTNER_EMAIL = 'partner@example.com'; // Not used for access control anymore
 const MOCK_PARTNER_BUSINESS_ID = '1'; 
 
 const offerFormSchema = z.object({
@@ -51,38 +50,23 @@ type OfferFormValues = z.infer<typeof offerFormSchema>;
 
 export default function ManagePartnerOffersPage() {
   const { toast } = useToast();
-  const router = useRouter();
-  const { user, isAdmin, loading: authLoading } = useAuth();
+  // const router = useRouter(); // No longer needed for auth redirection
+  // const { user, isAdmin, loading: authLoading } = useAuth(); // Auth checks removed
   
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [partnerBusiness, setPartnerBusiness] = useState<GramadoBusiness | null>(null);
   const [isLoadingBusiness, setIsLoadingBusiness] = useState(true);
 
-  const canAccess = user && (user.email === MOCK_PARTNER_EMAIL || isAdmin);
-
+  // Access is now public, auth checks removed from useEffect
   useEffect(() => {
-    if (!authLoading && !user) {
-      router.push('/login?redirect=/partner/manage-offers');
-    }
-  }, [authLoading, user, router]);
-
-  useEffect(() => {
-    if (user && canAccess) {
-      async function loadBusiness() {
-        setIsLoadingBusiness(true);
-        // Admin might manage any, partner their own. For mock, always MOCK_PARTNER_BUSINESS_ID
-        const businessIdToLoad = isAdmin && process.env.NEXT_PUBLIC_ADMIN_MANAGES_BUSINESS_ID 
-                               ? process.env.NEXT_PUBLIC_ADMIN_MANAGES_BUSINESS_ID 
-                               : MOCK_PARTNER_BUSINESS_ID;
-        const business = await getGramadoBusinessById(businessIdToLoad);
-        setPartnerBusiness(business || null);
-        setIsLoadingBusiness(false);
-      }
-      loadBusiness();
-    } else if (user && !canAccess) {
+    async function loadBusiness() {
+      setIsLoadingBusiness(true);
+      const business = await getGramadoBusinessById(MOCK_PARTNER_BUSINESS_ID); // Always load mock partner's business
+      setPartnerBusiness(business || null);
       setIsLoadingBusiness(false);
     }
-  }, [user, canAccess, isAdmin]);
+    loadBusiness();
+  }, []);
 
   const form = useForm<OfferFormValues>({
     resolver: zodResolver(offerFormSchema),
@@ -139,7 +123,7 @@ export default function ManagePartnerOffersPage() {
     form.reset(); 
   };
 
-  if (authLoading || isLoadingBusiness) {
+  if (isLoadingBusiness) { // Simplified loading state check
     return (
         <div className="p-4 md:p-6">
             <Skeleton className="mb-6 h-10 w-1/3" />
@@ -148,38 +132,20 @@ export default function ManagePartnerOffersPage() {
     );
   }
 
-  if (!user) {
-    return <div className="p-6 text-center">Carregando informações do usuário...</div>;
-  }
-
-  if (!canAccess) {
-    return (
-      <div className="p-4 md:p-6 flex flex-col items-center justify-center min-h-[calc(100vh-200px)]">
-        <Alert variant="destructive" className="max-w-md text-center">
-          <ShieldAlert className="mx-auto mb-2 h-6 w-6" />
-          <AlertTitle>Acesso Negado</AlertTitle>
-          <AlertDescription>
-            Esta funcionalidade é exclusiva para parceiros e administradores.
-          </AlertDescription>
-        </Alert>
-         <Button asChild variant="outline" className="mt-6">
-          <Link href="/">
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Voltar para Início
-          </Link>
-        </Button>
-      </div>
-    );
-  }
-
   if (!partnerBusiness) {
     return (
          <div className="p-4 md:p-6">
             <Alert variant="destructive">
-                <ShieldAlert className="h-5 w-5" />
+                {/* <ShieldAlert className="h-5 w-5" /> // Icon removed as it implies security issue */}
                 <AlertTitle>Erro</AlertTitle>
                 <AlertDescription>Não foi possível carregar os dados do seu estabelecimento. Contate o suporte.</AlertDescription>
             </Alert>
+            <Button asChild variant="outline" className="mt-6">
+              <Link href="/partner/panel">
+                <ArrowLeft className="mr-2 h-4 w-4" />
+                Voltar para o Painel
+              </Link>
+            </Button>
         </div>
     );
   }

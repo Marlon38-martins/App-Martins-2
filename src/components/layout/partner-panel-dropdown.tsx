@@ -16,18 +16,21 @@ import {
   LayoutDashboard,
   Tag,
   Users,
-  UserPlus
+  UserPlus,
+  Edit
 } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 
+// This component was conceptually renamed to PartnerAdminDirectLink then reverted to DynamicPartnerLink
+// It now handles both admin dropdown and a direct partner panel link.
 export function DynamicPartnerLink() {
   const { user, isAdmin, loading } = useAuth();
 
   if (loading) {
     return (
-      <div className="flex items-center gap-2 p-2 w-full group-data-[collapsible=icon]:justify-center">
-        <Skeleton className="h-8 w-8 rounded-full" />
-        <Skeleton className="h-4 w-24 group-data-[collapsible=icon]:hidden" />
+      <div className="flex items-center gap-2 p-1.5 w-full group-data-[collapsible=icon]:justify-center">
+        <Skeleton className="h-7 w-7 rounded-full" />
+        <Skeleton className="h-4 w-20 group-data-[collapsible=icon]:hidden" />
       </div>
     );
   }
@@ -37,7 +40,7 @@ export function DynamicPartnerLink() {
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <SidebarMenuButton tooltip={{content: "Admin Geral", side:"right"}} className="w-full">
-            <LayoutDashboard /> {/* Changed icon for Admin */}
+            <LayoutDashboard />
             <span className="group-data-[collapsible=icon]:hidden">
               Admin Geral
             </span>
@@ -46,7 +49,7 @@ export function DynamicPartnerLink() {
         <DropdownMenuContent
           side="right"
           align="start"
-          className="w-60 bg-popover text-popover-foreground ml-2 group-data-[collapsible=icon]:ml-0"
+          className="w-56 bg-popover text-popover-foreground ml-2 group-data-[collapsible=icon]:ml-0"
         >
           <DropdownMenuItem asChild>
             <Link href="/admin/list-all-partners" className="flex items-center cursor-pointer">
@@ -54,12 +57,12 @@ export function DynamicPartnerLink() {
               Listar Todos os Parceiros
             </Link>
           </DropdownMenuItem>
-          {/* <DropdownMenuItem asChild>
+          <DropdownMenuItem asChild>
             <Link href="/admin/manage-deals" className="flex items-center cursor-pointer">
               <Tag className="mr-2 h-4 w-4" />
               Gerenciar Ofertas (Admin)
             </Link>
-          </DropdownMenuItem> */}
+          </DropdownMenuItem>
           <DropdownMenuItem asChild>
             <Link href="/admin/add-establishment" className="flex items-center cursor-pointer">
               <UserPlus className="mr-2 h-4 w-4" />
@@ -71,16 +74,13 @@ export function DynamicPartnerLink() {
     );
   }
 
-  if (user && user.email === 'partner@example.com') {
-    return (
-      <SidebarMenuButton asChild tooltip={{content: "Painel do Parceiro", side:"right"}}>
-        <Link href="/partner/panel">
-          <Briefcase />
-          <span className="group-data-[collapsible=icon]:hidden">Painel do Parceiro</span>
-        </Link>
-      </SidebarMenuButton>
-    );
-  }
-
-  return null;
+  // Always show "Painel do Parceiro" link if not admin (accessible without login)
+  return (
+    <SidebarMenuButton asChild tooltip={{content: "Painel do Parceiro", side:"right"}}>
+      <Link href="/partner/panel">
+        <Briefcase />
+        <span className="group-data-[collapsible=icon]:hidden">Painel do Parceiro</span>
+      </Link>
+    </SidebarMenuButton>
+  );
 }
