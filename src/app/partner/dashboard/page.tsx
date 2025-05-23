@@ -204,16 +204,23 @@ export default function PartnerDashboardPage() {
 
       <Card className="shadow-sm">
         <CardHeader className="p-3">
-          <div className="flex items-center justify-between flex-wrap gap-1.5">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between flex-wrap gap-1.5">
             <CardTitle className="text-sm text-accent flex items-center md:text-base">
               <Tag className="mr-1.5 h-4 w-4" />
               Minhas Ofertas ({deals.length})
             </CardTitle>
-            <Button asChild size="sm" className="text-xs h-7 px-2">
-              <Link href="/partner/manage-offers">
-                <PlusCircle className="mr-1.5 h-3 w-3" /> Adicionar Oferta
-              </Link>
-            </Button>
+            <div className="flex flex-wrap gap-1.5">
+                <Button asChild size="sm" className="text-xs h-7 px-2">
+                <Link href="/partner/add-normal-offer">
+                    <PlusCircle className="mr-1.5 h-3 w-3" /> Adicionar Oferta Normal
+                </Link>
+                </Button>
+                <Button asChild size="sm" variant="outline" className="text-xs h-7 px-2 border-purple-500 text-purple-600 hover:bg-purple-500/10 hover:text-purple-700">
+                <Link href="/partner/add-vip-offer">
+                    <Star className="mr-1.5 h-3 w-3 text-yellow-400 fill-yellow-400" /> Adicionar Oferta VIP
+                </Link>
+                </Button>
+            </div>
           </div>
         </CardHeader>
         <CardContent className="p-3 space-y-3">
