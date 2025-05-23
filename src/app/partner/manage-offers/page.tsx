@@ -1,3 +1,4 @@
+
 // src/app/partner/manage-offers/page.tsx
 'use client';
 
@@ -6,8 +7,8 @@ import { useForm, type SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import Link from 'next/link';
-// import { useRouter } from 'next/navigation'; // No longer needed for auth redirection
-// import { useAuth } from '@/hooks/use-auth-client'; // No longer needed
+import { useRouter } from 'next/navigation';
+import { useAuth } from '@/hooks/use-auth-client';
 import { getGramadoBusinessById, type GramadoBusiness } from '@/services/gramado-businesses';
 
 import { Button } from '@/components/ui/button';
@@ -18,12 +19,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
-import { ArrowLeft, Tag, PlusCircle } from 'lucide-react'; // ShieldAlert removed
+import { ArrowLeft, Tag, PlusCircle, ShieldAlert } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 
-// const MOCK_PARTNER_EMAIL = 'partner@example.com'; // Not used for access control anymore
+const MOCK_PARTNER_EMAIL = 'partner@example.com';
 const MOCK_PARTNER_BUSINESS_ID = '1'; 
+const ADMIN_EMAIL = 'admin@example.com';
 
 const offerFormSchema = z.object({
   title: z.string().min(5, { message: 'Título da oferta é obrigatório (mínimo 5 caracteres).' }),
@@ -50,23 +52,45 @@ type OfferFormValues = z.infer<typeof offerFormSchema>;
 
 export default function ManagePartnerOffersPage() {
   const { toast } = useToast();
-  // const router = useRouter(); // No longer needed for auth redirection
-  // const { user, isAdmin, loading: authLoading } = useAuth(); // Auth checks removed
+  const router = useRouter();
+  const { user, isAdmin, loading: authLoading } = useAuth();
   
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [partnerBusiness, setPartnerBusiness] = useState<GramadoBusiness | null>(null);
   const [isLoadingBusiness, setIsLoadingBusiness] = useState(true);
+  const [canAccess, setCanAccess] = useState(false);
 
-  // Access is now public, auth checks removed from useEffect
   useEffect(() => {
-    async function loadBusiness() {
-      setIsLoadingBusiness(true);
-      const business = await getGramadoBusinessById(MOCK_PARTNER_BUSINESS_ID); // Always load mock partner's business
-      setPartnerBusiness(business || null);
-      setIsLoadingBusiness(false);
+    if (!authLoading) {
+      if (!user) {
+        router.push('/login?redirect=/partner/manage-offers');
+      } else {
+        const isMockPartner = user.email === MOCK_PARTNER_EMAIL;
+        if (isAdmin || isMockPartner) {
+          setCanAccess(true);
+          const businessIdToLoad = isMockPartner ? MOCK_PARTNER_BUSINESS_ID : (isAdmin ? MOCK_PARTNER_BUSINESS_ID : null); // Admin can also manage offers for mock partner
+
+          if (businessIdToLoad) {
+            async function loadBusiness() {
+              setIsLoadingBusiness(true);
+              const business = await getGramadoBusinessById(businessIdToLoad);
+              setPartnerBusiness(business || null);
+              setIsLoadingBusiness(false);
+            }
+            loadBusiness();
+          } else {
+            setIsLoadingBusiness(false);
+            // For admin, if no specific partner business is contextually loaded, they might need a selector
+            // For now, this page assumes admin is operating on the mock partner's business if directly accessed
+            setPartnerBusiness(null); // Or handle differently
+          }
+        } else {
+          setCanAccess(false);
+          setIsLoadingBusiness(false);
+        }
+      }
     }
-    loadBusiness();
-  }, []);
+  }, [user, isAdmin, authLoading, router]);
 
   const form = useForm<OfferFormValues>({
     resolver: zodResolver(offerFormSchema),
@@ -116,14 +140,14 @@ export default function ManagePartnerOffersPage() {
 
     toast({
       title: 'Oferta Cadastrada!',
-      description: `A oferta "${data.title}" foi adicionada para ${partnerBusiness.name}.`,
+      description: `A oferta "${data.title}" foi adicionada para ${partnerBusiness.name}. Um QR Code para esta oferta foi gerado (simulação).`,
       variant: 'default', 
     });
     setIsSubmitting(false);
     form.reset(); 
   };
 
-  if (isLoadingBusiness) { // Simplified loading state check
+  if (authLoading || isLoadingBusiness) {
     return (
         <div className="p-4 md:p-6">
             <Skeleton className="mb-6 h-10 w-1/3" />
@@ -132,13 +156,30 @@ export default function ManagePartnerOffersPage() {
     );
   }
 
-  if (!partnerBusiness) {
+  if (!canAccess && !authLoading) {
+    return (
+      <div className="p-4 md:p-6 flex flex-col items-center justify-center min-h-[calc(100vh-200px)]">
+        <Alert variant="destructive" className="max-w-md text-center">
+          <ShieldAlert className="h-6 w-6 mx-auto mb-2" />
+          <AlertTitle>Acesso Negado</AlertTitle>
+          <AlertDescription>
+            Você não tem permissão para acessar esta área.
+          </AlertDescription>
+        </Alert>
+        <Button asChild variant="outline" className="mt-6">
+          <Link href="/"><ArrowLeft className="mr-2 h-4 w-4"/> Voltar para Início</Link>
+        </Button>
+      </div>
+    );
+  }
+
+  if (!partnerBusiness && canAccess) {
     return (
          <div className="p-4 md:p-6">
             <Alert variant="destructive">
-                {/* <ShieldAlert className="h-5 w-5" /> // Icon removed as it implies security issue */}
+                <ShieldAlert className="h-5 w-5" />
                 <AlertTitle>Erro</AlertTitle>
-                <AlertDescription>Não foi possível carregar os dados do seu estabelecimento. Contate o suporte.</AlertDescription>
+                <AlertDescription>Não foi possível carregar os dados do seu estabelecimento. Contate o suporte ou selecione um estabelecimento (Admin).</AlertDescription>
             </Alert>
             <Button asChild variant="outline" className="mt-6">
               <Link href="/partner/panel">
@@ -161,35 +202,35 @@ export default function ManagePartnerOffersPage() {
       </Button>
 
       <section className="mb-8">
-        <h2 className="mb-2 text-3xl font-bold tracking-tight text-primary md:text-4xl">
+        <h2 className="mb-2 text-xl font-bold tracking-tight text-primary md:text-2xl">
           Gerenciar Minhas Ofertas
         </h2>
-        <p className="text-lg text-foreground/80">
-          Adicione novas promoções para o seu estabelecimento: <span className="font-semibold text-accent">{partnerBusiness.name}</span>.
+        <p className="text-sm text-foreground/80 md:text-base">
+          Adicione novas promoções para: <span className="font-semibold text-accent">{partnerBusiness?.name || "seu estabelecimento"}</span>.
         </p>
       </section>
 
       <Card className="shadow-xl">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
-            <CardHeader>
-              <CardTitle className="flex items-center text-2xl text-primary">
-                <Tag className="mr-3 h-7 w-7 text-accent" />
+            <CardHeader className="p-4">
+              <CardTitle className="flex items-center text-lg text-primary md:text-xl">
+                <Tag className="mr-2 h-5 w-5 md:h-6 md:w-6 text-accent" />
                 Nova Oferta
               </CardTitle>
-              <CardDescription>
+              <CardDescription className="text-xs md:text-sm">
                 Preencha os detalhes da nova oferta para seu estabelecimento.
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-6">
+            <CardContent className="space-y-4 p-4">
               <FormField
                 control={form.control}
                 name="title"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel htmlFor="title">Título da Oferta *</FormLabel>
+                    <FormLabel htmlFor="title" className="text-sm">Título da Oferta *</FormLabel>
                     <FormControl>
-                      <Input id="title" placeholder="Ex: Happy Hour Especial, Combo Família" {...field} value={field.value ?? ''} />
+                      <Input id="title" placeholder="Ex: Happy Hour Especial" {...field} value={field.value ?? ''} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -200,9 +241,9 @@ export default function ManagePartnerOffersPage() {
                 name="description"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel htmlFor="description">Descrição da Oferta *</FormLabel>
+                    <FormLabel htmlFor="description" className="text-sm">Descrição da Oferta *</FormLabel>
                     <FormControl>
-                      <Textarea id="description" placeholder="Descreva os detalhes da oferta, o que está incluído, etc." {...field} value={field.value ?? ''} rows={3}/>
+                      <Textarea id="description" placeholder="Descreva os detalhes da oferta..." {...field} value={field.value ?? ''} rows={3}/>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -214,7 +255,7 @@ export default function ManagePartnerOffersPage() {
                 name="offerType"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Tipo de Oferta *</FormLabel>
+                    <FormLabel className="text-sm">Tipo de Oferta *</FormLabel>
                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <FormControl>
                         <SelectTrigger>
@@ -237,7 +278,7 @@ export default function ManagePartnerOffersPage() {
                   name="discountPercentage"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel htmlFor="discountPercentage">Porcentagem de Desconto (%) *</FormLabel>
+                      <FormLabel htmlFor="discountPercentage" className="text-sm">Porcentagem de Desconto (%) *</FormLabel>
                       <FormControl>
                         <Input id="discountPercentage" type="number" placeholder="Ex: 10 para 10% de desconto" {...field} value={field.value ?? ''} />
                       </FormControl>
@@ -252,7 +293,7 @@ export default function ManagePartnerOffersPage() {
                     control={form.control}
                     name="isPay1Get2"
                     render={({ field }) => (
-                        <FormItem className="flex flex-row items-center space-x-3 space-y-0 rounded-md border p-3">
+                        <FormItem className="flex flex-row items-center space-x-2 space-y-0 rounded-md border p-3">
                         <FormControl>
                             <Checkbox
                             checked={field.value}
@@ -260,8 +301,8 @@ export default function ManagePartnerOffersPage() {
                             id="isPay1Get2"
                             />
                         </FormControl>
-                        <FormLabel htmlFor="isPay1Get2" className="font-normal cursor-pointer">
-                            Confirmar como oferta "Pague 1 Leve 2" (ou similar, ex: Pague 2 Leve 3)
+                        <FormLabel htmlFor="isPay1Get2" className="text-sm font-normal cursor-pointer">
+                            Confirmar como oferta "Pague 1 Leve 2" (ou similar)
                         </FormLabel>
                         </FormItem>
                     )}
@@ -273,11 +314,11 @@ export default function ManagePartnerOffersPage() {
                 name="usageLimitPerUser"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel htmlFor="usageLimitPerUser">Limite de Uso por Usuário Prime</FormLabel>
+                    <FormLabel htmlFor="usageLimitPerUser" className="text-sm">Limite de Uso por Usuário Prime</FormLabel>
                     <FormControl>
                       <Input id="usageLimitPerUser" type="number" placeholder="Ex: 1" {...field} value={field.value ?? ''} />
                     </FormControl>
-                    <FormDescription>Quantas vezes um membro Prime pode usar esta oferta específica. Padrão é 1.</FormDescription>
+                    <FormDescription className="text-xs">Quantas vezes um membro Prime pode usar esta oferta. Padrão é 1.</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -288,18 +329,21 @@ export default function ManagePartnerOffersPage() {
                 name="termsAndConditions"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel htmlFor="termsAndConditions">Termos e Condições da Oferta *</FormLabel>
+                    <FormLabel htmlFor="termsAndConditions" className="text-sm">Termos e Condições da Oferta *</FormLabel>
                     <FormControl>
-                      <Textarea id="termsAndConditions" placeholder="Ex: Válido de segunda a quinta, exceto feriados. Apresente o card Guia Mais." {...field} value={field.value ?? ''} rows={4}/>
+                      <Textarea id="termsAndConditions" placeholder="Ex: Válido de segunda a quinta..." {...field} value={field.value ?? ''} rows={3}/>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
+              <p className="text-xs text-muted-foreground pt-2">
+                QR Codes para as ofertas são gerados automaticamente após o cadastro.
+              </p>
             </CardContent>
-            <CardFooter>
-              <Button type="submit" size="lg" className="w-full bg-primary hover:bg-primary/90" disabled={isSubmitting}>
-                <PlusCircle className="mr-2 h-5 w-5" />
+            <CardFooter className="p-4">
+              <Button type="submit" size="default" className="w-full bg-primary hover:bg-primary/90 text-sm" disabled={isSubmitting}>
+                <PlusCircle className="mr-2 h-4 w-4" />
                 {isSubmitting ? 'Salvando Oferta...' : 'Salvar Nova Oferta'}
               </Button>
             </CardFooter>
@@ -309,3 +353,4 @@ export default function ManagePartnerOffersPage() {
     </div>
   );
 }
+
