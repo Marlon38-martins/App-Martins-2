@@ -13,9 +13,6 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ArrowLeft, Camera, QrCode, VideoOff, CheckCircle } from 'lucide-react';
 
-// TODO: Add a QR code scanning library like 'react-qr-reader' or 'html5-qrcode' to package.json
-// For now, we will simulate the scanning process.
-
 export default function ScanOfferPage() {
   const router = useRouter();
   const { user, loading: authLoading } = useAuth();
@@ -32,32 +29,76 @@ export default function ScanOfferPage() {
   }, [authLoading, user, router]);
 
   useEffect(() => {
-    const getCameraPermission = async () => {
-      if (!user) return; // Don't request if not logged in
+    let streamToCleanUp: MediaStream | null = null;
+
+    const getCameraStreamWithFallback = async () => {
+      if (!user || typeof window === 'undefined' || !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        setHasCameraPermission(false);
+        if (user) { // Only toast if user is logged in, otherwise redirect will handle it
+            toast({ variant: 'destructive', title: 'Câmera Não Suportada', description: 'Seu navegador não suporta acesso à câmera ou a funcionalidade não está disponível.' });
+        }
+        return;
+      }
+
       try {
-        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        // Attempt to get the front camera first ("user" facing)
+        console.log('Attempting to get front camera (user facing)...');
+        streamToCleanUp = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } });
+        console.log('Front camera (user facing) obtained successfully.');
+      } catch (frontCameraError) {
+        console.warn('Failed to get front camera:', frontCameraError, '. Falling back to default/any camera.');
+        try {
+          // Fallback to any camera (usually rear on mobile, or default webcam)
+          streamToCleanUp = await navigator.mediaDevices.getUserMedia({ video: true });
+          console.log('Default/any camera obtained after fallback.');
+        } catch (anyCameraError) {
+          console.error('Error accessing any camera after fallback:', anyCameraError);
+          setHasCameraPermission(false);
+          toast({
+            variant: 'destructive',
+            title: 'Acesso à Câmera Falhou',
+            description: 'Não foi possível acessar nenhuma câmera. Verifique as permissões do seu navegador.',
+          });
+          return; // Exit if all attempts fail
+        }
+      }
+
+      if (streamToCleanUp) {
         setHasCameraPermission(true);
         if (videoRef.current) {
-          videoRef.current.srcObject = stream;
+          videoRef.current.srcObject = streamToCleanUp;
         }
-        // Clean up stream when component unmounts or permissions change
-        return () => {
-          stream.getTracks().forEach(track => track.stop());
-        };
-      } catch (error) {
-        console.error('Error accessing camera:', error);
+      } else {
+        // This case might be redundant if the catches above handle it, but serves as a safeguard
         setHasCameraPermission(false);
-        toast({
-          variant: 'destructive',
-          title: 'Acesso à Câmera Negado',
-          description: 'Por favor, habilite a permissão da câmera nas configurações do seu navegador para escanear QR codes.',
-        });
+        if (user){ // Only show toast if user context is available
+             toast({
+                variant: 'destructive',
+                title: 'Acesso à Câmera Falhou',
+                description: 'Não foi possível iniciar a câmera.',
+            });
+        }
       }
     };
 
-    getCameraPermission();
-  }, [user, toast]);
+    if (user) { // Only attempt to get camera if user is loaded and present
+        getCameraStreamWithFallback();
+    } else if (!authLoading && !user) { // If auth is done loading and there's no user
+        setHasCameraPermission(false); // Ensure camera permission is false if no user
+    }
 
+
+    // Cleanup function for the useEffect hook
+    return () => {
+      if (streamToCleanUp) {
+        streamToCleanUp.getTracks().forEach(track => track.stop());
+        console.log('Camera stream stopped on component unmount or user/auth change.');
+      }
+      if (videoRef.current) {
+        videoRef.current.srcObject = null; // Good practice to clear srcObject
+      }
+    };
+  }, [user, authLoading, toast]); // Dependencies for useEffect
 
   const handleScan = async () => {
     if (!hasCameraPermission) {
@@ -73,12 +114,6 @@ export default function ScanOfferPage() {
     // Simulate scanning process
     await new Promise(resolve => setTimeout(resolve, 1500)); 
     
-    // Simulate a successful scan and offer redemption
-    // In a real app, you would:
-    // 1. Use a QR library to decode the video stream.
-    // 2. Send the decoded data (e.g., offerId, businessId) to your backend.
-    // 3. Backend validates the offer, checks user eligibility, records redemption.
-    // 4. Backend returns success/failure.
     const mockScannedData = {
       offerTitle: "Desconto Especial de Parceiro",
       businessName: "Restaurante Mirante da Serra",
@@ -93,8 +128,6 @@ export default function ScanOfferPage() {
       icon: <CheckCircle className="h-5 w-5 text-white" />,
     });
     setIsScanning(false);
-    // Optionally, redirect or show more details
-    // router.push('/profile'); 
   };
 
   if (authLoading || !user) {
@@ -133,7 +166,7 @@ export default function ScanOfferPage() {
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="aspect-video w-full bg-muted rounded-md overflow-hidden flex items-center justify-center border border-dashed">
-            {hasCameraPermission === null && (
+            {hasCameraPermission === null && !authLoading && user && ( // Show loading only if user is loaded and no permission status yet
               <div className="text-center text-muted-foreground p-4">
                 <Camera className="h-12 w-12 mx-auto mb-2" />
                 Solicitando permissão da câmera...
@@ -148,6 +181,12 @@ export default function ScanOfferPage() {
             {hasCameraPermission === true && (
                 // Always render video tag, srcObject will be set by useEffect
                 <video ref={videoRef} className="w-full h-full object-cover" autoPlay muted playsInline />
+            )}
+             {hasCameraPermission === null && (authLoading || !user) && ( // Placeholder for when auth is loading
+                <div className="text-center text-muted-foreground p-4">
+                    <Camera className="h-12 w-12 mx-auto mb-2 opacity-50" />
+                    Aguardando autenticação para iniciar câmera...
+                </div>
             )}
           </div>
 
@@ -171,7 +210,7 @@ export default function ScanOfferPage() {
             {isScanning ? 'Escaneando...' : (
               <>
                 <Camera className="mr-2 h-5 w-5" />
-                {hasCameraPermission === true ? "Validar QR Code (Simulado)" : "Aguardando Câmera..."}
+                {hasCameraPermission === true ? "Validar QR Code (Simulado)" : (hasCameraPermission === false ? "Câmera Indisponível" : "Aguardando Câmera...")}
               </>
             )}
           </Button>
