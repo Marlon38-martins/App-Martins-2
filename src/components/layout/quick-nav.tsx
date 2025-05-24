@@ -30,12 +30,12 @@ export function QuickNav() {
             <Link
               key={category.slug}
               href={category.slug === 'map' ? '/map' : (category.slug === '/services' ? '/services' : `/services/${category.slug}`)}
-              className="shrink-0 w-20" // Increased width from w-[72px] to w-20 (80px)
+              className="shrink-0 w-24" // Increased width
             >
-              <Card className="group h-full hover:bg-accent/10 transition-colors duration-200 shadow-sm border-transparent hover:border-primary/50">
-                <CardContent className="flex flex-col items-center justify-center p-2 text-center h-full"> {/* Increased padding from p-1.5 */}
-                  <category.Icon className="h-6 w-6 mb-1 text-primary group-hover:text-accent transition-colors" /> {/* Increased icon size and margin */}
-                  <p className="text-xs font-medium text-foreground group-hover:text-accent transition-colors leading-tight"> {/* Increased font size */}
+              <Card className="group h-24 flex flex-col hover:bg-accent/10 transition-colors duration-200 shadow-sm border-transparent hover:border-primary/50"> {/* Increased height and made flex col */}
+                <CardContent className="flex-grow flex flex-col items-center justify-center p-2 text-center"> {/* Adjusted padding and flex properties for centering */}
+                  <category.Icon className="h-6 w-6 mb-1 text-primary group-hover:text-accent transition-colors" />
+                  <p className="text-xs font-medium text-foreground group-hover:text-accent transition-colors leading-tight">
                     {category.name}
                   </p>
                 </CardContent>
@@ -47,3 +47,4 @@ export function QuickNav() {
     </section>
   );
 }
+
