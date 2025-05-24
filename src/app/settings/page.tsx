@@ -12,7 +12,7 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
-import { UserCircle, Bell, Shield, CreditCard, LogOut } from 'lucide-react';
+import { UserCircle, Bell, Shield, CreditCard, LogOut, Star } from 'lucide-react'; // Added Star
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/use-auth-client'; 
 import { mockLogout } from '@/services/gramado-businesses'; 
@@ -26,9 +26,9 @@ export default function SettingsPage() {
 
   useEffect(() => {
     if (!loading && !user) {
-      router.push('/login');
+      router.push('/login?redirect=/settings'); // Added redirect query
     } else if (user) {
-      setName(user.name || '');
+      setName(user.name || user.email?.split('@')[0] || '');
     }
   }, [user, loading, router]);
 
@@ -39,6 +39,7 @@ export default function SettingsPage() {
   const handleSignOut = async () => {
     try {
         await contextSignOutUser(); 
+        // The signOutUser in useAuth now handles redirect and toast
     } catch (error) {
         console.error("Error signing out from settings: ", error);
         toast({ title: "Erro no Logout", description: "Não foi possível fazer logout. Tente novamente.", variant: 'destructive' });
@@ -84,7 +85,7 @@ export default function SettingsPage() {
         <CardContent className="space-y-4">
           <div>
             <Label htmlFor="name">Nome</Label>
-            <Input id="name" value={name ?? ''} onChange={(e) => setName(e.target.value)} placeholder="Seu nome completo" />
+            <Input id="name" value={name} onChange={(e) => setName(e.target.value)} placeholder="Seu nome completo" />
           </div>
           <div>
             <Label htmlFor="email">Email</Label>
@@ -103,9 +104,9 @@ export default function SettingsPage() {
         <CardContent className="space-y-4">
           <div className="flex items-center justify-between">
             <Label htmlFor="promo-notifications" className="flex flex-col space-y-1">
-              <span>Ofertas e Promoções</span>
-              <span className="font-normal leading-snug text-muted-foreground">
-                Receber emails sobre novas ofertas e descontos exclusivos.
+              <span>Ofertas e Promoções Gerais</span>
+              <span className="font-normal leading-snug text-muted-foreground text-xs">
+                Receber emails sobre novas ofertas e descontos para todos os membros.
               </span>
             </Label>
             <Switch id="promo-notifications" defaultChecked />
@@ -114,11 +115,36 @@ export default function SettingsPage() {
           <div className="flex items-center justify-between">
             <Label htmlFor="news-notifications" className="flex flex-col space-y-1">
               <span>Novidades do Clube</span>
-              <span className="font-normal leading-snug text-muted-foreground">
-                Receber informações sobre novos parceiros e eventos.
+              <span className="font-normal leading-snug text-muted-foreground text-xs">
+                Receber informações sobre novos parceiros e eventos gerais.
               </span>
             </Label>
             <Switch id="news-notifications" />
+          </div>
+          <Separator />
+           <div className="pt-2">
+             <h4 className="text-md font-semibold text-accent mb-2 flex items-center">
+                <Star className="mr-2 h-5 w-5 text-yellow-400 fill-yellow-400"/> Notificações VIP
+             </h4>
+            <div className="flex items-center justify-between">
+                <Label htmlFor="vip-offer-reminders" className="flex flex-col space-y-1">
+                <span>Lembretes de Ofertas VIP Exclusivas</span>
+                <span className="font-normal leading-snug text-muted-foreground text-xs">
+                    Receber notificações sobre promoções especiais para membros VIP.
+                </span>
+                </Label>
+                <Switch id="vip-offer-reminders" defaultChecked />
+            </div>
+            <Separator className="my-4" />
+            <div className="flex items-center justify-between">
+                <Label htmlFor="vip-event-alerts" className="flex flex-col space-y-1">
+                <span>Alertas de Novos Eventos VIP</span>
+                <span className="font-normal leading-snug text-muted-foreground text-xs">
+                    Ser informado sobre eventos e experiências exclusivas para VIPs.
+                </span>
+                </Label>
+                <Switch id="vip-event-alerts" defaultChecked />
+            </div>
           </div>
         </CardContent>
       </Card>
@@ -139,7 +165,7 @@ export default function SettingsPage() {
           <CardDescription>Veja e gerencie seu plano Guia Mais.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-            <p className="text-muted-foreground">Detalhes da sua assinatura e opções de gerenciamento aparecerão aqui.</p>
+            <p className="text-muted-foreground text-sm">Detalhes da sua assinatura e opções de gerenciamento aparecerão aqui.</p>
             <Button variant="outline" asChild><Link href="/join">Ver Planos</Link></Button>
         </CardContent>
       </Card>

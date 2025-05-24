@@ -1,3 +1,4 @@
+
 // src/app/vip-area/page.tsx
 'use client';
 
@@ -8,7 +9,7 @@ import { useAuth } from '@/hooks/use-auth-client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
-import { ArrowLeft, Crown, ShieldAlert, Star } from 'lucide-react';
+import { ArrowLeft, Crown, ShieldAlert, Star, Bell } from 'lucide-react'; // Added Bell
 
 export default function VipAreaPage() {
   const { user, subscription, loading } = useAuth();
@@ -70,23 +71,24 @@ export default function VipAreaPage() {
             <Crown className="mx-auto h-16 w-16 text-accent mb-4" />
             <CardTitle className="text-3xl font-bold text-primary">Bem-vindo(a) à Área VIP!</CardTitle>
             <CardDescription className="text-lg text-accent-foreground/90">
-              {user.name || user.email}, você tem acesso exclusivo a este espaço.
+              {user.name || user.email?.split('@')[0] || 'Membro'}, você tem acesso exclusivo a este espaço.
             </CardDescription>
           </CardHeader>
           <CardContent className="text-center">
-            <p className="text-lg mb-4 text-foreground/80">
+            <p className="text-lg mb-2 text-foreground/80">
               Aqui você encontrará conteúdo e ofertas especiais disponíveis apenas para membros Serrano VIP.
             </p>
-            <p className="text-sm text-muted-foreground mb-6">
-              (Conteúdo VIP exclusivo será adicionado aqui em breve)
-            </p>
+            <div className="flex items-center justify-center text-sm text-muted-foreground mb-6 bg-secondary/10 p-2 rounded-md border border-secondary/30">
+                <Bell className="mr-2 h-4 w-4 text-accent"/>
+                <span>Fique atento! Você receberá notificações sobre ofertas e eventos exclusivos.</span>
+            </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <Card className="bg-card/80">
                     <CardHeader>
                         <CardTitle className="text-xl text-accent flex items-center"><Star className="mr-2 h-5 w-5"/>Ofertas VIP Exclusivas</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <p className="text-muted-foreground">Acesso a descontos e promoções ainda melhores.</p>
+                        <p className="text-muted-foreground text-sm">Acesso a descontos e promoções ainda melhores.</p>
                          <Button variant="link" asChild className="mt-2 text-primary"><Link href="/services">Ver Ofertas VIP</Link></Button>
                     </CardContent>
                 </Card>
@@ -95,10 +97,17 @@ export default function VipAreaPage() {
                         <CardTitle className="text-xl text-accent flex items-center"><Star className="mr-2 h-5 w-5"/>Eventos Especiais</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <p className="text-muted-foreground">Convites antecipados para eventos exclusivos.</p>
+                        <p className="text-muted-foreground text-sm">Convites antecipados para eventos exclusivos.</p>
                          <Button variant="link" className="mt-2 text-primary" disabled>Ver Eventos (Em Breve)</Button>
                     </CardContent>
                 </Card>
+            </div>
+             <div className="mt-6">
+                <Button variant="outline" asChild>
+                    <Link href="/settings">
+                        <Bell className="mr-2 h-4 w-4"/> Gerenciar Preferências de Notificação
+                    </Link>
+                </Button>
             </div>
           </CardContent>
         </Card>
