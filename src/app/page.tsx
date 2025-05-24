@@ -14,26 +14,9 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { 
     Frown, Play, Tag, Award, Sparkles, CheckCircle, MapIcon, Building, UserPlus, TicketPercent as OffersIcon,
-    UtensilsCrossed, BedDouble, ShoppingBag, Coffee, Beer, Landmark as AttractionIcon, Trees, ChevronRight,
-    Navigation
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { RankingPanel } from '@/components/ranking/RankingPanel';
-import { BusinessTypeIcon } from '@/components/icons';
-import { slugify } from '@/lib/utils';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
-
-
-const quickNavCategories = [
-  { name: 'Restaurantes', slug: slugify('Restaurante'), Icon: UtensilsCrossed },
-  { name: 'Hospedagem', slug: slugify('Hotel'), Icon: BedDouble },
-  { name: 'Bares', slug: slugify('Bar'), Icon: Beer },
-  { name: 'Cafés', slug: slugify('Café'), Icon: Coffee },
-  { name: 'Lojas', slug: slugify('Loja'), Icon: ShoppingBag }, 
-  { name: 'Lazer', slug: slugify('Atração'), Icon: AttractionIcon },
-  { name: 'Mapa', slug: 'map', Icon: MapIcon }, 
-];
-
 
 export default function HomePage() {
   const { toast } = useToast();
@@ -130,22 +113,15 @@ export default function HomePage() {
   if (isLoading) {
     return (
       <div className="space-y-12">
-        <Skeleton className="relative mb-12 h-[350px] w-full rounded-md md:h-[400px]" />
+        <Skeleton className="relative mb-12 h-[300px] w-full rounded-md md:h-[350px]" />
         
         <section className="mb-10">
           <Skeleton className="mb-4 h-8 w-1/2" />
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             {Array.from({length: 4}).map((_, i) => <Skeleton key={`qa-skel-${i}`} className="h-20 w-full rounded-md" />)}
           </div>
         </section>
-
-        <section className="mb-10">
-          <Skeleton className="mb-4 h-8 w-1/2" />
-          <div className="flex space-x-4 overflow-x-auto p-2 -m-2">
-            {Array.from({ length: 5 }).map((_, i) => <Skeleton key={`hnav-skel-${i}`} className="h-24 w-32 shrink-0 rounded-md" />)}
-          </div>
-        </section>
-
+        
         <section className="mb-12 py-10 bg-secondary/10 rounded-lg shadow-inner">
           <div className="grid md:grid-cols-2 gap-8 items-center">
             <div>
@@ -161,7 +137,7 @@ export default function HomePage() {
 
         <section className="mb-12">
           <Skeleton className="mb-6 h-9 w-1/2" />
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {Array.from({ length: 4 }).map((_, index) => (
               <div key={index} className="flex flex-col space-y-3">
                 <Skeleton className="h-[180px] w-full rounded-lg" />
@@ -198,7 +174,7 @@ export default function HomePage() {
 
         <section className="mb-12">
           <Skeleton className="mb-6 h-9 w-1/2" />
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {Array.from({ length: 3 }).map((_, index) => (
               <div key={index} className="flex flex-col space-y-3">
                 <Skeleton className="h-[180px] w-full rounded-lg" />
@@ -222,7 +198,7 @@ export default function HomePage() {
           <Skeleton className="h-10 w-full md:col-span-2 rounded-md" />
           <Skeleton className="h-10 w-full rounded-md" />
         </div>
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {Array.from({ length: 3 }).map((_, index) => (
             <div key={index} className="flex flex-col space-y-3">
               <Skeleton className="h-[180px] w-full rounded-lg" />
@@ -256,7 +232,7 @@ export default function HomePage() {
   }
 
   return (
-    <div className="space-y-12">
+    <div className="space-y-10"> {/* Adjusted main spacing */}
       <section className="relative mb-8 h-[300px] w-full overflow-hidden rounded-lg shadow-xl md:h-[350px]">
         <Image
           src="https://placehold.co/1200x800.png"
@@ -277,63 +253,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-10">
-        <Button asChild variant="outline" size="default" className="flex flex-col h-auto py-2 items-center justify-center text-sm">
-          <Link href="/services" className="flex flex-col items-center">
-            <span className="flex flex-col items-center">
-              <OffersIcon className="h-6 w-6 mb-1" />
-              Ofertas
-            </span>
-          </Link>
-        </Button>
-        <Button asChild variant="outline" size="default" className="flex flex-col h-auto py-2 items-center justify-center text-sm">
-          <Link href="/services" className="flex flex-col items-center">
-            <span className="flex flex-col items-center">
-              <Building className="h-6 w-6 mb-1" />
-              Parceiros
-            </span>
-          </Link>
-        </Button>
-        <Button asChild variant="outline" size="default" className="flex flex-col h-auto py-2 items-center justify-center text-sm">
-          <Link href="/map" className="flex flex-col items-center">
-            <span className="flex flex-col items-center">
-              <MapIcon className="h-6 w-6 mb-1" />
-              Mapa
-            </span>
-          </Link>
-        </Button>
-        <Button asChild variant="default" size="default" className="bg-accent hover:bg-accent/90 text-accent-foreground flex flex-col h-auto py-2 items-center justify-center text-sm">
-          <Link href="/join" className="flex flex-col items-center">
-            <span className="flex flex-col items-center">
-              <UserPlus className="h-6 w-6 mb-1" />
-              Assinar
-            </span>
-          </Link>
-        </Button>
-      </section>
-
-      <section className="mb-10">
-        <h2 className="mb-4 text-center text-2xl font-bold tracking-tight text-primary md:text-3xl">
-          <Navigation className="inline-block h-7 w-7 mr-2 text-accent" />
-          Navegação Rápida
-        </h2>
-        <div className="flex space-x-3 overflow-x-auto p-1 -m-1 scrollbar-thin scrollbar-thumb-muted scrollbar-track-transparent">
-          {quickNavCategories.map((category) => (
-            <Link 
-              key={category.slug} 
-              href={category.slug === 'map' ? '/map' : `/services/${category.slug}`} 
-              className="shrink-0 w-32" 
-            >
-              <Card className="group h-full hover:bg-accent/10 transition-colors duration-300 shadow-md hover:shadow-lg">
-                <CardContent className="flex flex-col items-center justify-center p-3 text-center">
-                  <category.Icon className="h-8 w-8 mb-1.5 text-primary group-hover:text-accent transition-colors" />
-                  <p className="text-sm font-medium text-foreground group-hover:text-accent transition-colors">{category.name}</p>
-                </CardContent>
-              </Card>
-            </Link>
-          ))}
-        </div>
-      </section>
+      {/* Quick Actions Bar removed as it's now global via QuickNav */}
 
       <section className="mb-10 py-8 bg-secondary/10 rounded-lg shadow-inner">
         <div className="px-4">
@@ -509,4 +429,3 @@ export default function HomePage() {
     </div>
   );
 }
-

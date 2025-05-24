@@ -18,7 +18,7 @@ import {
   HomeIcon, 
   ShoppingCart as ServicesIcon, 
   MountainSnow, 
-  MapIcon, 
+  MapIcon as MapIconSidebar, // Renamed to avoid conflict with local MapIcon
   UserPlus, 
   LayoutDashboard,
   UtensilsCrossed,
@@ -26,15 +26,16 @@ import {
   ShoppingBag,
   Coffee,
   Beer,
-  Landmark as AttractionIcon, 
+  Landmark as AttractionIconSidebar, // Renamed
   Trees,
   LayoutGrid,
   Info,
   Search as SearchIcon,
   Handshake,
-  QrCode, // Added QrCode
+  QrCode,
 } from 'lucide-react'; 
 import { Header } from '@/components/layout/header';
+import { QuickNav } from '@/components/layout/quick-nav'; // Added QuickNav import
 import { AuthProviderClient } from '@/hooks/use-auth-client'; 
 import { AuthStateInitializer } from '@/components/auth/auth-state-initializer';
 import { CurrentUserDisplay } from '@/components/auth/current-user-display';
@@ -70,7 +71,7 @@ const categoriesForMenu = [
   { name: 'Bares', slug: slugify('Bar'), Icon: Beer },
   { name: 'Cafés', slug: slugify('Café'), Icon: Coffee },
   { name: 'Lojas', slug: slugify('Comércio'), Icon: ShoppingBag }, 
-  { name: 'Lazer', slug: slugify('Atração'), Icon: AttractionIcon },
+  { name: 'Lazer', slug: slugify('Atração'), Icon: AttractionIconSidebar },
   { name: 'Parques', slug: slugify('Parque'), Icon: Trees },
 ];
 
@@ -129,7 +130,7 @@ export default function RootLayout({
                           <DropdownMenuItem key={category.slug} asChild>
                             <Link href={`/services/${category.slug}`} className="flex items-center cursor-pointer">
                               <span className="flex items-center gap-1.5">
-                                <category.Icon className="h-4 w-4" />
+                                <category.Icon className="mr-2 h-4 w-4" />
                                 {category.name}
                               </span>
                             </Link>
@@ -139,7 +140,7 @@ export default function RootLayout({
                         <DropdownMenuItem asChild>
                           <Link href="/services" className="flex items-center cursor-pointer">
                              <span className="flex items-center gap-1.5">
-                              <LayoutGrid className="h-4 w-4" />
+                              <LayoutGrid className="mr-2 h-4 w-4" />
                               Ver Todas as Categorias
                             </span>
                           </Link>
@@ -152,7 +153,7 @@ export default function RootLayout({
                     <SidebarMenuButton asChild tooltip={{content: "Mapa", side:"right"}}>
                       <Link href="/map">
                         <span className="flex items-center gap-1.5">
-                          <MapIcon />
+                          <MapIconSidebar />
                           <span className="group-data-[collapsible=icon]:hidden">Mapa</span>
                         </span>
                       </Link>
@@ -213,6 +214,7 @@ export default function RootLayout({
 
             <SidebarInset>
               <Header />
+              <QuickNav /> {/* Added QuickNav here */}
               <main className="flex-grow p-4 bg-background overflow-x-hidden w-full">
                 <div className="w-full max-w-sm mx-auto">
                   {children}
