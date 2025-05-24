@@ -18,7 +18,7 @@ import {
   HomeIcon, 
   ShoppingCart as ServicesIcon, 
   MountainSnow, 
-  MapIcon as MapIconSidebar, // Renamed to avoid conflict with local MapIcon
+  MapIcon as MapIconSidebar,
   UserPlus, 
   LayoutDashboard,
   UtensilsCrossed,
@@ -26,7 +26,7 @@ import {
   ShoppingBag,
   Coffee,
   Beer,
-  Landmark as AttractionIconSidebar, // Renamed
+  Landmark as AttractionIconSidebar,
   Trees,
   LayoutGrid,
   Info,
@@ -35,7 +35,7 @@ import {
   QrCode,
 } from 'lucide-react'; 
 import { Header } from '@/components/layout/header';
-import { QuickNav } from '@/components/layout/quick-nav'; // Added QuickNav import
+import { QuickNav } from '@/components/layout/quick-nav';
 import { AuthProviderClient } from '@/hooks/use-auth-client'; 
 import { AuthStateInitializer } from '@/components/auth/auth-state-initializer';
 import { CurrentUserDisplay } from '@/components/auth/current-user-display';
@@ -214,7 +214,7 @@ export default function RootLayout({
 
             <SidebarInset>
               <Header />
-              <QuickNav /> {/* Added QuickNav here */}
+              <QuickNav />
               <main className="flex-grow p-4 bg-background overflow-x-hidden w-full">
                 <div className="w-full max-w-sm mx-auto">
                   {children}
