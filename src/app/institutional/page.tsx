@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Building2, Info, Newspaper, Briefcase, Phone, MapPin, CalendarDays, Users, Instagram, Globe } from 'lucide-react';
+import { ArrowLeft, Building2, Info, Newspaper, Briefcase, Phone, MapPin, CalendarDays, Users, Instagram, Globe, Bell } from 'lucide-react';
 
 export default function InstitutionalPage() {
   const currentYear = new Date().getFullYear();
@@ -108,6 +108,13 @@ export default function InstitutionalPage() {
             <CardDescription>Agenda de eventos e festividades em Martins.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
+            <Alert variant="default" className="bg-purple-500/10 border-purple-500/30 mb-4">
+                <Bell className="h-5 w-5 text-purple-600" />
+                <AlertTitle className="text-purple-700">Membros VIP São Notificados!</AlertTitle>
+                <AlertDescription>
+                    Nossos membros <Link href="/vip-area" className="font-semibold underline hover:text-purple-700/80">Serrano VIP</Link> recebem notificações exclusivas sobre estes e outros eventos da cidade e de parceiros. <Link href="/settings" className="font-semibold underline hover:text-purple-700/80">Gerencie suas preferências</Link>.
+                </AlertDescription>
+            </Alert>
             <Alert variant="default" className="bg-secondary/20 border-secondary">
                 <CalendarDays className="h-5 w-5 text-secondary-foreground"/>
                 <AlertTitle className="text-secondary-foreground">Festival Gastronômico da Serra</AlertTitle>
@@ -254,5 +261,3 @@ export default function InstitutionalPage() {
     </div>
   );
 }
-
-    

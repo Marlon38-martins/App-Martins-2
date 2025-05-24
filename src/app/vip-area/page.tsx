@@ -1,4 +1,3 @@
-
 // src/app/vip-area/page.tsx
 'use client';
 
@@ -9,7 +8,7 @@ import { useAuth } from '@/hooks/use-auth-client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
-import { ArrowLeft, Crown, ShieldAlert, Star, Bell } from 'lucide-react'; // Added Bell
+import { ArrowLeft, Crown, ShieldAlert, Star, Bell, CalendarDays } from 'lucide-react'; // Added Bell and CalendarDays
 
 export default function VipAreaPage() {
   const { user, subscription, loading } = useAuth();
@@ -74,14 +73,27 @@ export default function VipAreaPage() {
               {user.name || user.email?.split('@')[0] || 'Membro'}, você tem acesso exclusivo a este espaço.
             </CardDescription>
           </CardHeader>
-          <CardContent className="text-center">
+          <CardContent className="text-center space-y-6">
             <p className="text-lg mb-2 text-foreground/80">
               Aqui você encontrará conteúdo e ofertas especiais disponíveis apenas para membros Serrano VIP.
             </p>
-            <div className="flex items-center justify-center text-sm text-muted-foreground mb-6 bg-secondary/10 p-2 rounded-md border border-secondary/30">
-                <Bell className="mr-2 h-4 w-4 text-accent"/>
-                <span>Fique atento! Você receberá notificações sobre ofertas e eventos exclusivos.</span>
-            </div>
+            
+            <Card className="bg-card/80 border-accent/30">
+                <CardHeader className="pb-2">
+                    <CardTitle className="text-xl text-accent flex items-center justify-center"><Bell className="mr-2 h-5 w-5"/>Notificações Exclusivas</CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <p className="text-muted-foreground text-sm">
+                        Como membro VIP, você recebe alertas sobre ofertas imperdíveis e os melhores eventos da cidade, tanto da prefeitura quanto de nossos parceiros.
+                    </p>
+                    <Button variant="outline" asChild size="sm" className="mt-3 text-xs">
+                        <Link href="/settings">
+                            <Bell className="mr-1.5 h-3 w-3"/> Gerenciar Preferências de Notificação
+                        </Link>
+                    </Button>
+                </CardContent>
+            </Card>
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <Card className="bg-card/80">
                     <CardHeader>
@@ -94,20 +106,13 @@ export default function VipAreaPage() {
                 </Card>
                 <Card className="bg-card/80">
                     <CardHeader>
-                        <CardTitle className="text-xl text-accent flex items-center"><Star className="mr-2 h-5 w-5"/>Eventos Especiais</CardTitle>
+                        <CardTitle className="text-xl text-accent flex items-center"><CalendarDays className="mr-2 h-5 w-5"/>Eventos da Cidade</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <p className="text-muted-foreground text-sm">Convites antecipados para eventos exclusivos.</p>
-                         <Button variant="link" className="mt-2 text-primary" disabled>Ver Eventos (Em Breve)</Button>
+                        <p className="text-muted-foreground text-sm">Convites e informações antecipadas para eventos.</p>
+                         <Button variant="link" asChild className="mt-2 text-primary"><Link href="/institutional">Ver Agenda de Eventos</Link></Button>
                     </CardContent>
                 </Card>
-            </div>
-             <div className="mt-6">
-                <Button variant="outline" asChild>
-                    <Link href="/settings">
-                        <Bell className="mr-2 h-4 w-4"/> Gerenciar Preferências de Notificação
-                    </Link>
-                </Button>
             </div>
           </CardContent>
         </Card>

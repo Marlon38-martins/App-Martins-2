@@ -1,4 +1,3 @@
-
 // src/app/settings/page.tsx
 'use client';
 
@@ -12,7 +11,7 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
-import { UserCircle, Bell, Shield, CreditCard, LogOut, Star } from 'lucide-react'; // Added Star
+import { UserCircle, Bell, Shield, CreditCard, LogOut, Star, CalendarDays } from 'lucide-react'; // Added Star and CalendarDays
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/use-auth-client'; 
 import { mockLogout } from '@/services/gramado-businesses'; 
@@ -130,7 +129,7 @@ export default function SettingsPage() {
                 <Label htmlFor="vip-offer-reminders" className="flex flex-col space-y-1">
                 <span>Lembretes de Ofertas VIP Exclusivas</span>
                 <span className="font-normal leading-snug text-muted-foreground text-xs">
-                    Receber notificações sobre promoções especiais para membros VIP.
+                    Receber notificações sobre promoções especiais e ofertas de parceiros para membros VIP.
                 </span>
                 </Label>
                 <Switch id="vip-offer-reminders" defaultChecked />
@@ -138,10 +137,10 @@ export default function SettingsPage() {
             <Separator className="my-4" />
             <div className="flex items-center justify-between">
                 <Label htmlFor="vip-event-alerts" className="flex flex-col space-y-1">
-                <span>Alertas de Novos Eventos VIP</span>
-                <span className="font-normal leading-snug text-muted-foreground text-xs">
-                    Ser informado sobre eventos e experiências exclusivas para VIPs.
-                </span>
+                  <span className="flex items-center"><CalendarDays className="mr-1.5 h-4 w-4 text-muted-foreground" /> Alertas de Novos Eventos</span>
+                  <span className="font-normal leading-snug text-muted-foreground text-xs">
+                      Ser informado sobre eventos municipais, de parceiros e outras experiências exclusivas para VIPs.
+                  </span>
                 </Label>
                 <Switch id="vip-event-alerts" defaultChecked />
             </div>
