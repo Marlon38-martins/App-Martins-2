@@ -2,7 +2,7 @@
 // src/app/partner/register/page.tsx
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react'; // Added useEffect
 import { useForm, type SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -18,7 +18,7 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
 import type { LucideIconName } from '@/services/gramado-businesses';
-import { ArrowLeft, Building, PlusCircle, Tag, Send } from 'lucide-react';
+import { ArrowLeft, Building, PlusCircle, Tag, Send, UserPlus as ContactIcon } from 'lucide-react'; // Changed UserPlus to ContactIcon alias
 
 const iconNames: LucideIconName[] = [
   'UtensilsCrossed', 
@@ -70,6 +70,10 @@ export default function PartnerRegisterPage() {
   const { toast } = useToast();
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    document.title = "Solicitação de Parceria - Guia Mais";
+  }, []);
 
   const form = useForm<PartnerRegistrationFormValues>({
     resolver: zodResolver(partnerRegistrationFormSchema),
@@ -123,8 +127,8 @@ export default function PartnerRegisterPage() {
       </Button>
 
       <section className="mb-8">
-        <h2 className="mb-2 text-3xl font-bold tracking-tight text-primary md:text-4xl">
-          Formulário de Solicitação de Parceria
+        <h2 className="mb-2 text-2xl font-bold tracking-tight text-primary md:text-3xl">
+          Formulário de Solicitação de Parceria Guia Mais
         </h2>
         <p className="text-lg text-foreground/80">
           Preencha os dados abaixo para iniciar o processo de parceria com o Guia Mais.
@@ -143,46 +147,46 @@ export default function PartnerRegisterPage() {
                 Informações que aparecerão no aplicativo para os usuários.
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <FormField control={form.control} name="name" render={({ field }) => ( <FormItem> <FormLabel>Nome do Estabelecimento *</FormLabel> <FormControl> <Input placeholder="Ex: Pousada Vista Linda" {...field} value={field.value ?? ''} /> </FormControl> <FormMessage /> </FormItem> )} />
                 <FormField control={form.control} name="type" render={({ field }) => ( <FormItem> <FormLabel>Tipo de Estabelecimento *</FormLabel> <FormControl> <Input placeholder="Ex: Hotel, Restaurante" {...field} value={field.value ?? ''} /> </FormControl> <FormMessage /> </FormItem> )} />
               </div>
               <FormField control={form.control} name="shortDescription" render={({ field }) => ( <FormItem> <FormLabel>Descrição Curta (para cards) *</FormLabel> <FormControl> <Input placeholder="Uma breve descrição (até 150 caracteres)" {...field} value={field.value ?? ''} /> </FormControl> <FormMessage /> </FormItem> )} />
-              <FormField control={form.control} name="fullDescription" render={({ field }) => ( <FormItem> <FormLabel>Descrição Completa *</FormLabel> <FormControl> <Textarea placeholder="Descreva detalhadamente o estabelecimento..." {...field} value={field.value ?? ''} rows={4}/> </FormControl> <FormMessage /> </FormItem> )} />
+              <FormField control={form.control} name="fullDescription" render={({ field }) => ( <FormItem> <FormLabel>Descrição Completa *</FormLabel> <FormControl> <Textarea placeholder="Descreva detalhadamente o estabelecimento..." {...field} value={field.value ?? ''} rows={3}/> </FormControl> <FormMessage /> </FormItem> )} />
               <FormField control={form.control} name="address" render={({ field }) => ( <FormItem> <FormLabel>Endereço Completo *</FormLabel> <FormControl> <Input placeholder="Rua, Número, Bairro, Cidade - Estado, CEP" {...field} value={field.value ?? ''} /> </FormControl> <FormMessage /> </FormItem> )} />
-              <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <FormField control={form.control} name="phoneNumber" render={({ field }) => ( <FormItem> <FormLabel>Telefone do Estabelecimento</FormLabel> <FormControl> <Input type="tel" placeholder="(XX) XXXXX-XXXX" {...field} value={field.value ?? ''} /> </FormControl> <FormMessage /> </FormItem> )} />
                 <FormField control={form.control} name="website" render={({ field }) => ( <FormItem> <FormLabel>Website</FormLabel> <FormControl> <Input type="url" placeholder="https://www.exemplo.com.br" {...field} value={field.value ?? ''} /> </FormControl> <FormMessage /> </FormItem> )} />
               </div>
-              <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <FormField control={form.control} name="latitude" render={({ field }) => ( <FormItem> <FormLabel>Latitude *</FormLabel> <FormControl> <Input type="number" step="any" placeholder="-6.0869" {...field} value={field.value ?? ''} /> </FormControl> <FormMessage /> </FormItem> )} />
                 <FormField control={form.control} name="longitude" render={({ field }) => ( <FormItem> <FormLabel>Longitude *</FormLabel> <FormControl> <Input type="number" step="any" placeholder="-37.9119" {...field} value={field.value ?? ''} /> </FormControl> <FormMessage /> </FormItem> )} />
               </div>
-              <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <FormField control={form.control} name="imageUrl" render={({ field }) => ( <FormItem> <FormLabel>URL da Imagem Principal *</FormLabel> <FormControl> <Input placeholder="https://placehold.co/seed/seu-nome/600/400" {...field} value={field.value ?? ''} /> </FormControl> <FormMessage /> </FormItem> )} />
-                <FormField control={form.control} name="icon" render={({ field }) => ( <FormItem> <FormLabel>Ícone representativo *</FormLabel> <Select onValueChange={field.onChange} defaultValue={field.value}> <FormControl> <SelectTrigger> <SelectValue placeholder="Selecione um ícone" /> </SelectTrigger> </FormControl> <SelectContent> {iconNames.map(iconName => ( <SelectItem key={iconName} value={iconName}>{iconName}</SelectItem> ))} </SelectContent> </Select> <FormMessage /> </FormItem> )} />
+                <FormField control={form.control} name="icon" render={({ field }) => ( <FormItem> <FormLabel>Ícone representativo *</FormLabel> <Select onValueChange={field.onChange} value={field.value ?? undefined}> <FormControl> <SelectTrigger> <SelectValue placeholder="Selecione um ícone" /> </SelectTrigger> </FormControl> <SelectContent> {iconNames.map(iconName => ( <SelectItem key={iconName} value={iconName}>{iconName}</SelectItem> ))} </SelectContent> </Select> <FormMessage /> </FormItem> )} />
               </div>
             </CardContent>
 
-            <CardHeader className="mt-4">
+            <CardHeader className="mt-3">
               <CardTitle className="flex items-center text-xl text-primary">
-                <UserPlus className="mr-3 h-7 w-7 text-accent" />
-                Dados do Responsável
+                <ContactIcon className="mr-3 h-7 w-7 text-accent" />
+                Dados do Responsável pela Parceria
               </CardTitle>
               <CardDescription>
                 Informações para entrarmos em contato sobre a parceria.
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-6">
+            <CardContent className="space-y-4">
                 <FormField control={form.control} name="contactName" render={({ field }) => ( <FormItem> <FormLabel>Nome do Responsável *</FormLabel> <FormControl> <Input placeholder="Seu nome completo" {...field} value={field.value ?? ''} /> </FormControl> <FormMessage /> </FormItem> )} />
-              <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <FormField control={form.control} name="contactEmail" render={({ field }) => ( <FormItem> <FormLabel>Email do Responsável *</FormLabel> <FormControl> <Input type="email" placeholder="seu_email@dominio.com" {...field} value={field.value ?? ''} /> </FormControl> <FormMessage /> </FormItem> )} />
                 <FormField control={form.control} name="contactPhone" render={({ field }) => ( <FormItem> <FormLabel>Telefone do Responsável *</FormLabel> <FormControl> <Input type="tel" placeholder="(XX) XXXXX-XXXX" {...field} value={field.value ?? ''} /> </FormControl> <FormMessage /> </FormItem> )} />
               </div>
             </CardContent>
 
-            <CardHeader className="mt-4">
+            <CardHeader className="mt-3">
               <CardTitle className="flex items-center text-xl text-primary">
                 <Tag className="mr-3 h-7 w-7 text-accent" />
                 Oferta Inicial (Opcional)
@@ -191,14 +195,14 @@ export default function PartnerRegisterPage() {
                 Deseja cadastrar uma oferta de boas-vindas para os membros Guia Mais?
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4 rounded-md border border-dashed p-4">
-              <FormField control={form.control} name="hasDefaultOffer" render={({ field }) => ( <FormItem className="flex flex-row items-start space-x-3 space-y-0"> <FormControl> <Checkbox checked={field.value} onCheckedChange={field.onChange} id="hasDefaultOffer" /> </FormControl> <div className="space-y-1 leading-none"> <FormLabel htmlFor="hasDefaultOffer" className="cursor-pointer"> Sim, quero adicionar uma oferta inicial. </FormLabel> </div> </FormItem> )} />
+            <CardContent className="space-y-3 rounded-md border border-dashed p-3">
+              <FormField control={form.control} name="hasDefaultOffer" render={({ field }) => ( <FormItem className="flex flex-row items-start space-x-2 space-y-0"> <FormControl> <Checkbox checked={field.value} onCheckedChange={field.onChange} id="hasDefaultOffer" /> </FormControl> <div className="space-y-0.5 leading-none"> <FormLabel htmlFor="hasDefaultOffer" className="cursor-pointer text-sm"> Sim, quero adicionar uma oferta inicial. </FormLabel> </div> </FormItem> )} />
               {watchHasDefaultOffer && (
-                <div className="ml-8 space-y-6 border-l border-accent pl-6 pt-2">
+                <div className="ml-6 space-y-4 border-l border-accent pl-4 pt-1">
                   <FormField control={form.control} name="defaultOfferTitle" render={({ field }) => ( <FormItem> <FormLabel>Título da Oferta Inicial *</FormLabel> <FormControl> <Input placeholder="Ex: Prato Principal em Dobro" {...field} value={field.value ?? ''} /> </FormControl> <FormMessage /> </FormItem> )} />
-                  <FormField control={form.control} name="defaultOfferDescription" render={({ field }) => ( <FormItem> <FormLabel>Descrição da Oferta Inicial *</FormLabel> <FormControl> <Textarea placeholder="Descreva a oferta..." {...field} value={field.value ?? ''} /> </FormControl> <FormMessage /> </FormItem> )} />
-                  <FormField control={form.control} name="defaultOfferIsPay1Get2" render={({ field }) => ( <FormItem className="flex flex-row items-center space-x-3 space-y-0"> <FormControl> <Checkbox checked={field.value} onCheckedChange={field.onChange} id="defaultOfferIsPay1Get2" /> </FormControl> <FormLabel htmlFor="defaultOfferIsPay1Get2" className="cursor-pointer font-normal"> Esta é uma oferta "Pague 1 Leve 2"? </FormLabel> </FormItem> )} />
-                  <FormField control={form.control} name="defaultOfferTerms" render={({ field }) => ( <FormItem> <FormLabel>Termos e Condições da Oferta Inicial *</FormLabel> <FormControl> <Textarea placeholder="Ex: Válido de segunda a quinta..." {...field} value={field.value ?? ''} /> </FormControl> <FormMessage /> </FormItem> )} />
+                  <FormField control={form.control} name="defaultOfferDescription" render={({ field }) => ( <FormItem> <FormLabel>Descrição da Oferta Inicial *</FormLabel> <FormControl> <Textarea placeholder="Descreva a oferta..." {...field} value={field.value ?? ''} rows={2}/> </FormControl> <FormMessage /> </FormItem> )} />
+                  <FormField control={form.control} name="defaultOfferIsPay1Get2" render={({ field }) => ( <FormItem className="flex flex-row items-center space-x-2 space-y-0"> <FormControl> <Checkbox checked={field.value} onCheckedChange={field.onChange} id="defaultOfferIsPay1Get2" /> </FormControl> <FormLabel htmlFor="defaultOfferIsPay1Get2" className="cursor-pointer font-normal text-sm"> Esta é uma oferta "Pague 1 Leve 2"? </FormLabel> </FormItem> )} />
+                  <FormField control={form.control} name="defaultOfferTerms" render={({ field }) => ( <FormItem> <FormLabel>Termos e Condições da Oferta Inicial *</FormLabel> <FormControl> <Textarea placeholder="Ex: Válido de segunda a quinta..." {...field} value={field.value ?? ''} rows={2}/> </FormControl> <FormMessage /> </FormItem> )} />
                 </div>
               )}
             </CardContent>
@@ -215,3 +219,4 @@ export default function PartnerRegisterPage() {
     </div>
   );
 }
+
