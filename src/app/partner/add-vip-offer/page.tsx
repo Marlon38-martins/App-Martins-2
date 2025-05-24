@@ -292,6 +292,9 @@ export default function AddVipOfferPage() {
                           <SelectItem value="p1g2">Benefício Especial VIP (Ex: Pague 1 Leve 2)</SelectItem>
                         </SelectContent>
                       </Select>
+                      <FormDescription className="text-xs">
+                        Defina as condições especiais desta oferta VIP nos campos 'Descrição' e 'Termos e Condições'.
+                      </FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -400,5 +403,7 @@ export default function AddVipOfferPage() {
     </div>
   );
 }
+
+    
 
     
