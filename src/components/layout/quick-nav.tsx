@@ -1,3 +1,4 @@
+
 // src/components/layout/quick-nav.tsx
 'use client';
 
@@ -15,7 +16,7 @@ const quickNavCategories = [
   { name: 'Cafés', slug: slugify('Café'), Icon: Coffee },
   { name: 'Lojas', slug: slugify('Comércio'), Icon: ShoppingBag },
   { name: 'Lazer', slug: slugify('Atração'), Icon: AttractionIcon },
-  { name: 'Ofertas', slug: '/services', Icon: TicketPercent },
+  { name: 'Ofertas', slug: '/services', Icon: TicketPercent }, // Link to all services/deals page
   { name: 'Mapa', slug: 'map', Icon: MapIcon },
 ];
 
@@ -29,12 +30,12 @@ export function QuickNav() {
             <Link
               key={category.slug}
               href={category.slug === 'map' ? '/map' : (category.slug === '/services' ? '/services' : `/services/${category.slug}`)}
-              className="shrink-0 w-[72px]" // Compact width for each item
+              className="shrink-0 w-20" // Increased width from w-[72px] to w-20 (80px)
             >
               <Card className="group h-full hover:bg-accent/10 transition-colors duration-200 shadow-sm border-transparent hover:border-primary/50">
-                <CardContent className="flex flex-col items-center justify-center p-1.5 text-center h-full">
-                  <category.Icon className="h-5 w-5 mb-0.5 text-primary group-hover:text-accent transition-colors" />
-                  <p className="text-[10px] font-medium text-foreground group-hover:text-accent transition-colors leading-tight tracking-tighter">
+                <CardContent className="flex flex-col items-center justify-center p-2 text-center h-full"> {/* Increased padding from p-1.5 */}
+                  <category.Icon className="h-6 w-6 mb-1 text-primary group-hover:text-accent transition-colors" /> {/* Increased icon size and margin */}
+                  <p className="text-xs font-medium text-foreground group-hover:text-accent transition-colors leading-tight"> {/* Increased font size */}
                     {category.name}
                   </p>
                 </CardContent>
