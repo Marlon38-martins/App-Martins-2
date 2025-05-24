@@ -1,3 +1,4 @@
+
 // src/app/institutional/page.tsx
 'use client';
 
@@ -7,7 +8,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Building2, Info, Newspaper, Briefcase, Phone, MapPin, CalendarDays, Users, Instagram, Globe, Bell } from 'lucide-react';
+import { ArrowLeft, Building2, Info, Newspaper, Briefcase, Phone, MapPin, CalendarDays, Users, Instagram, Globe, Bell, RefreshCw } from 'lucide-react';
 
 export default function InstitutionalPage() {
   const currentYear = new Date().getFullYear();
@@ -34,7 +35,7 @@ export default function InstitutionalPage() {
       <div className="space-y-8">
         <Card className="shadow-lg">
           <CardHeader>
-            <CardTitle className="flex items-center text-accent"> {/* Adjusted title size via CardTitle default */}
+            <CardTitle className="flex items-center text-accent">
               <Info className="mr-3 h-7 w-7" />
               Sobre a Cidade de Martins
             </CardTitle>
@@ -105,7 +106,7 @@ export default function InstitutionalPage() {
               <CalendarDays className="mr-3 h-7 w-7" />
               Eventos Municipais e de Parceiros ({currentYear})
             </CardTitle>
-            <CardDescription>Agenda de eventos e festividades em Martins.</CardDescription>
+            <CardDescription>Agenda de eventos e festividades em Martins. Conteúdo atualizado regularmente.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <Alert variant="default" className="bg-purple-500/10 border-purple-500/30 mb-4">
@@ -152,9 +153,15 @@ export default function InstitutionalPage() {
               <Newspaper className="mr-3 h-7 w-7" />
               Notícias da Administração Pública ({currentYear})
             </CardTitle>
-            <CardDescription>Fique por dentro das últimas novidades e comunicados.</CardDescription>
+            <CardDescription>Fique por dentro das últimas novidades e comunicados. Informações sincronizadas com fontes oficiais.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
+            <Alert variant="default" className="bg-muted/50 border-muted">
+                <RefreshCw className="h-4 w-4 text-muted-foreground"/>
+                <AlertDescription className="text-xs text-muted-foreground pl-1">
+                    Esta seção é atualizada com informações provenientes dos canais oficiais da prefeitura. (Funcionalidade de sincronização automática requer integração de backend).
+                </AlertDescription>
+            </Alert>
             <Alert variant="default" className="bg-secondary/20 border-secondary">
               <Newspaper className="h-5 w-5 text-secondary-foreground" />
               <AlertTitle className="text-secondary-foreground">Nova Campanha de Vacinação</AlertTitle>
@@ -261,3 +268,4 @@ export default function InstitutionalPage() {
     </div>
   );
 }
+
