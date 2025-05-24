@@ -1,3 +1,4 @@
+
 // src/app/page.tsx
 'use client';
 
@@ -12,11 +13,26 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card'; // Added Card for QuickNav items
 import { 
     Frown, Play, Tag, Award, Sparkles, CheckCircle, MapIcon, Building, UserPlus, TicketPercent as OffersIcon,
+    UtensilsCrossed, BedDouble, Beer, Coffee, ShoppingBag, Landmark as AttractionIcon,
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { RankingPanel } from '@/components/ranking/RankingPanel';
+import { slugify } from '@/lib/utils';
+
+const quickNavCategories = [
+  { name: 'Restaurantes', slug: slugify('Restaurante'), Icon: UtensilsCrossed },
+  { name: 'Hospedagem', slug: slugify('Hotel'), Icon: BedDouble },
+  { name: 'Bares', slug: slugify('Bar'), Icon: Beer },
+  { name: 'Cafés', slug: slugify('Café'), Icon: Coffee },
+  { name: 'Lojas', slug: slugify('Comércio'), Icon: ShoppingBag },
+  { name: 'Lazer', slug: slugify('Atração'), Icon: AttractionIcon },
+  { name: 'Ofertas', slug: '/services', Icon: OffersIcon },
+  { name: 'Mapa', slug: 'map', Icon: MapIcon },
+];
+
 
 export default function HomePage() {
   const { toast } = useToast();
@@ -112,58 +128,60 @@ export default function HomePage() {
 
   if (isLoading) {
     return (
-      <div className="space-y-12">
-        <Skeleton className="relative mb-12 h-[300px] w-full rounded-md md:h-[350px]" />
+      <div className="space-y-8">
+        <Skeleton className="relative mb-8 h-[300px] w-full rounded-md md:h-[350px]" />
         
-        <section className="mb-10">
-          <Skeleton className="mb-4 h-8 w-1/2" />
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            {Array.from({length: 4}).map((_, i) => <Skeleton key={`qa-skel-${i}`} className="h-20 w-full rounded-md" />)}
+        <section className="mb-8">
+          <Skeleton className="mb-3 h-6 w-1/2" />
+          <div className="flex space-x-3 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-muted scrollbar-track-transparent -mx-1 px-1">
+            {Array.from({length: 5}).map((_, i) => (
+              <Skeleton key={`qnav-skel-${i}`} className="h-20 w-24 shrink-0 rounded-md" />
+            ))}
           </div>
         </section>
         
-        <section className="mb-12 py-10 bg-secondary/10 rounded-lg shadow-inner">
-          <div className="grid md:grid-cols-2 gap-8 items-center">
-            <div>
-              <Skeleton className="h-8 w-3/4 mb-3" />
-              <Skeleton className="h-5 w-full mb-2" />
-              <Skeleton className="h-5 w-full mb-2" />
-              <Skeleton className="h-5 w-5/6 mb-4" />
-              <Skeleton className="h-10 w-40 rounded-md" />
+        <section className="mb-8 py-6 bg-secondary/10 rounded-lg shadow-inner">
+          <div className="px-4">
+            <div className="grid md:grid-cols-2 gap-4 items-center">
+              <div>
+                <Skeleton className="h-8 w-3/4 mb-3" />
+                <Skeleton className="h-4 w-full mb-1.5" />
+                <Skeleton className="h-4 w-full mb-1.5" />
+                <Skeleton className="h-4 w-5/6 mb-3" />
+                <Skeleton className="h-9 w-36 rounded-md" />
+              </div>
+              <Skeleton className="aspect-square w-full max-w-[280px] mx-auto rounded-lg" />
             </div>
-            <Skeleton className="aspect-square w-full max-w-xs mx-auto rounded-lg" />
           </div>
         </section>
 
-        <section className="mb-12">
-          <Skeleton className="mb-6 h-9 w-1/2" />
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {Array.from({ length: 4 }).map((_, index) => (
-              <div key={index} className="flex flex-col space-y-3">
-                <Skeleton className="h-[180px] w-full rounded-lg" />
-                <div className="space-y-2">
-                  <Skeleton className="h-5 w-full" />
-                  <Skeleton className="h-4 w-3/4" />
-                  <Skeleton className="h-9 w-full" />
-                </div>
+        <section className="mb-8">
+          <Skeleton className="mb-4 h-8 w-1/2" />
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            {Array.from({ length: 2 }).map((_, index) => (
+              <div key={`fd-skel-${index}`} className="flex flex-col space-y-2">
+                <Skeleton className="h-[160px] w-full rounded-lg" />
+                <Skeleton className="h-4 w-3/4" />
+                <Skeleton className="h-4 w-1/2" />
+                <Skeleton className="h-9 w-full" />
               </div>
             ))}
           </div>
         </section>
 
-        <section className="mb-12">
-          <Skeleton className="mb-6 h-9 w-1/2" />
-           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {Array.from({ length: 3 }).map((_, index) => (
-              <div key={`rank-skeleton-${index}`} className="space-y-3 p-4 border rounded-lg">
-                <Skeleton className="h-6 w-1/2 mb-3" />
+        <section className="mb-8">
+          <Skeleton className="mb-4 h-8 w-1/2" />
+           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {Array.from({ length: 2 }).map((_, index) => (
+              <div key={`rank-skeleton-${index}`} className="space-y-2 p-3 border rounded-lg">
+                <Skeleton className="h-5 w-1/2 mb-2" />
                 {Array.from({ length: 2 }).map((_, itemIndex) => (
-                  <div key={`rank-item-skeleton-${itemIndex}`} className="flex items-start space-x-3 py-3 border-b last:border-none">
-                    <Skeleton className="h-16 w-16 rounded-md shrink-0" />
-                    <div className="flex-1 space-y-2">
-                      <Skeleton className="h-5 w-3/4" />
-                      <Skeleton className="h-4 w-1/2" />
-                      <Skeleton className="h-4 w-1/4" />
+                  <div key={`rank-item-skeleton-${itemIndex}`} className="flex items-start space-x-2 py-2 border-b last:border-none">
+                    <Skeleton className="h-12 w-12 rounded-md shrink-0" />
+                    <div className="flex-1 space-y-1.5">
+                      <Skeleton className="h-4 w-3/4" />
+                      <Skeleton className="h-3 w-1/2" />
+                      <Skeleton className="h-3 w-1/4" />
                     </div>
                   </div>
                 ))}
@@ -172,41 +190,37 @@ export default function HomePage() {
           </div>
         </section>
 
-        <section className="mb-12">
-          <Skeleton className="mb-6 h-9 w-1/2" />
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {Array.from({ length: 3 }).map((_, index) => (
-              <div key={index} className="flex flex-col space-y-3">
-                <Skeleton className="h-[180px] w-full rounded-lg" />
-                <div className="space-y-2">
-                  <Skeleton className="h-5 w-3/4" />
-                  <Skeleton className="h-4 w-1/2" />
-                </div>
+        <section className="mb-8">
+          <Skeleton className="mb-4 h-8 w-1/2" />
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            {Array.from({ length: 2 }).map((_, index) => (
+              <div key={`ts-skel-${index}`} className="flex flex-col space-y-2">
+                <Skeleton className="h-[160px] w-full rounded-lg" />
+                <Skeleton className="h-4 w-3/4" />
+                <Skeleton className="h-4 w-1/2" />
               </div>
             ))}
           </div>
         </section>
 
-        <section className="mb-12">
-          <Skeleton className="mb-6 h-9 w-1/2" />
-          <Skeleton className="aspect-video w-full max-w-xl mx-auto rounded-lg" />
+        <section className="mb-8">
+          <Skeleton className="mb-4 h-8 w-1/2" />
+          <Skeleton className="aspect-video w-full max-w-lg mx-auto rounded-lg" />
         </section>
 
-        <Skeleton className="mb-3 h-9 w-1/2" />
-        <Skeleton className="mb-6 h-6 w-full" />
-        <div className="mb-8 grid grid-cols-1 gap-4 md:grid-cols-3">
-          <Skeleton className="h-10 w-full md:col-span-2 rounded-md" />
-          <Skeleton className="h-10 w-full rounded-md" />
+        <Skeleton className="mb-2 h-8 w-1/2" />
+        <Skeleton className="mb-4 h-5 w-full" />
+        <div className="mb-6 grid grid-cols-1 gap-3">
+          <Skeleton className="h-9 w-full rounded-md" />
+          <Skeleton className="h-9 w-full rounded-md" />
         </div>
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {Array.from({ length: 3 }).map((_, index) => (
-            <div key={index} className="flex flex-col space-y-3">
-              <Skeleton className="h-[180px] w-full rounded-lg" />
-              <div className="space-y-2">
-                <Skeleton className="h-5 w-3/4" />
-                <Skeleton className="h-4 w-1/2" />
-                <Skeleton className="h-9 w-full" />
-              </div>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          {Array.from({ length: 2 }).map((_, index) => (
+            <div key={`flb-skel-${index}`} className="flex flex-col space-y-2">
+              <Skeleton className="h-[160px] w-full rounded-lg" />
+              <Skeleton className="h-4 w-3/4" />
+              <Skeleton className="h-4 w-1/2" />
+              <Skeleton className="h-9 w-full" />
             </div>
           ))}
         </div>
@@ -232,7 +246,7 @@ export default function HomePage() {
   }
 
   return (
-    <div className="space-y-10"> {/* Adjusted main spacing */}
+    <div className="space-y-8"> {/* Main spacing for sections */}
       <section className="relative mb-8 h-[300px] w-full overflow-hidden rounded-lg shadow-xl md:h-[350px]">
         <Image
           src="https://placehold.co/1200x800.png"
@@ -253,32 +267,52 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Quick Actions Bar removed as it's now global via QuickNav */}
+      <section className="mb-8">
+        <h2 className="mb-3 text-xl font-semibold text-primary">Explore por Categoria</h2>
+        <div className="flex space-x-3 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-muted scrollbar-track-transparent -mx-1 px-1">
+          {quickNavCategories.map((category) => (
+            <Link
+              key={category.slug}
+              href={category.slug === 'map' ? '/map' : (category.slug === '/services' ? '/services' : `/services/${category.slug}`)}
+              className="shrink-0 w-24"
+            >
+              <Card className="group h-24 flex flex-col hover:bg-accent/10 transition-colors duration-200 shadow-sm border-transparent hover:border-primary/50">
+                <CardContent className="flex-grow flex flex-col items-center justify-center p-2 text-center">
+                  <category.Icon className="h-6 w-6 mb-1 text-primary group-hover:text-accent transition-colors" />
+                  <p className="text-xs font-medium text-foreground group-hover:text-accent transition-colors leading-tight">
+                    {category.name}
+                  </p>
+                </CardContent>
+              </Card>
+            </Link>
+          ))}
+        </div>
+      </section>
 
-      <section className="mb-10 py-8 bg-secondary/10 rounded-lg shadow-inner">
+      <section className="mb-8 py-6 bg-secondary/10 rounded-lg shadow-inner">
         <div className="px-4">
-          <div className="grid md:grid-cols-2 gap-6 items-center">
+          <div className="grid md:grid-cols-2 gap-4 items-center">
             <div className="text-center md:text-left">
-              <Sparkles className="h-10 w-10 text-primary mb-3 mx-auto md:mx-0" />
-              <h2 className="text-2xl font-bold tracking-tight text-primary md:text-3xl mb-3">
+              <Sparkles className="h-8 w-8 text-primary mb-2 mx-auto md:mx-0" />
+              <h2 className="text-xl font-bold tracking-tight text-primary md:text-2xl mb-2">
                 Seja um Membro Guia Mais Premium
               </h2>
-              <p className="text-md text-foreground/80 mb-4">
+              <p className="text-sm text-foreground/80 mb-3">
                 Desbloqueie um mundo de vantagens e experiências exclusivas em Martins.
               </p>
-              <ul className="space-y-1.5 text-left mb-6 text-foreground/70 text-sm">
-                <li className="flex items-center"><CheckCircle className="h-4 w-4 text-green-500 mr-2" /> Descontos incríveis em restaurantes, hotéis e lojas.</li>
-                <li className="flex items-center"><CheckCircle className="h-4 w-4 text-green-500 mr-2" /> Roteiros personalizados e acesso offline no app.</li>
-                <li className="flex items-center"><CheckCircle className="h-4 w-4 text-green-500 mr-2" /> Recompensas exclusivas por apoiar o comércio local.</li>
+              <ul className="space-y-1 text-left mb-4 text-foreground/70 text-xs">
+                <li className="flex items-center"><CheckCircle className="h-3.5 w-3.5 text-green-500 mr-1.5" /> Descontos incríveis em restaurantes, hotéis e lojas.</li>
+                <li className="flex items-center"><CheckCircle className="h-3.5 w-3.5 text-green-500 mr-1.5" /> Roteiros personalizados e acesso offline no app.</li>
+                <li className="flex items-center"><CheckCircle className="h-3.5 w-3.5 text-green-500 mr-1.5" /> Recompensas exclusivas por apoiar o comércio local.</li>
               </ul>
-              <Button asChild size="default" className="bg-accent hover:bg-accent/90 text-accent-foreground">
+              <Button asChild size="sm" className="bg-accent hover:bg-accent/90 text-accent-foreground">
                 <Link href="/join">Conheça os Planos Premium</Link>
               </Button>
-              <p className="mt-3 text-sm text-muted-foreground">
+              <p className="mt-2 text-xs text-muted-foreground">
                 💚 Sua assinatura contribui para valorizar e fortalecer o turismo e comércio local!
               </p>
             </div>
-            <div className="relative aspect-square max-w-xs mx-auto w-full overflow-hidden rounded-lg shadow-xl">
+            <div className="relative aspect-square max-w-[280px] mx-auto w-full overflow-hidden rounded-lg shadow-xl">
                 <Image
                     src="https://placehold.co/400x400.png" 
                     alt="Membro Guia Mais aproveitando a cidade"
@@ -292,15 +326,15 @@ export default function HomePage() {
       </section>
 
       {featuredDeals.length > 0 && (
-        <section className="mb-10">
-          <h2 className="mb-3 text-center text-2xl font-bold tracking-tight text-primary md:text-3xl">
+        <section className="mb-8">
+          <h2 className="mb-3 text-center text-xl font-bold tracking-tight text-primary md:text-2xl">
             Ofertas em Destaque
           </h2>
-          <p className="mb-6 text-center text-md text-foreground/80">
+          <p className="mb-4 text-center text-sm text-foreground/80">
             Benefícios exclusivos para membros do nosso clube!
           </p>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            {featuredDeals.map(deal => {
+            {featuredDeals.slice(0,2).map(deal => { // Show fewer deals for compactness
               const businessForDeal = businesses.find(b => b.id === deal.businessId);
               return <DealCard key={deal.id} deal={deal} business={businessForDeal} />;
             })}
@@ -309,36 +343,36 @@ export default function HomePage() {
       )}
 
        {Object.keys(rankedBusinessesByCategory).length > 0 && (
-        <section className="mb-10">
-          <h2 className="mb-3 text-center text-2xl font-bold tracking-tight text-primary md:text-3xl">
-            <Award className="inline-block h-7 w-7 mr-2 text-accent" />
+        <section className="mb-8">
+          <h2 className="mb-3 text-center text-xl font-bold tracking-tight text-primary md:text-2xl">
+            <Award className="inline-block h-6 w-6 mr-1.5 text-accent" />
             Top Avaliados
           </h2>
-          <p className="mb-6 text-center text-md text-foreground/80">
-            Os locais mais bem avaliados pelos nossos exploradores!
+          <p className="mb-4 text-center text-sm text-foreground/80">
+            Os locais mais bem avaliados!
           </p>
           <RankingPanel rankedBusinessesByCategory={rankedBusinessesByCategory} />
         </section>
       )}
 
       {touristSpots.length > 0 && (
-        <section className="mb-10">
-          <h2 className="mb-4 text-center text-2xl font-bold tracking-tight text-primary md:text-3xl">
+        <section className="mb-8">
+          <h2 className="mb-3 text-center text-xl font-bold tracking-tight text-primary md:text-2xl">
             Pontos Turísticos
           </h2>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            {touristSpots.map(spot => (
+            {touristSpots.slice(0,2).map(spot => ( // Show fewer spots
               <BusinessCard key={spot.id} business={spot} />
             ))}
           </div>
         </section>
       )}
 
-      <section className="mb-10">
-        <h2 className="mb-4 text-center text-2xl font-bold tracking-tight text-primary md:text-3xl">
+      <section className="mb-8">
+        <h2 className="mb-3 text-center text-xl font-bold tracking-tight text-primary md:text-2xl">
           Descubra Martins
         </h2>
-        <div className="aspect-video w-full max-w-xl mx-auto overflow-hidden rounded-lg shadow-xl bg-muted border border-border">
+        <div className="aspect-video w-full max-w-lg mx-auto overflow-hidden rounded-lg shadow-xl bg-muted border border-border">
           <div className="relative h-full w-full">
             <Image
               src="https://placehold.co/1024x576.png"
@@ -350,31 +384,31 @@ export default function HomePage() {
             <div className="absolute inset-0 flex items-center justify-center bg-black/40 transition-opacity hover:opacity-75">
               <button
                 aria-label="Assistir vídeo sobre Martins"
-                className="group p-2.5 bg-background/80 rounded-full text-primary backdrop-blur-sm transition-all hover:bg-background hover:scale-110 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-black/50"
+                className="group p-2 bg-background/80 rounded-full text-primary backdrop-blur-sm transition-all hover:bg-background hover:scale-110 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-black/50"
                 onClick={() => {
                   const videoUrl = "https://www.youtube.com/watch?v=dQw4w9WgXcQ"; 
                   window.open(videoUrl, "_blank");
                   toast({ title: "Vídeo Demonstrativo", description: "Abrindo vídeo em nova aba..."});
                 }}
               >
-                <Play className="h-8 w-8 fill-primary md:h-10 md:w-10 transition-transform group-hover:scale-105" />
+                <Play className="h-7 w-7 fill-primary md:h-9 md:w-9 transition-transform group-hover:scale-105" />
               </button>
             </div>
           </div>
         </div>
-        <p className="mt-3 text-center text-sm text-muted-foreground">
+        <p className="mt-2 text-center text-xs text-muted-foreground">
           Clique para assistir e encante-se com as paisagens de Martins.
         </p>
       </section>
 
       {otherServiceBusinesses.length > 0 && (
-        <section className="mb-10">
-          <h2 className="mb-4 text-center text-2xl font-bold tracking-tight text-primary md:text-3xl">
+        <section className="mb-8">
+          <h2 className="mb-3 text-center text-xl font-bold tracking-tight text-primary md:text-2xl">
             Parceiros em Destaque
           </h2>
           <div className="flex space-x-3 overflow-x-auto p-1 -m-1 scrollbar-thin scrollbar-thumb-muted scrollbar-track-transparent">
-            {otherServiceBusinesses.slice(0, 6).map(business => ( 
-              <div key={business.id} className="min-w-[280px] sm:min-w-[300px] flex-shrink-0">
+            {otherServiceBusinesses.slice(0, 4).map(business => ( 
+              <div key={business.id} className="min-w-[260px] sm:min-w-[280px] flex-shrink-0">
                 <BusinessCard business={business} />
               </div>
             ))}
@@ -382,21 +416,19 @@ export default function HomePage() {
         </section>
       )}
 
-      <section className="mb-6 text-center">
-        <h2 className="mb-2 text-2xl font-bold tracking-tight text-primary md:text-3xl">
+      <section className="mb-4 text-center">
+        <h2 className="mb-1.5 text-xl font-bold tracking-tight text-primary md:text-2xl">
           Nossos Parceiros
         </h2>
-        <p className="text-md text-foreground/80">
+        <p className="text-sm text-foreground/80">
           Encontre restaurantes, hotéis, lojas e serviços com benefícios Guia Mais.
         </p>
       </section>
 
-      <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-3">
-        <div className="md:col-span-2">
-          <SearchBar searchTerm={searchTerm} onSearchChange={setSearchTerm} placeholder="Buscar por nome, tipo ou descrição..." />
-        </div>
+      <div className="mb-4 grid grid-cols-1 gap-3">
+        <SearchBar searchTerm={searchTerm} onSearchChange={setSearchTerm} placeholder="Buscar por nome, tipo ou descrição..." />
         <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-          <SelectTrigger className="w-full rounded-lg bg-background py-2.5 text-sm shadow-md focus:ring-2 focus:ring-primary">
+          <SelectTrigger className="w-full rounded-lg bg-background py-2 text-sm shadow-md focus:ring-2 focus:ring-primary h-9">
             <SelectValue placeholder="Filtrar por categoria" />
           </SelectTrigger>
           <SelectContent>
@@ -410,10 +442,10 @@ export default function HomePage() {
       </div>
 
       {filteredListedBusinesses.length === 0 && !isLoading && (
-        <div className="mt-10 flex flex-col items-center justify-center text-center">
-            <Frown className="mb-3 h-14 w-14 text-muted-foreground" />
-            <h3 className="text-lg font-semibold text-foreground">Nenhum estabelecimento encontrado</h3>
-            <p className="text-sm text-muted-foreground">
+        <div className="mt-8 flex flex-col items-center justify-center text-center">
+            <Frown className="mb-2 h-12 w-12 text-muted-foreground" />
+            <h3 className="text-md font-semibold text-foreground">Nenhum estabelecimento encontrado</h3>
+            <p className="text-xs text-muted-foreground">
               Tente ajustar seus filtros de busca ou categoria.
             </p>
           </div>
@@ -421,7 +453,7 @@ export default function HomePage() {
 
       {filteredListedBusinesses.length > 0 && (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          {filteredListedBusinesses.map(business => (
+          {filteredListedBusinesses.slice(0,4).map(business => ( // Show fewer for compactness
             <BusinessCard key={business.id} business={business} />
           ))}
         </div>

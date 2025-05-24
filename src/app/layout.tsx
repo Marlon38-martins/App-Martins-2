@@ -20,7 +20,7 @@ import {
   MountainSnow, 
   MapIcon as MapIconSidebar,
   UserPlus, 
-  LayoutDashboard,
+  // LayoutDashboard, // No longer used directly here
   UtensilsCrossed,
   BedDouble,
   ShoppingBag,
@@ -35,7 +35,7 @@ import {
   QrCode,
 } from 'lucide-react'; 
 import { Header } from '@/components/layout/header';
-import { QuickNav } from '@/components/layout/quick-nav';
+// import { QuickNav } from '@/components/layout/quick-nav'; // Removed QuickNav from global layout
 import { AuthProviderClient } from '@/hooks/use-auth-client'; 
 import { AuthStateInitializer } from '@/components/auth/auth-state-initializer';
 import { CurrentUserDisplay } from '@/components/auth/current-user-display';
@@ -214,7 +214,7 @@ export default function RootLayout({
 
             <SidebarInset>
               <Header />
-              <QuickNav />
+              {/* QuickNav removed from here */}
               <main className="flex-grow p-4 bg-background overflow-x-hidden w-full">
                 <div className="w-full max-w-sm mx-auto">
                   {children}
