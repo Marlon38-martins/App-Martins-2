@@ -1,8 +1,17 @@
 
 import type {NextConfig} from 'next';
+import path from 'path'; // For next-pwa
+
+// Configuration for next-pwa
+const withPWA = require('next-pwa')({
+  dest: 'public',
+  register: true,
+  skipWaiting: true,
+  disable: process.env.NODE_ENV === 'development', // Disable PWA in development
+  // You can add more PWA options here, like runtimeCaching
+});
 
 const nextConfig: NextConfig = {
-  /* config options here */
   typescript: {
     ignoreBuildErrors: true,
   },
@@ -29,14 +38,13 @@ const nextConfig: NextConfig = {
       //   protocol: 'https',
       //   hostname: 'firebasestorage.googleapis.com',
       //   port: '',
-      //   pathname: '/v0/b/your-project-id.appspot.com/**',
+      //   pathname: '/v0/b/YOUR_PROJECT_ID.appspot.com/**', // Replace YOUR_PROJECT_ID
       // },
-      // Add other image hostnames if needed
     ],
   },
   // Environment variables:
-  // To use environment variables, create a .env.local file in your project root.
-  // For example:
+  // Create a .env.local file in your project root for API keys.
+  // Example:
   // NEXT_PUBLIC_FIREBASE_API_KEY="your_firebase_api_key"
   // NEXT_PUBLIC_GOOGLE_MAPS_API_KEY="your_google_maps_api_key"
   // NEXT_PUBLIC_OPENWEATHER_API_KEY="your_openweather_api_key"
@@ -45,5 +53,5 @@ const nextConfig: NextConfig = {
   // Server-side only variables can be defined without the NEXT_PUBLIC_ prefix.
 };
 
-export default nextConfig;
+export default withPWA(nextConfig);
     

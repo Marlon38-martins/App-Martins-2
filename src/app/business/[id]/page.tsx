@@ -1,4 +1,4 @@
-
+// src/app/business/[id]/page.tsx
 'use client';
 
 import { use, useEffect, useState, Suspense, useMemo } from 'react';
@@ -11,31 +11,41 @@ import {
     getDealsForBusiness, 
     type GramadoBusiness, 
     type Deal, 
-    // TODO: Replace with actual Firebase user and subscription data if Firebase is integrated
-    // getCurrentUser, 
-    // getMockUserSubscription, 
     checkUserOfferUsage 
 } from '@/services/gramado-businesses';
-// TODO: Replace with actual Firebase user and subscription types from your app
 import type { User as AppUser, Subscription } from '@/types/user'; 
 import { useAuth } from '@/hooks/use-auth-client';
 
 
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { BusinessTypeIcon } from '@/components/icons';
 import { DealCard } from '@/components/deal/deal-card';
 import { 
-  MapPin, Phone, Globe, ArrowLeft, TicketPercent, Frown, Star, Tag, UserCheck, AlertTriangle,
-  Instagram, Facebook, MessageCircle, Mail, Share2 // Added Share2
+  MapPin, Phone, Globe, ArrowLeft, TicketPercent, Frown, Star, UserCheck, AlertTriangle,
+  Instagram, Facebook, MessageCircle, Mail, Share2, Sun, CloudSun, CloudRain
 } from 'lucide-react';
 
-// TODO: Implement WhatsApp/Email Sharing
-// - Add functions to generate WhatsApp and mailto links with pre-filled messages.
-// - Call these functions from the Share buttons.
+// Placeholder for actual WhatsApp/Email sharing logic
+const generateWhatsAppLink = (businessName: string, offerTitle?: string) => {
+  const message = offerTitle 
+    ? `Olá! Gostaria de saber mais sobre a oferta "${offerTitle}" no ${businessName} que vi no Guia Mais.`
+    : `Olá! Vi o ${businessName} no Guia Mais e gostaria de mais informações.`;
+  return `https://wa.me/?text=${encodeURIComponent(message)}`; // No phone number for general share
+};
+
+const generateEmailLink = (businessName: string, offerTitle?: string) => {
+  const subject = offerTitle 
+    ? `Interesse na Oferta: ${offerTitle} - ${businessName} (via Guia Mais)`
+    : `Interesse em: ${businessName} (via Guia Mais)`;
+  const body = offerTitle
+    ? `Olá ${businessName},\n\nVi a oferta "${offerTitle}" no aplicativo Guia Mais e gostaria de mais informações.\n\nObrigado(a)!`
+    : `Olá ${businessName},\n\nVi seu estabelecimento no aplicativo Guia Mais e gostaria de mais informações.\n\nObrigado(a)!`;
+  return `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+};
+
 
 interface BusinessPageParams {
   id: string;
@@ -57,7 +67,7 @@ function BusinessPageContent({ params }: { params: BusinessPageParams }) {
     if (!id) return; 
 
     async function loadBusinessData() {
-      if (authLoading) return; // Wait for auth state to be resolved
+      if (authLoading) return; 
       setIsLoading(true);
       setError(null);
       try {
@@ -87,7 +97,7 @@ function BusinessPageContent({ params }: { params: BusinessPageParams }) {
       }
     }
     loadBusinessData();
-  }, [id, authUser, authLoading]); // authLoading added to dependencies
+  }, [id, authUser, authLoading]); 
 
   const canUsePrimeBenefits = authUser && userSubscription && userSubscription.status === 'active';
   const isVipUser = canUsePrimeBenefits && userSubscription?.planId === 'serrano_vip';
@@ -99,7 +109,7 @@ function BusinessPageContent({ params }: { params: BusinessPageParams }) {
     return allDealsForBusiness.filter(deal => !deal.isVipOffer);
   }, [allDealsForBusiness, isVipUser]);
 
-  if (isLoading || authLoading) { // Consider authLoading here as well
+  if (isLoading || authLoading) { 
     return (
       <div> 
         <Skeleton className="mb-4 h-10 w-32" /> 
@@ -184,13 +194,16 @@ function BusinessPageContent({ params }: { params: BusinessPageParams }) {
                 {business.icon && <BusinessTypeIcon type={business.icon} className="h-8 w-8 text-primary" />}
               </div>
               <CardDescription className="text-lg text-muted-foreground">{business.type}</CardDescription>
-              {/* TODO: Add Share buttons here */}
               <div className="mt-2 flex space-x-2">
-                <Button variant="outline" size="sm" onClick={() => alert('Compartilhar no WhatsApp (simulado)')}>
-                  <MessageCircle className="mr-2 h-4 w-4" /> WhatsApp
+                <Button variant="outline" size="sm" asChild>
+                  <Link href={generateWhatsAppLink(business.name)} target="_blank" rel="noopener noreferrer">
+                    <MessageCircle className="mr-2 h-4 w-4" /> WhatsApp
+                  </Link>
                 </Button>
-                <Button variant="outline" size="sm" onClick={() => alert('Compartilhar por Email (simulado)')}>
-                  <Mail className="mr-2 h-4 w-4" /> Email
+                <Button variant="outline" size="sm" asChild>
+                  <Link href={generateEmailLink(business.name)} target="_blank">
+                    <Mail className="mr-2 h-4 w-4" /> Email
+                  </Link>
                 </Button>
                 <Button variant="outline" size="sm" onClick={() => alert('Compartilhar (simulado)')}>
                   <Share2 className="mr-2 h-4 w-4" /> Outros
@@ -200,11 +213,27 @@ function BusinessPageContent({ params }: { params: BusinessPageParams }) {
             <CardContent>
               <p className="mb-6 text-foreground/90">{business.fullDescription}</p>
               
+              <div className="mb-6 p-4 rounded-md border bg-muted/50">
+                <h4 className="text-md font-semibold text-primary mb-2 flex items-center">
+                  <Sun className="mr-2 h-5 w-5 text-yellow-500" />
+                  Previsão do Tempo (Local)
+                </h4>
+                <p className="text-sm text-muted-foreground">
+                  Integração com OpenWeather API aqui.
+                </p>
+                {/* Placeholder weather info */}
+                <div className="mt-2 flex items-center space-x-2">
+                  <CloudSun className="h-6 w-6 text-accent"/>
+                  <span className="font-medium text-foreground/90">28°C - Parcialmente Nublado</span>
+                </div>
+                 <p className="text-xs text-muted-foreground mt-1">Atualizado: DD/MM/AAAA HH:MM (Simulado)</p>
+              </div>
+
+
               <div className="space-y-3">
                 <div className="flex items-start">
                   <MapPin className="mr-3 mt-1 h-5 w-5 shrink-0 text-accent" />
                   <span className="text-foreground/80">{business.address}</span>
-                  {/* TODO: Add link to Google Maps here */}
                   <a
                     href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(business.address)}`}
                     target="_blank"
@@ -261,11 +290,11 @@ function BusinessPageContent({ params }: { params: BusinessPageParams }) {
 
         <div className="md:col-span-2">
           <div className="mb-8">
-            <h3 className="mb-4 flex items-center text-2xl font-semibold text-primary">
+            <h3 className="mb-4 flex items-center text-xl font-semibold text-primary">
               <TicketPercent className="mr-2 h-7 w-7 text-accent" />
               Ofertas Guia Mais
             </h3>
-            {!authUser && !authLoading && ( // Show only if auth is done and no user
+            {!authUser && !authLoading && ( 
                  <Alert variant="default" className="mb-4 bg-accent/10 border-accent/30">
                     <UserCheck className="h-5 w-5 text-accent" />
                     <AlertTitle className="text-accent">Faça Login para Vantagens!</AlertTitle>
@@ -274,7 +303,7 @@ function BusinessPageContent({ params }: { params: BusinessPageParams }) {
                     </AlertDescription>
                 </Alert>
             )}
-            {authUser && !canUsePrimeBenefits && !authLoading && ( // Show if auth is done, user exists, but no active sub
+            {authUser && !canUsePrimeBenefits && !authLoading && ( 
                  <Alert variant="default" className="mb-4 bg-accent/10 border-accent/30">
                     <AlertTriangle className="h-5 w-5 text-accent" />
                     <AlertTitle className="text-accent">Assinatura Guia Mais Necessária</AlertTitle>
@@ -301,26 +330,21 @@ function BusinessPageContent({ params }: { params: BusinessPageParams }) {
                   const hasRedeemedThisOffer = userRedemptions[deal.id] || false;
                   const isP1G2Limited = deal.isPay1Get2 && deal.usageLimitPerUser === 1;
                   
-                  // Determine if the user can access this specific deal
                   let dealIsAccessible = false;
-                  if (canUsePrimeBenefits) { // Basic requirement: active subscription
+                  if (canUsePrimeBenefits) { 
                     if (deal.isVipOffer) {
-                      dealIsAccessible = isVipUser; // If it's a VIP offer, user must be VIP
+                      dealIsAccessible = isVipUser; 
                     } else {
-                      dealIsAccessible = true; // If it's not a VIP offer, any Prime member can access
+                      dealIsAccessible = true; 
                     }
                   }
-                  // Offer cannot be used if already redeemed (for limited P1G2) or if not accessible
-                  const isEffectivelyDisabled = (isP1G2Limited && hasRedeemedThisOffer) || !dealIsAccessible;
-
-
                   return (
                     <DealCard 
                         key={deal.id} 
                         deal={deal} 
                         business={business}
                         isRedeemed={isP1G2Limited && hasRedeemedThisOffer}
-                        canAccess={dealIsAccessible} // Pass the correctly determined access status
+                        canAccess={dealIsAccessible} 
                     />
                   );
                 })}

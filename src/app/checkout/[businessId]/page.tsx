@@ -1,4 +1,3 @@
-
 // src/app/checkout/[businessId]/page.tsx
 'use client';
 
@@ -17,10 +16,9 @@ import {
     type Deal,
     checkUserOfferUsage, 
     recordUserOfferUsage, 
-    getCurrentUser,      
-    getMockUserSubscription  
 } from '@/services/gramado-businesses';
 import type { User as AppUser, Subscription } from '@/types/user'; 
+import { useAuth } from '@/hooks/use-auth-client';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -29,7 +27,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useToast } from '@/hooks/use-toast';
-import { ArrowLeft, User as UserIcon, Mail, Phone as PhoneIcon, ShieldCheck, ShoppingCart, Frown, Star, Tag, AlertTriangle, Crown } from 'lucide-react';
+import { ArrowLeft, User as UserIcon, Mail, Phone as PhoneIcon, ShieldCheck, ShoppingCart, Frown, Star, Tag, AlertTriangle, Crown, CalendarCheck } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 
 const checkoutFormSchema = z.object({
@@ -50,16 +48,15 @@ function CheckoutPageContent({ businessId }: { businessId: string }) {
   const dealId = searchParams.get('dealId');
   const { toast } = useToast();
   
-  const [authUser, setAuthUser] = useState<AppUser | null>(null);
+  const { user: authUser, subscription: userSubscription, loading: authLoading } = useAuth();
   const [business, setBusiness] = useState<GramadoBusiness | null>(null);
   const [specificDeal, setSpecificDeal] = useState<Deal | null>(null);
-  const [userSubscription, setUserSubscription] = useState<Subscription | null>(null);
-  const [hasUsedOffer, setHasUsedOffer] = useState(false);
   
   const [isLoadingPage, setIsLoadingPage] = useState(true); 
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [authCheckedAndEligible, setAuthCheckedAndEligible] = useState(false);
+  const [hasUsedOfferState, setHasUsedOfferState] = useState(false);
 
   const form = useForm<CheckoutFormValues>({
     resolver: zodResolver(checkoutFormSchema),
@@ -91,9 +88,6 @@ function CheckoutPageContent({ businessId }: { businessId: string }) {
       setAuthCheckedAndEligible(false);
 
       try {
-        const user = await getCurrentUser();
-        setAuthUser(user);
-
         const businessData = await getGramadoBusinessById(businessId);
         if (!businessData) {
           setError('Estabelecimento não encontrado.');
@@ -118,19 +112,16 @@ function CheckoutPageContent({ businessId }: { businessId: string }) {
             return;
         }
         
-        if (user) {
-          const sub = await getMockUserSubscription(user.id);
-          setUserSubscription(sub);
-          if (!sub || sub.status !== 'active') {
+        if (authUser) {
+          if (!userSubscription || userSubscription.status !== 'active') {
             setError('Sua assinatura Guia Mais não está ativa. Por favor, renove ou associe-se.');
             setAuthCheckedAndEligible(false); 
             setIsLoadingPage(false);
             return;
           }
 
-          // Check for VIP offer eligibility
           if (currentDeal?.isVipOffer) {
-            if (sub.planId !== 'serrano_vip') { // Ensure this matches your VIP plan ID
+            if (userSubscription.planId !== 'serrano_vip') { 
               setError('Esta oferta é exclusiva para membros VIP. Faça um upgrade para aproveitar!');
               setAuthCheckedAndEligible(false);
               setIsLoadingPage(false);
@@ -138,9 +129,9 @@ function CheckoutPageContent({ businessId }: { businessId: string }) {
             }
           }
 
-          if (currentDeal?.isPay1Get2 && currentDeal?.usageLimitPerUser === 1) {
-            const used = await checkUserOfferUsage(user.id, dealId);
-            setHasUsedOffer(used);
+          if (dealId && currentDeal?.isPay1Get2 && currentDeal?.usageLimitPerUser === 1) {
+            const used = await checkUserOfferUsage(authUser.id, dealId);
+            setHasUsedOfferState(used);
             if (used) {
               setError(`Você já utilizou esta oferta "${currentDeal.title}" anteriormente.`);
               setAuthCheckedAndEligible(false); 
@@ -164,25 +155,21 @@ function CheckoutPageContent({ businessId }: { businessId: string }) {
       }
     }
     loadDataAndCheckAuth();
-  }, [businessId, dealId]); 
+  }, [businessId, dealId, authUser, userSubscription]); 
 
 
   const getActionName = () => {
-    if (specificDeal) return specificDeal.title;
-    if (!business) return "Benefício";
-    const type = business.type.toLowerCase();
-    if (type.includes('hotel') || type.includes('pousada')) return "Reserva com Benefício Guia Mais";
-    if (type.includes('restaurante') || type.includes('café')) return "Uso de Benefício Guia Mais";
-    if (type.includes('loja') || type.includes('artesanato')) return "Compra com Desconto Guia Mais";
-    return "Benefício Guia Mais";
+    if (specificDeal) return `Agendar Uso: ${specificDeal.title}`;
+    if (!business) return "Agendar Benefício";
+    return `Agendar Benefício em ${business.name}`;
   }
 
   const onSubmit: SubmitHandler<CheckoutFormValues> = async (data) => {
     if (!authUser || !userSubscription || userSubscription.status !== 'active' || !authCheckedAndEligible) {
-        toast({ title: "Não Elegível", description: "Você não está elegível para usar este benefício no momento.", variant: "destructive" });
+        toast({ title: "Não Elegível", description: "Você não está elegível para esta ação no momento.", variant: "destructive" });
         return;
     }
-    if (specificDeal?.isPay1Get2 && specificDeal?.usageLimitPerUser === 1 && hasUsedOffer) {
+    if (specificDeal?.isPay1Get2 && specificDeal?.usageLimitPerUser === 1 && hasUsedOfferState) {
         toast({ title: "Oferta Já Utilizada", description: "Você já utilizou esta oferta Pague 1 Leve 2.", variant: "destructive" });
         return;
     }
@@ -191,18 +178,17 @@ function CheckoutPageContent({ businessId }: { businessId: string }) {
         return;
     }
 
-
     setIsSubmitting(true);
     try {
       if (dealId && authUser) { 
         await recordUserOfferUsage(authUser.id, dealId, businessId);
       }
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise(resolve => setTimeout(resolve, 1000)); 
       
-      console.log('Offer Activation Data:', data, 'Deal ID:', dealId);
+      console.log('Agendamento/Offer Activation Data:', data, 'Deal ID:', dealId);
       toast({
-        title: 'Benefício Confirmado!',
-        description: `Seu benefício Guia Mais em ${business?.name} (${getActionName()}) foi ativado. Apresente esta confirmação ou seu card de membro no estabelecimento.`,
+        title: 'Agendamento Confirmado!',
+        description: `Seu benefício Guia Mais em ${business?.name} (${specificDeal?.title || 'Benefício Geral'}) foi agendado/ativado. Apresente esta confirmação ou seu card de membro no estabelecimento.`,
         variant: 'default', 
       });
       router.push(`/business/${businessId}`); 
@@ -214,8 +200,9 @@ function CheckoutPageContent({ businessId }: { businessId: string }) {
     }
   };
   
+  const isVipUser = userSubscription?.planId === 'serrano_vip' && userSubscription?.status === 'active';
 
-  if (isLoadingPage) {
+  if (isLoadingPage || authLoading) {
     return (
       <div> 
         <Skeleton className="mb-4 h-10 w-32" /> 
@@ -284,7 +271,7 @@ function CheckoutPageContent({ businessId }: { businessId: string }) {
       </Button>
 
       <h2 className="mb-6 text-3xl font-bold tracking-tight text-primary md:text-4xl">
-        Confirmar Uso: <span className="text-accent">{getActionName()}</span>
+        {getActionName()}
       </h2>
       <p className="mb-6 text-lg text-foreground/80">Em: {business.name}</p>
 
@@ -300,12 +287,12 @@ function CheckoutPageContent({ businessId }: { businessId: string }) {
         <div className="md:col-span-2">
           <Card className="shadow-xl">
             <CardHeader>
-              <CardTitle className="flex items-center text-2xl">
+              <CardTitle className="flex items-center text-xl">
                 <UserIcon className="mr-2 h-6 w-6 text-accent" />
-                Seus Dados para Confirmação
+                Seus Dados para Agendamento
               </CardTitle>
               <CardDescription>
-                Confirme seus dados para ativar o benefício Guia Mais. Estes dados são para registro interno.
+                Confirme seus dados para agendar/ativar o benefício Guia Mais. Estes dados são para registro.
               </CardDescription>
             </CardHeader>
             <Form {...form}>
@@ -316,7 +303,7 @@ function CheckoutPageContent({ businessId }: { businessId: string }) {
                     name="name"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel htmlFor="name">Nome Completo (como no cadastro Guia Mais)</FormLabel>
+                        <FormLabel htmlFor="name">Nome Completo</FormLabel>
                         <FormControl>
                           <Input id="name" placeholder="Seu nome completo" {...field} value={field.value ?? ''} disabled={!authCheckedAndEligible || isSubmitting}/>
                         </FormControl>
@@ -329,7 +316,7 @@ function CheckoutPageContent({ businessId }: { businessId: string }) {
                     name="email"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel htmlFor="email">Email (do cadastro Guia Mais)</FormLabel>
+                        <FormLabel htmlFor="email">Email</FormLabel>
                         <FormControl>
                           <Input id="email" type="email" placeholder="seuemail@exemplo.com" {...field} value={field.value ?? ''} disabled={!authCheckedAndEligible || isSubmitting}/>
                         </FormControl>
@@ -342,7 +329,7 @@ function CheckoutPageContent({ businessId }: { businessId: string }) {
                     name="phone"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel htmlFor="phone">Telefone (opcional, para contato)</FormLabel>
+                        <FormLabel htmlFor="phone">Telefone (opcional)</FormLabel>
                         <FormControl>
                           <Input id="phone" type="tel" placeholder="(XX) XXXXX-XXXX" {...field} value={field.value ?? ''} disabled={!authCheckedAndEligible || isSubmitting}/>
                         </FormControl>
@@ -353,13 +340,13 @@ function CheckoutPageContent({ businessId }: { businessId: string }) {
                   
                   <p className="flex items-center text-sm text-muted-foreground pt-3">
                     <ShieldCheck className="mr-2 h-4 w-4 text-green-500" />
-                    Ao confirmar, seu benefício será registrado para uso no estabelecimento.
+                    Ao confirmar, seu agendamento será registrado para uso no estabelecimento.
                   </p>
                 </CardContent>
                 <CardFooter>
                   <Button type="submit" size="lg" className="w-full bg-primary hover:bg-primary/90" disabled={isSubmitting || !authCheckedAndEligible}>
-                    <Tag className="mr-2 h-5 w-5" />
-                    {isSubmitting ? 'Confirmando...' : `Confirmar Uso do Benefício`}
+                    <CalendarCheck className="mr-2 h-5 w-5" />
+                    {isSubmitting ? 'Confirmando...' : `Confirmar Agendamento`}
                   </Button>
                 </CardFooter>
               </form>
@@ -370,9 +357,9 @@ function CheckoutPageContent({ businessId }: { businessId: string }) {
         <div className="md:col-span-1">
           <Card className="sticky top-24 shadow-lg"> 
             <CardHeader>
-              <CardTitle className="flex items-center text-xl">
+              <CardTitle className="flex items-center text-lg">
                 <ShoppingCart className="mr-2 h-5 w-5 text-accent" />
-                Resumo do Benefício
+                Resumo do Agendamento
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -382,7 +369,7 @@ function CheckoutPageContent({ businessId }: { businessId: string }) {
                   alt={`Imagem de ${business.name}`}
                   layout="fill"
                   objectFit="cover"
-                  data-ai-hint={`${business.type} service`}
+                  data-ai-hint={`${business.type} service booking`}
                 />
               </div>
               <div>
@@ -404,7 +391,7 @@ function CheckoutPageContent({ businessId }: { businessId: string }) {
                )}
               
               <div className="mt-3 rounded-md border border-muted bg-muted/50 p-3 text-sm text-muted-foreground">
-                <strong>Importante:</strong> A confirmação aqui registra sua intenção de uso do benefício. O estabelecimento validará sua elegibilidade e aplicará as condições Guia Mais no local.
+                <strong>Importante:</strong> A confirmação aqui registra sua intenção de agendamento/uso do benefício. O estabelecimento validará sua elegibilidade e aplicará as condições Guia Mais no local.
               </div>
             </CardContent>
           </Card>
@@ -422,3 +409,4 @@ export default function CheckoutPageWrapper() {
       </Suspense>
   );
 }
+
