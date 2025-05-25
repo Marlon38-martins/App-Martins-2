@@ -126,73 +126,73 @@ export default function HomePage() {
 
   const uniqueCities = useMemo(() => {
     const cities = businesses.map(b => b.city).filter(Boolean); // Filter out undefined/empty cities
-    return Array.from(new Set(cities));
+    return Array.from(new Set(cities)).sort(); // Sort city names
   }, [businesses]);
 
 
   if (isLoading) {
     return (
-      <div className="space-y-12">
-        <Skeleton className="relative mb-12 h-[300px] w-full rounded-lg md:h-[350px]" />
+      <div className="space-y-6">
+        <Skeleton className="relative mb-8 h-[300px] w-full rounded-lg md:h-[350px]" />
         
-        <section className="mb-12">
-          <Skeleton className="mb-4 h-8 w-1/2" />
-           <div className="flex space-x-4 overflow-x-auto pb-4 -mx-2 px-2">
+        <section className="mb-8">
+          <Skeleton className="mb-3 h-6 w-1/2" />
+           <div className="flex space-x-3 overflow-x-auto pb-3 -mx-2 px-2">
             {Array.from({length: 5}).map((_, i) => (
-              <Skeleton key={`qnav-skel-${i}`} className="h-24 w-24 shrink-0 rounded-lg" />
+              <Skeleton key={`qnav-skel-${i}`} className="h-20 w-20 shrink-0 rounded-lg" />
             ))}
           </div>
         </section>
 
-        <section className="mb-12">
-          <Skeleton className="mb-4 h-8 w-1/2" />
-           <div className="flex space-x-3 overflow-x-auto pb-2 -mx-2 px-2">
-             {Array.from({length: 3}).map((_, i) => <Skeleton key={`city-skel-${i}`} className="h-9 w-28 rounded-md" />)}
+        <section className="mb-8">
+          <Skeleton className="mb-3 h-6 w-1/2" />
+           <div className="flex space-x-2 overflow-x-auto pb-2 -mx-2 px-2">
+             {Array.from({length: 3}).map((_, i) => <Skeleton key={`city-skel-${i}`} className="h-8 w-24 rounded-md" />)}
            </div>
         </section>
         
-        <section className="mb-12 py-10 bg-secondary/10 rounded-lg shadow-inner">
+        <section className="mb-8 py-6 bg-secondary/10 rounded-lg shadow-inner">
           <div className="px-4">
-            <div className="grid md:grid-cols-2 gap-6 items-center">
+            <div className="grid md:grid-cols-2 gap-4 items-center">
               <div>
-                <Skeleton className="h-8 w-3/4 mb-3" />
-                <Skeleton className="h-4 w-full mb-2" />
-                <Skeleton className="h-4 w-full mb-2" />
-                <Skeleton className="h-4 w-5/6 mb-4" />
-                <Skeleton className="h-10 w-40 rounded-md" />
+                <Skeleton className="h-7 w-3/4 mb-2" />
+                <Skeleton className="h-3 w-full mb-1.5" />
+                <Skeleton className="h-3 w-full mb-1.5" />
+                <Skeleton className="h-3 w-5/6 mb-3" />
+                <Skeleton className="h-9 w-36 rounded-md" />
               </div>
-              <Skeleton className="aspect-square w-full max-w-xs mx-auto rounded-lg" />
+              <Skeleton className="aspect-square w-full max-w-[280px] mx-auto rounded-lg" />
             </div>
           </div>
         </section>
 
-        <section className="mb-12">
-          <Skeleton className="mb-4 h-8 w-1/2" />
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+        <section className="mb-8">
+          <Skeleton className="mb-4 h-7 w-1/2" />
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             {Array.from({ length: 2 }).map((_, index) => (
-              <div key={`fd-skel-${index}`} className="flex flex-col space-y-3">
-                <Skeleton className="h-[200px] w-full rounded-lg" />
-                <Skeleton className="h-5 w-3/4" />
-                <Skeleton className="h-4 w-1/2" />
-                <Skeleton className="h-10 w-full" />
+              <div key={`fd-skel-${index}`} className="flex flex-col space-y-2">
+                <Skeleton className="h-[180px] w-full rounded-lg" />
+                <Skeleton className="h-4 w-3/4" />
+                <Skeleton className="h-3 w-1/2" />
+                <Skeleton className="h-9 w-full" />
               </div>
             ))}
           </div>
         </section>
 
-        <section className="mb-12">
-          <Skeleton className="mb-4 h-8 w-1/2" />
-           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <section className="mb-8">
+          <Skeleton className="mb-4 h-7 w-1/2" />
+           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {Array.from({ length: 2 }).map((_, index) => (
-              <div key={`rank-skeleton-${index}`} className="space-y-3 p-4 border rounded-lg">
-                <Skeleton className="h-6 w-1/2 mb-2" />
+              <div key={`rank-skeleton-${index}`} className="space-y-2.5 p-3 border rounded-lg">
+                <Skeleton className="h-5 w-1/2 mb-1.5" />
                 {Array.from({ length: 2 }).map((_, itemIndex) => (
-                  <div key={`rank-item-skeleton-${itemIndex}`} className="flex items-start space-x-3 py-2 border-b last:border-none">
-                    <Skeleton className="h-16 w-16 rounded-md shrink-0" />
-                    <div className="flex-1 space-y-2">
-                      <Skeleton className="h-4 w-3/4" />
-                      <Skeleton className="h-3 w-1/2" />
-                      <Skeleton className="h-3 w-1/4" />
+                  <div key={`rank-item-skeleton-${itemIndex}`} className="flex items-start space-x-2.5 py-1.5 border-b last:border-none">
+                    <Skeleton className="h-14 w-14 rounded-md shrink-0" />
+                    <div className="flex-1 space-y-1.5">
+                      <Skeleton className="h-3 w-3/4" />
+                      <Skeleton className="h-2.5 w-1/2" />
+                      <Skeleton className="h-2.5 w-1/4" />
                     </div>
                   </div>
                 ))}
@@ -201,37 +201,37 @@ export default function HomePage() {
           </div>
         </section>
 
-        <section className="mb-12">
-          <Skeleton className="mb-4 h-8 w-1/2" />
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+        <section className="mb-8">
+          <Skeleton className="mb-4 h-7 w-1/2" />
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             {Array.from({ length: 2 }).map((_, index) => (
-              <div key={`ts-skel-${index}`} className="flex flex-col space-y-3">
-                <Skeleton className="h-[200px] w-full rounded-lg" />
-                <Skeleton className="h-5 w-3/4" />
-                <Skeleton className="h-4 w-1/2" />
+              <div key={`ts-skel-${index}`} className="flex flex-col space-y-2">
+                <Skeleton className="h-[180px] w-full rounded-lg" />
+                <Skeleton className="h-4 w-3/4" />
+                <Skeleton className="h-3 w-1/2" />
               </div>
             ))}
           </div>
         </section>
 
-        <section className="mb-12">
-          <Skeleton className="mb-4 h-8 w-1/2" />
-          <Skeleton className="aspect-video w-full max-w-xl mx-auto rounded-lg" />
+        <section className="mb-8">
+          <Skeleton className="mb-3 h-7 w-1/2" />
+          <Skeleton className="aspect-video w-full max-w-lg mx-auto rounded-lg" />
         </section>
 
-        <Skeleton className="mb-3 h-8 w-1/2" />
-        <Skeleton className="mb-6 h-6 w-full" />
-        <div className="mb-6 grid grid-cols-1 gap-4">
-          <Skeleton className="h-10 w-full rounded-md" />
-          <Skeleton className="h-10 w-full rounded-md" />
+        <Skeleton className="mb-2 h-7 w-1/2" />
+        <Skeleton className="mb-4 h-5 w-full" />
+        <div className="mb-4 grid grid-cols-1 gap-3">
+          <Skeleton className="h-9 w-full rounded-md" />
+          <Skeleton className="h-9 w-full rounded-md" />
         </div>
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           {Array.from({ length: 2 }).map((_, index) => (
-            <div key={`flb-skel-${index}`} className="flex flex-col space-y-3">
-              <Skeleton className="h-[200px] w-full rounded-lg" />
-              <Skeleton className="h-5 w-3/4" />
-              <Skeleton className="h-4 w-1/2" />
-              <Skeleton className="h-10 w-full" />
+            <div key={`flb-skel-${index}`} className="flex flex-col space-y-2">
+              <Skeleton className="h-[180px] w-full rounded-lg" />
+              <Skeleton className="h-4 w-3/4" />
+              <Skeleton className="h-3 w-1/2" />
+              <Skeleton className="h-9 w-full" />
             </div>
           ))}
         </div>
@@ -257,7 +257,7 @@ export default function HomePage() {
   }
 
   return (
-    <div className="space-y-12">
+    <div className="space-y-8">
       <section className="relative mb-8 h-[300px] w-full overflow-hidden rounded-lg shadow-xl md:h-[350px]">
         <Image
           src="https://placehold.co/1600x900.png"
@@ -279,7 +279,7 @@ export default function HomePage() {
       </section>
 
       <section className="mb-8">
-        <h2 className="mb-3 text-xl font-semibold text-primary">Explore por Categoria</h2>
+        <h2 className="mb-3 text-xl font-semibold text-primary">Navegação Rápida</h2>
         <div className="flex space-x-3 overflow-x-auto pb-3 -mx-2 px-2 scrollbar-thin scrollbar-thumb-muted scrollbar-track-transparent">
           {quickNavCategories.map((category) => (
             <Button
@@ -308,7 +308,9 @@ export default function HomePage() {
             {uniqueCities.map(city => (
               <Button key={slugify(city)} variant="outline" size="sm" asChild className="text-xs">
                 <Link href={`/services?city=${slugify(city)}`}>
-                  <MapPinned className="mr-1.5 h-3.5 w-3.5" /> {city}
+                  <span className="flex items-center">
+                    <MapPinned className="mr-1.5 h-3.5 w-3.5" /> {city}
+                  </span>
                 </Link>
               </Button>
             ))}
@@ -316,7 +318,7 @@ export default function HomePage() {
         </section>
       )}
 
-      <section className="mb-8 py-8 bg-secondary/10 rounded-lg shadow-inner">
+      <section className="mb-8 py-6 bg-secondary/10 rounded-lg shadow-inner">
         <div className="px-4">
           <div className="grid md:grid-cols-2 gap-4 items-center">
             <div className="text-center md:text-left">
@@ -396,7 +398,7 @@ export default function HomePage() {
       )}
 
       <section className="mb-8">
-        <h2 className="mb-4 text-center text-xl font-bold tracking-tight text-primary md:text-2xl">
+        <h2 className="mb-3 text-center text-xl font-bold tracking-tight text-primary md:text-2xl">
           Descubra Martins
         </h2>
         <div className="aspect-video w-full max-w-lg mx-auto overflow-hidden rounded-lg shadow-xl bg-muted border border-border">

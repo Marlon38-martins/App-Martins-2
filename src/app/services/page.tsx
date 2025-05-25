@@ -61,7 +61,7 @@ function ServicesPageContent() {
   }, [allBusinesses, citySlugFromQuery]);
 
   const allCategories = useMemo(() => {
-    if (isLoading) return []; // Don't compute if still loading all businesses
+    if (isLoading) return []; 
     const categoryMap = new Map<string, { count: number; icon?: GramadoBusiness['icon'] }>();
     businessesForSelectedCity.forEach(business => {
       const existing = categoryMap.get(business.type);
@@ -92,7 +92,7 @@ function ServicesPageContent() {
   const uniqueCities = useMemo(() => {
     if (!allBusinesses.length) return [];
     const cities = allBusinesses.map(b => b.city).filter(Boolean);
-    return Array.from(new Set(cities)).map(city => ({ name: city, slug: slugify(city) }));
+    return Array.from(new Set(cities)).map(city => ({ name: city, slug: slugify(city) })).sort((a,b) => a.name.localeCompare(b.name));
   }, [allBusinesses]);
 
   return (
@@ -120,7 +120,9 @@ function ServicesPageContent() {
               className="text-xs"
             >
               <Link href={`/services`}>
-                <MapPinned className="mr-1.5 h-3.5 w-3.5" /> Todas
+                <span className="flex items-center">
+                  <MapPinned className="mr-1.5 h-3.5 w-3.5" /> Todas
+                </span>
               </Link>
             </Button>
             {uniqueCities.map(city => (
@@ -132,7 +134,9 @@ function ServicesPageContent() {
                 className="text-xs"
               >
                 <Link href={`/services?city=${city.slug}`}>
-                  <MapPinned className="mr-1.5 h-3.5 w-3.5" /> {city.name}
+                   <span className="flex items-center">
+                    <MapPinned className="mr-1.5 h-3.5 w-3.5" /> {city.name}
+                   </span>
                 </Link>
               </Button>
             ))}
@@ -203,8 +207,10 @@ function ServicesPageContent() {
                     href={`/services/${category.slug}${citySlugFromQuery ? `?city=${citySlugFromQuery}` : ''}`}
                     className="inline-flex items-center justify-center rounded-md bg-accent px-4 py-2 text-sm font-medium text-accent-foreground shadow-sm transition-colors hover:bg-accent/90 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 w-full"
                   >
-                    Ver {category.name}
-                    <ArrowRight className="ml-2 h-4 w-4" />
+                    <span className="flex items-center justify-center w-full">
+                        Ver {category.name}
+                        <ArrowRight className="ml-2 h-4 w-4" />
+                    </span>
                 </Link>
               </div>
             </Card>

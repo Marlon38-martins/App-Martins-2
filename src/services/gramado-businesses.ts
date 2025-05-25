@@ -269,13 +269,13 @@ const businesses: GramadoBusiness[] = [
     id: '8',
     name: 'Hotel Fazenda "Vale Verdejante"',
     type: 'Hotel',
-    city: 'Cidade Vizinha, RN',
+    city: 'Cidade Vizinha, RN', // Changed city
     shortDescription: 'Natureza e conforto na cidade vizinha.',
     fullDescription: 'Desfrute da tranquilidade do campo com o conforto de um hotel fazenda. Piscina, passeios a cavalo e culinária caseira.',
     address: 'Rodovia CV-010, Km 5, Zona Rural, Cidade Vizinha - RN',
     phoneNumber: '(84) 3392-1010',
     website: 'https://www.valeverdejante.com.br',
-    latitude: -6.1500, // Example coordinates for a nearby city
+    latitude: -6.1500,
     longitude: -37.8500,
     imageUrl: 'https://placehold.co/600x400.png',
     icon: 'BedDouble',
@@ -286,17 +286,65 @@ const businesses: GramadoBusiness[] = [
     id: '9',
     name: 'Restaurante "Sabor da Roça"',
     type: 'Restaurante',
-    city: 'Cidade Vizinha, RN',
+    city: 'Cidade Vizinha, RN', // Changed city
     shortDescription: 'Comida caseira e fogão a lenha.',
     fullDescription: 'Autêntica comida do interior feita no fogão a lenha, com ingredientes frescos da nossa horta. Venha provar o verdadeiro sabor da roça.',
     address: 'Rua Principal, 200, Centro, Cidade Vizinha - RN',
     phoneNumber: '(84) 3392-1020',
-    latitude: -6.1450, // Example coordinates
+    latitude: -6.1450,
     longitude: -37.8550,
     imageUrl: 'https://placehold.co/600x400.png',
     icon: 'UtensilsCrossed',
     rating: 4.7,
     reviewCount: 95,
+  },
+  {
+    id: '10',
+    name: 'Loja de Souvenirs Pauferrense',
+    type: 'Loja',
+    city: 'Pau dos Ferros, RN',
+    shortDescription: 'Lembranças autênticas do Alto Oeste.',
+    fullDescription: 'Encontre o presente perfeito ou uma lembrança especial da sua viagem a Pau dos Ferros. Artesanato, camisetas e produtos regionais.',
+    address: 'Av. Independência, 300, Centro, Pau dos Ferros - RN',
+    phoneNumber: '(84) 3351-2020',
+    latitude: -6.1108,
+    longitude: -38.2060,
+    imageUrl: 'https://placehold.co/600x400.png',
+    icon: 'ShoppingBag',
+    rating: 4.0,
+    reviewCount: 30,
+  },
+  {
+    id: '11',
+    name: 'Pizzaria Forno a Lenha Apodi',
+    type: 'Restaurante',
+    city: 'Apodi, RN',
+    shortDescription: 'Pizzas artesanais e ambiente familiar.',
+    fullDescription: 'Deliciosas pizzas assadas em forno a lenha, com ingredientes frescos e selecionados. Ótimo para reunir a família e amigos.',
+    address: 'Rua das Flores, 55, Centro, Apodi - RN',
+    phoneNumber: '(84) 3333-4040',
+    latitude: -5.6602,
+    longitude: -37.9950,
+    imageUrl: 'https://placehold.co/600x400.png',
+    icon: 'UtensilsCrossed',
+    rating: 4.4,
+    reviewCount: 65,
+  },
+   {
+    id: '12',
+    name: 'Hotel Portal de Umarizal',
+    type: 'Hotel',
+    city: 'Umarizal, RN',
+    shortDescription: 'Conforto e hospitalidade no coração de Umarizal.',
+    fullDescription: 'Oferecemos acomodações modernas e confortáveis para sua estadia em Umarizal, seja a negócios ou lazer. Café da manhã regional incluso.',
+    address: 'Praça da Matriz, 120, Centro, Umarizal - RN',
+    phoneNumber: '(84) 3397-5050',
+    latitude: -5.9870,
+    longitude: -37.8200,
+    imageUrl: 'https://placehold.co/600x400.png',
+    icon: 'BedDouble',
+    rating: 4.1,
+    reviewCount: 40,
   }
 ];
 
@@ -380,7 +428,7 @@ const deals: Deal[] = [
   },
   {
     id: 'deal-9',
-    businessId: '8', // Hotel Fazenda "Vale Verdejante"
+    businessId: '8', 
     title: '10% OFF na Diária (Cidade Vizinha)',
     description: 'Membros Guia Mais ganham 10% de desconto na diária em nosso Hotel Fazenda.',
     discountPercentage: 10,
@@ -389,12 +437,40 @@ const deals: Deal[] = [
   },
   {
     id: 'deal-10',
-    businessId: '9', // Restaurante "Sabor da Roça"
+    businessId: '9', 
     title: 'Suco Natural Cortesia (Cidade Vizinha)',
     description: 'Peça um prato principal e ganhe um suco natural da estação. Exclusivo Guia Mais.',
     discountPercentage: 0,
     termsAndConditions: 'Válido para consumo no local. Apresentar card Guia Mais.',
     isVipOffer: false,
+  },
+  {
+    id: 'deal-11',
+    businessId: '10', // Loja de Souvenirs Pauferrense
+    title: 'Lembrança Especial Pau dos Ferros - 10% OFF',
+    description: 'Leve uma recordação de Pau dos Ferros com 10% de desconto em itens selecionados.',
+    discountPercentage: 10,
+    termsAndConditions: 'Válido para itens com etiqueta Guia Mais. Apresente o app.',
+    isVipOffer: false,
+  },
+  {
+    id: 'deal-12',
+    businessId: '11', // Pizzaria Forno a Lenha Apodi
+    title: 'Pizza Grande em Dobro - Apodi',
+    description: 'Compre uma pizza grande e leve outra de igual ou menor valor. Promoção Guia Mais!',
+    isPay1Get2: true,
+    usageLimitPerUser: 1,
+    termsAndConditions: 'Válido de segunda a quarta, exceto vésperas de feriado. Uso único por membro.',
+    isVipOffer: false,
+  },
+  {
+    id: 'deal-13',
+    businessId: '12', // Hotel Portal de Umarizal
+    title: 'Café da Manhã VIP Umarizal',
+    description: 'Hóspedes VIP Guia Mais ganham um item extra especial no café da manhã.',
+    discountPercentage: 0,
+    termsAndConditions: 'Exclusivo para reservas diretas de membros VIP. Informar no check-in.',
+    isVipOffer: true,
   }
 ];
 
@@ -567,4 +643,3 @@ export function mockLogout() {
   }
 }
 // --- End Mocked Services ---
-
