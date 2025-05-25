@@ -37,7 +37,7 @@ export function AuthProviderClient({ children }: AuthProviderClientProps) {
   const router = useRouter();
 
 
-  const fetchMockDataForUser = useCallback(async (currentAppUser: User) => {
+  const fetchMockSubscriptionForUser = useCallback(async (currentAppUser: User) => {
     try {
       const subDetails = await getMockUserSubscription(currentAppUser.id);
       setSubscription(subDetails);
@@ -47,30 +47,35 @@ export function AuthProviderClient({ children }: AuthProviderClientProps) {
     }
   }, []);
 
+  const loadMockAuthData = useCallback(async () => {
+    console.log("AuthProvider: Attempting to load mock auth data...");
+    setLoading(true);
+    try {
+      const mockAppUser = await getMockCurrentUser();
+      setUser(mockAppUser);
+      if (mockAppUser) {
+        console.log("AuthProvider: Mock user loaded:", mockAppUser.email);
+        await fetchMockSubscriptionForUser(mockAppUser);
+        setIsAdmin(mockAppUser.email === 'admin@example.com');
+      } else {
+        console.log("AuthProvider: No mock user found in local storage.");
+        setSubscription(null);
+        setIsAdmin(false);
+      }
+    } catch (error) {
+      console.error("AuthProvider: Error fetching mock auth data:", error);
+      setUser(null);
+      setSubscription(null);
+      setIsAdmin(false);
+    } finally {
+      setLoading(false);
+      console.log("AuthProvider: Mock auth data loading finished.");
+    }
+  }, [fetchMockSubscriptionForUser]);
+
   useEffect(() => {
     if (!auth) {
-      console.warn("Firebase Auth is not initialized. Falling back to mock authentication.");
-      const loadMockAuthData = async () => {
-        setLoading(true);
-        try {
-          const mockAppUser = await getMockCurrentUser();
-          setUser(mockAppUser);
-          if (mockAppUser) {
-            await fetchMockDataForUser(mockAppUser);
-            setIsAdmin(mockAppUser.email === 'admin@example.com');
-          } else {
-            setSubscription(null);
-            setIsAdmin(false);
-          }
-        } catch (error) {
-          console.error("Error fetching mock auth data:", error);
-          setUser(null);
-          setSubscription(null);
-          setIsAdmin(false);
-        } finally {
-          setLoading(false);
-        }
-      };
+      console.warn("AuthProvider: Firebase Auth is not initialized. Falling back to mock authentication.");
       loadMockAuthData();
       // Listen to mock auth changes if Firebase isn't available
       const handleMockAuthChange = () => loadMockAuthData();
@@ -80,13 +85,13 @@ export function AuthProviderClient({ children }: AuthProviderClientProps) {
       };
     } else {
       // Firebase Auth is initialized, set up the real listener
-      console.log("Firebase Auth is initialized. Setting up real auth state listener.");
+      console.log("AuthProvider: Firebase Auth is initialized. Setting up real auth state listener.");
       const unsubscribe = onAuthStateChanged(auth, async (fbUser) => {
+        console.log("AuthProvider: onAuthStateChanged triggered.");
         setLoading(true);
         setFirebaseUser(fbUser);
         if (fbUser) {
-          console.log("Firebase user detected:", fbUser.email);
-          // Adapt FirebaseUser to your app's User type
+          console.log("AuthProvider: Firebase user detected:", fbUser.email);
           const appUser: User = {
             id: fbUser.uid,
             email: fbUser.email,
@@ -94,65 +99,77 @@ export function AuthProviderClient({ children }: AuthProviderClientProps) {
             photoURL: fbUser.photoURL,
           };
           setUser(appUser);
-          await fetchMockDataForUser(appUser); // Still using mock subscription for now
+          await fetchMockSubscriptionForUser(appUser);
           setIsAdmin(appUser.email === 'admin@example.com');
         } else {
-          console.log("No Firebase user detected.");
+          console.log("AuthProvider: No Firebase user detected.");
           setUser(null);
           setSubscription(null);
           setIsAdmin(false);
         }
         setLoading(false);
+        console.log("AuthProvider: Firebase auth state processing finished.");
       });
-      return () => unsubscribe(); // Cleanup listener on component unmount
+      return () => unsubscribe();
     }
-  }, [fetchMockDataForUser]);
+  }, [fetchMockSubscriptionForUser, loadMockAuthData]);
 
 
-  // This function is primarily for the mock login flow
+  // This function is primarily for the mock login flow from the /login page
   const signInUser = (loggedInUser: User, userSub: Subscription) => {
-    if (!auth) { // Only use this if Firebase is not available
+    console.log("AuthProvider: signInUser (mock) called for:", loggedInUser.email);
+    if (!auth) { // Only use this if Firebase is not available or chosen mock flow
+      setUser(loggedInUser);
+      setSubscription(userSub);
+      setIsAdmin(loggedInUser.email === 'admin@example.com');
+      setLoading(false); // Ensure loading is false after mock sign-in
+      // The mockLogin function in gramado-businesses.ts already handles localStorage
+      // and dispatches 'mockAuthChange'
+      console.log("AuthProvider: Mock user signed in. Admin status:", loggedInUser.email === 'admin@example.com');
+    } else {
+      console.warn("AuthProvider: signInUser (mock) called, but Firebase Auth is active. This function is intended for mock auth or if Firebase is disabled.");
+      // If Firebase is active, actual sign-in should be handled by Firebase methods,
+      // and onAuthStateChanged will update the state.
+      // However, to allow testing the UI with mock roles even if Firebase config is present (but maybe not used for login):
       setUser(loggedInUser);
       setSubscription(userSub);
       setIsAdmin(loggedInUser.email === 'admin@example.com');
       setLoading(false);
-      localStorage.setItem('mockUser', JSON.stringify(loggedInUser));
-      localStorage.setItem('mockSubscription', JSON.stringify(userSub));
-      window.dispatchEvent(new CustomEvent('mockAuthChange'));
-    } else {
-      console.warn("signInUser called, but Firebase Auth is active. This function is for mock auth.");
     }
   };
 
   const signOutUser = async () => {
+    console.log("AuthProvider: signOutUser called.");
     setLoading(true);
     if (auth && firebaseUser) {
-      // Real Firebase sign out
       try {
         await firebaseSignOut(auth);
-        console.log("Successfully signed out from Firebase.");
-        // Auth state listener will clear user, firebaseUser, subscription, isAdmin
+        console.log("AuthProvider: Successfully signed out from Firebase.");
+        // onAuthStateChanged will handle setting user, subscription, isAdmin to null/false
       } catch (error) {
-        console.error("Error signing out from Firebase: ", error);
+        console.error("AuthProvider: Error signing out from Firebase: ", error);
         toast({ title: "Erro no Logout", description: "Não foi possível fazer logout do Firebase. Tente novamente.", variant: 'destructive' });
         setLoading(false); // Reset loading on error
-        return; // Exit if Firebase sign-out fails
+        return;
       }
     } else {
-      // Mock sign out
-      await mockLogout();
-      console.log("Successfully signed out from mock system.");
+      // This handles mock logout or if Firebase user wasn't present
+      await mockLogout(); // Clears localStorage for mock user
+      console.log("AuthProvider: Successfully signed out from mock system or no Firebase user was present.");
       setUser(null);
       setFirebaseUser(null);
       setSubscription(null);
       setIsAdmin(false);
     }
-    setLoading(false); // Set loading to false after state updates are certain
-    // The onAuthStateChanged listener (or mockAuthChange) should handle global state updates
-    // and redirects are typically handled by pages checking auth state.
+    // setLoading(false) will be called by the onAuthStateChanged listener or by loadMockAuthData if in pure mock mode
+    // For immediate UI update after explicit mock logout:
+    if (!auth || !firebaseUser) {
+        setLoading(false);
+    }
     toast({ title: 'Logout Realizado', description: 'Você foi desconectado com sucesso.' });
-    router.push('/login');
-    window.dispatchEvent(new CustomEvent('mockAuthChange')); // Ensure mock system also reacts if it was in use
+    router.push('/login'); // Redirect after logout
+    // Explicitly trigger mockAuthChange if needed for components listening to this
+    if (!auth) window.dispatchEvent(new CustomEvent('mockAuthChange'));
   };
 
   const value = { user, firebaseUser, subscription, loading, signInUser, signOutUser, isAdmin };
