@@ -13,15 +13,33 @@ interface DealCardProps {
   deal: Deal;
   business?: GramadoBusiness;
   isRedeemed?: boolean;
-  canAccess?: boolean;
+  canAccess?: boolean; // Explicitly control if the user can access this deal (e.g., for VIP offers)
 }
 
 export function DealCard({ deal, business, isRedeemed = false, canAccess = true }: DealCardProps) {
   const businessName = business?.name || "Parceiro Guia Mais";
-  const businessImage = business?.imageUrl || "https://placehold.co/300x200.png"; // Generic placeholder
+  const businessImage = business?.imageUrl || "https://placehold.co/300x200.png"; 
   const businessTypeIcon = business?.icon;
 
-  const cardClasses = `flex h-full flex-col overflow-hidden shadow-md transition-all duration-300 ease-in-out ${isRedeemed ? 'opacity-60' : 'hover:scale-105 hover:shadow-xl'} ${!canAccess && !isRedeemed ? 'opacity-70 bg-muted/50' : ''}`;
+  const isEffectivelyDisabled = isRedeemed || !canAccess;
+
+  const cardClasses = `flex h-full flex-col overflow-hidden shadow-md transition-all duration-300 ease-in-out ${isEffectivelyDisabled ? 'opacity-60 bg-muted/30' : 'hover:scale-105 hover:shadow-xl group'}`;
+  
+  let buttonText = "Ver Oferta";
+  let buttonLink = `/checkout/${deal.businessId}?dealId=${deal.id}`;
+  let buttonVariant: "default" | "secondary" = "default";
+
+  if (isRedeemed) {
+    buttonText = "Oferta Utilizada";
+  } else if (!canAccess && deal.isVipOffer) {
+    buttonText = "Exclusivo VIP - Assine Já!";
+    buttonLink = "/join";
+    buttonVariant = "secondary";
+  } else if (!canAccess) {
+    // Generic case for other non-accessible reasons, though less common now
+    buttonText = "Acesso Restrito"; 
+  }
+
 
   return (
     <Card className={cardClasses}>
@@ -59,41 +77,36 @@ export function DealCard({ deal, business, isRedeemed = false, canAccess = true 
           </div>
         </div>
       )}
-      <CardHeader className="space-y-1 p-6 pb-2 pt-3">
-        <CardTitle className="text-primary text-lg">{deal.title}</CardTitle>
+      <CardHeader className="space-y-1 p-4 pb-2 pt-3"> {/* Reduced padding */}
+        <CardTitle className="text-primary text-md">{deal.title}</CardTitle> {/* Reduced size */}
         {business && (
-            <div className="flex items-center justify-between text-sm text-muted-foreground">
+            <div className="flex items-center justify-between text-xs text-muted-foreground"> {/* Reduced size */}
                 <span>{business.name}</span>
-                {businessTypeIcon && <BusinessTypeIcon type={businessTypeIcon} className="h-4 w-4" />}
+                {businessTypeIcon && <BusinessTypeIcon type={businessTypeIcon} className="h-3.5 w-3.5" />} {/* Reduced size */}
             </div>
         )}
-        <CardDescription className="text-sm text-foreground/80 line-clamp-2 pt-1">{deal.description}</CardDescription>
+        <CardDescription className="text-xs text-foreground/80 line-clamp-2 pt-0.5">{deal.description}</CardDescription> {/* Reduced size */}
       </CardHeader>
-      <CardContent className="flex-grow pt-0 pb-3 p-6">
-        <p className="text-xs text-muted-foreground line-clamp-3">{deal.termsAndConditions}</p>
+      <CardContent className="flex-grow pt-0 pb-2 p-4"> {/* Reduced padding */}
+        <p className="text-xs text-muted-foreground line-clamp-2">{deal.termsAndConditions}</p> {/* Reduced line-clamp */}
         {isRedeemed && (
-            <p className="mt-2 text-sm font-semibold text-destructive flex items-center">
-                <XCircle className="mr-1.5 h-4 w-4"/> Você já utilizou esta oferta.
-            </p>
-        )}
-         {!canAccess && !isRedeemed && deal.isVipOffer && (
-            <p className="mt-2 text-sm font-semibold text-purple-700">
-                Oferta exclusiva para membros VIP.
+            <p className="mt-1.5 text-xs font-semibold text-destructive flex items-center"> {/* Reduced size */}
+                <XCircle className="mr-1 h-3.5 w-3.5"/> Você já utilizou esta oferta. {/* Reduced size */}
             </p>
         )}
       </CardContent>
-      <CardFooter className="pt-0 p-6">
+      <CardFooter className="pt-0 p-4"> {/* Reduced padding */}
         <Button
             asChild
-            variant="default"
-            className={`w-full h-10 px-4 py-2 text-sm ${!canAccess || isRedeemed ? 'bg-muted hover:bg-muted text-muted-foreground cursor-not-allowed' : 'bg-accent hover:bg-accent/90 text-accent-foreground'}`}
-            disabled={!canAccess || isRedeemed}
+            variant={buttonVariant}
+            className={`w-full h-9 px-3 py-1.5 text-xs ${isEffectivelyDisabled ? 'bg-muted hover:bg-muted text-muted-foreground cursor-not-allowed' : (buttonVariant === 'secondary' ? 'bg-purple-500 hover:bg-purple-600 text-white' : 'bg-accent hover:bg-accent/90 text-accent-foreground') }`}
+            disabled={isEffectivelyDisabled && buttonLink === '#'}
         >
-          <Link href={canAccess && !isRedeemed ? `/checkout/${deal.businessId}?dealId=${deal.id}` : '#'}>
+          <Link href={isEffectivelyDisabled && buttonLink !== '/join' ? '#' : buttonLink}>
             <span className="flex items-center justify-center w-full">
-              <Tag className="mr-2 h-4 w-4" />
-              {isRedeemed ? "Oferta Utilizada" : (canAccess ? "Ver Oferta" : "Requer Acesso VIP")}
-              {canAccess && !isRedeemed && <ArrowRight className="ml-2 h-4 w-4" />}
+              <Tag className="mr-1.5 h-3.5 w-3.5" /> {/* Reduced size */}
+              {buttonText}
+              {!isEffectivelyDisabled && buttonLink !== '/join' && <ArrowRight className="ml-1.5 h-3.5 w-3.5" />} {/* Reduced size */}
             </span>
           </Link>
         </Button>

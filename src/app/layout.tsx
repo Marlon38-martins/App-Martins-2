@@ -46,6 +46,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { slugify } from '@/lib/utils';
 import { DynamicPartnerLink } from '@/components/layout/partner-panel-dropdown';
+import { DesktopHorizontalNav } from '@/components/layout/desktop-horizontal-nav'; // Import new component
+import { QuickNav } from '@/components/layout/quick-nav';
 
 
 const geistSans = Geist({
@@ -112,7 +114,7 @@ export default function RootLayout({
                   <SidebarMenuItem>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <SidebarMenuButton tooltip={{content: "Parceiros & Categorias", side:"right"}} className="w-full">
+                        <SidebarMenuButton href="/services" tooltip={{content: "Parceiros & Categorias", side:"right"}} className="w-full">
                            <span className="flex items-center gap-1.5">
                             <ServicesIcon />
                             <span className="group-data-[collapsible=icon]:hidden">Parceiros</span>
@@ -212,8 +214,10 @@ export default function RootLayout({
 
             <SidebarInset>
               <Header />
+              <DesktopHorizontalNav /> {/* Added for collapsed desktop sidebar */}
+              <QuickNav /> {/* This one is md:hidden (mobile only) */}
               <main className="flex-grow p-4 bg-background overflow-x-hidden w-full">
-                <div className="w-full max-w-sm mx-auto"> {/* Constrains page content width */}
+                <div className="w-full max-w-sm mx-auto"> 
                   {children}
                 </div>
               </main>
