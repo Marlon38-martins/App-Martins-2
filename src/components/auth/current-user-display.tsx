@@ -3,8 +3,8 @@
 
 import Link from 'next/link';
 import { useAuth } from '@/hooks/use-auth-client';
-import { SidebarMenuItem, SidebarMenuButton } from '@/components/ui/sidebar';
-import { LogIn, LogOut, UserCircle, UserPlus, Settings, Star } from 'lucide-react'; // Added Star
+import { SidebarMenuItem, SidebarMenuButton, useSidebar } from '@/components/ui/sidebar';
+import { LogIn, LogOut, UserCircle, UserPlus, Settings, Star } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
@@ -20,28 +20,34 @@ import { useRouter } from 'next/navigation';
 
 
 export function CurrentUserDisplay() {
-  const { user, subscription, loading, signOutUser } = useAuth(); // Added subscription
+  const { user, subscription, loading, signOutUser } = useAuth();
   const { toast } = useToast();
   const router = useRouter();
+  const { isMobile, setOpenMobile } = useSidebar(); // Get sidebar context
 
   const handleSignOut = async () => {
     try {
       await signOutUser();
+      if (isMobile) {
+        setOpenMobile(false);
+      }
       // Toast and redirect are handled within AuthProviderClient's signOutUser or here for page-specific feedback.
-      // For consistency, let's assume AuthProviderClient handles the global redirect/toast on auth change.
-      // If not, uncomment these lines:
-      // toast({ title: 'Logout Realizado', description: 'Você foi desconectado com sucesso.' });
-      // router.push('/login'); 
     } catch (error) {
       console.error("Error signing out: ", error);
       toast({ title: 'Erro no Logout', description: 'Não foi possível fazer logout. Tente novamente.', variant: 'destructive' });
     }
   };
 
+  const handleDropdownItemSelect = () => {
+    if (isMobile) {
+      setOpenMobile(false);
+    }
+  };
+
   if (loading) {
     return (
       <SidebarMenuItem className="mt-auto pt-4 border-t border-sidebar-border">
-        <div className="flex items-center gap-2 p-2 w-full group-data-[collapsible=icon]:justify-center">
+        <div className="flex items-center gap-2 p-1.5 w-full group-data-[collapsible=icon]:justify-center">
           <Skeleton className="h-8 w-8 rounded-full" />
           <Skeleton className="h-4 w-24 group-data-[collapsible=icon]:hidden" />
         </div>
@@ -55,10 +61,10 @@ export function CurrentUserDisplay() {
     const isVip = subscription?.planId === 'serrano_vip' && subscription?.status === 'active';
 
     return (
-      <SidebarMenuItem className="mt-auto pt-4 border-t border-sidebar-border">
+      <SidebarMenuItem> {/* Removed mt-auto from here, layout.tsx will handle bottom alignment */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <button className="flex w-full items-center gap-2 rounded-md p-2 text-left text-sm text-sidebar-foreground outline-none transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 focus-visible:ring-sidebar-ring group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:size-10">
+            <button className="flex w-full items-center gap-2 rounded-md p-1.5 text-left text-sm text-sidebar-foreground outline-none transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-1 focus-visible:ring-sidebar-ring group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:size-8">
               <Avatar className="h-8 w-8">
                 <AvatarImage src={user.photoURL || undefined} alt={userName} />
                 <AvatarFallback>{userInitial}</AvatarFallback>
@@ -76,21 +82,21 @@ export function CurrentUserDisplay() {
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem asChild>
+            <DropdownMenuItem asChild onSelect={handleDropdownItemSelect}>
               <Link href="/profile" className="flex items-center cursor-pointer">
                 <UserCircle className="mr-2 h-4 w-4" />
                 Meu Perfil
               </Link>
             </DropdownMenuItem>
             {isVip && (
-              <DropdownMenuItem asChild>
+              <DropdownMenuItem asChild onSelect={handleDropdownItemSelect}>
                 <Link href="/vip-area" className="flex items-center cursor-pointer text-accent hover:!text-accent-foreground hover:!bg-accent/10">
                   <Star className="mr-2 h-4 w-4" />
                   Área VIP
                 </Link>
               </DropdownMenuItem>
             )}
-            <DropdownMenuItem asChild>
+            <DropdownMenuItem asChild onSelect={handleDropdownItemSelect}>
               <Link href="/settings" className="flex items-center cursor-pointer">
                 <Settings className="mr-2 h-4 w-4" />
                 Configurações
@@ -109,19 +115,23 @@ export function CurrentUserDisplay() {
 
   return (
     <>
-      <SidebarMenuItem className="mt-auto pt-4 border-t border-sidebar-border">
-        <SidebarMenuButton asChild tooltip={{ content: "Login", side: "right" }}>
+      <SidebarMenuItem className="mt-auto pt-3 border-t border-sidebar-border"> {/* This will push Login/Join to bottom IF partner panel is not there */}
+        <SidebarMenuButton asChild tooltip={{ content: "Login", side: "right" }} href="/login">
           <Link href="/login">
-            <LogIn />
-            <span className="group-data-[collapsible=icon]:hidden">Login</span>
+            <span className="flex items-center gap-1.5">
+                <LogIn />
+                <span className="group-data-[collapsible=icon]:hidden">Login</span>
+            </span>
           </Link>
         </SidebarMenuButton>
       </SidebarMenuItem>
       <SidebarMenuItem>
-        <SidebarMenuButton asChild tooltip={{ content: "Associe-se", side: "right" }}>
+        <SidebarMenuButton asChild tooltip={{ content: "Associe-se", side: "right" }} href="/join">
           <Link href="/join">
-            <UserPlus />
-            <span className="group-data-[collapsible=icon]:hidden">Associe-se</span>
+            <span className="flex items-center gap-1.5">
+                <UserPlus />
+                <span className="group-data-[collapsible=icon]:hidden">Associe-se</span>
+            </span>
           </Link>
         </SidebarMenuButton>
       </SidebarMenuItem>
