@@ -33,6 +33,12 @@ function ServicesPageContent() {
   const [citySearchTerm, setCitySearchTerm] = useState('');
   const [currentCityName, setCurrentCityName] = useState<string | null>(null);
 
+  const suggestedRegionsStatic = useMemo(() => [
+    { name: 'Martins, RN', slug: slugify('Martins, RN') },
+    { name: 'Cidade Vizinha, RN', slug: slugify('Cidade Vizinha, RN') },
+    { name: 'Pau dos Ferros, RN', slug: slugify('Pau dos Ferros, RN') },
+  ], []);
+
   useEffect(() => {
     async function loadData() {
       setIsLoading(true);
@@ -95,9 +101,9 @@ function ServicesPageContent() {
     return Array.from(new Set(cities)).map(city => ({ name: city, slug: slugify(city) })).sort((a,b) => a.name.localeCompare(b.name));
   }, [allBusinesses]);
 
-  const displayedCityFilters = useMemo(() => {
+  const searchedAndFilteredCities = useMemo(() => {
     if (!citySearchTerm) {
-      return uniqueCitiesSource; // Show all unique cities by default
+      return []; // Only show search results if there's a search term
     }
     return uniqueCitiesSource.filter(city =>
       city.name.toLowerCase().includes(citySearchTerm.toLowerCase())
@@ -118,37 +124,60 @@ function ServicesPageContent() {
         </p>
       </section>
 
-      {uniqueCitiesSource.length > 0 && ( // Show city filters only if there are cities to filter by
+      {uniqueCitiesSource.length > 0 && (
         <section className="mb-4 p-3 border rounded-lg shadow-sm bg-card">
           <h3 className="mb-2 text-sm font-semibold text-accent flex items-center">
-            <MapPinned className="mr-1.5 h-4 w-4" /> Filtrar por Região:
+            <MapPinned className="mr-1.5 h-4 w-4" /> Regiões Sugeridas:
+          </h3>
+          <div className="flex flex-wrap gap-1.5 mb-3">
+            <Button
+              variant={!citySlugFromQuery ? 'default' : 'outline'}
+              size="sm"
+              asChild
+              className="text-xs h-8"
+            >
+              <Link href={`/services`}>
+                <span className="flex items-center">
+                  <Building className="mr-1 h-3 w-3" /> Todas
+                </span>
+              </Link>
+            </Button>
+            {suggestedRegionsStatic.filter(sr => uniqueCitiesSource.some(ucs => ucs.slug === sr.slug)).map(city => (
+              <Button
+                key={city.slug}
+                variant={citySlugFromQuery === city.slug ? 'default' : 'outline'}
+                size="sm"
+                asChild
+                className="text-xs h-8"
+              >
+                <Link href={`/services?city=${city.slug}`}>
+                  <span className="flex items-center">
+                    <MapPinned className="mr-1 h-3 w-3" /> {city.name}
+                  </span>
+                </Link>
+              </Button>
+            ))}
+          </div>
+
+          <h3 className="mb-1.5 text-sm font-semibold text-accent flex items-center">
+            <Search className="mr-1.5 h-4 w-4" /> Buscar Outra Região:
           </h3>
           <div className="mb-2">
             <SearchBar
               searchTerm={citySearchTerm}
               onSearchChange={setCitySearchTerm}
-              placeholder="Buscar cidade na região..."
+              placeholder="Digite o nome da cidade..."
             />
           </div>
           {isLoading && <Skeleton className="h-8 w-full rounded-md" />}
-          {!isLoading && displayedCityFilters.length === 0 && citySearchTerm && (
+          
+          {citySearchTerm && searchedAndFilteredCities.length === 0 && (
             <p className="text-xs text-muted-foreground text-center py-1.5">Nenhuma cidade encontrada para "{citySearchTerm}".</p>
           )}
-          {!isLoading && displayedCityFilters.length > 0 && (
-            <div className="flex flex-wrap gap-1.5">
-              <Button
-                variant={!citySlugFromQuery ? 'default' : 'outline'}
-                size="sm"
-                asChild
-                className="text-xs h-8"
-              >
-                <Link href={`/services`}>
-                  <span className="flex items-center">
-                    <Building className="mr-1 h-3 w-3" /> Todas as Regiões
-                  </span>
-                </Link>
-              </Button>
-              {displayedCityFilters.map(city => (
+
+          {citySearchTerm && searchedAndFilteredCities.length > 0 && (
+            <div className="flex flex-wrap gap-1.5 mt-2">
+              {searchedAndFilteredCities.map(city => (
                 <Button
                   key={city.slug}
                   variant={citySlugFromQuery === city.slug ? 'default' : 'outline'}
@@ -165,6 +194,9 @@ function ServicesPageContent() {
               ))}
             </div>
           )}
+           {!citySearchTerm && (
+             <p className="text-xs text-muted-foreground text-center py-1.5">Digite na busca acima para encontrar mais cidades.</p>
+           )}
         </section>
       )}
 
