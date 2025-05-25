@@ -27,10 +27,9 @@ export function DesktopHorizontalNav() {
   // This nav is visible only when !isMobile and sidebar state is 'collapsed'
   return (
     <nav className={cn(
-      "sticky top-16 z-30 h-12 bg-background/95 backdrop-blur-sm flex items-center justify-center shadow-sm border-b", // Kept border-b to separate from content below
-      // Visibility is controlled by the React conditional rendering above
+      "sticky top-16 z-30 h-12 bg-background/95 backdrop-blur-sm flex items-center shadow-sm border-b",
     )}>
-      <div className="flex items-center justify-center h-full space-x-1 px-2">
+      <div className="flex items-center justify-end h-full space-x-1 px-4 md:px-6 w-full"> {/* Changed justify-start to justify-end and added w-full */}
         {navItems.map((item) => (
           <Button
             key={item.label}
