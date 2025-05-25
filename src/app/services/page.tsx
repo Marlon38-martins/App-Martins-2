@@ -1,4 +1,3 @@
-
 // src/app/services/page.tsx
 'use client';
 
@@ -11,7 +10,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { BusinessTypeIcon } from '@/components/icons';
 import { slugify, unslugify } from '@/lib/utils';
-import { Frown, ArrowRight, Search, MapPinned, Filter, Building } from 'lucide-react'; // Added Building
+import { Frown, ArrowRight, Search, MapPinned, Filter, Building } from 'lucide-react';
 import { SearchBar } from '@/components/search-bar';
 import { Button } from '@/components/ui/button';
 
@@ -23,6 +22,13 @@ interface Category {
   count: number;
 }
 
+const suggestedRegionsForServicesPage = [
+    { name: 'Martins, RN', slug: slugify('Martins, RN') },
+    { name: 'Cidade Vizinha, RN', slug: slugify('Cidade Vizinha, RN') },
+    { name: 'Pau dos Ferros, RN', slug: slugify('Pau dos Ferros, RN') },
+    // Add more key suggestions as needed
+];
+
 function ServicesPageContent() {
   const searchParams = useSearchParams();
   const citySlugFromQuery = searchParams.get('city');
@@ -31,7 +37,7 @@ function ServicesPageContent() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [categorySearchTerm, setCategorySearchTerm] = useState('');
-  const [citySearchTerm, setCitySearchTerm] = useState(''); // New state for city search
+  const [citySearchTerm, setCitySearchTerm] = useState('');
   const [currentCityName, setCurrentCityName] = useState<string | null>(null);
 
   useEffect(() => {
@@ -96,9 +102,12 @@ function ServicesPageContent() {
     return Array.from(new Set(cities)).map(city => ({ name: city, slug: slugify(city) })).sort((a,b) => a.name.localeCompare(b.name));
   }, [allBusinesses]);
 
-  const filteredUniqueCities = useMemo(() => {
+  const displayedCityFilters = useMemo(() => {
     if (!citySearchTerm) {
-      return uniqueCitiesSource;
+      // Show suggested regions if no search term, but only if they exist in the actual uniqueCitiesSource
+      return suggestedRegionsForServicesPage.filter(suggested => 
+        uniqueCitiesSource.some(unique => unique.slug === suggested.slug)
+      );
     }
     return uniqueCitiesSource.filter(city =>
       city.name.toLowerCase().includes(citySearchTerm.toLowerCase())
@@ -106,25 +115,25 @@ function ServicesPageContent() {
   }, [uniqueCitiesSource, citySearchTerm]);
 
   return (
-    <div>
-      <section className="mb-8 text-center">
-        <h2 className="mb-1 text-2xl font-bold tracking-tight text-primary md:text-3xl">
+    <div className="p-3">
+      <section className="mb-6 text-center">
+        <h2 className="mb-1 text-xl font-bold tracking-tight text-primary md:text-2xl">
           Nossos Parceiros e Serviços
         </h2>
         {currentCityName && (
-            <p className="text-lg text-accent font-semibold">em {currentCityName}</p>
+            <p className="text-md text-accent font-semibold">em {currentCityName}</p>
         )}
-        <p className="text-sm text-foreground/80 md:text-base">
+        <p className="text-xs text-foreground/80 md:text-sm">
           Explore e contrate serviços dos melhores estabelecimentos.
         </p>
       </section>
 
       {uniqueCitiesSource.length > 1 && (
-        <section className="mb-6 p-4 border rounded-lg shadow-sm bg-card">
-          <h3 className="mb-3 text-md font-semibold text-accent flex items-center">
-            <MapPinned className="mr-2 h-5 w-5" /> Filtrar por Região:
+        <section className="mb-4 p-3 border rounded-lg shadow-sm bg-card">
+          <h3 className="mb-2 text-sm font-semibold text-accent flex items-center">
+            <MapPinned className="mr-1.5 h-4 w-4" /> Filtrar por Região:
           </h3>
-          <div className="mb-3">
+          <div className="mb-2">
             <SearchBar
               searchTerm={citySearchTerm}
               onSearchChange={setCitySearchTerm}
@@ -132,46 +141,49 @@ function ServicesPageContent() {
             />
           </div>
           {isLoading && <Skeleton className="h-8 w-full rounded-md" />}
-          {!isLoading && filteredUniqueCities.length === 0 && citySearchTerm && (
-            <p className="text-sm text-muted-foreground text-center py-2">Nenhuma cidade encontrada para "{citySearchTerm}".</p>
+          {!isLoading && displayedCityFilters.length === 0 && citySearchTerm && (
+            <p className="text-xs text-muted-foreground text-center py-1.5">Nenhuma cidade encontrada para "{citySearchTerm}".</p>
           )}
-          {!isLoading && (filteredUniqueCities.length > 0 || !citySearchTerm) && (
-            <div className="flex flex-wrap gap-2">
+          {!isLoading && (displayedCityFilters.length > 0 || !citySearchTerm) && (
+            <div className="flex flex-wrap gap-1.5">
               <Button
                 variant={!citySlugFromQuery ? 'default' : 'outline'}
                 size="sm"
                 asChild
-                className="text-xs"
+                className="text-xs h-8"
               >
                 <Link href={`/services`}>
                   <span className="flex items-center">
-                    <Building className="mr-1.5 h-3.5 w-3.5" /> Todas as Regiões
+                    <Building className="mr-1 h-3 w-3" /> Todas as Regiões
                   </span>
                 </Link>
               </Button>
-              {filteredUniqueCities.map(city => (
+              {displayedCityFilters.map(city => (
                 <Button
                   key={city.slug}
                   variant={citySlugFromQuery === city.slug ? 'default' : 'outline'}
                   size="sm"
                   asChild
-                  className="text-xs"
+                  className="text-xs h-8"
                 >
                   <Link href={`/services?city=${city.slug}`}>
                     <span className="flex items-center">
-                      <MapPinned className="mr-1.5 h-3.5 w-3.5" /> {city.name}
+                      <MapPinned className="mr-1 h-3 w-3" /> {city.name}
                     </span>
                   </Link>
                 </Button>
               ))}
             </div>
           )}
+           {!citySearchTerm && uniqueCitiesSource.length > suggestedRegionsForServicesPage.length && (
+            <p className="text-xs text-muted-foreground mt-1.5">Digite na busca acima para ver mais regiões.</p>
+           )}
         </section>
       )}
 
-      <div className="mb-8 max-w-xl mx-auto">
-        <h3 className="mb-2 text-md font-semibold text-accent flex items-center">
-            <Filter className="mr-2 h-5 w-5" /> Buscar por Categoria {currentCityName ? `em ${currentCityName}` : ''}:
+      <div className="mb-6 max-w-lg mx-auto">
+        <h3 className="mb-1.5 text-sm font-semibold text-accent flex items-center">
+            <Filter className="mr-1.5 h-4 w-4" /> Buscar por Categoria {currentCityName ? `em ${currentCityName}` : ''}:
         </h3>
         <SearchBar
           searchTerm={categorySearchTerm}
@@ -181,18 +193,18 @@ function ServicesPageContent() {
       </div>
 
       {isLoading && (
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {Array.from({ length: 3 }).map((_, index) => (
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          {Array.from({ length: 2 }).map((_, index) => (
             <Card key={index} className="flex flex-col">
-              <CardHeader className="p-3">
-                <Skeleton className="mb-1.5 h-7 w-7 rounded-md" />
-                <Skeleton className="h-5 w-3/4" />
+              <CardHeader className="p-2.5">
+                <Skeleton className="mb-1 h-6 w-6 rounded-md" />
+                <Skeleton className="h-4 w-3/4" />
               </CardHeader>
-              <CardContent className="flex-grow p-3 pt-0">
-                <Skeleton className="h-3 w-1/2" />
+              <CardContent className="flex-grow p-2.5 pt-0">
+                <Skeleton className="h-2.5 w-1/2" />
               </CardContent>
-              <div className="p-3 pt-0">
-                <Skeleton className="h-9 w-full rounded-md" />
+              <div className="p-2.5 pt-0">
+                <Skeleton className="h-8 w-full rounded-md" />
               </div>
             </Card>
           ))}
@@ -200,46 +212,46 @@ function ServicesPageContent() {
       )}
 
       {error && (
-        <Alert variant="destructive" className="my-6">
-          <Frown className="h-5 w-5" />
-          <AlertTitle>Erro ao Carregar</AlertTitle>
-          <AlertDescription>{error}</AlertDescription>
+        <Alert variant="destructive" className="my-4">
+          <Frown className="h-4 w-4" />
+          <AlertTitle className="text-sm">Erro ao Carregar</AlertTitle>
+          <AlertDescription className="text-xs">{error}</AlertDescription>
         </Alert>
       )}
 
       {!isLoading && !error && filteredCategories.length === 0 && (
-        <div className="mt-10 flex flex-col items-center justify-center text-center">
-          <Frown className="mb-3 h-14 w-14 text-muted-foreground" />
-          <h3 className="text-lg font-semibold text-foreground">
+        <div className="mt-8 flex flex-col items-center justify-center text-center">
+          <Frown className="mb-2.5 h-12 w-12 text-muted-foreground" />
+          <h3 className="text-md font-semibold text-foreground">
             {allCategories.length > 0 && categorySearchTerm ? `Nenhuma categoria encontrada para "${categorySearchTerm}"` : `Nenhuma categoria encontrada ${currentCityName ? `em ${currentCityName}`:''}`}
           </h3>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-xs text-muted-foreground">
             {allCategories.length > 0 && categorySearchTerm ? 'Tente um termo de busca diferente.' : 'Parece que ainda não há serviços cadastrados para esta seleção.'}
           </p>
         </div>
       )}
 
       {!isLoading && !error && filteredCategories.length > 0 && (
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           {filteredCategories.map(category => (
-            <Card key={category.slug} className="flex transform flex-col overflow-hidden shadow-md transition-all duration-200 hover:scale-105 hover:shadow-xl group bg-card">
-              <CardHeader className="pb-1 p-3">
+            <Card key={category.slug} className="flex transform flex-col overflow-hidden shadow-sm transition-all duration-200 hover:scale-105 hover:shadow-lg group bg-card">
+              <CardHeader className="pb-1 p-2.5">
                 <div className="flex items-center justify-between">
-                  <CardTitle className="text-lg font-semibold text-primary group-hover:text-accent">{category.name}</CardTitle>
-                  {category.icon && <BusinessTypeIcon type={category.icon} className="h-6 w-6 text-muted-foreground group-hover:text-accent" />}
+                  <CardTitle className="text-md font-semibold text-primary group-hover:text-accent">{category.name}</CardTitle>
+                  {category.icon && <BusinessTypeIcon type={category.icon} className="h-5 w-5 text-muted-foreground group-hover:text-accent" />}
                 </div>
               </CardHeader>
-              <CardContent className="flex-grow p-3 pt-0">
+              <CardContent className="flex-grow p-2.5 pt-0">
                 <p className="text-xs text-muted-foreground">{category.count} estabelecimento(s) encontrado(s)</p>
               </CardContent>
-              <div className="p-3 pt-1">
+              <div className="p-2.5 pt-1">
                  <Link
                     href={`/services/${category.slug}${citySlugFromQuery ? `?city=${citySlugFromQuery}` : ''}`}
-                    className="inline-flex items-center justify-center rounded-md bg-accent px-3 py-2 text-xs font-medium text-accent-foreground shadow-sm transition-colors hover:bg-accent/80 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 w-full group-hover:bg-primary group-hover:text-primary-foreground"
+                    className="inline-flex items-center justify-center rounded-md bg-accent px-2.5 py-1.5 text-xs font-medium text-accent-foreground shadow-sm transition-colors hover:bg-accent/80 focus:outline-none focus:ring-1 focus:ring-accent focus:ring-offset-1 w-full group-hover:bg-primary group-hover:text-primary-foreground h-8"
                   >
                     <span className="flex items-center justify-center w-full">
                         Ver em {category.name}
-                        <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
+                        <ArrowRight className="ml-1 h-3 w-3" />
                     </span>
                 </Link>
               </div>
@@ -258,4 +270,3 @@ export default function ServicesPage() {
         </Suspense>
     )
 }
-
