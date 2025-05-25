@@ -27,15 +27,15 @@ export function DesktopHorizontalNav() {
   // This nav is visible only when !isMobile and sidebar state is 'collapsed'
   return (
     <nav className={cn(
-      "sticky top-16 z-30 h-12 bg-background/95 backdrop-blur-sm flex items-center shadow-sm border-b",
+      "sticky top-16 z-30 h-10 bg-background/95 backdrop-blur-sm flex items-center", // Reduced height to h-10, removed border-b and shadow-sm
     )}>
-      <div className="flex items-center justify-end h-full space-x-1 px-4 md:px-6 w-full"> {/* Changed justify-start to justify-end and added w-full */}
+      <div className="flex items-center justify-end h-full space-x-1 px-4 md:px-6 w-full">
         {navItems.map((item) => (
           <Button
             key={item.label}
             variant="ghost"
             asChild
-            size="sm"
+            size="sm" // h-9
             className="text-xs px-1.5 py-1 h-auto hover:bg-accent/10 rounded-md"
           >
             <Link href={item.href} className="flex flex-col items-center justify-center p-1 text-center">
