@@ -4,6 +4,8 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '@/hooks/use-auth-client';
 import { getGramadoBusinessById, getDealsForBusiness, type GramadoBusiness, type Deal } from '@/services/gramado-businesses';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -32,19 +34,16 @@ import {
     Settings2,
     QrCode as QrCodeIcon,
     Star,
-    Ticket
+    Ticket,
+    ShieldAlert
 } from 'lucide-react';
 import { BusinessTypeIcon } from '@/components/icons';
-import { useAuth } from '@/hooks/use-auth-client'; // Re-added for partner context
-import { useRouter } from 'next/navigation'; // For redirect
 
 const MOCK_PARTNER_BUSINESS_ID = '1'; 
 const MOCK_PARTNER_EMAIL = 'partner@example.com';
-const ADMIN_EMAIL = 'admin@example.com';
-
 
 export default function PartnerDashboardPage() {
-  const { user, loading: authLoading } = useAuth();
+  const { user, loading: authLoading, isAdmin } = useAuth();
   const router = useRouter();
   const [business, setBusiness] = useState<GramadoBusiness | null>(null);
   const [deals, setDeals] = useState<Deal[]>([]);
@@ -56,18 +55,18 @@ export default function PartnerDashboardPage() {
     if (!authLoading) {
       if (!user) {
         router.push('/login?redirect=/partner/dashboard');
-      } else if (user.email === MOCK_PARTNER_EMAIL || user.email === ADMIN_EMAIL) {
+      } else if (user.email === MOCK_PARTNER_EMAIL || isAdmin) {
         setCanAccess(true);
       } else {
         setCanAccess(false);
-        setError("Acesso negado. Esta área é restrita para parceiros.");
-        setIsLoadingData(false);
+        setError("Acesso negado. Esta área é restrita.");
+        setIsLoadingData(false); // Stop loading if access is denied early
       }
     }
-  }, [user, authLoading, router]);
+  }, [user, authLoading, isAdmin, router]);
 
   useEffect(() => {
-    if (!canAccess || !user) return; // Only load data if user can access
+    if (!canAccess || !user) return; 
 
     const businessIdToLoad = MOCK_PARTNER_BUSINESS_ID; 
 
@@ -96,12 +95,12 @@ export default function PartnerDashboardPage() {
         setIsLoadingData(false);
         setError("ID do estabelecimento do parceiro não definido.");
     }
-  }, [canAccess, user]); // Rerun if canAccess changes
+  }, [canAccess, user]); 
 
   const normalDeals = deals.filter(deal => !deal.isVipOffer);
   const vipDeals = deals.filter(deal => deal.isVipOffer);
 
-  if (authLoading || isLoadingData) {
+  if (authLoading || (!canAccess && !authLoading) || (canAccess && isLoadingData)) {
     return (
       <div className="space-y-6 p-4 md:p-6">
         <Skeleton className="mb-6 h-8 w-2/3" />
@@ -127,18 +126,15 @@ export default function PartnerDashboardPage() {
             <Skeleton className="h-12 w-full rounded-md" />
           </CardContent>
         </Card>
-        <Card className="shadow-lg">
-          <CardHeader className="p-6"><Skeleton className="h-7 w-1/2" /></CardHeader>
-          <CardContent className="p-6"><Skeleton className="h-8 w-full" /></CardContent>
-        </Card>
       </div>
     );
   }
   
-   if (!canAccess) {
+   if (!canAccess && !authLoading) {
     return (
-      <div className="p-4 md:p-6">
-        <Alert variant="destructive">
+      <div className="p-4 md:p-6 flex flex-col items-center justify-center min-h-[calc(100vh-200px)]">
+        <Alert variant="destructive" className="max-w-md text-center">
+          <ShieldAlert className="mx-auto mb-2 h-6 w-6" />
           <AlertTitle>Acesso Negado</AlertTitle>
           <AlertDescription>{error || "Você não tem permissão para visualizar esta página."}</AlertDescription>
         </Alert>
@@ -149,7 +145,7 @@ export default function PartnerDashboardPage() {
     );
   }
   
-  if (error && canAccess) { // Show error only if access was granted but data loading failed
+  if (error && canAccess) { 
     return (
       <div className="p-4 md:p-6">
         <Alert variant="destructive">
@@ -185,7 +181,7 @@ export default function PartnerDashboardPage() {
         <CardHeader className="p-6">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
             <div className="flex items-center">
-              {business.icon && <BusinessTypeIcon type={business.icon} className="mr-2 h-5 w-5 text-accent hidden sm:block" />}
+              {business.icon && <BusinessTypeIcon type={business.icon} className="mr-2 h-6 w-6 text-accent hidden sm:block" />}
               <CardTitle className="text-xl text-accent md:text-2xl">{business.name}</CardTitle>
             </div>
             <div className="flex flex-wrap gap-2 mt-2 sm:mt-0">
@@ -333,24 +329,6 @@ export default function PartnerDashboardPage() {
                 Mantenha suas ofertas atualizadas e atrativas!
             </p>
         </CardFooter>
-      </Card>
-
-      <Card className="shadow-lg">
-        <CardHeader className="p-6">
-            <CardTitle className="text-xl text-accent flex items-center md:text-2xl">
-                <BarChart3 className="mr-2 h-5 w-5" />
-                Visão Geral do Desempenho
-            </CardTitle>
-        </CardHeader>
-        <CardContent className="p-6">
-            <Alert variant="default" className="bg-secondary/20 border-secondary">
-                <BarChart3 className="h-4 w-4 text-secondary-foreground"/>
-                <AlertTitle className="text-secondary-foreground">Em Breve!</AlertTitle>
-                <AlertDescription>
-                Esta seção mostrará estatísticas sobre visualizações, resgates de ofertas e mais.
-                </AlertDescription>
-            </Alert>
-        </CardContent>
       </Card>
     </div>
   );

@@ -7,8 +7,7 @@ import Link from 'next/link';
 import { useForm, type SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-
-// import { useAuth } from '@/hooks/use-auth-client'; // No longer needed for public access
+import { useAuth } from '@/hooks/use-auth-client';
 import { getGramadoBusinessById, type GramadoBusiness, type LucideIconName } from '@/services/gramado-businesses';
 
 import { Button } from '@/components/ui/button';
@@ -20,10 +19,11 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { useToast } from '@/hooks/use-toast';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
-import { ArrowLeft, Building, Save } from 'lucide-react'; // ShieldAlert removed
+import { ArrowLeft, Building, Save, ShieldAlert } from 'lucide-react'; 
 
-// const MOCK_PARTNER_EMAIL = 'partner@example.com'; // Not used for access control anymore
-const MOCK_PARTNER_BUSINESS_ID = '1'; // Used to fetch business data if no specific partner context
+const MOCK_PARTNER_EMAIL = 'partner@example.com';
+const MOCK_PARTNER_BUSINESS_ID = '1'; 
+const ADMIN_EMAIL = 'admin@example.com';
 
 const iconNames: LucideIconName[] = [
   'UtensilsCrossed', 
@@ -64,45 +64,72 @@ export default function EditPartnerBusinessPage() {
   const { toast } = useToast();
   const router = useRouter();
   const params = useParams() as EditBusinessPageParams;
-  const businessId = params.id || MOCK_PARTNER_BUSINESS_ID; // Fallback for direct access
+  const businessIdFromUrl = params.id;
 
-  // const { user, isAdmin, loading: authLoading } = useAuth(); // Auth checks removed
+  const { user, loading: authLoading, isAdmin } = useAuth();
   const [business, setBusiness] = useState<GramadoBusiness | null>(null);
   const [isLoadingData, setIsLoadingData] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [canAccess, setCanAccess] = useState(false);
+  const [accessError, setAccessError] = useState<string | null>(null);
   
   const form = useForm<EditEstablishmentFormValues>({
     resolver: zodResolver(editEstablishmentFormSchema),
     defaultValues: {}, 
   });
 
-  // Access is now public, auth checks removed from useEffect
   useEffect(() => {
-    if (businessId) {
+    if (!authLoading) {
+      if (!user) {
+        router.push(`/login?redirect=/partner/edit-business/${businessIdFromUrl || MOCK_PARTNER_BUSINESS_ID}`);
+      } else if (user.email === MOCK_PARTNER_EMAIL || isAdmin) {
+        setCanAccess(true);
+      } else {
+        setCanAccess(false);
+        setAccessError("Acesso negado. Esta funcionalidade é para parceiros registrados ou administradores.");
+        setIsLoadingData(false);
+      }
+    }
+  }, [user, authLoading, isAdmin, router, businessIdFromUrl]);
+
+
+  useEffect(() => {
+    if (!canAccess || !user) return;
+
+    const businessIdToLoad = isAdmin ? businessIdFromUrl : MOCK_PARTNER_BUSINESS_ID;
+
+    if (businessIdToLoad) {
       async function loadBusinessData() {
         setIsLoadingData(true);
         setError(null);
         try {
-          const businessData = await getGramadoBusinessById(businessId);
+          // Admin can edit any business by ID, partner edits their own (MOCK_PARTNER_BUSINESS_ID)
+          const businessData = await getGramadoBusinessById(businessIdToLoad);
           if (businessData) {
-            setBusiness(businessData);
-            form.reset({
-              name: businessData.name,
-              type: businessData.type,
-              shortDescription: businessData.shortDescription,
-              fullDescription: businessData.fullDescription,
-              address: businessData.address,
-              phoneNumber: businessData.phoneNumber || '',
-              website: businessData.website || '',
-              instagramUrl: businessData.instagramUrl || '',
-              facebookUrl: businessData.facebookUrl || '',
-              whatsappNumber: businessData.whatsappNumber || '',
-              latitude: businessData.latitude,
-              longitude: businessData.longitude,
-              imageUrl: businessData.imageUrl,
-              icon: businessData.icon,
-            });
+            // Ensure partner is not trying to edit another business if not admin
+            if (!isAdmin && businessData.id !== MOCK_PARTNER_BUSINESS_ID) {
+                 setError('Você não tem permissão para editar este estabelecimento.');
+                 setBusiness(null);
+            } else {
+                setBusiness(businessData);
+                form.reset({
+                name: businessData.name,
+                type: businessData.type,
+                shortDescription: businessData.shortDescription,
+                fullDescription: businessData.fullDescription,
+                address: businessData.address,
+                phoneNumber: businessData.phoneNumber || '',
+                website: businessData.website || '',
+                instagramUrl: businessData.instagramUrl || '',
+                facebookUrl: businessData.facebookUrl || '',
+                whatsappNumber: businessData.whatsappNumber || '',
+                latitude: businessData.latitude,
+                longitude: businessData.longitude,
+                imageUrl: businessData.imageUrl,
+                icon: businessData.icon,
+                });
+            }
           } else {
             setError('Estabelecimento não encontrado.');
           }
@@ -118,7 +145,7 @@ export default function EditPartnerBusinessPage() {
       setIsLoadingData(false);
       setError("ID do estabelecimento não fornecido.");
     }
-  }, [businessId, form]);
+  }, [canAccess, user, businessIdFromUrl, isAdmin, form]);
 
 
   const onSubmit: SubmitHandler<EditEstablishmentFormValues> = async (data) => {
@@ -142,60 +169,75 @@ export default function EditPartnerBusinessPage() {
       variant: 'default', 
     });
     setIsSubmitting(false);
-    router.push('/partner/panel'); // Navigate back to partner panel after edit
+    router.push(isAdmin ? '/admin/list-all-partners' : '/partner/panel'); 
   };
   
-  if (isLoadingData) { 
+  if (authLoading || (canAccess && isLoadingData)) { 
     return (
       <div className="p-4 md:p-6">
         <Skeleton className="mb-6 h-10 w-1/3" />
         <Skeleton className="mb-8 h-8 w-2/3" />
         <Card className="shadow-xl">
           <CardHeader><Skeleton className="h-8 w-1/2" /></CardHeader>
-          <CardContent className="space-y-6">
-            {Array.from({ length: 5 }).map((_, i) => <Skeleton key={i} className="h-10 w-full" />)}
+          <CardContent className="space-y-4 p-4">
+            {Array.from({ length: 5 }).map((_, i) => <Skeleton key={i} className="h-9 w-full" />)}
           </CardContent>
-          <CardFooter><Skeleton className="h-12 w-full" /></CardFooter>
+          <CardFooter className="p-4"><Skeleton className="h-10 w-full" /></CardFooter>
         </Card>
       </div>
     );
   }
+
+  if (!canAccess && !authLoading) {
+    return (
+      <div className="p-4 md:p-6 flex flex-col items-center justify-center min-h-[calc(100vh-200px)]">
+        <Alert variant="destructive" className="max-w-md text-center">
+          <ShieldAlert className="mx-auto mb-2 h-6 w-6" />
+          <AlertTitle>Acesso Negado</AlertTitle>
+          <AlertDescription>{accessError || "Você não tem permissão para visualizar esta página."}</AlertDescription>
+        </Alert>
+         <Button asChild variant="outline" className="mt-6">
+          <Link href="/"> <ArrowLeft className="mr-2 h-4 w-4" /> Voltar para Início </Link>
+        </Button>
+      </div>
+    );
+  }
   
-  if (error) {
+  if (error && canAccess) {
     return (
       <div className="p-4 md:p-6">
         <Alert variant="destructive">
-          {/* <ShieldAlert className="h-5 w-5" /> // Icon removed as it was for auth error */}
+          <ShieldAlert className="h-5 w-5" />
           <AlertTitle>Erro</AlertTitle>
           <AlertDescription>{error}</AlertDescription>
         </Alert>
         <Button asChild variant="outline" className="mt-6">
-          <Link href="/partner/panel"> <ArrowLeft className="mr-2 h-4 w-4" /> Voltar para o Painel </Link>
+          <Link href={isAdmin ? "/admin/list-all-partners" : "/partner/panel"}> <ArrowLeft className="mr-2 h-4 w-4" /> Voltar </Link>
         </Button>
       </div>
     );
   }
 
-  if (!business) {
-     return <div className="p-6 text-center">Carregando dados do estabelecimento... Se o erro persistir, o ID pode ser inválido.</div>;
+  if (!business && canAccess) {
+     return <div className="p-6 text-center">Carregando dados do estabelecimento... Se o erro persistir, o ID pode ser inválido ou você não tem permissão.</div>;
   }
 
 
   return (
     <div className="p-4 md:p-6">
       <Button asChild variant="outline" className="mb-6">
-        <Link href="/partner/panel">
+        <Link href={isAdmin ? "/admin/list-all-partners" : "/partner/panel"}>
           <ArrowLeft className="mr-2 h-4 w-4" />
-          Voltar para o Painel
+          Voltar 
         </Link>
       </Button>
 
       <section className="mb-8">
         <h2 className="mb-2 text-2xl font-bold tracking-tight text-primary md:text-3xl">
-          Editar Detalhes do Estabelecimento
+          {isAdmin ? "Editar Estabelecimento (Admin)" : "Editar Detalhes do Meu Estabelecimento"}
         </h2>
         <p className="text-md text-foreground/80 md:text-lg">
-          Atualize as informações de: <span className="font-semibold text-accent">{business.name}</span>.
+          Atualize as informações de: <span className="font-semibold text-accent">{business?.name}</span>.
         </p>
       </section>
 

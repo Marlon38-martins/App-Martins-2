@@ -9,7 +9,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { SidebarMenuButton, useSidebar } from '@/components/ui/sidebar'; // Import useSidebar
+import { SidebarMenuButton, useSidebar } from '@/components/ui/sidebar';
 import { useAuth } from '@/hooks/use-auth-client';
 import {
   Briefcase,
@@ -17,13 +17,17 @@ import {
   Tag,
   Users,
   UserPlus,
-  Edit
+  Edit3,
+  Settings2,
+  PlusCircle,
+  Star
 } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 
+// This component will render either admin links, partner links, or nothing.
 export function DynamicPartnerLink() {
   const { user, isAdmin, loading } = useAuth();
-  const { isMobile, setOpenMobile } = useSidebar(); // Get sidebar context
+  const { isMobile, setOpenMobile } = useSidebar();
 
   const handleDropdownItemSelect = () => {
     if (isMobile) {
@@ -44,8 +48,8 @@ export function DynamicPartnerLink() {
     return (
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <SidebarMenuButton tooltip={{content: "Admin Geral", side:"right"}} className="w-full" href="#"> {/* href="#" to make it behave like a button for active state */}
-             <span className="flex items-center gap-1.5">
+          <SidebarMenuButton tooltip={{content: "Admin Geral", side:"right"}} className="w-full" href="#">
+            <span className="flex items-center gap-1.5">
                 <LayoutDashboard />
                 <span className="group-data-[collapsible=icon]:hidden">
                 Admin Geral
@@ -61,16 +65,16 @@ export function DynamicPartnerLink() {
           <DropdownMenuItem asChild onSelect={handleDropdownItemSelect}>
             <Link href="/admin/list-all-partners" className="flex items-center cursor-pointer">
               <Users className="mr-2 h-4 w-4" />
-              Listar Todos os Parceiros
+              Listar Parceiros
             </Link>
           </DropdownMenuItem>
-          {/* Add more admin links here if needed */}
           <DropdownMenuItem asChild onSelect={handleDropdownItemSelect}>
             <Link href="/admin/add-establishment" className="flex items-center cursor-pointer">
               <UserPlus className="mr-2 h-4 w-4" />
-              Adicionar Novo Estabelecimento
+              Novo Estabelecimento
             </Link>
           </DropdownMenuItem>
+          {/* Add more admin-specific links here if needed */}
         </DropdownMenuContent>
       </DropdownMenu>
     );
@@ -89,5 +93,5 @@ export function DynamicPartnerLink() {
     );
   }
 
-  return null; // Don't render anything if not admin or partner
+  return null; // No link if not admin or the specific partner
 }

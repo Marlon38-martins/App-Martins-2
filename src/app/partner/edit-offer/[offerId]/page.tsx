@@ -7,6 +7,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
+import { useAuth } from '@/hooks/use-auth-client';
 import { getDealsForBusiness, getGramadoBusinessById, type Deal, type GramadoBusiness } from '@/services/gramado-businesses';
 
 import { Button } from '@/components/ui/button';
@@ -17,11 +18,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
-import { ArrowLeft, Tag, Save, Loader2, AlertCircle, Star } from 'lucide-react';
+import { ArrowLeft, Tag, Save, Loader2, AlertCircle, Star, ShieldAlert } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 
-const MOCK_PARTNER_BUSINESS_ID = '1'; // Assuming this is the business context for the partner
+const MOCK_PARTNER_BUSINESS_ID = '1'; 
+const MOCK_PARTNER_EMAIL = 'partner@example.com';
 
 const offerFormSchema = z.object({
   title: z.string().min(5, { message: 'Título da oferta é obrigatório (mínimo 5 caracteres).' }),
@@ -29,7 +31,7 @@ const offerFormSchema = z.object({
   offerType: z.enum(['discount', 'p1g2'], { required_error: "Tipo da oferta é obrigatório."}),
   discountPercentage: z.coerce.number().min(0).max(100).optional(),
   isPay1Get2: z.boolean().optional(),
-  isVipOffer: z.boolean().optional().default(false), // Added VIP offer flag
+  isVipOffer: z.boolean().optional().default(false), 
   usageLimitPerUser: z.coerce.number().min(1, {message: "Limite de uso deve ser ao menos 1."}).optional().default(1),
   termsAndConditions: z.string().min(10, { message: 'Termos e condições são obrigatórios (mínimo 10 caracteres).' }),
 }).refine(data => {
@@ -56,12 +58,15 @@ export default function EditPartnerOfferPage() {
   const router = useRouter();
   const params = useParams() as EditOfferPageParams;
   const offerId = params.offerId;
+  const { user, loading: authLoading, isAdmin } = useAuth();
   
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoadingOffer, setIsLoadingOffer] = useState(true);
   const [offerToEdit, setOfferToEdit] = useState<Deal | null>(null);
   const [businessName, setBusinessName] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
+  const [canAccess, setCanAccess] = useState(false);
+  const [accessError, setAccessError] = useState<string | null>(null);
 
   const form = useForm<OfferFormValues>({
     resolver: zodResolver(offerFormSchema),
@@ -69,6 +74,22 @@ export default function EditPartnerOfferPage() {
   });
 
   useEffect(() => {
+    if (!authLoading) {
+      if (!user) {
+        router.push(`/login?redirect=/partner/edit-offer/${offerId}`);
+      } else if (user.email === MOCK_PARTNER_EMAIL || isAdmin) {
+        setCanAccess(true);
+      } else {
+        setCanAccess(false);
+        setAccessError("Acesso negado. Esta funcionalidade é para parceiros ou administradores.");
+        setIsLoadingOffer(false);
+      }
+    }
+  }, [user, authLoading, isAdmin, router, offerId]);
+
+  useEffect(() => {
+    if (!canAccess || !user) return;
+
     async function loadOffer() {
       if (!offerId) {
         setError("ID da oferta não encontrado.");
@@ -104,7 +125,7 @@ export default function EditPartnerOfferPage() {
       }
     }
     loadOffer();
-  }, [offerId, form]);
+  }, [offerId, form, canAccess, user]);
 
   const watchOfferType = form.watch('offerType');
   
@@ -129,8 +150,8 @@ export default function EditPartnerOfferPage() {
         ...offerToEdit,
         title: data.title,
         description: data.description,
-        isPay1Get2: data.offerType === 'p1g2' ? true : undefined,
-        discountPercentage: data.offerType === 'discount' ? data.discountPercentage : undefined,
+        isPay1Get2: data.offerType === 'p1g2' ? true : false,
+        discountPercentage: data.offerType === 'discount' ? data.discountPercentage : 0,
         isVipOffer: data.isVipOffer,
         usageLimitPerUser: data.usageLimitPerUser,
         termsAndConditions: data.termsAndConditions,
@@ -147,7 +168,7 @@ export default function EditPartnerOfferPage() {
     router.push('/partner/dashboard'); 
   };
 
-  if (isLoadingOffer) {
+  if (authLoading || (canAccess && isLoadingOffer)) {
     return (
         <div className="p-4 md:p-6">
             <Skeleton className="h-8 w-1/3 mb-6" />
@@ -162,7 +183,22 @@ export default function EditPartnerOfferPage() {
     );
   }
 
-  if (error) {
+  if (!canAccess && !authLoading) {
+    return (
+      <div className="p-4 md:p-6 flex flex-col items-center justify-center min-h-[calc(100vh-200px)]">
+        <Alert variant="destructive" className="max-w-md text-center">
+          <ShieldAlert className="mx-auto mb-2 h-6 w-6" />
+          <AlertTitle>Acesso Negado</AlertTitle>
+          <AlertDescription>{accessError || "Você não tem permissão para visualizar esta página."}</AlertDescription>
+        </Alert>
+         <Button asChild variant="outline" className="mt-6">
+          <Link href="/"> <ArrowLeft className="mr-2 h-4 w-4" /> Voltar para Início </Link>
+        </Button>
+      </div>
+    );
+  }
+
+  if (error && canAccess) {
     return (
          <div className="p-4 md:p-6">
             <Alert variant="destructive">
@@ -180,7 +216,7 @@ export default function EditPartnerOfferPage() {
     );
   }
   
-  if (!offerToEdit) {
+  if (!offerToEdit && canAccess) {
      return (
          <div className="p-4 md:p-6">
             <Alert variant="destructive">
@@ -209,10 +245,10 @@ export default function EditPartnerOfferPage() {
 
       <section className="mb-8">
         <h2 className="mb-2 text-xl font-bold tracking-tight text-primary md:text-2xl">
-          Editar Oferta Especial
+          Editar Oferta
         </h2>
         <p className="text-sm text-foreground/80 md:text-base">
-          Modifique os detalhes da oferta para: <span className="font-semibold text-accent">{businessName}</span>.
+          Modifique os detalhes da oferta "{offerToEdit?.title}" para: <span className="font-semibold text-accent">{businessName}</span>.
         </p>
       </section>
 
@@ -222,7 +258,7 @@ export default function EditPartnerOfferPage() {
             <CardHeader className="p-4">
               <CardTitle className="flex items-center text-lg text-primary md:text-xl">
                 <Tag className="mr-2 h-5 w-5 md:h-6 md:w-6 text-accent" />
-                Detalhes da Oferta: {offerToEdit.title}
+                Detalhes da Oferta
               </CardTitle>
               <CardDescription className="text-xs md:text-sm">
                 Altere os campos abaixo e salve. O QR Code será atualizado com as novas informações.

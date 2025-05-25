@@ -2,15 +2,65 @@
 'use client';
 
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, BarChart3, Eye, ShoppingCart, MessageSquare } from 'lucide-react';
+import { Skeleton } from '@/components/ui/skeleton';
+import { ArrowLeft, BarChart3, Eye, ShoppingCart, MessageSquare, ShieldAlert } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-// No useAuth needed as this page is now publicly accessible
+import { useAuth } from '@/hooks/use-auth-client';
+
+const MOCK_PARTNER_EMAIL = 'partner@example.com';
 
 export default function PartnerAnalyticsPage() {
-  // No auth checks, page is publicly accessible
-  // Data displayed would be for the mock partner business or generic placeholders
+  const { user, loading: authLoading, isAdmin } = useAuth();
+  const router = useRouter();
+  const [canAccess, setCanAccess] = useState(false);
+  const [accessError, setAccessError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!authLoading) {
+      if (!user) {
+        router.push('/login?redirect=/partner/analytics');
+      } else if (user.email === MOCK_PARTNER_EMAIL || isAdmin) {
+        setCanAccess(true);
+      } else {
+        setCanAccess(false);
+        setAccessError("Acesso negado. Esta funcionalidade é para parceiros ou administradores.");
+      }
+    }
+  }, [user, authLoading, isAdmin, router]);
+
+
+  if (authLoading || (!canAccess && !authLoading)) {
+    return (
+      <div className="p-4 md:p-6 space-y-6 md:space-y-8">
+        <Skeleton className="h-9 w-1/3 mb-2" />
+        <Skeleton className="h-8 w-2/3 mb-6" />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+          <Skeleton className="h-36 w-full rounded-lg" />
+          <Skeleton className="h-36 w-full rounded-lg" />
+        </div>
+        <Skeleton className="h-48 w-full rounded-lg" />
+      </div>
+    );
+  }
+
+  if (!canAccess && !authLoading) {
+    return (
+      <div className="p-4 md:p-6 flex flex-col items-center justify-center min-h-[calc(100vh-200px)]">
+        <Alert variant="destructive" className="max-w-md text-center">
+          <ShieldAlert className="mx-auto mb-2 h-6 w-6" />
+          <AlertTitle>Acesso Negado</AlertTitle>
+          <AlertDescription>{accessError || "Você não tem permissão para visualizar esta página."}</AlertDescription>
+        </Alert>
+         <Button asChild variant="outline" className="mt-6">
+          <Link href="/"> <ArrowLeft className="mr-2 h-4 w-4" /> Voltar para Início </Link>
+        </Button>
+      </div>
+    );
+  }
 
   return (
     <div className="p-4 md:p-6 space-y-6 md:space-y-8">
