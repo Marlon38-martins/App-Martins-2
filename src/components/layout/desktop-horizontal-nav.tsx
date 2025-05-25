@@ -4,14 +4,15 @@
 import { useSidebar } from '@/components/ui/sidebar';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { TicketPercent, MapIcon, Search, Info, UserPlus, Handshake } from 'lucide-react';
+import { TicketPercent, MapIcon, Search, Info, UserPlus, Handshake, QrCode } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const navItems = [
   { href: '/services', label: 'Ofertas', Icon: TicketPercent },
   { href: '/map', label: 'Mapa', Icon: MapIcon },
   { href: '/search', label: 'Buscar', Icon: Search },
-  { href: '/institutional', label: 'Info', Icon: Info }, // Shortened label
+  { href: '/scan-offer', label: 'Escanear', Icon: QrCode },
+  { href: '/institutional', label: 'Info', Icon: Info },
   { href: '/join', label: 'Assinar', Icon: UserPlus },
   { href: '/partner-registration', label: 'Parceiros', Icon: Handshake },
 ];
@@ -26,7 +27,7 @@ export function DesktopHorizontalNav() {
   // This nav is visible only when !isMobile and sidebar state is 'collapsed'
   return (
     <nav className={cn(
-      "sticky top-16 z-30 h-14 bg-background/95 backdrop-blur-sm border-b flex items-center justify-center shadow-sm",
+      "sticky top-16 z-30 h-12 bg-background/95 backdrop-blur-sm flex items-center justify-center shadow-sm border-b", // Kept border-b to separate from content below
       // Visibility is controlled by the React conditional rendering above
     )}>
       <div className="flex items-center justify-center h-full space-x-1 px-2">
