@@ -24,7 +24,6 @@ import {
 } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 
-// This component will render either admin links, partner links, or nothing.
 export function DynamicPartnerLink() {
   const { user, isAdmin, loading } = useAuth();
   const { isMobile, setOpenMobile } = useSidebar();
@@ -74,24 +73,25 @@ export function DynamicPartnerLink() {
               Novo Estabelecimento
             </Link>
           </DropdownMenuItem>
-          {/* Add more admin-specific links here if needed */}
+          {/* Placeholder for admin managing general deals */}
+           <DropdownMenuItem disabled className="flex items-center cursor-not-allowed opacity-50">
+              <Tag className="mr-2 h-4 w-4" />
+              Gerenciar Ofertas (Admin)
+            </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     );
   }
 
-  if (user && user.email === 'partner@example.com') {
-    return (
-      <SidebarMenuButton asChild tooltip={{content: "Painel do Parceiro", side:"right"}} href="/partner/panel">
-        <Link href="/partner/panel">
-            <span className="flex items-center gap-1.5">
-                <Briefcase />
-                <span className="group-data-[collapsible=icon]:hidden">Painel do Parceiro</span>
-            </span>
-        </Link>
-      </SidebarMenuButton>
-    );
-  }
-
-  return null; // No link if not admin or the specific partner
+  // Always show "Painel do Parceiro" link for everyone else (including non-logged-in)
+  return (
+    <SidebarMenuButton asChild tooltip={{content: "Painel do Parceiro", side:"right"}} href="/partner/panel">
+      <Link href="/partner/panel">
+          <span className="flex items-center gap-1.5">
+              <Briefcase />
+              <span className="group-data-[collapsible=icon]:hidden">Painel do Parceiro</span>
+          </span>
+      </Link>
+    </SidebarMenuButton>
+  );
 }

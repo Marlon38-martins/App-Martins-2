@@ -7,7 +7,6 @@ import Link from 'next/link';
 import { useForm, type SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { useAuth } from '@/hooks/use-auth-client';
 import { getGramadoBusinessById, type GramadoBusiness, type LucideIconName } from '@/services/gramado-businesses';
 
 import { Button } from '@/components/ui/button';
@@ -21,9 +20,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import { ArrowLeft, Building, Save, ShieldAlert } from 'lucide-react'; 
 
-const MOCK_PARTNER_EMAIL = 'partner@example.com';
 const MOCK_PARTNER_BUSINESS_ID = '1'; 
-const ADMIN_EMAIL = 'admin@example.com';
 
 const iconNames: LucideIconName[] = [
   'UtensilsCrossed', 
@@ -66,13 +63,10 @@ export default function EditPartnerBusinessPage() {
   const params = useParams() as EditBusinessPageParams;
   const businessIdFromUrl = params.id;
 
-  const { user, loading: authLoading, isAdmin } = useAuth();
   const [business, setBusiness] = useState<GramadoBusiness | null>(null);
   const [isLoadingData, setIsLoadingData] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [canAccess, setCanAccess] = useState(false);
-  const [accessError, setAccessError] = useState<string | null>(null);
   
   const form = useForm<EditEstablishmentFormValues>({
     resolver: zodResolver(editEstablishmentFormSchema),
@@ -80,38 +74,15 @@ export default function EditPartnerBusinessPage() {
   });
 
   useEffect(() => {
-    if (!authLoading) {
-      if (!user) {
-        router.push(`/login?redirect=/partner/edit-business/${businessIdFromUrl || MOCK_PARTNER_BUSINESS_ID}`);
-      } else if (user.email === MOCK_PARTNER_EMAIL || isAdmin) {
-        setCanAccess(true);
-      } else {
-        setCanAccess(false);
-        setAccessError("Acesso negado. Esta funcionalidade é para parceiros registrados ou administradores.");
-        setIsLoadingData(false);
-      }
-    }
-  }, [user, authLoading, isAdmin, router, businessIdFromUrl]);
-
-
-  useEffect(() => {
-    if (!canAccess || !user) return;
-
-    const businessIdToLoad = isAdmin ? businessIdFromUrl : MOCK_PARTNER_BUSINESS_ID;
+    const businessIdToLoad = businessIdFromUrl || MOCK_PARTNER_BUSINESS_ID;
 
     if (businessIdToLoad) {
       async function loadBusinessData() {
         setIsLoadingData(true);
         setError(null);
         try {
-          // Admin can edit any business by ID, partner edits their own (MOCK_PARTNER_BUSINESS_ID)
           const businessData = await getGramadoBusinessById(businessIdToLoad);
           if (businessData) {
-            // Ensure partner is not trying to edit another business if not admin
-            if (!isAdmin && businessData.id !== MOCK_PARTNER_BUSINESS_ID) {
-                 setError('Você não tem permissão para editar este estabelecimento.');
-                 setBusiness(null);
-            } else {
                 setBusiness(businessData);
                 form.reset({
                 name: businessData.name,
@@ -129,7 +100,6 @@ export default function EditPartnerBusinessPage() {
                 imageUrl: businessData.imageUrl,
                 icon: businessData.icon,
                 });
-            }
           } else {
             setError('Estabelecimento não encontrado.');
           }
@@ -145,7 +115,7 @@ export default function EditPartnerBusinessPage() {
       setIsLoadingData(false);
       setError("ID do estabelecimento não fornecido.");
     }
-  }, [canAccess, user, businessIdFromUrl, isAdmin, form]);
+  }, [businessIdFromUrl, form]);
 
 
   const onSubmit: SubmitHandler<EditEstablishmentFormValues> = async (data) => {
@@ -169,41 +139,26 @@ export default function EditPartnerBusinessPage() {
       variant: 'default', 
     });
     setIsSubmitting(false);
-    router.push(isAdmin ? '/admin/list-all-partners' : '/partner/panel'); 
+    router.push('/partner/panel'); 
   };
   
-  if (authLoading || (canAccess && isLoadingData)) { 
+  if (isLoadingData) { 
     return (
       <div className="p-4 md:p-6">
         <Skeleton className="mb-6 h-10 w-1/3" />
         <Skeleton className="mb-8 h-8 w-2/3" />
         <Card className="shadow-xl">
-          <CardHeader><Skeleton className="h-8 w-1/2" /></CardHeader>
-          <CardContent className="space-y-4 p-4">
-            {Array.from({ length: 5 }).map((_, i) => <Skeleton key={i} className="h-9 w-full" />)}
+          <CardHeader className="p-3"><Skeleton className="h-7 w-1/2" /></CardHeader>
+          <CardContent className="space-y-3 p-3">
+            {Array.from({ length: 5 }).map((_, i) => <Skeleton key={i} className="h-8 w-full" />)}
           </CardContent>
-          <CardFooter className="p-4"><Skeleton className="h-10 w-full" /></CardFooter>
+          <CardFooter className="p-3"><Skeleton className="h-9 w-full" /></CardFooter>
         </Card>
       </div>
     );
   }
-
-  if (!canAccess && !authLoading) {
-    return (
-      <div className="p-4 md:p-6 flex flex-col items-center justify-center min-h-[calc(100vh-200px)]">
-        <Alert variant="destructive" className="max-w-md text-center">
-          <ShieldAlert className="mx-auto mb-2 h-6 w-6" />
-          <AlertTitle>Acesso Negado</AlertTitle>
-          <AlertDescription>{accessError || "Você não tem permissão para visualizar esta página."}</AlertDescription>
-        </Alert>
-         <Button asChild variant="outline" className="mt-6">
-          <Link href="/"> <ArrowLeft className="mr-2 h-4 w-4" /> Voltar para Início </Link>
-        </Button>
-      </div>
-    );
-  }
   
-  if (error && canAccess) {
+  if (error) {
     return (
       <div className="p-4 md:p-6">
         <Alert variant="destructive">
@@ -211,58 +166,58 @@ export default function EditPartnerBusinessPage() {
           <AlertTitle>Erro</AlertTitle>
           <AlertDescription>{error}</AlertDescription>
         </Alert>
-        <Button asChild variant="outline" className="mt-6">
-          <Link href={isAdmin ? "/admin/list-all-partners" : "/partner/panel"}> <ArrowLeft className="mr-2 h-4 w-4" /> Voltar </Link>
+        <Button asChild variant="outline" className="mt-6 text-xs">
+          <Link href="/partner/panel"> <ArrowLeft className="mr-2 h-3 w-3" /> Voltar para Painel </Link>
         </Button>
       </div>
     );
   }
 
-  if (!business && canAccess) {
-     return <div className="p-6 text-center">Carregando dados do estabelecimento... Se o erro persistir, o ID pode ser inválido ou você não tem permissão.</div>;
+  if (!business) {
+     return <div className="p-6 text-center text-sm">Carregando dados do estabelecimento... Se o erro persistir, o ID pode ser inválido.</div>;
   }
 
 
   return (
-    <div className="p-4 md:p-6">
-      <Button asChild variant="outline" className="mb-6">
-        <Link href={isAdmin ? "/admin/list-all-partners" : "/partner/panel"}>
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          Voltar 
+    <div className="p-3 md:p-4">
+      <Button asChild variant="outline" size="sm" className="mb-4 text-xs">
+        <Link href="/partner/panel">
+          <ArrowLeft className="mr-1.5 h-3 w-3" />
+          Voltar para Painel do Parceiro
         </Link>
       </Button>
 
-      <section className="mb-8">
-        <h2 className="mb-2 text-2xl font-bold tracking-tight text-primary md:text-3xl">
-          {isAdmin ? "Editar Estabelecimento (Admin)" : "Editar Detalhes do Meu Estabelecimento"}
+      <section className="mb-5">
+        <h2 className="mb-1.5 text-lg font-bold tracking-tight text-primary md:text-xl">
+         Editar Detalhes do Meu Estabelecimento
         </h2>
-        <p className="text-md text-foreground/80 md:text-lg">
+        <p className="text-xs text-foreground/80 md:text-sm">
           Atualize as informações de: <span className="font-semibold text-accent">{business?.name}</span>.
         </p>
       </section>
 
-      <Card className="shadow-xl">
+      <Card className="shadow-md">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
-            <CardHeader className="p-4">
-              <CardTitle className="flex items-center text-lg text-primary md:text-xl">
-                <Building className="mr-3 h-6 w-6 md:h-7 md:w-7 text-accent" />
+            <CardHeader className="p-3">
+              <CardTitle className="flex items-center text-md text-primary md:text-lg">
+                <Building className="mr-2 h-5 w-5 text-accent" />
                 Informações do Estabelecimento
               </CardTitle>
               <CardDescription className="text-xs md:text-sm">
                 Modifique os campos abaixo e salve as alterações.
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4 p-4">
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <CardContent className="space-y-3 p-3">
+              <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
                 <FormField
                   control={form.control}
                   name="name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel htmlFor="name" className="text-sm">Nome do Estabelecimento *</FormLabel>
+                      <FormLabel htmlFor="name" className="text-xs">Nome do Estabelecimento *</FormLabel>
                       <FormControl>
-                        <Input id="name" placeholder="Ex: Pousada Vista Linda" {...field} value={field.value ?? ''} />
+                        <Input id="name" placeholder="Ex: Pousada Vista Linda" {...field} value={field.value ?? ''} className="h-9 text-sm"/>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -273,9 +228,9 @@ export default function EditPartnerBusinessPage() {
                   name="type"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel htmlFor="type" className="text-sm">Tipo de Estabelecimento *</FormLabel>
+                      <FormLabel htmlFor="type" className="text-xs">Tipo de Estabelecimento *</FormLabel>
                       <FormControl>
-                        <Input id="type" placeholder="Ex: Hotel, Restaurante, Loja de Artesanato" {...field} value={field.value ?? ''} />
+                        <Input id="type" placeholder="Ex: Hotel, Restaurante" {...field} value={field.value ?? ''} className="h-9 text-sm"/>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -288,9 +243,9 @@ export default function EditPartnerBusinessPage() {
                 name="shortDescription"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel htmlFor="shortDescription" className="text-sm">Descrição Curta (para cards) *</FormLabel>
+                    <FormLabel htmlFor="shortDescription" className="text-xs">Descrição Curta (para cards) *</FormLabel>
                     <FormControl>
-                      <Input id="shortDescription" placeholder="Uma breve descrição (até 150 caracteres)" {...field} value={field.value ?? ''} />
+                      <Input id="shortDescription" placeholder="Breve descrição (até 150 caracteres)" {...field} value={field.value ?? ''} className="h-9 text-sm"/>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -301,9 +256,9 @@ export default function EditPartnerBusinessPage() {
                 name="fullDescription"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel htmlFor="fullDescription" className="text-sm">Descrição Completa *</FormLabel>
+                    <FormLabel htmlFor="fullDescription" className="text-xs">Descrição Completa *</FormLabel>
                     <FormControl>
-                      <Textarea id="fullDescription" placeholder="Descreva detalhadamente o estabelecimento, seus serviços e diferenciais." {...field} value={field.value ?? ''} rows={3}/>
+                      <Textarea id="fullDescription" placeholder="Descreva detalhadamente o estabelecimento..." {...field} value={field.value ?? ''} rows={3} className="min-h-[60px] text-sm"/>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -314,23 +269,23 @@ export default function EditPartnerBusinessPage() {
                 name="address"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel htmlFor="address" className="text-sm">Endereço Completo *</FormLabel>
+                    <FormLabel htmlFor="address" className="text-xs">Endereço Completo *</FormLabel>
                     <FormControl>
-                      <Input id="address" placeholder="Rua, Número, Bairro, Cidade - Estado, CEP" {...field} value={field.value ?? ''} />
+                      <Input id="address" placeholder="Rua, Número, Bairro, Cidade - Estado, CEP" {...field} value={field.value ?? ''} className="h-9 text-sm"/>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+              <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
                 <FormField
                   control={form.control}
                   name="phoneNumber"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel htmlFor="phoneNumber" className="text-sm">Telefone (com DDD)</FormLabel>
+                      <FormLabel htmlFor="phoneNumber" className="text-xs">Telefone (com DDD)</FormLabel>
                       <FormControl>
-                        <Input id="phoneNumber" type="tel" placeholder="(XX) XXXXX-XXXX" {...field} value={field.value ?? ''} />
+                        <Input id="phoneNumber" type="tel" placeholder="(XX) XXXXX-XXXX" {...field} value={field.value ?? ''} className="h-9 text-sm"/>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -341,24 +296,24 @@ export default function EditPartnerBusinessPage() {
                   name="website"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel htmlFor="website" className="text-sm">Website</FormLabel>
+                      <FormLabel htmlFor="website" className="text-xs">Website</FormLabel>
                       <FormControl>
-                        <Input id="website" type="url" placeholder="https://www.exemplo.com.br" {...field} value={field.value ?? ''} />
+                        <Input id="website" type="url" placeholder="https://www.exemplo.com.br" {...field} value={field.value ?? ''} className="h-9 text-sm"/>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
               </div>
-               <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+               <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
                 <FormField
                   control={form.control}
                   name="instagramUrl"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel htmlFor="instagramUrl" className="text-sm">Instagram URL</FormLabel>
+                      <FormLabel htmlFor="instagramUrl" className="text-xs">Instagram URL</FormLabel>
                       <FormControl>
-                        <Input id="instagramUrl" type="url" placeholder="https://instagram.com/seu_negocio" {...field} value={field.value ?? ''} />
+                        <Input id="instagramUrl" type="url" placeholder="https://instagram.com/seu_negocio" {...field} value={field.value ?? ''} className="h-9 text-sm"/>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -369,9 +324,9 @@ export default function EditPartnerBusinessPage() {
                   name="facebookUrl"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel htmlFor="facebookUrl" className="text-sm">Facebook URL</FormLabel>
+                      <FormLabel htmlFor="facebookUrl" className="text-xs">Facebook URL</FormLabel>
                       <FormControl>
-                        <Input id="facebookUrl" type="url" placeholder="https://facebook.com/seu_negocio" {...field} value={field.value ?? ''} />
+                        <Input id="facebookUrl" type="url" placeholder="https://facebook.com/seu_negocio" {...field} value={field.value ?? ''} className="h-9 text-sm"/>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -382,24 +337,24 @@ export default function EditPartnerBusinessPage() {
                   name="whatsappNumber"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel htmlFor="whatsappNumber" className="text-sm">WhatsApp (com DDD e país)</FormLabel>
+                      <FormLabel htmlFor="whatsappNumber" className="text-xs">WhatsApp (com DDD e país)</FormLabel>
                       <FormControl>
-                        <Input id="whatsappNumber" type="tel" placeholder="5584912345678" {...field} value={field.value ?? ''} />
+                        <Input id="whatsappNumber" type="tel" placeholder="5584912345678" {...field} value={field.value ?? ''} className="h-9 text-sm"/>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
               </div>
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+              <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
                 <FormField
                   control={form.control}
                   name="latitude"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel htmlFor="latitude" className="text-sm">Latitude *</FormLabel>
+                      <FormLabel htmlFor="latitude" className="text-xs">Latitude *</FormLabel>
                       <FormControl>
-                        <Input id="latitude" type="number" step="any" placeholder="-6.0869" {...field} value={field.value ?? ''} />
+                        <Input id="latitude" type="number" step="any" placeholder="-6.0869" {...field} value={field.value ?? ''} className="h-9 text-sm"/>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -410,24 +365,24 @@ export default function EditPartnerBusinessPage() {
                   name="longitude"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel htmlFor="longitude" className="text-sm">Longitude *</FormLabel>
+                      <FormLabel htmlFor="longitude" className="text-xs">Longitude *</FormLabel>
                       <FormControl>
-                        <Input id="longitude" type="number" step="any" placeholder="-37.9119" {...field} value={field.value ?? ''} />
+                        <Input id="longitude" type="number" step="any" placeholder="-37.9119" {...field} value={field.value ?? ''} className="h-9 text-sm"/>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
               </div>
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+              <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
                 <FormField
                     control={form.control}
                     name="imageUrl"
                     render={({ field }) => (
                         <FormItem>
-                        <FormLabel htmlFor="imageUrl" className="text-sm">URL da Imagem Principal *</FormLabel>
+                        <FormLabel htmlFor="imageUrl" className="text-xs">URL da Imagem Principal *</FormLabel>
                         <FormControl>
-                            <Input id="imageUrl" placeholder="https://placehold.co/seed/nome/600/400" {...field} value={field.value ?? ''} />
+                            <Input id="imageUrl" placeholder="https://placehold.co/seed/nome/600/400" {...field} value={field.value ?? ''} className="h-9 text-sm"/>
                         </FormControl>
                         <FormDescription className="text-xs">Use uma URL pública (ex: Picsum, Imgur).</FormDescription>
                         <FormMessage />
@@ -439,16 +394,16 @@ export default function EditPartnerBusinessPage() {
                   name="icon"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel htmlFor="icon" className="text-sm">Ícone representativo *</FormLabel>
+                      <FormLabel htmlFor="icon" className="text-xs">Ícone representativo *</FormLabel>
                       <Select onValueChange={field.onChange} value={field.value}>
                         <FormControl>
-                          <SelectTrigger id="icon">
+                          <SelectTrigger id="icon" className="h-9 text-sm">
                             <SelectValue placeholder="Selecione um ícone" />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
                           {iconNames.map(iconName => (
-                            <SelectItem key={iconName} value={iconName}>
+                            <SelectItem key={iconName} value={iconName} className="text-xs">
                               {iconName}
                             </SelectItem>
                           ))}
@@ -460,9 +415,9 @@ export default function EditPartnerBusinessPage() {
                 />
               </div>
             </CardContent>
-            <CardFooter className="p-4">
-              <Button type="submit" size="default" className="w-full bg-primary hover:bg-primary/90 text-sm" disabled={isSubmitting}>
-                <Save className="mr-2 h-4 w-4" />
+            <CardFooter className="p-3">
+              <Button type="submit" size="sm" className="w-full bg-primary hover:bg-primary/90 text-xs h-9" disabled={isSubmitting}>
+                <Save className="mr-1.5 h-3.5 w-3.5" />
                 {isSubmitting ? 'Salvando Alterações...' : 'Salvar Alterações'}
               </Button>
             </CardFooter>

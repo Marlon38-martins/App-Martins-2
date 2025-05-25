@@ -7,8 +7,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
-import { useAuth } from '@/hooks/use-auth-client';
 import { getGramadoBusinessById, type GramadoBusiness } from '@/services/gramado-businesses';
 
 import { Button } from '@/components/ui/button';
@@ -24,7 +22,6 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 
 const MOCK_PARTNER_BUSINESS_ID = '1';
-const MOCK_PARTNER_EMAIL = 'partner@example.com';
 
 const offerFormSchema = z.object({
   title: z.string().min(5, { message: 'Título da oferta é obrigatório (mínimo 5 caracteres).' }),
@@ -56,33 +53,13 @@ interface CreatedOfferInfo {
 
 export default function AddNormalOfferPage() {
   const { toast } = useToast();
-  const router = useRouter();
-  const { user, loading: authLoading, isAdmin } = useAuth();
   
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [partnerBusiness, setPartnerBusiness] = useState<GramadoBusiness | null>(null);
   const [isLoadingBusiness, setIsLoadingBusiness] = useState(true);
   const [createdOfferDetails, setCreatedOfferDetails] = useState<CreatedOfferInfo | null>(null);
-  const [canAccess, setCanAccess] = useState(false);
-  const [accessError, setAccessError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!authLoading) {
-      if (!user) {
-        router.push('/login?redirect=/partner/add-normal-offer');
-      } else if (user.email === MOCK_PARTNER_EMAIL || isAdmin) {
-        setCanAccess(true);
-      } else {
-        setCanAccess(false);
-        setAccessError("Acesso negado. Esta funcionalidade é para parceiros.");
-        setIsLoadingBusiness(false);
-      }
-    }
-  }, [user, authLoading, isAdmin, router]);
-
-  useEffect(() => {
-    if (!canAccess || !user) return;
-
     const businessIdToLoad = MOCK_PARTNER_BUSINESS_ID; 
     if (businessIdToLoad) {
       async function loadBusiness() {
@@ -96,7 +73,7 @@ export default function AddNormalOfferPage() {
       setIsLoadingBusiness(false);
       setPartnerBusiness(null); 
     }
-  }, [canAccess, user]);
+  }, []);
 
   const form = useForm<OfferFormValues>({
     resolver: zodResolver(offerFormSchema),
@@ -138,7 +115,7 @@ export default function AddNormalOfferPage() {
         description: data.description,
         isPay1Get2: data.offerType === 'p1g2' ? true : false,
         discountPercentage: data.offerType === 'discount' ? data.discountPercentage : 0,
-        isVipOffer: false, // Explicitly false for normal offers
+        isVipOffer: false, 
         usageLimitPerUser: data.usageLimitPerUser,
         termsAndConditions: data.termsAndConditions,
     };
@@ -146,7 +123,6 @@ export default function AddNormalOfferPage() {
     console.log('New Partner Normal Offer Data:', newDeal, 'For Business:', partnerBusiness.name);
     setCreatedOfferDetails({ id: newDealId, title: data.title });
     setIsSubmitting(false);
-    // Don't reset form immediately
     toast({
       title: 'Oferta Normal Cadastrada!',
       description: `A oferta "${data.title}" foi adicionada. Veja o QR Code abaixo para download.`,
@@ -159,7 +135,7 @@ export default function AddNormalOfferPage() {
     form.reset();
   };
 
-  if (authLoading || (canAccess && isLoadingBusiness)) { 
+  if (isLoadingBusiness) { 
     return (
         <div className="p-3 md:p-4 space-y-3">
             <Skeleton className="h-7 w-1/3 mb-4" />
@@ -174,22 +150,7 @@ export default function AddNormalOfferPage() {
     );
   }
 
-  if (!canAccess && !authLoading) {
-    return (
-      <div className="p-4 md:p-6 flex flex-col items-center justify-center min-h-[calc(100vh-200px)]">
-        <Alert variant="destructive" className="max-w-md text-center">
-          <ShieldAlert className="mx-auto mb-2 h-6 w-6" />
-          <AlertTitle>Acesso Negado</AlertTitle>
-          <AlertDescription>{accessError || "Você não tem permissão para visualizar esta página."}</AlertDescription>
-        </Alert>
-         <Button asChild variant="outline" className="mt-6">
-          <Link href="/"> <ArrowLeft className="mr-2 h-4 w-4" /> Voltar para Início </Link>
-        </Button>
-      </div>
-    );
-  }
-
-  if (!partnerBusiness && canAccess) { 
+  if (!partnerBusiness) { 
     return (
          <div className="p-3 md:p-4">
             <Alert variant="destructive">

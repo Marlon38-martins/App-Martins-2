@@ -7,7 +7,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
-import { useAuth } from '@/hooks/use-auth-client';
 import { getDealsForBusiness, getGramadoBusinessById, type Deal, type GramadoBusiness } from '@/services/gramado-businesses';
 
 import { Button } from '@/components/ui/button';
@@ -23,7 +22,6 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 
 const MOCK_PARTNER_BUSINESS_ID = '1'; 
-const MOCK_PARTNER_EMAIL = 'partner@example.com';
 
 const offerFormSchema = z.object({
   title: z.string().min(5, { message: 'Título da oferta é obrigatório (mínimo 5 caracteres).' }),
@@ -58,15 +56,12 @@ export default function EditPartnerOfferPage() {
   const router = useRouter();
   const params = useParams() as EditOfferPageParams;
   const offerId = params.offerId;
-  const { user, loading: authLoading, isAdmin } = useAuth();
   
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoadingOffer, setIsLoadingOffer] = useState(true);
   const [offerToEdit, setOfferToEdit] = useState<Deal | null>(null);
   const [businessName, setBusinessName] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
-  const [canAccess, setCanAccess] = useState(false);
-  const [accessError, setAccessError] = useState<string | null>(null);
 
   const form = useForm<OfferFormValues>({
     resolver: zodResolver(offerFormSchema),
@@ -74,22 +69,6 @@ export default function EditPartnerOfferPage() {
   });
 
   useEffect(() => {
-    if (!authLoading) {
-      if (!user) {
-        router.push(`/login?redirect=/partner/edit-offer/${offerId}`);
-      } else if (user.email === MOCK_PARTNER_EMAIL || isAdmin) {
-        setCanAccess(true);
-      } else {
-        setCanAccess(false);
-        setAccessError("Acesso negado. Esta funcionalidade é para parceiros ou administradores.");
-        setIsLoadingOffer(false);
-      }
-    }
-  }, [user, authLoading, isAdmin, router, offerId]);
-
-  useEffect(() => {
-    if (!canAccess || !user) return;
-
     async function loadOffer() {
       if (!offerId) {
         setError("ID da oferta não encontrado.");
@@ -125,7 +104,7 @@ export default function EditPartnerOfferPage() {
       }
     }
     loadOffer();
-  }, [offerId, form, canAccess, user]);
+  }, [offerId, form]);
 
   const watchOfferType = form.watch('offerType');
   
@@ -168,47 +147,32 @@ export default function EditPartnerOfferPage() {
     router.push('/partner/dashboard'); 
   };
 
-  if (authLoading || (canAccess && isLoadingOffer)) {
+  if (isLoadingOffer) {
     return (
-        <div className="p-4 md:p-6">
-            <Skeleton className="h-8 w-1/3 mb-6" />
-            <Card className="shadow-xl">
-                <CardHeader className="p-4"><Skeleton className="h-7 w-1/2" /></CardHeader>
-                <CardContent className="space-y-4 p-4">
-                    {Array(5).fill(0).map((_, i) => <Skeleton key={i} className="h-10 w-full" />)}
+        <div className="p-3 md:p-4">
+            <Skeleton className="h-7 w-1/3 mb-4" />
+            <Card className="shadow-md">
+                <CardHeader className="p-3"><Skeleton className="h-6 w-1/2" /></CardHeader>
+                <CardContent className="space-y-3 p-3">
+                    {Array(5).fill(0).map((_, i) => <Skeleton key={i} className="h-8 w-full" />)}
                 </CardContent>
-                <CardFooter className="p-4"><Skeleton className="h-10 w-full" /></CardFooter>
+                <CardFooter className="p-3"><Skeleton className="h-9 w-full" /></CardFooter>
             </Card>
         </div>
     );
   }
 
-  if (!canAccess && !authLoading) {
+  if (error) {
     return (
-      <div className="p-4 md:p-6 flex flex-col items-center justify-center min-h-[calc(100vh-200px)]">
-        <Alert variant="destructive" className="max-w-md text-center">
-          <ShieldAlert className="mx-auto mb-2 h-6 w-6" />
-          <AlertTitle>Acesso Negado</AlertTitle>
-          <AlertDescription>{accessError || "Você não tem permissão para visualizar esta página."}</AlertDescription>
-        </Alert>
-         <Button asChild variant="outline" className="mt-6">
-          <Link href="/"> <ArrowLeft className="mr-2 h-4 w-4" /> Voltar para Início </Link>
-        </Button>
-      </div>
-    );
-  }
-
-  if (error && canAccess) {
-    return (
-         <div className="p-4 md:p-6">
+         <div className="p-3 md:p-4">
             <Alert variant="destructive">
-                <AlertCircle className="h-5 w-5" />
-                <AlertTitle>Erro ao Carregar Oferta</AlertTitle>
-                <AlertDescription>{error}</AlertDescription>
+                <AlertCircle className="h-4 w-4" />
+                <AlertTitle className="text-sm">Erro ao Carregar Oferta</AlertTitle>
+                <AlertDescription className="text-xs">{error}</AlertDescription>
             </Alert>
-            <Button asChild variant="outline" className="mt-6">
+            <Button asChild variant="outline" size="sm" className="mt-3 text-xs">
               <Link href="/partner/dashboard">
-                <ArrowLeft className="mr-2 h-4 w-4" />
+                <ArrowLeft className="mr-1.5 h-3 w-3" />
                 Voltar para o Painel
               </Link>
             </Button>
@@ -216,17 +180,17 @@ export default function EditPartnerOfferPage() {
     );
   }
   
-  if (!offerToEdit && canAccess) {
+  if (!offerToEdit) {
      return (
-         <div className="p-4 md:p-6">
+         <div className="p-3 md:p-4">
             <Alert variant="destructive">
-                <AlertCircle className="h-5 w-5" />
-                <AlertTitle>Oferta Não Encontrada</AlertTitle>
-                <AlertDescription>A oferta que você está tentando editar não foi encontrada.</AlertDescription>
+                <AlertCircle className="h-4 w-4" />
+                <AlertTitle className="text-sm">Oferta Não Encontrada</AlertTitle>
+                <AlertDescription className="text-xs">A oferta que você está tentando editar não foi encontrada.</AlertDescription>
             </Alert>
-             <Button asChild variant="outline" className="mt-6">
+             <Button asChild variant="outline" size="sm" className="mt-3 text-xs">
               <Link href="/partner/dashboard">
-                <ArrowLeft className="mr-2 h-4 w-4" />
+                <ArrowLeft className="mr-1.5 h-3 w-3" />
                 Voltar para o Painel
               </Link>
             </Button>
@@ -235,44 +199,44 @@ export default function EditPartnerOfferPage() {
   }
 
   return (
-    <div className="p-4 md:p-6">
-      <Button asChild variant="outline" className="mb-6">
+    <div className="p-3 md:p-4">
+      <Button asChild variant="outline" size="sm" className="mb-4 text-xs">
         <Link href="/partner/dashboard">
-          <ArrowLeft className="mr-2 h-4 w-4" />
+          <ArrowLeft className="mr-1.5 h-3 w-3" />
           Voltar para o Painel de Ofertas
         </Link>
       </Button>
 
-      <section className="mb-8">
-        <h2 className="mb-2 text-xl font-bold tracking-tight text-primary md:text-2xl">
+      <section className="mb-5">
+        <h2 className="mb-1.5 text-lg font-bold tracking-tight text-primary md:text-xl">
           Editar Oferta
         </h2>
-        <p className="text-sm text-foreground/80 md:text-base">
+        <p className="text-xs text-foreground/80 md:text-sm">
           Modifique os detalhes da oferta "{offerToEdit?.title}" para: <span className="font-semibold text-accent">{businessName}</span>.
         </p>
       </section>
 
-      <Card className="shadow-xl">
+      <Card className="shadow-md">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
-            <CardHeader className="p-4">
-              <CardTitle className="flex items-center text-lg text-primary md:text-xl">
-                <Tag className="mr-2 h-5 w-5 md:h-6 md:w-6 text-accent" />
+            <CardHeader className="p-3">
+              <CardTitle className="flex items-center text-md text-primary md:text-lg">
+                <Tag className="mr-2 h-4 w-4 md:h-5 md:w-5 text-accent" />
                 Detalhes da Oferta
               </CardTitle>
               <CardDescription className="text-xs md:text-sm">
                 Altere os campos abaixo e salve. O QR Code será atualizado com as novas informações.
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4 p-4">
+            <CardContent className="space-y-3 p-3">
               <FormField
                 control={form.control}
                 name="title"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel htmlFor="title" className="text-sm">Título da Oferta *</FormLabel>
+                    <FormLabel htmlFor="title" className="text-xs">Título da Oferta *</FormLabel>
                     <FormControl>
-                      <Input id="title" placeholder="Ex: Happy Hour Especial" {...field} value={field.value ?? ''} />
+                      <Input id="title" placeholder="Ex: Happy Hour Especial" {...field} value={field.value ?? ''} className="h-9 text-sm"/>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -283,9 +247,9 @@ export default function EditPartnerOfferPage() {
                 name="description"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel htmlFor="description" className="text-sm">Descrição da Oferta *</FormLabel>
+                    <FormLabel htmlFor="description" className="text-xs">Descrição da Oferta *</FormLabel>
                     <FormControl>
-                      <Textarea id="description" placeholder="Descreva os detalhes da oferta..." {...field} value={field.value ?? ''} rows={3}/>
+                      <Textarea id="description" placeholder="Descreva os detalhes da oferta..." {...field} value={field.value ?? ''} rows={3} className="min-h-[60px] text-sm"/>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -297,16 +261,16 @@ export default function EditPartnerOfferPage() {
                 name="offerType"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-sm">Tipo de Oferta *</FormLabel>
+                    <FormLabel className="text-xs">Tipo de Oferta *</FormLabel>
                     <Select onValueChange={field.onChange} value={field.value}>
                       <FormControl>
-                        <SelectTrigger>
+                        <SelectTrigger className="h-9 text-sm">
                           <SelectValue placeholder="Selecione o tipo da oferta" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="discount">Desconto Percentual</SelectItem>
-                        <SelectItem value="p1g2">Pague 1 Leve 2 (ou similar)</SelectItem>
+                        <SelectItem value="discount" className="text-xs">Desconto Percentual</SelectItem>
+                        <SelectItem value="p1g2" className="text-xs">Pague 1 Leve 2 (ou similar)</SelectItem>
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -320,9 +284,9 @@ export default function EditPartnerOfferPage() {
                   name="discountPercentage"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel htmlFor="discountPercentage" className="text-sm">Porcentagem de Desconto (%) *</FormLabel>
+                      <FormLabel htmlFor="discountPercentage" className="text-xs">Porcentagem de Desconto (%) *</FormLabel>
                       <FormControl>
-                        <Input id="discountPercentage" type="number" placeholder="Ex: 10 para 10% de desconto" {...field} value={field.value ?? ''} />
+                        <Input id="discountPercentage" type="number" placeholder="Ex: 10 para 10% de desconto" {...field} value={field.value ?? ''} className="h-9 text-sm"/>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -335,7 +299,7 @@ export default function EditPartnerOfferPage() {
                     control={form.control}
                     name="isPay1Get2"
                     render={({ field }) => (
-                        <FormItem className="flex flex-row items-center space-x-2 space-y-0 rounded-md border p-3">
+                        <FormItem className="flex flex-row items-center space-x-2 space-y-0 rounded-md border p-2.5">
                         <FormControl>
                             <Checkbox
                             checked={field.value}
@@ -343,7 +307,7 @@ export default function EditPartnerOfferPage() {
                             id="isPay1Get2"
                             />
                         </FormControl>
-                        <FormLabel htmlFor="isPay1Get2" className="text-sm font-normal cursor-pointer">
+                        <FormLabel htmlFor="isPay1Get2" className="text-xs font-normal cursor-pointer">
                             Confirmar como oferta "Pague 1 Leve 2" (ou similar)
                         </FormLabel>
                         </FormItem>
@@ -355,16 +319,17 @@ export default function EditPartnerOfferPage() {
                 control={form.control}
                 name="isVipOffer"
                 render={({ field }) => (
-                  <FormItem className="flex flex-row items-center space-x-2 space-y-0 rounded-md border p-3">
+                  <FormItem className="flex flex-row items-center space-x-2 space-y-0 rounded-md border p-2.5 bg-purple-500/10">
                     <FormControl>
                       <Checkbox
                         checked={field.value}
                         onCheckedChange={field.onChange}
                         id="isVipOffer"
+                        className="border-purple-500 data-[state=checked]:bg-purple-600 data-[state=checked]:text-purple-50"
                       />
                     </FormControl>
-                    <FormLabel htmlFor="isVipOffer" className="text-sm font-normal cursor-pointer flex items-center">
-                      <Star className="mr-1.5 h-4 w-4 text-yellow-400" />
+                    <FormLabel htmlFor="isVipOffer" className="text-xs font-normal cursor-pointer flex items-center text-purple-700">
+                      <Star className="mr-1.5 h-3 w-3 text-yellow-400 fill-yellow-400" />
                       Esta é uma oferta exclusiva para membros VIP?
                     </FormLabel>
                   </FormItem>
@@ -376,9 +341,9 @@ export default function EditPartnerOfferPage() {
                 name="usageLimitPerUser"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel htmlFor="usageLimitPerUser" className="text-sm">Limite de Uso por Usuário Prime</FormLabel>
+                    <FormLabel htmlFor="usageLimitPerUser" className="text-xs">Limite de Uso por Usuário Prime</FormLabel>
                     <FormControl>
-                      <Input id="usageLimitPerUser" type="number" placeholder="Ex: 1" {...field} value={field.value ?? ''} />
+                      <Input id="usageLimitPerUser" type="number" placeholder="Ex: 1" {...field} value={field.value ?? ''} className="h-9 text-sm"/>
                     </FormControl>
                     <FormDescription className="text-xs">Quantas vezes um membro Prime pode usar esta oferta.</FormDescription>
                     <FormMessage />
@@ -391,18 +356,18 @@ export default function EditPartnerOfferPage() {
                 name="termsAndConditions"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel htmlFor="termsAndConditions" className="text-sm">Termos e Condições da Oferta *</FormLabel>
+                    <FormLabel htmlFor="termsAndConditions" className="text-xs">Termos e Condições da Oferta *</FormLabel>
                     <FormControl>
-                      <Textarea id="termsAndConditions" placeholder="Ex: Válido de segunda a quinta..." {...field} value={field.value ?? ''} rows={3}/>
+                      <Textarea id="termsAndConditions" placeholder="Ex: Válido de segunda a quinta..." {...field} value={field.value ?? ''} rows={3} className="min-h-[60px] text-sm"/>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
             </CardContent>
-            <CardFooter className="p-4">
-              <Button type="submit" size="default" className="w-full bg-primary hover:bg-primary/90 text-sm" disabled={isSubmitting}>
-                {isSubmitting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}
+            <CardFooter className="p-3">
+              <Button type="submit" size="sm" className="w-full bg-primary hover:bg-primary/90 text-xs h-9" disabled={isSubmitting}>
+                {isSubmitting ? <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" /> : <Save className="mr-1.5 h-3.5 w-3.5" />}
                 {isSubmitting ? 'Salvando Alterações...' : 'Salvar Alterações na Oferta'}
               </Button>
             </CardFooter>
