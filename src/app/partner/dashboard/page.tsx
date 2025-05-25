@@ -35,17 +35,40 @@ import {
     Ticket
 } from 'lucide-react';
 import { BusinessTypeIcon } from '@/components/icons';
+import { useAuth } from '@/hooks/use-auth-client'; // Re-added for partner context
+import { useRouter } from 'next/navigation'; // For redirect
 
 const MOCK_PARTNER_BUSINESS_ID = '1'; 
+const MOCK_PARTNER_EMAIL = 'partner@example.com';
+const ADMIN_EMAIL = 'admin@example.com';
 
 
 export default function PartnerDashboardPage() {
+  const { user, loading: authLoading } = useAuth();
+  const router = useRouter();
   const [business, setBusiness] = useState<GramadoBusiness | null>(null);
   const [deals, setDeals] = useState<Deal[]>([]);
   const [isLoadingData, setIsLoadingData] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [canAccess, setCanAccess] = useState(false);
 
   useEffect(() => {
+    if (!authLoading) {
+      if (!user) {
+        router.push('/login?redirect=/partner/dashboard');
+      } else if (user.email === MOCK_PARTNER_EMAIL || user.email === ADMIN_EMAIL) {
+        setCanAccess(true);
+      } else {
+        setCanAccess(false);
+        setError("Acesso negado. Esta área é restrita para parceiros.");
+        setIsLoadingData(false);
+      }
+    }
+  }, [user, authLoading, router]);
+
+  useEffect(() => {
+    if (!canAccess || !user) return; // Only load data if user can access
+
     const businessIdToLoad = MOCK_PARTNER_BUSINESS_ID; 
 
     if (businessIdToLoad) {
@@ -73,101 +96,115 @@ export default function PartnerDashboardPage() {
         setIsLoadingData(false);
         setError("ID do estabelecimento do parceiro não definido.");
     }
-  }, []);
+  }, [canAccess, user]); // Rerun if canAccess changes
 
   const normalDeals = deals.filter(deal => !deal.isVipOffer);
   const vipDeals = deals.filter(deal => deal.isVipOffer);
 
-  if (isLoadingData) {
+  if (authLoading || isLoadingData) {
     return (
-      <div className="space-y-3 p-3 md:p-4">
-        <Skeleton className="mb-3 h-6 w-2/3" />
-        <Card className="shadow-sm">
-          <CardHeader className="p-3"><Skeleton className="h-5 w-1/2" /></CardHeader>
-          <CardContent className="space-y-1.5 p-3">
-            <div className="grid md:grid-cols-3 gap-2">
-                <Skeleton className="h-24 w-full md:col-span-1 rounded-md" />
-                <div className="md:col-span-2 space-y-1">
-                    <Skeleton className="h-3 w-3/4" />
-                    <Skeleton className="h-2.5 w-full" />
-                    <Skeleton className="h-2.5 w-5/6" />
-                    <Skeleton className="h-2.5 w-1/2" />
+      <div className="space-y-6 p-4 md:p-6">
+        <Skeleton className="mb-6 h-8 w-2/3" />
+        <Card className="shadow-lg">
+          <CardHeader className="p-6"><Skeleton className="h-7 w-1/2" /></CardHeader>
+          <CardContent className="space-y-3 p-6">
+            <div className="grid md:grid-cols-3 gap-4">
+                <Skeleton className="h-32 w-full md:col-span-1 rounded-md" />
+                <div className="md:col-span-2 space-y-2">
+                    <Skeleton className="h-5 w-3/4" />
+                    <Skeleton className="h-4 w-full" />
+                    <Skeleton className="h-4 w-5/6" />
+                    <Skeleton className="h-4 w-1/2" />
                 </div>
             </div>
-            <Skeleton className="mt-1 h-6 w-1/3" />
+            <Skeleton className="mt-2 h-8 w-1/3" />
           </CardContent>
         </Card>
-         <Card className="shadow-sm">
-          <CardHeader className="p-3"><Skeleton className="h-5 w-1/2" /></CardHeader>
-          <CardContent className="space-y-1.5 p-3">
-            <Skeleton className="h-10 w-full rounded-md" />
-            <Skeleton className="h-10 w-full rounded-md" />
+         <Card className="shadow-lg">
+          <CardHeader className="p-6"><Skeleton className="h-7 w-1/2" /></CardHeader>
+          <CardContent className="space-y-3 p-6">
+            <Skeleton className="h-12 w-full rounded-md" />
+            <Skeleton className="h-12 w-full rounded-md" />
           </CardContent>
         </Card>
-        <Card className="shadow-sm">
-          <CardHeader className="p-3"><Skeleton className="h-5 w-1/2" /></CardHeader>
-          <CardContent className="p-3"><Skeleton className="h-6 w-full" /></CardContent>
+        <Card className="shadow-lg">
+          <CardHeader className="p-6"><Skeleton className="h-7 w-1/2" /></CardHeader>
+          <CardContent className="p-6"><Skeleton className="h-8 w-full" /></CardContent>
         </Card>
       </div>
     );
   }
   
-  if (error) {
+   if (!canAccess) {
     return (
-      <div className="p-3 md:p-4">
+      <div className="p-4 md:p-6">
+        <Alert variant="destructive">
+          <AlertTitle>Acesso Negado</AlertTitle>
+          <AlertDescription>{error || "Você não tem permissão para visualizar esta página."}</AlertDescription>
+        </Alert>
+        <Button asChild variant="outline" className="mt-6">
+          <Link href="/"><ArrowLeft className="mr-2 h-4 w-4"/> Voltar para Início</Link>
+        </Button>
+      </div>
+    );
+  }
+  
+  if (error && canAccess) { // Show error only if access was granted but data loading failed
+    return (
+      <div className="p-4 md:p-6">
         <Alert variant="destructive">
           <AlertTitle>Erro</AlertTitle>
           <AlertDescription>{error}</AlertDescription>
         </Alert>
-         <Button asChild variant="outline" size="sm" className="mt-3 text-xs">
-          <Link href="/partner/panel"><ArrowLeft className="mr-1.5 h-3 w-3"/> Voltar ao Painel</Link>
+         <Button asChild variant="outline" className="mt-6">
+          <Link href="/partner/panel"><ArrowLeft className="mr-2 h-4 w-4"/> Voltar ao Painel</Link>
         </Button>
       </div>
     );
   }
 
   if (!business) {
-    return <div className="p-3 text-center text-xs">Estabelecimento não encontrado ou não associado.</div>;
+    return <div className="p-6 text-center">Estabelecimento não encontrado ou não associado.</div>;
   }
 
   return (
-    <div className="p-3 md:p-4 space-y-3">
-      <Button asChild variant="outline" size="sm" className="mb-1 text-xs">
+    <div className="p-4 md:p-6 space-y-6">
+      <Button asChild variant="outline" className="mb-4">
         <Link href="/partner/panel">
-          <ArrowLeft className="mr-1.5 h-3 w-3" />
+          <ArrowLeft className="mr-2 h-4 w-4" />
           Voltar para o Painel do Parceiro
         </Link>
       </Button>
 
-      <div className="mb-3">
-        <h1 className="text-base font-bold text-primary md:text-lg">Painel do Estabelecimento</h1>
-        <p className="text-muted-foreground text-xs md:text-sm">Gerencie as informações e ofertas do seu negócio.</p>
+      <div className="mb-6">
+        <h1 className="text-2xl font-bold text-primary md:text-3xl">Painel do Estabelecimento</h1>
+        <p className="text-muted-foreground">Gerencie as informações e ofertas do seu negócio.</p>
       </div>
 
-      <Card className="shadow-sm">
-        <CardHeader className="p-3">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-1.5">
+      <Card className="shadow-lg">
+        <CardHeader className="p-6">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
             <div className="flex items-center">
-              {business.icon && <BusinessTypeIcon type={business.icon} className="mr-1.5 h-3.5 w-3.5 text-accent hidden sm:block" />}
-              <CardTitle className="text-sm text-accent md:text-base">{business.name}</CardTitle>
+              {business.icon && <BusinessTypeIcon type={business.icon} className="mr-2 h-5 w-5 text-accent hidden sm:block" />}
+              <CardTitle className="text-xl text-accent md:text-2xl">{business.name}</CardTitle>
             </div>
-            <div className="flex flex-wrap gap-1.5 mt-1 sm:mt-0">
-                <Button variant="outline" size="sm" asChild className="text-xs h-7 px-2">
+            <div className="flex flex-wrap gap-2 mt-2 sm:mt-0">
+                <Button variant="outline" size="sm" asChild>
                     <Link href={`/partner/edit-business/${business.id}`}> 
-                        <Edit3 className="mr-1 h-3 w-3" /> Editar Detalhes
+                        <Edit3 className="mr-1.5 h-4 w-4" /> Editar Detalhes
                     </Link>
                 </Button>
-                <Button variant="default" size="sm" asChild className="text-xs h-7 px-2">
+                <Button variant="default" size="sm" asChild>
                     <Link href={`/business/${business.id}`} target="_blank">
-                        <Eye className="mr-1 h-3 w-3" /> Ver Página
+                        <Eye className="mr-1.5 h-4 w-4" /> Ver Página Pública
                     </Link>
                 </Button>
             </div>
           </div>
         </CardHeader>
-        <CardContent className="p-3 grid grid-cols-1 md:grid-cols-3 gap-2">
+        <CardContent className="p-6 grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="md:col-span-1">
-            <div className="relative aspect-video w-full rounded-md border overflow-hidden shadow-sm">
+            <div className="relative aspect-video w-full rounded-lg border overflow-hidden shadow-md">
               <Image 
                 src={business.imageUrl} 
                 alt={`Imagem de ${business.name}`} 
@@ -177,139 +214,139 @@ export default function PartnerDashboardPage() {
               />
             </div>
           </div>
-          <div className="md:col-span-2 space-y-0.5">
+          <div className="md:col-span-2 space-y-2">
             <div>
-                <p className="text-xs font-medium text-muted-foreground">Tipo</p>
-                <p className="text-xs text-foreground">{business.type}</p>
+                <p className="text-sm font-medium text-muted-foreground">Tipo</p>
+                <p className="text-foreground">{business.type}</p>
             </div>
-            <Separator className="my-0.5"/>
+            <Separator className="my-2"/>
             <div>
-                <p className="text-xs font-medium text-muted-foreground">Endereço</p>
-                <p className="text-foreground text-xs">{business.address}</p>
+                <p className="text-sm font-medium text-muted-foreground">Endereço</p>
+                <p className="text-foreground text-sm">{business.address}</p>
             </div>
             {business.phoneNumber && (
-                <> <Separator className="my-0.5"/> <div> <p className="text-xs font-medium text-muted-foreground">Telefone</p> <p className="text-foreground text-xs">{business.phoneNumber}</p> </div> </>
+                <> <Separator className="my-2"/> <div> <p className="text-sm font-medium text-muted-foreground">Telefone</p> <p className="text-foreground text-sm">{business.phoneNumber}</p> </div> </>
             )}
             {business.website && (
-                 <> <Separator className="my-0.5"/> <div> <p className="text-xs font-medium text-muted-foreground">Website</p> <a href={business.website.startsWith('http') ? business.website : `https://${business.website}`} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline block truncate text-xs"> {business.website} </a> </div> </>
+                 <> <Separator className="my-2"/> <div> <p className="text-sm font-medium text-muted-foreground">Website</p> <a href={business.website.startsWith('http') ? business.website : `https://${business.website}`} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline block truncate text-sm"> {business.website} </a> </div> </>
             )}
-            <Separator className="my-0.5"/>
+            <Separator className="my-2"/>
             <div>
-                <p className="text-xs font-medium text-muted-foreground">Descrição Completa</p>
-                <p className="text-foreground/90 text-xs leading-relaxed line-clamp-2">{business.fullDescription}</p>
+                <p className="text-sm font-medium text-muted-foreground">Descrição Completa</p>
+                <p className="text-foreground/90 text-sm leading-relaxed line-clamp-3">{business.fullDescription}</p>
             </div>
           </div>
         </CardContent>
       </Card>
 
-      <Card className="shadow-sm">
-        <CardHeader className="p-3">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between flex-wrap gap-1.5">
-            <CardTitle className="text-sm text-accent flex items-center md:text-base">
-              <Tag className="mr-1.5 h-3.5 w-3.5" />
-              Minhas Ofertas ({deals.length})
+      <Card className="shadow-lg">
+        <CardHeader className="p-6">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between flex-wrap gap-3">
+            <CardTitle className="text-xl text-accent flex items-center md:text-2xl">
+              <Tag className="mr-2 h-5 w-5" />
+              Minhas Ofertas Atuais ({deals.length})
             </CardTitle>
-            <div className="flex flex-wrap gap-1.5">
-                <Button asChild size="sm" className="text-xs h-7 px-2">
+            <div className="flex flex-wrap gap-2">
+                <Button asChild size="sm">
                 <Link href="/partner/add-normal-offer">
-                    <PlusCircle className="mr-1 h-3 w-3" /> Adicionar Oferta Normal
+                    <PlusCircle className="mr-1.5 h-4 w-4" /> Adicionar Oferta Normal
                 </Link>
                 </Button>
-                <Button asChild size="sm" variant="outline" className="text-xs h-7 px-2 border-purple-500 text-purple-600 hover:bg-purple-500/10 hover:text-purple-700">
+                <Button asChild size="sm" variant="outline" className="border-purple-500 text-purple-600 hover:bg-purple-500/10 hover:text-purple-700">
                 <Link href="/partner/add-vip-offer">
-                    <Star className="mr-1 h-3 w-3 text-yellow-400 fill-yellow-400" /> Adicionar Oferta VIP
+                    <Star className="mr-1.5 h-4 w-4 text-yellow-400 fill-yellow-400" /> Adicionar Oferta VIP
                 </Link>
                 </Button>
             </div>
           </div>
         </CardHeader>
-        <CardContent className="p-3 space-y-2.5">
-          {/* Normal Offers Section */}
+        <CardContent className="p-6 space-y-4">
           <div>
-            <h3 className="text-xs font-semibold text-primary mb-1 flex items-center">
-              <Ticket className="mr-1.5 h-3.5 w-3.5" />
+            <h3 className="text-lg font-semibold text-primary mb-2 flex items-center">
+              <Ticket className="mr-2 h-5 w-5" />
               Ofertas Normais ({normalDeals.length})
             </h3>
             {normalDeals.length > 0 ? (
-              <div className="space-y-1.5">
+              <div className="space-y-3">
                 {normalDeals.map(deal => (
-                  <Card key={deal.id} className="bg-muted/30 p-2">
-                    <div className="flex flex-col sm:flex-row justify-between items-start gap-1.5">
+                  <Card key={deal.id} className="bg-muted/50 p-4">
+                    <div className="flex flex-col sm:flex-row justify-between items-start gap-3">
                       <div>
-                        <h4 className="font-semibold text-xs text-primary md:text-sm">{deal.title}</h4>
-                        <p className="text-xs text-muted-foreground line-clamp-1 mb-0.5">{deal.description}</p>
-                        <div className="flex flex-wrap gap-1">
-                          {deal.isPay1Get2 && <Badge variant="destructive" className="bg-accent text-accent-foreground text-[9px] px-1 py-0">Pague 1 Leve 2</Badge>}
-                          {deal.discountPercentage && deal.discountPercentage > 0 && <Badge variant="default" className="bg-primary text-primary-foreground text-[9px] px-1 py-0">{deal.discountPercentage}% OFF</Badge>}
+                        <h4 className="font-semibold text-primary md:text-lg">{deal.title}</h4>
+                        <p className="text-xs text-muted-foreground line-clamp-2 mb-1">{deal.description}</p>
+                        <div className="flex flex-wrap gap-1.5">
+                          {deal.isPay1Get2 && <Badge variant="destructive" className="bg-accent text-accent-foreground text-xs">Pague 1 Leve 2</Badge>}
+                          {deal.discountPercentage && deal.discountPercentage > 0 && <Badge variant="default" className="bg-primary text-primary-foreground text-xs">{deal.discountPercentage}% OFF</Badge>}
                         </div>
+                         <p className="mt-2 text-xs text-muted-foreground/80">Termos: {deal.termsAndConditions.substring(0, 100)}{deal.termsAndConditions.length > 100 ? '...' : ''}</p>
                       </div>
-                      <div className="mt-1 sm:mt-0 sm:ml-auto flex-shrink-0 space-x-1.5">
-                        <AlertDialog><AlertDialogTrigger asChild><Button variant="outline" size="sm" className="text-xs h-6 px-1.5 py-0.5"><QrCodeIcon className="mr-1 h-2.5 w-2.5" /> Ver QR</Button></AlertDialogTrigger><AlertDialogContent><AlertDialogHeader><AlertDialogTitle className="flex items-center"><QrCodeIcon className="mr-2 h-5 w-5 text-primary"/>QR Code: {deal.title}</AlertDialogTitle><AlertDialogDescription>Apresente este QR Code no caixa ou para o atendente para validar sua oferta (simulação).</AlertDialogDescription></AlertDialogHeader><div className="flex justify-center my-3"><Image src={`https://placehold.co/150x150.png?text=QR+${deal.id.substring(0,8)}`} alt={`QR Code para ${deal.title}`} width={150} height={150} data-ai-hint="qr code"/></div><AlertDialogFooter><AlertDialogCancel>Fechar</AlertDialogCancel></AlertDialogFooter></AlertDialogContent></AlertDialog>
-                        <Button asChild variant="outline" size="sm" className="text-xs h-6 px-1.5 py-0.5"><Link href={`/partner/edit-offer/${deal.id}`}><Settings2 className="mr-1 h-2.5 w-2.5" /> Editar</Link></Button>
+                      <div className="mt-2 sm:mt-0 sm:ml-auto flex-shrink-0 space-x-2">
+                        <AlertDialog><AlertDialogTrigger asChild><Button variant="outline" size="sm" className="text-xs"><QrCodeIcon className="mr-1.5 h-3.5 w-3.5" /> Ver QR</Button></AlertDialogTrigger><AlertDialogContent><AlertDialogHeader><AlertDialogTitle className="flex items-center"><QrCodeIcon className="mr-2 h-5 w-5 text-primary"/>QR Code: {deal.title}</AlertDialogTitle><AlertDialogDescription>Apresente este QR Code no caixa ou para o atendente para validar sua oferta (simulação).</AlertDialogDescription></AlertDialogHeader><div className="flex justify-center my-4"><Image src={`https://placehold.co/150x150.png?text=QR+${deal.id.substring(0,8)}`} alt={`QR Code para ${deal.title}`} width={150} height={150} data-ai-hint="qr code"/></div><AlertDialogFooter><AlertDialogCancel>Fechar</AlertDialogCancel></AlertDialogFooter></AlertDialogContent></AlertDialog>
+                        <Button asChild variant="outline" size="sm" className="text-xs"><Link href={`/partner/edit-offer/${deal.id}`}><Settings2 className="mr-1.5 h-3.5 w-3.5" /> Editar</Link></Button>
                       </div>
                     </div>
                   </Card>
                 ))}
               </div>
             ) : (
-              <Alert className="text-xs py-1.5 px-2.5"><Ticket className="h-3 w-3"/><AlertTitle className="text-xs">Nenhuma Oferta Normal</AlertTitle><AlertDescription className="text-xs">Você ainda não cadastrou nenhuma oferta normal.</AlertDescription></Alert>
+              <Alert className="text-sm"><Ticket className="h-4 w-4"/><AlertTitle className="text-sm">Nenhuma Oferta Normal</AlertTitle><AlertDescription className="text-xs">Você ainda não cadastrou nenhuma oferta normal.</AlertDescription></Alert>
             )}
           </div>
 
-          <Separator className="my-2" />
+          <Separator className="my-6" />
 
-          {/* VIP Offers Section */}
           <div>
-            <h3 className="text-xs font-semibold text-purple-600 mb-1 flex items-center">
-              <Star className="mr-1.5 h-3.5 w-3.5 text-yellow-400 fill-yellow-400" />
+            <h3 className="text-lg font-semibold text-purple-600 mb-2 flex items-center">
+              <Star className="mr-2 h-5 w-5 text-yellow-400 fill-yellow-400" />
               Ofertas VIP Especiais ({vipDeals.length})
             </h3>
             {vipDeals.length > 0 ? (
-              <div className="space-y-1.5">
+              <div className="space-y-3">
                 {vipDeals.map(deal => (
-                  <Card key={deal.id} className="bg-purple-500/10 border-purple-500/30 p-2">
-                    <div className="flex flex-col sm:flex-row justify-between items-start gap-1.5">
+                  <Card key={deal.id} className="bg-purple-500/10 border-purple-500/30 p-4">
+                    <div className="flex flex-col sm:flex-row justify-between items-start gap-3">
                       <div>
-                        <h4 className="font-semibold text-xs text-purple-700 md:text-sm">{deal.title}</h4>
-                        <p className="text-xs text-muted-foreground line-clamp-1 mb-0.5">{deal.description}</p>
-                        <div className="flex flex-wrap gap-1">
-                            <Badge variant="default" className="bg-purple-600 hover:bg-purple-700 text-white text-[9px] px-1 py-0"><Star className="mr-0.5 h-2.5 w-2.5" /> VIP</Badge>
-                            {deal.isPay1Get2 && <Badge variant="destructive" className="bg-accent text-accent-foreground text-[9px] px-1 py-0">Pague 1 Leve 2</Badge>}
-                            {deal.discountPercentage && deal.discountPercentage > 0 && <Badge variant="default" className="bg-primary text-primary-foreground text-[9px] px-1 py-0">{deal.discountPercentage}% OFF</Badge>}
+                        <h4 className="font-semibold text-purple-700 md:text-lg">{deal.title}</h4>
+                        <p className="text-xs text-muted-foreground line-clamp-2 mb-1">{deal.description}</p>
+                        <div className="flex flex-wrap gap-1.5">
+                            <Badge variant="default" className="bg-purple-600 hover:bg-purple-700 text-white text-xs"><Star className="mr-1 h-3 w-3"/> VIP</Badge>
+                            {deal.isPay1Get2 && <Badge variant="destructive" className="bg-accent text-accent-foreground text-xs">Pague 1 Leve 2</Badge>}
+                            {deal.discountPercentage && deal.discountPercentage > 0 && <Badge variant="default" className="bg-primary text-primary-foreground text-xs">{deal.discountPercentage}% OFF</Badge>}
                         </div>
+                         <p className="mt-2 text-xs text-muted-foreground/80">Termos: {deal.termsAndConditions.substring(0, 100)}{deal.termsAndConditions.length > 100 ? '...' : ''}</p>
                       </div>
-                      <div className="mt-1 sm:mt-0 sm:ml-auto flex-shrink-0 space-x-1.5">
-                        <AlertDialog><AlertDialogTrigger asChild><Button variant="outline" size="sm" className="text-xs h-6 px-1.5 py-0.5"><QrCodeIcon className="mr-1 h-2.5 w-2.5" /> Ver QR</Button></AlertDialogTrigger><AlertDialogContent><AlertDialogHeader><AlertDialogTitle className="flex items-center"><QrCodeIcon className="mr-2 h-5 w-5 text-primary"/>QR Code VIP: {deal.title}</AlertDialogTitle><AlertDialogDescription>Apresente este QR Code no caixa ou para o atendente para validar sua oferta VIP (simulação).</AlertDialogDescription></AlertDialogHeader><div className="flex justify-center my-3"><Image src={`https://placehold.co/150x150.png?text=QR+VIP+${deal.id.substring(0,6)}`} alt={`QR Code VIP para ${deal.title}`} width={150} height={150} data-ai-hint="qr code vip"/></div><AlertDialogFooter><AlertDialogCancel>Fechar</AlertDialogCancel></AlertDialogFooter></AlertDialogContent></AlertDialog>
-                        <Button asChild variant="outline" size="sm" className="text-xs h-6 px-1.5 py-0.5"><Link href={`/partner/edit-offer/${deal.id}`}><Settings2 className="mr-1 h-2.5 w-2.5" /> Editar</Link></Button>
+                      <div className="mt-2 sm:mt-0 sm:ml-auto flex-shrink-0 space-x-2">
+                        <AlertDialog><AlertDialogTrigger asChild><Button variant="outline" size="sm" className="text-xs"><QrCodeIcon className="mr-1.5 h-3.5 w-3.5" /> Ver QR</Button></AlertDialogTrigger><AlertDialogContent><AlertDialogHeader><AlertDialogTitle className="flex items-center"><QrCodeIcon className="mr-2 h-5 w-5 text-primary"/>QR Code VIP: {deal.title}</AlertDialogTitle><AlertDialogDescription>Apresente este QR Code no caixa ou para o atendente para validar sua oferta VIP (simulação).</AlertDialogDescription></AlertDialogHeader><div className="flex justify-center my-4"><Image src={`https://placehold.co/150x150.png?text=QR+VIP+${deal.id.substring(0,6)}`} alt={`QR Code VIP para ${deal.title}`} width={150} height={150} data-ai-hint="qr code vip"/></div><AlertDialogFooter><AlertDialogCancel>Fechar</AlertDialogCancel></AlertDialogFooter></AlertDialogContent></AlertDialog>
+                        <Button asChild variant="outline" size="sm" className="text-xs"><Link href={`/partner/edit-offer/${deal.id}`}><Settings2 className="mr-1.5 h-3.5 w-3.5" /> Editar</Link></Button>
                       </div>
                     </div>
                   </Card>
                 ))}
               </div>
             ) : (
-              <Alert className="text-xs py-1.5 px-2.5 border-purple-500/30 bg-purple-500/5"><Star className="h-3 w-3 text-purple-600"/><AlertTitle className="text-xs text-purple-700">Nenhuma Oferta VIP</AlertTitle><AlertDescription className="text-xs">Você ainda não cadastrou nenhuma oferta VIP especial.</AlertDescription></Alert>
+              <Alert className="text-sm border-purple-500/30 bg-purple-500/5"><Star className="h-4 w-4 text-purple-600"/><AlertTitle className="text-sm text-purple-700">Nenhuma Oferta VIP</AlertTitle><AlertDescription className="text-xs">Você ainda não cadastrou nenhuma oferta VIP especial.</AlertDescription></Alert>
             )}
           </div>
         </CardContent>
-        <CardFooter className="p-3">
+        <CardFooter className="p-6">
             <p className="text-xs text-muted-foreground">
                 Mantenha suas ofertas atualizadas e atrativas!
             </p>
         </CardFooter>
       </Card>
 
-      <Card className="shadow-sm">
-        <CardHeader className="p-3">
-            <CardTitle className="text-sm text-accent flex items-center md:text-base">
-                <BarChart3 className="mr-1.5 h-3.5 w-3.5" />
+      <Card className="shadow-lg">
+        <CardHeader className="p-6">
+            <CardTitle className="text-xl text-accent flex items-center md:text-2xl">
+                <BarChart3 className="mr-2 h-5 w-5" />
                 Visão Geral do Desempenho
             </CardTitle>
         </CardHeader>
-        <CardContent className="p-3">
-            <Alert variant="default" className="bg-secondary/20 border-secondary text-xs py-1.5 px-2.5">
-                <BarChart3 className="h-3 w-3 text-secondary-foreground"/>
-                <AlertTitle className="text-xs text-secondary-foreground">Em Breve!</AlertTitle>
-                <AlertDescription className="text-xs">
+        <CardContent className="p-6">
+            <Alert variant="default" className="bg-secondary/20 border-secondary">
+                <BarChart3 className="h-4 w-4 text-secondary-foreground"/>
+                <AlertTitle className="text-secondary-foreground">Em Breve!</AlertTitle>
+                <AlertDescription>
                 Esta seção mostrará estatísticas sobre visualizações, resgates de ofertas e mais.
                 </AlertDescription>
             </Alert>
@@ -318,5 +355,3 @@ export default function PartnerDashboardPage() {
     </div>
   );
 }
-
-    

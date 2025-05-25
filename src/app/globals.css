@@ -32,7 +32,7 @@
     --input: 30 40% 92%; /* Light beige input background */
     --ring: 150 45% 40%; /* Primary color for focus rings */
 
-    --radius: 0.5rem;
+    --radius: 0.5rem; /* Reverted to 0.5rem */
 
     --chart-1: hsl(var(--primary)); /* Teal/Green */
     --chart-2: hsl(var(--secondary)); /* Terracotta */

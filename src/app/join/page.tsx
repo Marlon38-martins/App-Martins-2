@@ -167,58 +167,58 @@ export default function JoinPage() {
   };
 
   return (
-    <div className="pb-24">
-      <section className="mb-10 text-center">
-        <Sparkles className="mx-auto mb-4 h-12 w-12 text-primary" />
-        <h1 className="mb-2 text-2xl font-bold tracking-tight text-primary md:text-3xl">
+    <div className="pb-28"> {/* Increased bottom padding to avoid overlap with fixed button */}
+      <section className="mb-12 text-center"> {/* Increased margin */}
+        <Sparkles className="mx-auto mb-4 h-16 w-16 text-primary" />
+        <h1 className="mb-3 text-3xl font-bold tracking-tight text-primary md:text-4xl">
           Assinatura Premium Guia Mais
         </h1>
-        <p className="text-md text-foreground/80 max-w-xl mx-auto">
+        <p className="text-lg text-foreground/80 max-w-xl mx-auto">
           🌟 Descubra o melhor da cidade com o Guia Mais! Assine o plano Premium e aproveite experiências inesquecíveis!
         </p>
       </section>
 
-      <section className="mb-10">
-        <h2 className="mb-4 text-center text-xl font-semibold text-accent">Seus Benefícios Exclusivos:</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+      <section className="mb-12"> {/* Increased margin */}
+        <h2 className="mb-6 text-center text-2xl font-semibold text-accent">Seus Benefícios Exclusivos:</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4"> {/* Increased gap */}
           {premiumFeatures.slice(0, 4).map((benefit, index) => ( 
             <Card key={index} className="text-center shadow-md hover:shadow-lg transition-all duration-300 ease-in-out bg-card">
-              <CardContent className="pt-4">
-                <benefit.IconComp className="mx-auto mb-2 h-10 w-10 text-primary" />
-                <p className="font-medium text-card-foreground text-sm">{benefit.text}</p>
+              <CardContent className="pt-6">
+                <benefit.IconComp className="mx-auto mb-3 h-12 w-12 text-primary" />
+                <p className="font-medium text-card-foreground text-base">{benefit.text}</p>
               </CardContent>
             </Card>
           ))}
         </div>
       </section>
 
-      <section className="mb-10">
+      <section className="mb-12"> {/* Increased margin */}
         <Card className="shadow-lg border-accent">
-            <CardHeader className="p-4">
-                <CardTitle className="text-accent text-center text-xl">🔓 Grátis vs. 🔑 Premium</CardTitle>
-                <CardDescription className="text-center text-sm">Veja a diferença e escolha o melhor para sua viagem!</CardDescription>
+            <CardHeader className="p-6">
+                <CardTitle className="text-accent text-center text-2xl">🔓 Grátis vs. 🔑 Premium</CardTitle>
+                <CardDescription className="text-center">Veja a diferença e escolha o melhor para sua viagem!</CardDescription>
             </CardHeader>
-            <CardContent className="p-4">
+            <CardContent className="p-6">
                 <Table>
                     <TableHeader>
                         <TableRow>
-                            <TableHead className="w-[55%] text-left text-xs">Recurso</TableHead>
-                            <TableHead className="text-center text-xs">Grátis</TableHead>
-                            <TableHead className="text-center text-primary font-semibold text-xs">Premium</TableHead>
+                            <TableHead className="w-[55%] text-left">Recurso</TableHead>
+                            <TableHead className="text-center">Grátis</TableHead>
+                            <TableHead className="text-center text-primary font-semibold">Premium</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
                         {comparisonFeatures.map((feature) => (
                             <TableRow key={feature.name}>
-                                <TableCell className="font-medium text-left flex items-center text-xs">
-                                  {feature.IconComp && <feature.IconComp className="mr-1.5 h-3.5 w-3.5 text-muted-foreground" />}
+                                <TableCell className="font-medium text-left flex items-center">
+                                  {feature.IconComp && <feature.IconComp className="mr-2 h-4 w-4 text-muted-foreground" />}
                                   {feature.name}
                                 </TableCell>
                                 <TableCell className="text-center">
-                                    {feature.free ? <CheckCircle className="h-4 w-4 text-green-500 mx-auto" /> : <XCircle className="h-4 w-4 text-muted-foreground mx-auto" />}
+                                    {feature.free ? <CheckCircle className="h-5 w-5 text-green-500 mx-auto" /> : <XCircle className="h-5 w-5 text-muted-foreground mx-auto" />}
                                 </TableCell>
                                 <TableCell className="text-center">
-                                    {feature.premium ? <CheckCircle className="h-4 w-4 text-green-500 mx-auto" /> : <XCircle className="h-4 w-4 text-muted-foreground mx-auto" />}
+                                    {feature.premium ? <CheckCircle className="h-5 w-5 text-green-500 mx-auto" /> : <XCircle className="h-5 w-5 text-muted-foreground mx-auto" />}
                                 </TableCell>
                             </TableRow>
                         ))}
@@ -228,39 +228,39 @@ export default function JoinPage() {
         </Card>
       </section>
 
-      <section className="mb-10 text-center">
-        <Card className="bg-secondary/20 border-secondary p-4 shadow-sm">
-          <CardTitle className="text-secondary-foreground mb-1.5 flex items-center justify-center text-lg">
-            <Info className="mr-2 h-5 w-5"/> Experimente o Guia Mais!
+      <section className="mb-12 text-center"> {/* Increased margin */}
+        <Card className="bg-secondary/20 border-secondary p-6 shadow-sm">
+          <CardTitle className="text-secondary-foreground mb-2 flex items-center justify-center text-xl">
+            <Info className="mr-2 h-6 w-6"/> Experimente o Guia Mais!
           </CardTitle>
-          <CardDescription className="text-secondary-foreground/90 text-sm">
+          <CardDescription className="text-secondary-foreground/90">
             “Veja um roteiro exclusivo gratuito por 24h!” (Funcionalidade de teste em breve)
           </CardDescription>
-          <Button variant="outline" size="sm" className="mt-3 border-secondary text-secondary-foreground hover:bg-secondary/30">
+          <Button variant="outline" size="default" className="mt-4 border-secondary text-secondary-foreground hover:bg-secondary/30">
             Ativar Teste Gratuito (Simulado)
           </Button>
         </Card>
       </section>
 
       <Card className="shadow-xl">
-        <CardHeader className="p-4">
-          <CardTitle className="flex items-center text-primary text-xl">
-            <User className="mr-2 h-6 w-6 text-accent" />
+        <CardHeader className="p-6">
+          <CardTitle className="flex items-center text-primary text-2xl">
+            <User className="mr-2 h-7 w-7 text-accent" />
             Complete seus Dados para Assinar
           </CardTitle>
-           <CardDescription className="text-sm">
+           <CardDescription>
             Escolha seu plano e preencha para se tornar um membro Guia Mais Premium.
           </CardDescription>
         </CardHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-6">
               <FormField
                 control={form.control}
                 name="selectedPlan"
                 render={({ field }) => (
-                  <FormItem className="space-y-2">
-                    <FormLabel className="text-md font-semibold">Selecione seu Plano Premium:</FormLabel>
+                  <FormItem className="space-y-3">
+                    <FormLabel className="text-lg font-semibold">Selecione seu Plano Premium:</FormLabel>
                     <FormControl>
                       <RadioGroup
                         onValueChange={(value) => {
@@ -268,14 +268,14 @@ export default function JoinPage() {
                             setCurrentSelectedPlanId(value as Plan['id']);
                         }}
                         value={field.value}
-                        className="grid grid-cols-1 md:grid-cols-2 gap-3"
+                        className="grid grid-cols-1 md:grid-cols-2 gap-4"
                       >
                         {premiumPlans.map((plan) => (
                           <FormItem 
                             key={plan.id} 
                             className={cn(
-                                "flex flex-col items-start space-y-0.5 rounded-lg border p-3 transition-all duration-300 ease-in-out cursor-pointer hover:border-primary hover:shadow-lg",
-                                field.value === plan.id && "border-2 border-primary ring-2 ring-primary ring-offset-1",
+                                "flex flex-col items-start space-y-1 rounded-lg border p-4 transition-all duration-300 ease-in-out cursor-pointer hover:border-primary hover:shadow-lg",
+                                field.value === plan.id && "border-2 border-primary ring-2 ring-primary ring-offset-2",
                                 plan.highlight && "border-accent hover:border-accent ring-accent"
                             )}
                            onClick={() => { 
@@ -283,22 +283,22 @@ export default function JoinPage() {
                                 setCurrentSelectedPlanId(plan.id);
                             }}
                           >
-                            <div className="flex items-center justify-between w-full mb-1">
-                                <FormLabel className="font-semibold text-md flex items-center cursor-pointer">
-                                    {plan.Icon && <plan.Icon className={cn("mr-1.5 h-5 w-5", plan.textColor)} />}
+                            <div className="flex items-center justify-between w-full mb-1.5">
+                                <FormLabel className="font-semibold text-lg flex items-center cursor-pointer">
+                                    {plan.Icon && <plan.Icon className={cn("mr-2 h-5 w-5", plan.textColor)} />}
                                     {plan.name}
                                 </FormLabel>
                                 <FormControl>
                                   <RadioGroupItem value={plan.id} className="sr-only" />
                                 </FormControl>
-                                {plan.highlight && <Badge variant="destructive" className="bg-accent text-accent-foreground text-xs">Melhor Valor!</Badge>}
+                                {plan.highlight && <Badge variant="destructive" className="bg-accent text-accent-foreground">Melhor Valor!</Badge>}
                             </div>
-                            <p className={cn("text-xl font-bold", plan.textColor)}>{plan.price} <span className="text-xs font-normal text-muted-foreground">/{plan.billingCycle}</span></p>
+                            <p className={cn("text-2xl font-bold", plan.textColor)}>{plan.price} <span className="text-sm font-normal text-muted-foreground">/{plan.billingCycle}</span></p>
                             {plan.annualEquivalentMonthlyPrice && <p className="text-xs text-muted-foreground">{plan.annualEquivalentMonthlyPrice}</p>}
-                             <ul className="mt-1.5 space-y-0.5 text-xs text-muted-foreground">
+                             <ul className="mt-2 space-y-1 text-sm text-muted-foreground">
                                 {plan.features.slice(0,2).map(feature => ( 
                                     <li key={feature.text} className="flex items-center">
-                                        <CheckCircle className="mr-1 h-3.5 w-3.5 text-green-500"/> {feature.text}
+                                        <CheckCircle className="mr-2 h-4 w-4 text-green-500"/> {feature.text}
                                     </li>
                                 ))}
                                 <li>& mais...</li>
@@ -312,7 +312,7 @@ export default function JoinPage() {
                 )}
               />
 
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                 <FormField
                   control={form.control}
                   name="name"
@@ -340,7 +340,7 @@ export default function JoinPage() {
                   )}
                 />
               </div>
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                 <FormField
                   control={form.control}
                   name="phone"
@@ -368,7 +368,7 @@ export default function JoinPage() {
                   )}
                 />
               </div>
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                 <FormField
                   control={form.control}
                   name="password"
@@ -401,7 +401,7 @@ export default function JoinPage() {
                 control={form.control}
                 name="agreeToTerms"
                 render={({ field }) => (
-                  <FormItem className="flex flex-row items-start space-x-2 space-y-0 rounded-md border p-3 shadow-sm">
+                  <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 shadow-sm">
                     <FormControl>
                       <Checkbox
                         checked={field.value}
@@ -409,11 +409,11 @@ export default function JoinPage() {
                         id="agreeToTerms"
                       />
                     </FormControl>
-                    <div className="space-y-0.5 leading-none">
-                      <FormLabel htmlFor="agreeToTerms" className="cursor-pointer text-xs">
+                    <div className="space-y-1 leading-none">
+                      <FormLabel htmlFor="agreeToTerms" className="cursor-pointer">
                         Li e concordo com os Termos e Condições de Uso e a Política de Privacidade do Guia Mais.
                       </FormLabel>
-                      <FormDescription className="text-xs">
+                      <FormDescription>
                         Ao marcar esta caixa, você confirma sua adesão ao clube.
                       </FormDescription>
                       <FormMessage />
@@ -422,17 +422,17 @@ export default function JoinPage() {
                 )}
               />
               
-              <p className="flex items-center text-xs text-muted-foreground pt-2">
-                <ShieldCheck className="mr-1.5 h-3.5 w-3.5 text-green-500" />
+              <p className="flex items-center text-sm text-muted-foreground pt-3">
+                <ShieldCheck className="mr-2 h-4 w-4 text-green-500" />
                 Seus dados estão seguros conosco. Pagamento seguro (Simulação).
               </p>
             </CardContent>
-            <div className="fixed bottom-0 left-0 right-0 z-50 bg-background/90 p-3 backdrop-blur-sm border-t border-border shadow-t-lg w-full max-w-sm mx-auto">
-                <Button type="submit" size="lg" className="w-full bg-accent hover:bg-accent/80 text-accent-foreground text-md py-2.5" disabled={isSubmitting}>
+            <div className="fixed bottom-0 left-0 right-0 z-50 bg-background/90 p-4 backdrop-blur-sm border-t border-border shadow-t-lg w-full max-w-sm mx-auto">
+                <Button type="submit" size="lg" className="w-full bg-accent hover:bg-accent/80 text-accent-foreground text-lg py-3" disabled={isSubmitting}>
                     <CheckCircle className="mr-2 h-5 w-5" />
                     {isSubmitting ? 'Processando...' : `Assinar Agora - ${selectedPlanDetails.price}/${selectedPlanDetails.billingCycle}`}
                 </Button>
-                <p className="mt-2 text-center text-xs text-muted-foreground">
+                <p className="mt-2.5 text-center text-sm text-muted-foreground">
                     💚 Sua assinatura contribui para melhorar sua experiência na Serra mais linda do RN
                 </p>
             </div>
@@ -442,4 +442,3 @@ export default function JoinPage() {
     </div>
   );
 }
-
