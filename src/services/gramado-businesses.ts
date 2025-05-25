@@ -265,11 +265,12 @@ const businesses: GramadoBusiness[] = [
     rating: 4.3,
     reviewCount: 60,
   },
+  // --- Businesses in "Cidade Vizinha, RN" ---
   {
     id: '8',
     name: 'Hotel Fazenda "Vale Verdejante"',
     type: 'Hotel',
-    city: 'Cidade Vizinha, RN', // Changed city
+    city: 'Cidade Vizinha, RN',
     shortDescription: 'Natureza e conforto na cidade vizinha.',
     fullDescription: 'Desfrute da tranquilidade do campo com o conforto de um hotel fazenda. Piscina, passeios a cavalo e culinária caseira.',
     address: 'Rodovia CV-010, Km 5, Zona Rural, Cidade Vizinha - RN',
@@ -286,7 +287,7 @@ const businesses: GramadoBusiness[] = [
     id: '9',
     name: 'Restaurante "Sabor da Roça"',
     type: 'Restaurante',
-    city: 'Cidade Vizinha, RN', // Changed city
+    city: 'Cidade Vizinha, RN',
     shortDescription: 'Comida caseira e fogão a lenha.',
     fullDescription: 'Autêntica comida do interior feita no fogão a lenha, com ingredientes frescos da nossa horta. Venha provar o verdadeiro sabor da roça.',
     address: 'Rua Principal, 200, Centro, Cidade Vizinha - RN',
@@ -298,6 +299,7 @@ const businesses: GramadoBusiness[] = [
     rating: 4.7,
     reviewCount: 95,
   },
+  // --- Businesses in other Northeast states ---
   {
     id: '10',
     name: 'Loja de Souvenirs Pauferrense',
@@ -345,7 +347,143 @@ const businesses: GramadoBusiness[] = [
     icon: 'BedDouble',
     rating: 4.1,
     reviewCount: 40,
-  }
+  },
+  // --- Alagoas ---
+  {
+    id: '13',
+    name: 'Barraca Praia de Pajuçara',
+    type: 'Restaurante',
+    city: 'Maceió, AL',
+    shortDescription: 'Frutos do mar frescos na bela Pajuçara.',
+    fullDescription: 'Desfrute de deliciosos frutos do mar, petiscos e bebidas geladas com os pés na areia na Praia de Pajuçara. Música ao vivo nos fins de semana.',
+    address: 'Av. Dr. Antônio Gouveia, Pajuçara, Maceió - AL',
+    phoneNumber: '(82) 99999-0013',
+    latitude: -9.6676,
+    longitude: -35.7133,
+    imageUrl: 'https://placehold.co/600x400.png',
+    icon: 'UtensilsCrossed',
+    rating: 4.6,
+    reviewCount: 150,
+  },
+  // --- Bahia ---
+  {
+    id: '14',
+    name: 'Hotel Pelourinho',
+    type: 'Hotel',
+    city: 'Salvador, BA',
+    shortDescription: 'Hospedagem histórica no coração do Pelourinho.',
+    fullDescription: 'Viva a história de Salvador hospedando-se em um casarão colonial restaurado no Pelourinho. Próximo aos principais pontos turísticos e culturais.',
+    address: 'Largo do Pelourinho, 10, Pelourinho, Salvador - BA',
+    phoneNumber: '(71) 3333-0014',
+    latitude: -12.9720,
+    longitude: -38.5092,
+    imageUrl: 'https://placehold.co/600x400.png',
+    icon: 'BedDouble',
+    rating: 4.4,
+    reviewCount: 110,
+  },
+  // --- Ceará ---
+  {
+    id: '15',
+    name: 'Beach Park Loja Oficial',
+    type: 'Loja',
+    city: 'Fortaleza, CE',
+    shortDescription: 'Lembranças e moda praia do Beach Park.',
+    fullDescription: 'Leve para casa a diversão do Beach Park! Produtos exclusivos, moda praia, brinquedos e muito mais na nossa loja oficial.',
+    address: 'Av. Beira Mar, 2500, Meireles, Fortaleza - CE',
+    phoneNumber: '(85) 4012-3000',
+    latitude: -3.7257,
+    longitude: -38.4941,
+    imageUrl: 'https://placehold.co/600x400.png',
+    icon: 'ShoppingBag',
+    rating: 4.3,
+    reviewCount: 60,
+  },
+  // --- Maranhão ---
+  {
+    id: '16',
+    name: 'Passeio Lençóis Maranhenses',
+    type: 'Atração',
+    city: 'São Luís, MA',
+    shortDescription: 'Excursões para os deslumbrantes Lençóis.',
+    fullDescription: 'Descubra a beleza única dos Lençóis Maranhenses com nossos passeios guiados. Saídas de São Luís para Barreirinhas. Consulte roteiros.',
+    address: 'Agência Central de Turismo, Centro Histórico, São Luís - MA',
+    phoneNumber: '(98) 98888-0016',
+    latitude: -2.5307,
+    longitude: -44.3068,
+    imageUrl: 'https://placehold.co/600x400.png',
+    icon: 'Landmark',
+    rating: 4.9,
+    reviewCount: 300,
+  },
+  // --- Paraíba ---
+  {
+    id: '17',
+    name: 'Café do Brejo',
+    type: 'Café',
+    city: 'João Pessoa, PB',
+    shortDescription: 'Cafés especiais e quitutes paraibanos.',
+    fullDescription: 'Aconchegante café com grãos selecionados da região do Brejo Paraibano. Experimente nossos bolos, tapiocas e o famoso queijo coalho.',
+    address: 'Av. Epitácio Pessoa, 1000, Tambaú, João Pessoa - PB',
+    phoneNumber: '(83) 3222-0017',
+    latitude: -7.1153,
+    longitude: -34.8292,
+    imageUrl: 'https://placehold.co/600x400.png',
+    icon: 'Coffee',
+    rating: 4.7,
+    reviewCount: 90,
+  },
+  // --- Pernambuco ---
+  {
+    id: '18',
+    name: 'Parque das Esculturas Francisco Brennand',
+    type: 'Parque',
+    city: 'Recife, PE',
+    shortDescription: 'Arte e natureza no coração de Recife.',
+    fullDescription: 'Explore o magnífico Parque das Esculturas de Francisco Brennand, um museu a céu aberto com obras monumentais do artista pernambucano.',
+    address: 'Pilar, Recife Antigo, Recife - PE',
+    phoneNumber: '(81) 3424-0018', // Placeholder
+    latitude: -8.0544,
+    longitude: -34.8692,
+    imageUrl: 'https://placehold.co/600x400.png',
+    icon: 'Trees',
+    rating: 4.8,
+    reviewCount: 250,
+  },
+  // --- Piauí ---
+  {
+    id: '19',
+    name: 'Cervejaria Cabeça de Cuia',
+    type: 'Bar',
+    city: 'Teresina, PI',
+    shortDescription: 'Cervejas artesanais e petiscos regionais.',
+    fullDescription: 'Prove as autênticas cervejas artesanais do Piauí na Cervejaria Cabeça de Cuia. Ambiente descontraído e cardápio com delícias locais.',
+    address: 'Av. Nossa Senhora de Fátima, 1234, Jóquei, Teresina - PI',
+    phoneNumber: '(86) 3232-0019',
+    latitude: -5.0608,
+    longitude: -42.7900,
+    imageUrl: 'https://placehold.co/600x400.png',
+    icon: 'Beer',
+    rating: 4.5,
+    reviewCount: 120,
+  },
+  // --- Sergipe ---
+  {
+    id: '20',
+    name: 'Orla de Atalaia Restaurante',
+    type: 'Restaurante',
+    city: 'Aracaju, SE',
+    shortDescription: 'Gastronomia diversificada na Orla de Atalaia.',
+    fullDescription: 'Ampla variedade de pratos, desde a culinária local até opções internacionais, com vista para a famosa Orla de Atalaia.',
+    address: 'Passarela do Caranguejo, Orla de Atalaia, Aracaju - SE',
+    phoneNumber: '(79) 3255-0020',
+    latitude: -10.9856,
+    longitude: -37.0444,
+    imageUrl: 'https://placehold.co/600x400.png',
+    icon: 'UtensilsCrossed',
+    rating: 4.3,
+    reviewCount: 180,
+  },
 ];
 
 const deals: Deal[] = [
@@ -428,7 +566,7 @@ const deals: Deal[] = [
   },
   {
     id: 'deal-9',
-    businessId: '8', 
+    businessId: '8',
     title: '10% OFF na Diária (Cidade Vizinha)',
     description: 'Membros Guia Mais ganham 10% de desconto na diária em nosso Hotel Fazenda.',
     discountPercentage: 10,
@@ -437,7 +575,7 @@ const deals: Deal[] = [
   },
   {
     id: 'deal-10',
-    businessId: '9', 
+    businessId: '9',
     title: 'Suco Natural Cortesia (Cidade Vizinha)',
     description: 'Peça um prato principal e ganhe um suco natural da estação. Exclusivo Guia Mais.',
     discountPercentage: 0,
@@ -471,7 +609,55 @@ const deals: Deal[] = [
     discountPercentage: 0,
     termsAndConditions: 'Exclusivo para reservas diretas de membros VIP. Informar no check-in.',
     isVipOffer: true,
-  }
+  },
+  // --- Deals for new Northeast businesses ---
+  {
+    id: 'deal-14',
+    businessId: '13', // Barraca Praia de Pajuçara, Maceió, AL
+    title: 'Caipirinha em Dobro na Pajuçara',
+    description: 'Compre uma caipirinha e ganhe outra na faixa! Exclusivo Guia Mais.',
+    isPay1Get2: true,
+    usageLimitPerUser: 1,
+    termsAndConditions: 'Válido todos os dias. Apresentar card Guia Mais.',
+    isVipOffer: false,
+  },
+  {
+    id: 'deal-15',
+    businessId: '14', // Hotel Pelourinho, Salvador, BA
+    title: 'Upgrade de Quarto VIP (Salvador)',
+    description: 'Membros VIP Guia Mais ganham upgrade de quarto, sujeito à disponibilidade.',
+    discountPercentage: 0,
+    termsAndConditions: 'Exclusivo para membros VIP. Solicitar no momento da reserva. Sujeito à disponibilidade.',
+    isVipOffer: true,
+  },
+  {
+    id: 'deal-16',
+    businessId: '15', // Beach Park Loja Oficial, Fortaleza, CE
+    title: '20% OFF em Moda Praia (Fortaleza)',
+    description: '20% de desconto em toda a linha de moda praia para membros Guia Mais.',
+    discountPercentage: 20,
+    termsAndConditions: 'Apresentar card Guia Mais. Não cumulativo.',
+    isVipOffer: false,
+  },
+  {
+    id: 'deal-17',
+    businessId: '17', // Café do Brejo, João Pessoa, PB
+    title: 'Bolo do Dia + Café Expresso por R$15',
+    description: 'Delicioso combo de fatia de bolo do dia com um café expresso especial.',
+    discountPercentage: 0, // This is a combo deal, not a direct percentage off.
+    termsAndConditions: 'Válido todos os dias. Apresentar card Guia Mais.',
+    isVipOffer: false,
+  },
+  {
+    id: 'deal-18',
+    businessId: '19', // Cervejaria Cabeça de Cuia, Teresina, PI
+    title: 'Chopp Artesanal VIP em Dobro',
+    description: 'Peça um chopp artesanal da casa e o segundo é por nossa conta! Exclusivo VIPs.',
+    isPay1Get2: true,
+    usageLimitPerUser: 1,
+    termsAndConditions: 'Válido às quintas-feiras. Exclusivo para membros VIP Guia Mais.',
+    isVipOffer: true,
+  },
 ];
 
 /**
