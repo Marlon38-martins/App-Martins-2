@@ -1,3 +1,4 @@
+
 // src/app/map/page.tsx
 'use client';
 
@@ -13,14 +14,22 @@ import { BusinessTypeIcon } from '@/components/icons';
 import { Frown, MapPin } from 'lucide-react';
 import { slugify } from '@/lib/utils'; // Import slugify
 
+// TODO: Integrate Google Maps API here
+// 1. Add NEXT_PUBLIC_GOOGLE_MAPS_API_KEY to your .env.local
+// 2. Install a library like `@react-google-maps/api`
+// 3. Replace the placeholder map image and points with a real Google Map
+//    - Load the Google Maps script using your API key.
+//    - Use the <GoogleMap>, <Marker> components.
+//    - The `mapPoints` data (latitude/longitude) can be used to place markers.
+
 interface MapPoint extends GramadoBusiness {
-  x: number; // Percentage
-  y: number; // Percentage
+  x: number; // Percentage for placeholder map
+  y: number; // Percentage for placeholder map
 }
 
 const legendCategories = [
   { name: 'Restaurante', iconType: 'Restaurante' as GramadoBusiness['icon'] },
-  { name: 'Hotel/Pousada', iconType: 'Hotel' as GramadoBusiness['icon'], slug: 'hotel' }, // Slug for Pousada/Hotel
+  { name: 'Hotel/Pousada', iconType: 'Hotel' as GramadoBusiness['icon'], slug: 'hotel' },
   { name: 'Loja', iconType: 'Loja' as GramadoBusiness['icon'] },
   { name: 'Atração Turística', iconType: 'Atração' as GramadoBusiness['icon'], slug: 'atracao' },
   { name: 'Café', iconType: 'Café' as GramadoBusiness['icon'] },
@@ -56,7 +65,6 @@ export default function MapPage() {
   const mapPoints = useMemo((): MapPoint[] => {
     if (!businesses || businesses.length === 0) return [];
 
-    // Filter businesses that have valid latitude and longitude
     const locatableBusinesses = businesses.filter(
       b => typeof b.latitude === 'number' && typeof b.longitude === 'number'
     );
@@ -74,17 +82,15 @@ export default function MapPage() {
     const latRange = maxLat - minLat;
     const lonRange = maxLon - minLon;
 
-    // Map only locatable businesses to points
     return locatableBusinesses.map(business => {
-      let x = 50; // Default to center
-      let y = 50; // Default to center
+      let x = 50; 
+      let y = 50; 
 
-      // Ensure longitude and latitude are numbers before calculation
       if (lonRange > 0 && typeof business.longitude === 'number') {
-        x = ((business.longitude - minLon) / lonRange) * 90 + 5; // Scale to 5-95%
+        x = ((business.longitude - minLon) / lonRange) * 90 + 5; 
       }
       if (latRange > 0 && typeof business.latitude === 'number') {
-        y = (1 - (business.latitude - minLat) / latRange) * 90 + 5; // Scale to 5-95% and invert Y
+        y = (1 - (business.latitude - minLat) / latRange) * 90 + 5; 
       }
       
       return { ...business, x, y };
@@ -99,13 +105,14 @@ export default function MapPage() {
         </h2>
         <p className="text-lg text-foreground/80">
           Navegue pelos pontos turísticos e estabelecimentos parceiros.
+          {/* TODO: Add OpenWeather API integration here for a small weather widget */}
         </p>
       </section>
 
       {isLoading && (
         <div className="space-y-4">
-          <Skeleton className="h-10 w-1/3" /> {/* Title skeleton */}
-          <Skeleton className="h-[500px] w-full rounded-lg md:h-[700px]" /> {/* Map area skeleton */}
+          <Skeleton className="h-10 w-1/3" />
+          <Skeleton className="h-[500px] w-full rounded-lg md:h-[700px]" />
         </div>
       )}
 
@@ -136,7 +143,7 @@ export default function MapPage() {
               layout="fill" 
               objectFit="cover" 
               className="opacity-20 -z-10" 
-              data-ai-hint="map mountains"
+              data-ai-hint="map mountains illustration"
             />
             
             {mapPoints.map((point) => (
@@ -182,4 +189,4 @@ export default function MapPage() {
     </div>
   );
 }
-
+    

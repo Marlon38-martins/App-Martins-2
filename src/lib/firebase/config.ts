@@ -1,11 +1,23 @@
+
 // src/lib/firebase/config.ts
 import { initializeApp, getApps, type FirebaseApp } from 'firebase/app';
 import { getAuth, type Auth } from 'firebase/auth';
-// import { getFirestore, type Firestore } from 'firebase/firestore';
-// import { getStorage, type FirebaseStorage } from 'firebase/storage';
+import { getFirestore, type Firestore } from 'firebase/firestore';
+import { getStorage, type FirebaseStorage } from 'firebase/storage';
 
-// Your web app's Firebase configuration
-// Ensure these environment variables are set in your .env.local file
+// IMPORTANT:
+// 1. Create a `.env.local` file in the root of your project.
+// 2. Add your Firebase project configuration to this file:
+//    NEXT_PUBLIC_FIREBASE_API_KEY="YOUR_API_KEY"
+//    NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN="YOUR_AUTH_DOMAIN"
+//    NEXT_PUBLIC_FIREBASE_PROJECT_ID="YOUR_PROJECT_ID"
+//    NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET="YOUR_STORAGE_BUCKET"
+//    NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID="YOUR_MESSAGING_SENDER_ID"
+//    NEXT_PUBLIC_FIREBASE_APP_ID="YOUR_APP_ID"
+//
+// Replace "YOUR_..." with your actual Firebase project values.
+// These NEXT_PUBLIC_ variables will be automatically available in your frontend code.
+
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
   authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
@@ -17,46 +29,64 @@ const firebaseConfig = {
 
 let app: FirebaseApp | undefined;
 let auth: Auth | undefined;
-// let firestore: Firestore | undefined;
-// let storage: FirebaseStorage | undefined;
+let firestore: Firestore | undefined;
+let storage: FirebaseStorage | undefined;
 
-// Check if the API key is a placeholder or missing
-const apiKeyIsPlaceholder = 
-  !firebaseConfig.apiKey || 
-  firebaseConfig.apiKey === "YOUR_API_KEY" || 
-  firebaseConfig.apiKey === "FIREBASE_API_KEY_PLACEHOLDER"; // Add more known placeholders if necessary
+const apiKeyIsEffectivelyMissingOrPlaceholder =
+  !firebaseConfig.apiKey ||
+  firebaseConfig.apiKey.trim() === "" ||
+  firebaseConfig.apiKey.startsWith("YOUR_") ||
+  firebaseConfig.apiKey.includes("PLACEHOLDER");
 
-if (!apiKeyIsPlaceholder) {
+if (!apiKeyIsEffectivelyMissingOrPlaceholder) {
   if (!getApps().length) {
     try {
+      console.log("Attempting Firebase initialization...");
       app = initializeApp(firebaseConfig);
       if (app) {
+        console.log("Firebase App initialized successfully.");
         auth = getAuth(app);
-        // firestore = getFirestore(app);
-        // storage = getStorage(app);
+        firestore = getFirestore(app);
+        storage = getStorage(app);
+        console.log("Firebase Auth, Firestore, and Storage services obtained.");
       }
     } catch (error) {
       console.error("Firebase initialization failed:", error);
-      // app, auth, firestore, storage will remain undefined
+      // Ensure all services are undefined if core initialization fails
+      app = undefined;
+      auth = undefined;
+      firestore = undefined;
+      storage = undefined;
     }
   } else {
     app = getApps()[0];
+    console.log("Using existing Firebase App instance.");
     if (app) {
-       try {
+      try {
         auth = getAuth(app);
-        // firestore = getFirestore(app);
-        // storage = getStorage(app);
+        firestore = getFirestore(app);
+        storage = getStorage(app);
+        console.log("Firebase Auth, Firestore, and Storage services obtained from existing app.");
       } catch (error) {
         console.error("Firebase getAuth (or other services) failed on existing app:", error);
+        auth = undefined; // Ensure auth is undefined if getAuth fails
+        firestore = undefined;
+        storage = undefined;
       }
     }
   }
 } else {
   console.warn(
-    "Firebase API key is a placeholder or not provided. " +
-    "Firebase services (Auth, Firestore, Storage) will not be initialized. " +
-    "The application will rely on mock data and services where available."
+    "Firebase API key is missing, a placeholder, or invalid. " +
+    "Firebase services (Auth, Firestore, Storage) will NOT be initialized. " +
+    "The application will rely on mock data and services."
   );
+  // Ensure all services are undefined
+  app = undefined;
+  auth = undefined;
+  firestore = undefined;
+  storage = undefined;
 }
 
-export { app, auth /*, firestore, storage */ };
+export { app, auth, firestore, storage };
+    

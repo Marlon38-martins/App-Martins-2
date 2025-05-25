@@ -1,7 +1,7 @@
 
 'use client';
 
-import { use, useEffect, useState, Suspense } from 'react';
+import { use, useEffect, useState, Suspense, useMemo } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation'; 
@@ -11,11 +11,15 @@ import {
     getDealsForBusiness, 
     type GramadoBusiness, 
     type Deal, 
-    getCurrentUser, 
-    getMockUserSubscription, 
+    // TODO: Replace with actual Firebase user and subscription data if Firebase is integrated
+    // getCurrentUser, 
+    // getMockUserSubscription, 
     checkUserOfferUsage 
 } from '@/services/gramado-businesses';
-import type { User, Subscription } from '@/types/user';
+// TODO: Replace with actual Firebase user and subscription types from your app
+import type { User as AppUser, Subscription } from '@/types/user'; 
+import { useAuth } from '@/hooks/use-auth-client';
+
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -23,61 +27,37 @@ import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { BusinessTypeIcon } from '@/components/icons';
-import { DealCard } from '@/components/deal/deal-card'; // Import DealCard
+import { DealCard } from '@/components/deal/deal-card';
 import { 
   MapPin, Phone, Globe, ArrowLeft, TicketPercent, Frown, Star, Tag, UserCheck, AlertTriangle,
-  Instagram, Facebook, MessageCircle
+  Instagram, Facebook, MessageCircle, Mail, Share2 // Added Share2
 } from 'lucide-react';
+
+// TODO: Implement WhatsApp/Email Sharing
+// - Add functions to generate WhatsApp and mailto links with pre-filled messages.
+// - Call these functions from the Share buttons.
 
 interface BusinessPageParams {
   id: string;
 }
 
-const getDealActivationDetails = (deal: Deal, businessType: string) => {
-  if (deal.isPay1Get2) {
-    return { text: `Ativar ${deal.title}`, Icon: Tag, query: `?dealId=${deal.id}` };
-  }
-  const lowerType = businessType.toLowerCase();
-  if (lowerType.includes('hotel') || lowerType.includes('pousada')) {
-    return { text: 'Reservar com Benefício Guia Mais', Icon: Tag, query: `?dealId=${deal.id}` };
-  }
-  if (lowerType.includes('restaurante') || lowerType.includes('café')) {
-    return { text: 'Usar Benefício Guia Mais Aqui', Icon: Tag, query: `?dealId=${deal.id}` };
-  }
-  return { text: 'Aproveitar Benefício Guia Mais', Icon: Tag, query: `?dealId=${deal.id}` };
-};
-
 function BusinessPageContent({ params }: { params: BusinessPageParams }) {
   const { id } = params;
+  const { user: authUser, subscription: userSubscription, loading: authLoading } = useAuth();
   
-  const [authUser, setAuthUser] = useState<User | null>(null);
   const [business, setBusiness] = useState<GramadoBusiness | null>(null);
   const [allDealsForBusiness, setAllDealsForBusiness] = useState<Deal[]>([]);
-  const [userSubscription, setUserSubscription] = useState<Subscription | null>(null);
   const [userRedemptions, setUserRedemptions] = useState<Record<string, boolean>>({});
 
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [authChecked, setAuthChecked] = useState(false);
+  
 
   useEffect(() => {
-    if (!id) return;
-    async function loadInitialAuth() {
-        const user = await getCurrentUser();
-        setAuthUser(user);
-        if (user) {
-            const sub = await getMockUserSubscription(user.id);
-            setUserSubscription(sub);
-        }
-        setAuthChecked(true);
-    }
-    loadInitialAuth();
-  }, [id]);
-
-  useEffect(() => {
-    if (!id || !authChecked) return; 
+    if (!id) return; 
 
     async function loadBusinessData() {
+      if (authLoading) return; // Wait for auth state to be resolved
       setIsLoading(true);
       setError(null);
       try {
@@ -107,20 +87,19 @@ function BusinessPageContent({ params }: { params: BusinessPageParams }) {
       }
     }
     loadBusinessData();
-  }, [id, authUser, authChecked]); 
+  }, [id, authUser, authLoading]); // authLoading added to dependencies
 
   const canUsePrimeBenefits = authUser && userSubscription && userSubscription.status === 'active';
   const isVipUser = canUsePrimeBenefits && userSubscription?.planId === 'serrano_vip';
 
   const displayedDeals = useMemo(() => {
     if (isVipUser) {
-      return allDealsForBusiness; // VIP users see all offers
+      return allDealsForBusiness; 
     }
-    // Non-VIP users or non-logged-in users see only non-VIP offers
     return allDealsForBusiness.filter(deal => !deal.isVipOffer);
   }, [allDealsForBusiness, isVipUser]);
 
-  if (isLoading || !authChecked) {
+  if (isLoading || authLoading) { // Consider authLoading here as well
     return (
       <div> 
         <Skeleton className="mb-4 h-10 w-32" /> 
@@ -205,6 +184,18 @@ function BusinessPageContent({ params }: { params: BusinessPageParams }) {
                 {business.icon && <BusinessTypeIcon type={business.icon} className="h-8 w-8 text-primary" />}
               </div>
               <CardDescription className="text-lg text-muted-foreground">{business.type}</CardDescription>
+              {/* TODO: Add Share buttons here */}
+              <div className="mt-2 flex space-x-2">
+                <Button variant="outline" size="sm" onClick={() => alert('Compartilhar no WhatsApp (simulado)')}>
+                  <MessageCircle className="mr-2 h-4 w-4" /> WhatsApp
+                </Button>
+                <Button variant="outline" size="sm" onClick={() => alert('Compartilhar por Email (simulado)')}>
+                  <Mail className="mr-2 h-4 w-4" /> Email
+                </Button>
+                <Button variant="outline" size="sm" onClick={() => alert('Compartilhar (simulado)')}>
+                  <Share2 className="mr-2 h-4 w-4" /> Outros
+                </Button>
+              </div>
             </CardHeader>
             <CardContent>
               <p className="mb-6 text-foreground/90">{business.fullDescription}</p>
@@ -213,6 +204,15 @@ function BusinessPageContent({ params }: { params: BusinessPageParams }) {
                 <div className="flex items-start">
                   <MapPin className="mr-3 mt-1 h-5 w-5 shrink-0 text-accent" />
                   <span className="text-foreground/80">{business.address}</span>
+                  {/* TODO: Add link to Google Maps here */}
+                  <a
+                    href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(business.address)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="ml-2 text-primary hover:underline text-xs"
+                  >
+                    (Ver no mapa)
+                  </a>
                 </div>
                 {business.phoneNumber && (
                   <div className="flex items-center">
@@ -265,16 +265,16 @@ function BusinessPageContent({ params }: { params: BusinessPageParams }) {
               <TicketPercent className="mr-2 h-7 w-7 text-accent" />
               Ofertas Guia Mais
             </h3>
-            {!authUser && (
+            {!authUser && !authLoading && ( // Show only if auth is done and no user
                  <Alert variant="default" className="mb-4 bg-accent/10 border-accent/30">
                     <UserCheck className="h-5 w-5 text-accent" />
                     <AlertTitle className="text-accent">Faça Login para Vantagens!</AlertTitle>
                     <AlertDescription>
-                        <Link href="/login" className="font-semibold underline hover:text-accent/80">Faça login</Link> ou <Link href="/join" className="font-semibold underline hover:text-accent/80">associe-se</Link> para ver e usar os benefícios Guia Mais.
+                        <Link href={`/login?redirect=/business/${id}`} className="font-semibold underline hover:text-accent/80">Faça login</Link> ou <Link href="/join" className="font-semibold underline hover:text-accent/80">associe-se</Link> para ver e usar os benefícios Guia Mais.
                     </AlertDescription>
                 </Alert>
             )}
-            {authUser && !canUsePrimeBenefits && (
+            {authUser && !canUsePrimeBenefits && !authLoading && ( // Show if auth is done, user exists, but no active sub
                  <Alert variant="default" className="mb-4 bg-accent/10 border-accent/30">
                     <AlertTriangle className="h-5 w-5 text-accent" />
                     <AlertTitle className="text-accent">Assinatura Guia Mais Necessária</AlertTitle>
@@ -283,7 +283,7 @@ function BusinessPageContent({ params }: { params: BusinessPageParams }) {
                     </AlertDescription>
                 </Alert>
             )}
-             {authUser && canUsePrimeBenefits && !isVipUser && allDealsForBusiness.some(d => d.isVipOffer) && (
+             {authUser && canUsePrimeBenefits && !isVipUser && allDealsForBusiness.some(d => d.isVipOffer) && !authLoading && (
               <Alert variant="default" className="mb-4 bg-purple-500/10 border-purple-500/30">
                 <Star className="h-5 w-5 text-purple-600" />
                 <AlertTitle className="text-purple-700">Ofertas VIP Disponíveis!</AlertTitle>
@@ -300,9 +300,19 @@ function BusinessPageContent({ params }: { params: BusinessPageParams }) {
                 {displayedDeals.map(deal => {
                   const hasRedeemedThisOffer = userRedemptions[deal.id] || false;
                   const isP1G2Limited = deal.isPay1Get2 && deal.usageLimitPerUser === 1;
-                  const isLinkDisabled = !canUsePrimeBenefits || (isP1G2Limited && hasRedeemedThisOffer);
-                  // For VIP offers, ensure user is VIP
-                  const canAccessThisDeal = deal.isVipOffer ? isVipUser : canUsePrimeBenefits;
+                  
+                  // Determine if the user can access this specific deal
+                  let dealIsAccessible = false;
+                  if (canUsePrimeBenefits) { // Basic requirement: active subscription
+                    if (deal.isVipOffer) {
+                      dealIsAccessible = isVipUser; // If it's a VIP offer, user must be VIP
+                    } else {
+                      dealIsAccessible = true; // If it's not a VIP offer, any Prime member can access
+                    }
+                  }
+                  // Offer cannot be used if already redeemed (for limited P1G2) or if not accessible
+                  const isEffectivelyDisabled = (isP1G2Limited && hasRedeemedThisOffer) || !dealIsAccessible;
+
 
                   return (
                     <DealCard 
@@ -310,7 +320,7 @@ function BusinessPageContent({ params }: { params: BusinessPageParams }) {
                         deal={deal} 
                         business={business}
                         isRedeemed={isP1G2Limited && hasRedeemedThisOffer}
-                        canAccess={canAccessThisDeal}
+                        canAccess={dealIsAccessible} // Pass the correctly determined access status
                     />
                   );
                 })}
@@ -319,9 +329,9 @@ function BusinessPageContent({ params }: { params: BusinessPageParams }) {
               <Card className="border-dashed bg-muted/50 p-6 text-center shadow-none">
                 <Star className="mx-auto mb-2 h-10 w-10 text-muted-foreground" />
                 <p className="text-muted-foreground">
-                  {isVipUser ? "Nenhuma oferta Guia Mais divulgada para este estabelecimento no momento." : "Nenhuma oferta Guia Mais disponível para seu nível de assinatura no momento."}
+                  {isVipUser ? "Nenhuma oferta Guia Mais divulgada para este estabelecimento no momento." : (authUser ? "Nenhuma oferta Guia Mais disponível para seu nível de assinatura no momento." : "Nenhuma oferta Guia Mais pública encontrada.")}
                 </p>
-                {!isVipUser && allDealsForBusiness.some(d => d.isVipOffer) && (
+                {!isVipUser && allDealsForBusiness.some(d => d.isVipOffer) && authUser && (
                      <p className="mt-2 text-sm text-purple-700">
                         Existem ofertas VIP! <Link href="/join" className="font-semibold underline">Faça upgrade</Link> para ver.
                     </p>
@@ -343,4 +353,4 @@ export default function BusinessPageWrapper({ params: paramsPromise }: { params:
         </Suspense>
     );
 }
-
+    
