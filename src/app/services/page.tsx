@@ -1,3 +1,4 @@
+
 // src/app/services/page.tsx
 'use client';
 
@@ -9,8 +10,10 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { BusinessTypeIcon } from '@/components/icons';
 import { slugify } from '@/lib/utils';
-import { Frown, ArrowRight, Search } from 'lucide-react';
-import { SearchBar } from '@/components/search-bar'; // Import SearchBar
+import { Frown, ArrowRight, Search, MapPinned } from 'lucide-react';
+import { SearchBar } from '@/components/search-bar'; 
+import { Button } from '@/components/ui/button';
+
 
 interface Category {
   name: string;
@@ -20,19 +23,21 @@ interface Category {
 }
 
 export default function ServicesPage() {
+  const [allBusinesses, setAllBusinesses] = useState<GramadoBusiness[]>([]);
   const [allCategories, setAllCategories] = useState<Category[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [categorySearchTerm, setCategorySearchTerm] = useState('');
 
   useEffect(() => {
-    async function loadCategories() {
+    async function loadData() {
       setIsLoading(true);
       setError(null);
       try {
         const businesses = await getGramadoBusinesses();
-        const categoryMap = new Map<string, { count: number; icon?: GramadoBusiness['icon'] }>();
+        setAllBusinesses(businesses);
 
+        const categoryMap = new Map<string, { count: number; icon?: GramadoBusiness['icon'] }>();
         businesses.forEach(business => {
           const existing = categoryMap.get(business.type);
           categoryMap.set(business.type, {
@@ -47,7 +52,7 @@ export default function ServicesPage() {
           icon: data.icon,
           count: data.count,
         }));
-        setAllCategories(formattedCategories.sort((a, b) => a.name.localeCompare(b.name))); // Sort categories alphabetically
+        setAllCategories(formattedCategories.sort((a, b) => a.name.localeCompare(b.name)));
       } catch (err) {
         setError('Falha ao carregar categorias de serviços. Tente novamente mais tarde.');
         console.error(err);
@@ -55,7 +60,7 @@ export default function ServicesPage() {
         setIsLoading(false);
       }
     }
-    loadCategories();
+    loadData();
   }, []);
 
   const filteredCategories = useMemo(() => {
@@ -67,6 +72,12 @@ export default function ServicesPage() {
     );
   }, [allCategories, categorySearchTerm]);
 
+  const uniqueCities = useMemo(() => {
+    if (!allBusinesses.length) return [];
+    const cities = allBusinesses.map(b => b.city).filter(Boolean);
+    return Array.from(new Set(cities));
+  }, [allBusinesses]);
+
   return (
     <div> 
       <section className="mb-8 text-center">
@@ -74,9 +85,25 @@ export default function ServicesPage() {
           Nossos Parceiros e Serviços
         </h2>
         <p className="text-lg text-foreground/80">
-          Explore e contrate serviços dos melhores estabelecimentos de Martins.
+          Explore e contrate serviços dos melhores estabelecimentos de Martins e região.
         </p>
       </section>
+
+      {uniqueCities.length > 1 && (
+        <section className="mb-6">
+          <h3 className="mb-2 text-lg font-semibold text-accent">Filtrar por Região:</h3>
+          <div className="flex flex-wrap gap-2">
+            {uniqueCities.map(city => (
+              <Button key={slugify(city)} variant="outline" size="sm" asChild className="text-xs">
+                {/* Placeholder link: Actual filtering by city is not yet implemented */}
+                <Link href={`/services?city=${slugify(city)}`}> 
+                  <MapPinned className="mr-1.5 h-3.5 w-3.5" /> {city}
+                </Link>
+              </Button>
+            ))}
+          </div>
+        </section>
+      )}
 
       <div className="mb-8 max-w-xl mx-auto">
         <SearchBar
@@ -90,14 +117,14 @@ export default function ServicesPage() {
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {Array.from({ length: 4 }).map((_, index) => (
             <Card key={index} className="flex flex-col">
-              <CardHeader>
+              <CardHeader className="p-4">
                 <Skeleton className="mb-2 h-8 w-8 rounded-md" />
                 <Skeleton className="h-6 w-3/4" />
               </CardHeader>
-              <CardContent className="flex-grow">
+              <CardContent className="flex-grow p-4">
                 <Skeleton className="h-4 w-1/2" />
               </CardContent>
-              <div className="p-6 pt-0">
+              <div className="p-4 pt-0">
                 <Skeleton className="h-10 w-full rounded-md" />
               </div>
             </Card>
@@ -129,14 +156,14 @@ export default function ServicesPage() {
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {filteredCategories.map(category => (
             <Card key={category.slug} className="flex transform flex-col overflow-hidden shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl">
-              <CardHeader className="pb-2">
+              <CardHeader className="pb-2 p-4">
                 {category.icon && <BusinessTypeIcon type={category.icon} className="mb-3 h-10 w-10 text-primary" />}
                 <CardTitle className="text-xl font-semibold text-primary">{category.name}</CardTitle>
               </CardHeader>
-              <CardContent className="flex-grow">
+              <CardContent className="flex-grow p-4">
                 <p className="text-sm text-muted-foreground">{category.count} estabelecimento(s)</p>
               </CardContent>
-              <div className="p-6 pt-0">
+              <div className="p-4 pt-0">
                  <Link href={`/services/${category.slug}`} className="inline-flex items-center justify-center rounded-md bg-accent px-4 py-2 text-sm font-medium text-accent-foreground shadow-sm transition-colors hover:bg-accent/90 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 w-full">
                     Ver {category.name}
                     <ArrowRight className="ml-2 h-4 w-4" />
@@ -149,3 +176,4 @@ export default function ServicesPage() {
     </div>
   );
 }
+

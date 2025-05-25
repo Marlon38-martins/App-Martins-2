@@ -31,6 +31,10 @@ export interface GramadoBusiness {
    */
   address: string;
   /**
+   * The city where the business is located.
+   */
+  city: string;
+  /**
    * The phone number of the business.
    */
   phoneNumber: string;
@@ -86,7 +90,7 @@ export type LucideIconName =
   | 'Coffee'
   | 'Trees'
   | 'TicketPercent'
-  | 'Beer'; // Added Beer
+  | 'Beer';
 
 
 /**
@@ -136,6 +140,7 @@ const businesses: GramadoBusiness[] = [
     id: '1',
     name: 'Restaurante Mirante da Serra',
     type: 'Restaurante',
+    city: 'Martins, RN',
     shortDescription: 'Culinária regional com vista panorâmica.',
     fullDescription: 'Saboreie pratos típicos do sertão potiguar enquanto aprecia uma vista deslumbrante da serra de Martins. Nosso cardápio celebra os ingredientes locais com um toque de sofisticação. Ambiente rústico e acolhedor.',
     address: 'Rua Dr. Abdon Abel, 150, Centro, Martins - RN',
@@ -144,8 +149,8 @@ const businesses: GramadoBusiness[] = [
     instagramUrl: 'https://www.instagram.com/mirantedaserramartins',
     facebookUrl: 'https://www.facebook.com/mirantedaserramartins',
     whatsappNumber: '5584933910001',
-    latitude: -6.0869, // Approximate latitude for Martins
-    longitude: -37.9119, // Approximate longitude for Martins
+    latitude: -6.0869,
+    longitude: -37.9119,
     imageUrl: 'https://placehold.co/600x400.png',
     icon: 'UtensilsCrossed',
     rating: 4.8,
@@ -154,7 +159,8 @@ const businesses: GramadoBusiness[] = [
   {
     id: '2',
     name: 'Pousada Aconchego Serrano',
-    type: 'Hotel', // Type can remain Hotel for Pousada
+    type: 'Hotel',
+    city: 'Martins, RN',
     shortDescription: 'Charme e tranquilidade na serra.',
     fullDescription: 'A Pousada Aconchego Serrano oferece acomodações confortáveis e charmosas, perfeitas para quem busca paz e contato com a natureza. Desfrute de nosso café da manhã regional e da hospitalidade martinense.',
     address: 'Sítio Recanto Verde, Zona Rural, Martins - RN',
@@ -162,8 +168,8 @@ const businesses: GramadoBusiness[] = [
     website: 'https://www.aconchegoserrano.com.br',
     instagramUrl: 'https://www.instagram.com/aconchegoserrano',
     whatsappNumber: '5584933910002',
-    latitude: -6.0900, // Approximate latitude
-    longitude: -37.9150, // Approximate longitude
+    latitude: -6.0900,
+    longitude: -37.9150,
     imageUrl: 'https://placehold.co/600x400.png',
     icon: 'BedDouble',
     rating: 4.5,
@@ -173,14 +179,15 @@ const businesses: GramadoBusiness[] = [
     id: '3',
     name: 'Loja de Artesanato Mãos da Serra',
     type: 'Loja',
+    city: 'Martins, RN',
     shortDescription: 'Artesanato local e lembranças de Martins.',
     fullDescription: 'Descubra a riqueza do artesanato de Martins em nossa loja. Peças em cerâmica, bordados, rendas e doces regionais. Leve um pedacinho da cultura serrana para casa.',
     address: 'Praça Almino Afonso, 50, Centro, Martins - RN',
     phoneNumber: '(84) 3391-0003',
     website: 'https://www.maosdaserrart.com.br',
     instagramUrl: 'https://www.instagram.com/maosdaserraart',
-    latitude: -6.0850, // Approximate latitude
-    longitude: -37.9100, // Approximate longitude
+    latitude: -6.0850,
+    longitude: -37.9100,
     imageUrl: 'https://placehold.co/600x400.png',
     icon: 'ShoppingBag',
     rating: 4.2,
@@ -190,14 +197,15 @@ const businesses: GramadoBusiness[] = [
     id: '4',
     name: 'Trilha da Casa de Pedra',
     type: 'Atração',
+    city: 'Martins, RN',
     shortDescription: 'Aventura e história em meio à naturezar.',
     fullDescription: 'Explore a famosa Casa de Pedra em uma trilha ecológica guiada. Conheça as formações rochosas, a fauna e a flora locais, e aprenda sobre as lendas e a história da região. Necessário agendamento.',
     address: 'Ponto de Encontro: Posto de Informações Turísticas, Martins - RN',
     phoneNumber: '(84) 99999-0004',
     website: 'https://www.martinsaventura.com.br/casadepedra',
     whatsappNumber: '5584999990004',
-    latitude: -6.0800, // Approximate latitude (Casa de Pedra is a bit outside)
-    longitude: -37.9000, // Approximate longitude
+    latitude: -6.0800,
+    longitude: -37.9000,
     imageUrl: 'https://placehold.co/600x400.png',
     icon: 'Landmark',
     rating: 4.9,
@@ -207,14 +215,15 @@ const businesses: GramadoBusiness[] = [
     id: '5',
     name: 'Cafeteria Grão Serrano',
     type: 'Café',
+    city: 'Martins, RN',
     shortDescription: 'Cafés especiais e delícias regionais.',
     fullDescription: 'Um refúgio para os amantes de café. Oferecemos grãos selecionados, métodos de preparo variados, bolos caseiros, tapiocas e outras iguarias para acompanhar sua bebida. Ambiente charmoso no coração de Martins.',
     address: 'Rua Coronel Demétrio Lemos, 75, Centro, Martins - RN',
     phoneNumber: '(84) 3391-0005',
     website: 'https://www.graoserrano.com.br',
     instagramUrl: 'https://www.instagram.com/graoserrano',
-    latitude: -6.0860, // Approximate latitude
-    longitude: -37.9110, // Approximate longitude
+    latitude: -6.0860,
+    longitude: -37.9110,
     imageUrl: 'https://placehold.co/600x400.png',
     icon: 'Coffee',
     rating: 4.7,
@@ -223,14 +232,15 @@ const businesses: GramadoBusiness[] = [
   {
     id: '6',
     name: 'Mirante do Canto',
-    type: 'Parque', // Considered a scenic viewpoint/park area
+    type: 'Parque',
+    city: 'Martins, RN',
     shortDescription: 'Vista espetacular do pôr do sol serrano.',
     fullDescription: 'O Mirante do Canto é um dos pontos mais altos de Martins, oferecendo uma vista panorâmica inesquecível, especialmente ao entardecer. Local ideal para contemplação e fotografias.',
     address: 'Acesso pela RN-076, Martins - RN',
-    phoneNumber: 'N/A', // Often public access without a direct phone
+    phoneNumber: 'N/A',
     website: 'https://turismo.martins.rn.gov.br/mirantedocanto',
-    latitude: -6.0795, // Approximate latitude
-    longitude: -37.9180, // Approximate longitude
+    latitude: -6.0795,
+    longitude: -37.9180,
     imageUrl: 'https://placehold.co/600x400.png',
     icon: 'Trees',
     rating: 4.9,
@@ -240,6 +250,7 @@ const businesses: GramadoBusiness[] = [
     id: '7',
     name: 'Bar Central',
     type: 'Bar',
+    city: 'Martins, RN',
     shortDescription: 'O ponto de encontro da cidade.',
     fullDescription: 'Bar tradicional no centro de Martins, com petiscos regionais, cerveja gelada e um ambiente animado. Perfeito para um happy hour ou para encontrar amigos.',
     address: 'Praça Central, 10, Centro, Martins - RN',
@@ -253,16 +264,49 @@ const businesses: GramadoBusiness[] = [
     icon: 'Beer',
     rating: 4.3,
     reviewCount: 60,
+  },
+  {
+    id: '8',
+    name: 'Hotel Fazenda "Vale Verdejante"',
+    type: 'Hotel',
+    city: 'Cidade Vizinha, RN',
+    shortDescription: 'Natureza e conforto na cidade vizinha.',
+    fullDescription: 'Desfrute da tranquilidade do campo com o conforto de um hotel fazenda. Piscina, passeios a cavalo e culinária caseira.',
+    address: 'Rodovia CV-010, Km 5, Zona Rural, Cidade Vizinha - RN',
+    phoneNumber: '(84) 3392-1010',
+    website: 'https://www.valeverdejante.com.br',
+    latitude: -6.1500, // Example coordinates for a nearby city
+    longitude: -37.8500,
+    imageUrl: 'https://placehold.co/600x400.png',
+    icon: 'BedDouble',
+    rating: 4.6,
+    reviewCount: 70,
+  },
+  {
+    id: '9',
+    name: 'Restaurante "Sabor da Roça"',
+    type: 'Restaurante',
+    city: 'Cidade Vizinha, RN',
+    shortDescription: 'Comida caseira e fogão a lenha.',
+    fullDescription: 'Autêntica comida do interior feita no fogão a lenha, com ingredientes frescos da nossa horta. Venha provar o verdadeiro sabor da roça.',
+    address: 'Rua Principal, 200, Centro, Cidade Vizinha - RN',
+    phoneNumber: '(84) 3392-1020',
+    latitude: -6.1450, // Example coordinates
+    longitude: -37.8550,
+    imageUrl: 'https://placehold.co/600x400.png',
+    icon: 'UtensilsCrossed',
+    rating: 4.7,
+    reviewCount: 95,
   }
 ];
 
 const deals: Deal[] = [
   {
     id: 'deal-1',
-    businessId: '1', // Restaurante Mirante da Serra
+    businessId: '1',
     title: 'Pague 1 Prato Principal, Leve 2',
     description: 'Na compra de um prato principal selecionado, ganhe outro de igual ou menor valor. Válido para membros Guia Mais.',
-    discountPercentage: 0, // Not a direct discount, but P1G2
+    discountPercentage: 0,
     isPay1Get2: true,
     usageLimitPerUser: 1,
     termsAndConditions: 'Válido de segunda a quinta, exceto feriados. Necessário apresentar o card digital Guia Mais. Não cumulativo com outras promoções. Consulte pratos selecionados.',
@@ -270,7 +314,7 @@ const deals: Deal[] = [
   },
   {
     id: 'deal-2',
-    businessId: '1', // Restaurante Mirante da Serra
+    businessId: '1',
     title: 'Sobremesa Regional VIP Cortesia',
     description: 'Grupos acima de 4 pessoas VIP ganham uma sobremesa regional especial.',
     discountPercentage: 0,
@@ -279,17 +323,17 @@ const deals: Deal[] = [
   },
   {
     id: 'deal-3',
-    businessId: '2', // Pousada Aconchego Serrano
+    businessId: '2',
     title: 'Pague 2 Diárias, Fique 3',
     description: 'Reserve duas diárias e ganhe a terceira noite como cortesia Guia Mais.',
-    isPay1Get2: true, // Conceptually similar, pay X get Y
+    isPay1Get2: true,
     usageLimitPerUser: 1,
     termsAndConditions: 'Válido para reservas diretas com a pousada, mediante apresentação do card Guia Mais. Sujeito à disponibilidade. Não válido em alta temporada ou feriados prolongados.',
     isVipOffer: false,
   },
   {
     id: 'deal-4',
-    businessId: '3', // Loja de Artesanato Mãos da Serra
+    businessId: '3',
     title: '15% OFF em Peças Selecionadas',
     description: 'Desconto de 15% em todas as peças de cerâmica e bordados para membros Guia Mais.',
     discountPercentage: 15,
@@ -298,17 +342,17 @@ const deals: Deal[] = [
   },
   {
     id: 'deal-5',
-    businessId: '5', // Cafeteria Grão Serrano
+    businessId: '5',
     title: 'Café VIP em Dobro',
     description: 'Na compra de um café expresso, membros VIP ganham outro. Benefício exclusivo Guia Mais VIP.',
     isPay1Get2: true,
-    usageLimitPerUser: 1, 
+    usageLimitPerUser: 1,
     termsAndConditions: 'Válido de terça a quinta-feira, exceto feriados. Apresentar card Guia Mais VIP. Não cumulativo.',
     isVipOffer: true,
   },
   {
     id: 'deal-6',
-    businessId: '2', // Pousada Aconchego Serrano
+    businessId: '2',
     title: 'Early Check-in VIP',
     description: 'Membros Serrano VIP podem solicitar early check-in gratuito (sujeito à disponibilidade).',
     discountPercentage: 0,
@@ -317,7 +361,7 @@ const deals: Deal[] = [
   },
   {
     id: 'deal-7',
-    businessId: '4', // Trilha da Casa de Pedra
+    businessId: '4',
     title: 'Aventura em Grupo com Desconto',
     description: '10% de desconto para grupos de 5 ou mais pessoas na Trilha da Casa de Pedra.',
     discountPercentage: 10,
@@ -326,12 +370,30 @@ const deals: Deal[] = [
   },
   {
     id: 'deal-8',
-    businessId: '7', // Bar Central
+    businessId: '7',
     title: 'Rodada Dupla de Caipirinha (Normal)',
     description: 'Peça uma caipirinha e ganhe a segunda por conta da casa. Exclusivo para membros Guia Mais.',
     isPay1Get2: true,
     usageLimitPerUser: 1,
     termsAndConditions: 'Válido às sextas-feiras, das 18h às 20h. Apresentar card Guia Mais.',
+    isVipOffer: false,
+  },
+  {
+    id: 'deal-9',
+    businessId: '8', // Hotel Fazenda "Vale Verdejante"
+    title: '10% OFF na Diária (Cidade Vizinha)',
+    description: 'Membros Guia Mais ganham 10% de desconto na diária em nosso Hotel Fazenda.',
+    discountPercentage: 10,
+    termsAndConditions: 'Apresentar card Guia Mais. Válido para reservas diretas.',
+    isVipOffer: false,
+  },
+  {
+    id: 'deal-10',
+    businessId: '9', // Restaurante "Sabor da Roça"
+    title: 'Suco Natural Cortesia (Cidade Vizinha)',
+    description: 'Peça um prato principal e ganhe um suco natural da estação. Exclusivo Guia Mais.',
+    discountPercentage: 0,
+    termsAndConditions: 'Válido para consumo no local. Apresentar card Guia Mais.',
     isVipOffer: false,
   }
 ];
@@ -393,25 +455,16 @@ let mockUserSubscription: Subscription | null = null;
 
 export async function getCurrentUser(): Promise<User | null> {
   await new Promise(resolve => setTimeout(resolve, 100));
-  // Simulate fetching the current logged-in user.
-  // In a real app, this would use Firebase Auth or your auth provider.
-  // For now, return a mock user if 'loggedIn'
   if (typeof window !== 'undefined') {
     const storedUser = localStorage.getItem('mockUser');
     if (storedUser) {
-      mockCurrentUser = JSON.parse(storedUser);
-      return mockCurrentUser;
-    }
-    // Fallback to old logic if no user in localStorage, for compatibility with existing login flow
-    if (localStorage.getItem('isMockLoggedIn') === 'true' && !mockCurrentUser) {
-        mockCurrentUser = {
-            id: MOCK_USER_ID,
-            email: 'membro.prime@example.com',
-            name: 'Membro Guia Mais Teste',
-            photoURL: `https://placehold.co/100x100.png`
-        };
-        localStorage.setItem('mockUser', JSON.stringify(mockCurrentUser));
+      try {
+        mockCurrentUser = JSON.parse(storedUser);
         return mockCurrentUser;
+      } catch (e) {
+        localStorage.removeItem('mockUser'); // Clear invalid data
+        mockCurrentUser = null;
+      }
     }
   }
   return null;
@@ -423,6 +476,7 @@ export async function getMockUserSubscription(userId: string): Promise<Subscript
   if (typeof window !== 'undefined') {
       const storedSub = localStorage.getItem('mockSubscription');
       if (storedSub) {
+        try {
           const sub = JSON.parse(storedSub) as Subscription;
           // Ensure dates are Date objects
           sub.startDate = new Date(sub.startDate);
@@ -431,74 +485,84 @@ export async function getMockUserSubscription(userId: string): Promise<Subscript
             mockUserSubscription = sub;
             return mockUserSubscription;
           }
+        } catch(e) {
+           localStorage.removeItem('mockSubscription'); // Clear invalid data
+           mockUserSubscription = null;
+        }
       }
-  }
-  
-  // Fallback for initial mock or if not matching stored user
-  if (userId === MOCK_USER_ID && typeof window !== 'undefined' && localStorage.getItem('isMockLoggedIn') === 'true' && !mockUserSubscription) {
-    const defaultSub = {
-        id: 'sub-vip-123',
-        userId: MOCK_USER_ID,
-        planId: 'serrano_vip', // Matches a plan ID from join/page.tsx
-        startDate: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), // 30 days ago
-        endDate: new Date(Date.now() + 335 * 24 * 60 * 60 * 1000), // ~11 months from now
-        status: 'active' as 'active',
-    };
-    localStorage.setItem('mockSubscription', JSON.stringify(defaultSub));
-    mockUserSubscription = defaultSub;
-    return mockUserSubscription;
   }
   return null;
 }
 
 export async function checkUserOfferUsage(userId: string, offerId: string): Promise<boolean> {
   await new Promise(resolve => setTimeout(resolve, 100));
-  if (userId !== mockCurrentUser?.id) return false; 
+  if (!mockCurrentUser || userId !== mockCurrentUser.id) return false;
   
   if (typeof window !== 'undefined') {
-    const redemptions = JSON.parse(localStorage.getItem(`mockUserRedemptions-${userId}`) || '{}');
-    return !!redemptions[offerId];
+    const redemptionsKey = `mockUserRedemptions-${userId}`;
+    try {
+      const redemptions = JSON.parse(localStorage.getItem(redemptionsKey) || '{}');
+      return !!redemptions[offerId];
+    } catch (e) {
+      localStorage.removeItem(redemptionsKey); // Clear invalid data
+      return false;
+    }
   }
   return false; // Default if localStorage not available
 }
 
 export async function recordUserOfferUsage(userId: string, offerId: string, businessId: string): Promise<void> {
   await new Promise(resolve => setTimeout(resolve, 100));
-   if (userId !== mockCurrentUser?.id) return;
+   if (!mockCurrentUser || userId !== mockCurrentUser.id) return;
 
   if (typeof window !== 'undefined') {
-    const redemptions = JSON.parse(localStorage.getItem(`mockUserRedemptions-${userId}`) || '{}');
-    redemptions[offerId] = true;
-    localStorage.setItem(`mockUserRedemptions-${userId}`, JSON.stringify(redemptions));
+     const redemptionsKey = `mockUserRedemptions-${userId}`;
+     try {
+        const redemptions = JSON.parse(localStorage.getItem(redemptionsKey) || '{}');
+        redemptions[offerId] = true;
+        localStorage.setItem(redemptionsKey, JSON.stringify(redemptions));
+     } catch (e) {
+        localStorage.removeItem(redemptionsKey); // Clear invalid data on error
+        const newRedemptions = { [offerId]: true };
+        localStorage.setItem(redemptionsKey, JSON.stringify(newRedemptions));
+     }
   }
 }
 
-// Helper for mocking login/logout in UI (development only)
 export function mockLogin(user: User, subscription: Subscription) {
   mockCurrentUser = user;
   mockUserSubscription = subscription;
   
   if (typeof window !== 'undefined') {
-    localStorage.setItem('isMockLoggedIn', 'true'); // Keep for general login state if needed
+    localStorage.setItem('isMockLoggedIn', 'true');
     localStorage.setItem('mockUser', JSON.stringify(user));
     localStorage.setItem('mockSubscription', JSON.stringify(subscription));
-    localStorage.removeItem(`mockUserRedemptions-${user.id}`); // Reset redemptions
-    // Dispatch event to notify other parts of the app (like AuthProviderClient)
+    const redemptionsKey = `mockUserRedemptions-${user.id}`;
+    localStorage.removeItem(redemptionsKey); // Reset redemptions
     window.dispatchEvent(new CustomEvent('mockAuthChange'));
   }
 }
 
 export function mockLogout() {
-  mockCurrentUser = null;
-  mockUserSubscription = null;
   if (typeof window !== 'undefined') {
-    const userId = JSON.parse(localStorage.getItem('mockUser') || '{}').id;
-    if (userId) {
-        localStorage.removeItem(`mockUserRedemptions-${userId}`);
+    let userIdToRemoveRedemptions = null;
+    const storedUser = localStorage.getItem('mockUser');
+    if (storedUser) {
+      try {
+        userIdToRemoveRedemptions = JSON.parse(storedUser).id;
+      } catch (e) { /* ignore error, just won't remove redemptions by ID */ }
+    }
+
+    if (userIdToRemoveRedemptions) {
+        localStorage.removeItem(`mockUserRedemptions-${userIdToRemoveRedemptions}`);
     }
     localStorage.removeItem('isMockLoggedIn');
     localStorage.removeItem('mockUser');
     localStorage.removeItem('mockSubscription');
+  }
+  mockCurrentUser = null;
+  mockUserSubscription = null;
+  if (typeof window !== 'undefined') {
     window.dispatchEvent(new CustomEvent('mockAuthChange'));
   }
 }
