@@ -101,7 +101,7 @@ export default function RootLayout({
               <SidebarContent>
                 <SidebarMenu>
                   <SidebarMenuItem>
-                    <SidebarMenuButton asChild tooltip={{content: "Início", side:"right"}}>
+                    <SidebarMenuButton href="/" asChild tooltip={{content: "Início", side:"right"}}>
                       <Link href="/">
                         <span className="flex items-center gap-1.5">
                           <HomeIcon />
@@ -150,7 +150,7 @@ export default function RootLayout({
                   </SidebarMenuItem>
 
                   <SidebarMenuItem>
-                    <SidebarMenuButton asChild tooltip={{content: "Mapa", side:"right"}}>
+                    <SidebarMenuButton href="/map" asChild tooltip={{content: "Mapa", side:"right"}}>
                       <Link href="/map">
                         <span className="flex items-center gap-1.5">
                           <MapIconSidebar />
@@ -161,7 +161,7 @@ export default function RootLayout({
                   </SidebarMenuItem>
 
                   <SidebarMenuItem>
-                    <SidebarMenuButton asChild tooltip={{content: "Buscar", side:"right"}}>
+                    <SidebarMenuButton href="/search" asChild tooltip={{content: "Buscar", side:"right"}}>
                       <Link href="/search">
                          <span className="flex items-center gap-1.5">
                           <SearchIcon />
@@ -172,7 +172,7 @@ export default function RootLayout({
                   </SidebarMenuItem>
 
                   <SidebarMenuItem>
-                    <SidebarMenuButton asChild tooltip={{content: "Escanear Cupom", side:"right"}}>
+                    <SidebarMenuButton href="/scan-offer" asChild tooltip={{content: "Escanear Cupom", side:"right"}}>
                       <Link href="/scan-offer">
                          <span className="flex items-center gap-1.5">
                           <QrCode />
@@ -183,7 +183,7 @@ export default function RootLayout({
                   </SidebarMenuItem>
 
                   <SidebarMenuItem>
-                    <SidebarMenuButton asChild tooltip={{content: "Institucional", side:"right"}}>
+                    <SidebarMenuButton href="/institutional" asChild tooltip={{content: "Institucional", side:"right"}}>
                       <Link href="/institutional">
                         <span className="flex items-center gap-1.5">
                           <Info />
@@ -199,7 +199,7 @@ export default function RootLayout({
                      <DynamicPartnerLink />
                   </SidebarMenuItem>
                   <SidebarMenuItem>
-                    <SidebarMenuButton asChild tooltip={{content: "Seja Parceiro", side:"right"}}>
+                    <SidebarMenuButton href="/partner-registration" asChild tooltip={{content: "Seja Parceiro", side:"right"}}>
                       <Link href="/partner-registration">
                         <span className="flex items-center gap-1.5">
                           <Handshake />
@@ -227,13 +227,13 @@ export default function RootLayout({
                     <p>© {new Date().getFullYear()} Guia Mais. Todos os direitos reservados.</p>
                   </div>
                   <nav className="space-y-0.5 md:justify-self-center">
-                    <Link href="/institutional" className="block hover:text-primary transition-colors">Sobre Guia Mais</Link>
-                    <Link href="/termos" className="block hover:text-primary transition-colors">Termos de Uso</Link>
-                    <Link href="/politica-de-privacidade" className="block hover:text-primary transition-colors">Política de Privacidade</Link>
+                    <Link href="/institutional" className="block px-2 py-1 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors">Sobre Guia Mais</Link>
+                    <Link href="/termos" className="block px-2 py-1 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors">Termos de Uso</Link>
+                    <Link href="/politica-de-privacidade" className="block px-2 py-1 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors">Política de Privacidade</Link>
                   </nav>
                   <nav className="space-y-0.5 md:justify-self-end">
-                     <Link href="/partner-registration" className="block hover:text-primary transition-colors">Seja um Parceiro</Link>
-                     <Link href="/contact" className="block hover:text-primary transition-colors">Fale Conosco</Link> 
+                     <Link href="/partner-registration" className="block px-2 py-1 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors">Seja um Parceiro</Link>
+                     <Link href="/contact" className="block px-2 py-1 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors">Fale Conosco</Link> 
                   </nav>
                 </div>
               </footer>
