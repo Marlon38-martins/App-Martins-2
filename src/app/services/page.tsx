@@ -22,13 +22,6 @@ interface Category {
   count: number;
 }
 
-const suggestedRegionsForServicesPage = [
-    { name: 'Martins, RN', slug: slugify('Martins, RN') },
-    { name: 'Cidade Vizinha, RN', slug: slugify('Cidade Vizinha, RN') },
-    { name: 'Pau dos Ferros, RN', slug: slugify('Pau dos Ferros, RN') },
-    // Add more key suggestions as needed
-];
-
 function ServicesPageContent() {
   const searchParams = useSearchParams();
   const citySlugFromQuery = searchParams.get('city');
@@ -104,10 +97,7 @@ function ServicesPageContent() {
 
   const displayedCityFilters = useMemo(() => {
     if (!citySearchTerm) {
-      // Show suggested regions if no search term, but only if they exist in the actual uniqueCitiesSource
-      return suggestedRegionsForServicesPage.filter(suggested => 
-        uniqueCitiesSource.some(unique => unique.slug === suggested.slug)
-      );
+      return uniqueCitiesSource; // Show all unique cities by default
     }
     return uniqueCitiesSource.filter(city =>
       city.name.toLowerCase().includes(citySearchTerm.toLowerCase())
@@ -128,7 +118,7 @@ function ServicesPageContent() {
         </p>
       </section>
 
-      {uniqueCitiesSource.length > 1 && (
+      {uniqueCitiesSource.length > 0 && ( // Show city filters only if there are cities to filter by
         <section className="mb-4 p-3 border rounded-lg shadow-sm bg-card">
           <h3 className="mb-2 text-sm font-semibold text-accent flex items-center">
             <MapPinned className="mr-1.5 h-4 w-4" /> Filtrar por Região:
@@ -144,7 +134,7 @@ function ServicesPageContent() {
           {!isLoading && displayedCityFilters.length === 0 && citySearchTerm && (
             <p className="text-xs text-muted-foreground text-center py-1.5">Nenhuma cidade encontrada para "{citySearchTerm}".</p>
           )}
-          {!isLoading && (displayedCityFilters.length > 0 || !citySearchTerm) && (
+          {!isLoading && displayedCityFilters.length > 0 && (
             <div className="flex flex-wrap gap-1.5">
               <Button
                 variant={!citySlugFromQuery ? 'default' : 'outline'}
@@ -175,9 +165,6 @@ function ServicesPageContent() {
               ))}
             </div>
           )}
-           {!citySearchTerm && uniqueCitiesSource.length > suggestedRegionsForServicesPage.length && (
-            <p className="text-xs text-muted-foreground mt-1.5">Digite na busca acima para ver mais regiões.</p>
-           )}
         </section>
       )}
 
