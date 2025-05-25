@@ -32,13 +32,13 @@ let auth: Auth | undefined;
 let firestore: Firestore | undefined;
 let storage: FirebaseStorage | undefined;
 
-const apiKeyIsEffectivelyMissingOrPlaceholder =
-  !firebaseConfig.apiKey ||
-  firebaseConfig.apiKey.trim() === "" ||
-  firebaseConfig.apiKey.startsWith("YOUR_") ||
-  firebaseConfig.apiKey.includes("PLACEHOLDER");
+const apiKeyIsProvidedAndSeemsValid =
+  firebaseConfig.apiKey &&
+  firebaseConfig.apiKey.trim() !== "" &&
+  !firebaseConfig.apiKey.startsWith("YOUR_") &&
+  !firebaseConfig.apiKey.includes("PLACEHOLDER");
 
-if (!apiKeyIsEffectivelyMissingOrPlaceholder) {
+if (apiKeyIsProvidedAndSeemsValid) {
   if (!getApps().length) {
     try {
       console.log("Attempting Firebase initialization...");
@@ -63,13 +63,14 @@ if (!apiKeyIsEffectivelyMissingOrPlaceholder) {
     console.log("Using existing Firebase App instance.");
     if (app) {
       try {
-        auth = getAuth(app);
+        auth = getAuth(app); // This might still fail if the existing app was initialized with bad config
         firestore = getFirestore(app);
         storage = getStorage(app);
         console.log("Firebase Auth, Firestore, and Storage services obtained from existing app.");
       } catch (error) {
         console.error("Firebase getAuth (or other services) failed on existing app:", error);
-        auth = undefined; // Ensure auth is undefined if getAuth fails
+        // Ensure auth is undefined if getAuth fails due to bad config from the existing app
+        auth = undefined; 
         firestore = undefined;
         storage = undefined;
       }
