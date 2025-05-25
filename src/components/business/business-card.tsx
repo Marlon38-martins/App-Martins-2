@@ -32,8 +32,8 @@ const renderStars = (rating?: number) => {
 
 export function BusinessCard({ business }: BusinessCardProps) {
   return (
-    <Card className="flex h-full flex-col overflow-hidden shadow-lg transition-all duration-300 ease-in-out hover:shadow-xl group">
-      <CardHeader className="space-y-1">
+    <Card className="flex h-full flex-col overflow-hidden shadow-md transition-all duration-300 ease-in-out hover:shadow-xl group">
+      <CardHeader className="space-y-1 p-3">
         <div className="relative mb-2 aspect-[16/9] w-full overflow-hidden rounded-md">
           <Image
             src={business.imageUrl}
@@ -45,26 +45,26 @@ export function BusinessCard({ business }: BusinessCardProps) {
           />
         </div>
         <div className="flex items-center justify-between">
-           <CardTitle>{business.name}</CardTitle>
-           {business.icon && <BusinessTypeIcon type={business.icon} className="h-5 w-5 text-muted-foreground" />}
+           <CardTitle className="text-base">{business.name}</CardTitle>
+           {business.icon && <BusinessTypeIcon type={business.icon} className="h-4 w-4 text-muted-foreground" />}
         </div>
-        <CardDescription>{business.type}</CardDescription>
+        <CardDescription className="text-xs">{business.type}</CardDescription>
          {business.rating !== undefined && business.reviewCount !== undefined && (
-          <div className="flex items-center space-x-1 pt-1">
+          <div className="flex items-center space-x-1 pt-0.5">
             {renderStars(business.rating)}
             <span className="text-xs text-muted-foreground">({business.reviewCount})</span>
           </div>
         )}
       </CardHeader>
-      <CardContent className="flex-grow pt-0">
-        <p className="text-sm text-foreground/80 line-clamp-3">{business.shortDescription}</p>
+      <CardContent className="flex-grow pt-0 p-3">
+        <p className="text-xs text-foreground/80 line-clamp-2">{business.shortDescription}</p>
       </CardContent>
-      <CardFooter className="pt-0">
-        <Button asChild variant="default" className="w-full bg-primary hover:bg-primary/90">
+      <CardFooter className="pt-0 p-3">
+        <Button asChild variant="default" className="w-full bg-primary hover:bg-primary/90 h-9 px-3 py-1.5 text-xs">
           <Link href={`/business/${business.id}`}>
-            <span className="flex items-center justify-center w-full"> {/* Ensures single child for Link */}
-              Ver Detalhes e Ofertas
-              <ArrowRight className="ml-2 h-4 w-4" />
+            <span className="flex items-center justify-center w-full">
+              Ver Detalhes
+              <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
             </span>
           </Link>
         </Button>
@@ -72,3 +72,4 @@ export function BusinessCard({ business }: BusinessCardProps) {
     </Card>
   );
 }
+
