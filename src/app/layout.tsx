@@ -46,7 +46,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { slugify } from '@/lib/utils';
 import { DynamicPartnerLink } from '@/components/layout/partner-panel-dropdown';
-import { DesktopHorizontalNav } from '@/components/layout/desktop-horizontal-nav';
+import { TopHorizontalNav } from '@/components/layout/top-horizontal-nav'; // New import
 
 
 const geistSans = Geist({
@@ -213,8 +213,7 @@ export default function RootLayout({
 
             <SidebarInset>
               <Header />
-              <DesktopHorizontalNav /> 
-              {/* QuickNav component for mobile was here, now DesktopHorizontalNav handles desktop collapsed state */}
+              <TopHorizontalNav /> 
               <main className="flex-grow p-4 bg-background overflow-x-hidden w-full">
                 <div className="w-full max-w-sm mx-auto"> 
                   {children}
@@ -245,3 +244,4 @@ export default function RootLayout({
     </html>
   );
 }
+
