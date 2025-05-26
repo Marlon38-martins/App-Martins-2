@@ -1,3 +1,4 @@
+
 // src/app/settings/page.tsx
 'use client';
 
@@ -11,7 +12,7 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
-import { UserCircle, Bell, Shield, CreditCard, LogOut, Star, CalendarDays } from 'lucide-react'; // Added Star and CalendarDays
+import { UserCircle, Bell, Shield, CreditCard, LogOut, Star, CalendarDays } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/use-auth-client'; 
 import { mockLogout } from '@/services/gramado-businesses'; 
@@ -25,7 +26,7 @@ export default function SettingsPage() {
 
   useEffect(() => {
     if (!loading && !user) {
-      router.push('/login?redirect=/settings'); // Added redirect query
+      router.push('/login?redirect=/settings'); 
     } else if (user) {
       setName(user.name || user.email?.split('@')[0] || '');
     }
@@ -38,7 +39,6 @@ export default function SettingsPage() {
   const handleSignOut = async () => {
     try {
         await contextSignOutUser(); 
-        // The signOutUser in useAuth now handles redirect and toast
     } catch (error) {
         console.error("Error signing out from settings: ", error);
         toast({ title: "Erro no Logout", description: "Não foi possível fazer logout. Tente novamente.", variant: 'destructive' });
@@ -84,11 +84,11 @@ export default function SettingsPage() {
         <CardContent className="space-y-4">
           <div>
             <Label htmlFor="name">Nome</Label>
-            <Input id="name" value={name} onChange={(e) => setName(e.target.value)} placeholder="Seu nome completo" />
+            <Input id="name" value={name ?? ''} onChange={(e) => setName(e.target.value)} placeholder="Seu nome completo" />
           </div>
           <div>
             <Label htmlFor="email">Email</Label>
-            <Input id="email" type="email" value={user.email || ''} disabled />
+            <Input id="email" type="email" value={user.email ?? ''} disabled />
             <p className="text-xs text-muted-foreground mt-1">O email não pode ser alterado por aqui.</p>
           </div>
           <Button onClick={handleSaveChanges}>Salvar Alterações (Simulado)</Button>

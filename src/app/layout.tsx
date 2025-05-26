@@ -46,7 +46,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { slugify } from '@/lib/utils';
 import { DynamicPartnerLink } from '@/components/layout/partner-panel-dropdown';
-import { TopHorizontalNav } from '@/components/layout/top-horizontal-nav'; // New import
+import { TopHorizontalNav } from '@/components/layout/top-horizontal-nav';
 
 
 const geistSans = Geist({
@@ -128,7 +128,7 @@ export default function RootLayout({
                         {categoriesForMenu.map(category => (
                           <DropdownMenuItem key={category.slug} asChild>
                             <Link href={`/services/${category.slug}`} className="flex items-center cursor-pointer">
-                              <span className="flex items-center gap-1.5">
+                              <span className="flex items-center gap-1.5 w-full">
                                 <category.Icon className="mr-2 h-4 w-4" />
                                 {category.name}
                               </span>
@@ -138,7 +138,7 @@ export default function RootLayout({
                         <DropdownMenuSeparator />
                         <DropdownMenuItem asChild>
                           <Link href="/services" className="flex items-center cursor-pointer">
-                             <span className="flex items-center gap-1.5">
+                             <span className="flex items-center gap-1.5 w-full">
                               <LayoutGrid className="mr-2 h-4 w-4" />
                               Ver Todas as Categorias
                             </span>
@@ -244,4 +244,3 @@ export default function RootLayout({
     </html>
   );
 }
-

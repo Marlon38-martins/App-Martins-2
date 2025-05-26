@@ -107,8 +107,8 @@ export default function AdminEditPartnerDetailsPage() {
               longitude: businessData.longitude,
               imageUrl: businessData.imageUrl,
               icon: businessData.icon,
-              rating: businessData.rating ?? undefined, // Ensure undefined if null/undefined
-              reviewCount: businessData.reviewCount ?? undefined, // Ensure undefined if null/undefined
+              rating: businessData.rating ?? undefined,
+              reviewCount: businessData.reviewCount ?? undefined,
             });
           } else {
             setError('Estabelecimento não encontrado. Não é possível editar.');
@@ -138,7 +138,7 @@ export default function AdminEditPartnerDetailsPage() {
     const updatedBusiness = {
         ...business, 
         ...data,
-        rating: data.rating === undefined || isNaN(data.rating) ? undefined : data.rating, // Handle potential NaN
+        rating: data.rating === undefined || isNaN(data.rating) ? undefined : data.rating, 
         reviewCount: data.reviewCount === undefined || isNaN(data.reviewCount) ? undefined : data.reviewCount,
     };
 

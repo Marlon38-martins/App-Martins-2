@@ -20,7 +20,9 @@ import {
   Edit3,
   Settings2,
   PlusCircle,
-  Star
+  Star,
+  ShieldAlert, // For Access Denied
+  Building,
 } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 
@@ -63,27 +65,26 @@ export function DynamicPartnerLink() {
         >
           <DropdownMenuItem asChild onSelect={handleDropdownItemSelect}>
             <Link href="/admin/list-all-partners" className="flex items-center cursor-pointer">
-              <Users className="mr-2 h-4 w-4" />
-              Listar Parceiros
+              <span className="flex items-center w-full">
+                <Users className="mr-2 h-4 w-4" />
+                Listar Parceiros
+              </span>
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem asChild onSelect={handleDropdownItemSelect}>
             <Link href="/admin/add-establishment" className="flex items-center cursor-pointer">
-              <UserPlus className="mr-2 h-4 w-4" />
-              Novo Estabelecimento
+              <span className="flex items-center w-full">
+                <Building className="mr-2 h-4 w-4" />
+                Novo Estabelecimento
+              </span>
             </Link>
           </DropdownMenuItem>
-          {/* Placeholder for admin managing general deals */}
-           <DropdownMenuItem disabled className="flex items-center cursor-not-allowed opacity-50">
-              <Tag className="mr-2 h-4 w-4" />
-              Gerenciar Ofertas (Admin)
-            </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     );
   }
-
-  // Always show "Painel do Parceiro" link for everyone else (including non-logged-in)
+  // For non-logged in users or regular logged-in users, show direct "Painel do Parceiro"
+  // Since we've removed the 'partner@example.com' specific check for now to make it publicly accessible
   return (
     <SidebarMenuButton asChild tooltip={{content: "Painel do Parceiro", side:"right"}} href="/partner/panel">
       <Link href="/partner/panel">

@@ -155,7 +155,7 @@ export default function ListAllPartnersPage() {
             <CardContent>
               <div className="flex flex-col md:flex-row gap-4 items-start">
                 <div className="relative h-32 w-full md:w-48 shrink-0 rounded-md overflow-hidden">
-                  <Image src={business.imageUrl} alt={`Imagem de ${business.name}`} layout="fill" objectFit="cover" data-ai-hint={`${business.type} sign`}/>
+                  <Image src={business.imageUrl} alt={`Imagem de ${business.name}`} layout="fill" objectFit="cover" data-ai-hint={`${business.type} building`} />
                 </div>
                 <p className="text-sm text-foreground/80 line-clamp-3">{business.shortDescription}</p>
               </div>

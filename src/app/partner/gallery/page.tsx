@@ -140,7 +140,7 @@ export default function PartnerGalleryPage() {
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
               {mockAdditionalImages.map((imgSrc, index) => (
                 <div key={index} className="group relative aspect-square rounded-md overflow-hidden border">
-                  <Image src={imgSrc} alt={`Imagem adicional ${index + 1}`} layout="fill" objectFit="cover" data-ai-hint={`${business?.type} gallery`} />
+                  <Image src={imgSrc} alt={`Imagem adicional ${index + 1}`} layout="fill" objectFit="cover" data-ai-hint={`${business?.type} interior`} />
                   <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                     <Button variant="destructive" size="icon" className="h-7 w-7" title="Remover Imagem (Simulado)" disabled>
                       <Trash2 className="h-3.5 w-3.5" />

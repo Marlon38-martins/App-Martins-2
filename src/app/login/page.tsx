@@ -73,7 +73,7 @@ export default function LoginPage() {
     const mockSubscription: Subscription = {
       id: 'sub-mock-' + Date.now(),
       userId: mockUser.id,
-      planId: 'premium_mensal', 
+      planId: data.email === 'admin@example.com' ? 'admin_plan' : (data.email === 'partner@example.com' ? 'partner_basic' : 'premium_mensal'), // Assign roles
       startDate: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
       endDate: new Date(Date.now() + 335 * 24 * 60 * 60 * 1000),
       status: 'active',
