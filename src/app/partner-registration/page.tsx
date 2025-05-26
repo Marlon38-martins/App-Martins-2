@@ -1,8 +1,10 @@
+
 // src/app/partner-registration/page.tsx
 'use client';
 
-import { useEffect } from 'react'; // Added useEffect
+import { useEffect } from 'react'; 
 import Link from 'next/link';
+import Image from 'next/image'; // Import Image
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { CheckCircle, Award, MessageSquare, Briefcase, ArrowLeft, TrendingUp, Rocket, Handshake, BadgePercent, Eye, BarChart3, Settings2, UserPlus, Wrench } from 'lucide-react';
@@ -20,6 +22,16 @@ export default function PartnerRegistrationPage() {
           Voltar para Início
         </Link>
       </Button>
+
+      <div className="relative w-full h-48 md:h-60 mb-8 rounded-lg overflow-hidden shadow-lg">
+        <Image
+          src="https://placehold.co/800x350.png"
+          alt="Seja Parceiro Guia Mais"
+          layout="fill"
+          objectFit="cover"
+          data-ai-hint="business partnership"
+        />
+      </div>
 
       <section className="mb-10 text-center">
         <Rocket className="mx-auto h-16 w-16 text-primary mb-4" />
@@ -149,7 +161,7 @@ export default function PartnerRegistrationPage() {
             </p>
             <div className="flex flex-col sm:flex-row justify-center gap-4">
               <Button size="lg" className="bg-accent hover:bg-accent/90 text-accent-foreground" asChild>
-                <Link href="/admin/add-establishment"> 
+                <Link href="/partner/register"> 
                   <UserPlus className="mr-2 h-5 w-5" />
                   Quero Ser Parceiro
                 </Link>

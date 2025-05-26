@@ -2,11 +2,12 @@
 // src/app/partner/register/page.tsx
 'use client';
 
-import { useState, useEffect } from 'react'; // Added useEffect
+import { useState, useEffect } from 'react'; 
 import { useForm, type SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import Link from 'next/link';
+import Image from 'next/image'; // Import Image
 import { useRouter } from 'next/navigation';
 
 import { Button } from '@/components/ui/button';
@@ -18,7 +19,7 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
 import type { LucideIconName } from '@/services/gramado-businesses';
-import { ArrowLeft, Building, PlusCircle, Tag, Send, UserPlus as ContactIcon } from 'lucide-react'; // Changed UserPlus to ContactIcon alias
+import { ArrowLeft, Building, PlusCircle, Tag, Send, UserPlus as ContactIcon } from 'lucide-react'; 
 
 const iconNames: LucideIconName[] = [
   'UtensilsCrossed', 
@@ -126,6 +127,16 @@ export default function PartnerRegisterPage() {
         </Link>
       </Button>
 
+      <div className="relative w-full h-48 md:h-60 mb-8 rounded-lg overflow-hidden shadow-lg">
+        <Image
+          src="https://placehold.co/800x350.png"
+          alt="Solicitação de Parceria Guia Mais"
+          layout="fill"
+          objectFit="cover"
+          data-ai-hint="business growth"
+        />
+      </div>
+
       <section className="mb-8">
         <h2 className="mb-2 text-2xl font-bold tracking-tight text-primary md:text-3xl">
           Formulário de Solicitação de Parceria Guia Mais
@@ -219,4 +230,3 @@ export default function PartnerRegisterPage() {
     </div>
   );
 }
-

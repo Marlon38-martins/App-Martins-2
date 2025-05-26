@@ -1,3 +1,4 @@
+
 // src/app/business/[id]/page.tsx
 'use client';
 
@@ -185,7 +186,7 @@ function BusinessPageContent({ params }: { params: BusinessPageParams }) {
                 alt={`Imagem de ${business.name}`}
                 layout="fill"
                 objectFit="cover"
-                data-ai-hint={`${business.type} scenic view`}
+                data-ai-hint={`${business.type} view`}
               />
             </div>
             <CardHeader>
@@ -377,4 +378,3 @@ export default function BusinessPageWrapper({ params: paramsPromise }: { params:
         </Suspense>
     );
 }
-    

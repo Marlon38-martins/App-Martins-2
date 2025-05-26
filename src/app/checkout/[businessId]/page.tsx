@@ -1,3 +1,4 @@
+
 // src/app/checkout/[businessId]/page.tsx
 'use client';
 
@@ -369,7 +370,7 @@ function CheckoutPageContent({ businessId }: { businessId: string }) {
                   alt={`Imagem de ${business.name}`}
                   layout="fill"
                   objectFit="cover"
-                  data-ai-hint={`${business.type} service booking`}
+                  data-ai-hint={`${business.type} booking`}
                 />
               </div>
               <div>
@@ -409,4 +410,3 @@ export default function CheckoutPageWrapper() {
       </Suspense>
   );
 }
-

@@ -48,7 +48,7 @@ export default function InstitutionalPage() {
                 alt="Vista panorâmica de Martins, RN"
                 layout="fill"
                 objectFit="cover"
-                data-ai-hint="Martins RN landscape"
+                data-ai-hint="Martins overview"
               />
             </div>
             <p className="text-foreground/90 leading-relaxed">
@@ -79,6 +79,15 @@ export default function InstitutionalPage() {
             <CardDescription>Explore as belezas e atrações da nossa cidade.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
+            <div className="relative aspect-video w-full overflow-hidden rounded-lg mb-4">
+              <Image
+                src="https://placehold.co/800x450.png"
+                alt="Turismo em Martins, RN"
+                layout="fill"
+                objectFit="cover"
+                data-ai-hint="Martins tourism"
+              />
+            </div>
             <p className="text-foreground/90 leading-relaxed">
               Martins oferece uma variedade de atrações para todos os gostos. Desde mirantes com vistas de tirar o fôlego, como o Mirante do Canto e o Mirante da Carranca, até trilhas históricas como a da Casa de Pedra. A cidade também é rica em cultura, com seu casario colonial e igrejas históricas.
             </p>
@@ -109,6 +118,15 @@ export default function InstitutionalPage() {
             <CardDescription>Agenda de eventos e festividades em Martins. Conteúdo atualizado regularmente.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
+            <div className="relative aspect-video w-full overflow-hidden rounded-lg mb-4">
+              <Image
+                src="https://placehold.co/800x450.png"
+                alt="Eventos em Martins, RN"
+                layout="fill"
+                objectFit="cover"
+                data-ai-hint="Martins festival"
+              />
+            </div>
             <Alert variant="default" className="bg-purple-500/10 border-purple-500/30 mb-4">
                 <Bell className="h-5 w-5 text-purple-600" />
                 <AlertTitle className="text-purple-700">Membros VIP São Notificados!</AlertTitle>
@@ -156,6 +174,15 @@ export default function InstitutionalPage() {
             <CardDescription>Fique por dentro das últimas novidades e comunicados. Informações sincronizadas com fontes oficiais.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
+            <div className="relative aspect-video w-full overflow-hidden rounded-lg mb-4">
+              <Image
+                src="https://placehold.co/800x450.png"
+                alt="Notícias de Martins, RN"
+                layout="fill"
+                objectFit="cover"
+                data-ai-hint="Martins cityhall"
+              />
+            </div>
             <Alert variant="default" className="bg-muted/50 border-muted">
                 <RefreshCw className="h-4 w-4 text-muted-foreground"/>
                 <AlertDescription className="text-xs text-muted-foreground pl-1">
@@ -268,4 +295,3 @@ export default function InstitutionalPage() {
     </div>
   );
 }
-

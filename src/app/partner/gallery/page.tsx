@@ -1,3 +1,4 @@
+
 // src/app/partner/gallery/page.tsx
 'use client';
 
@@ -111,7 +112,7 @@ export default function PartnerGalleryPage() {
         </CardHeader>
         <CardContent className="flex flex-col items-center sm:items-start gap-2 p-3">
           <div className="relative w-full max-w-md aspect-video rounded-md overflow-hidden border">
-            <Image src={business?.imageUrl || 'https://placehold.co/600x400.png'} alt={`Imagem principal de ${business?.name}`} layout="fill" objectFit="cover" data-ai-hint={`${business?.type} cover photo`} />
+            <Image src={business?.imageUrl || 'https://placehold.co/600x400.png'} alt={`Imagem principal de ${business?.name}`} layout="fill" objectFit="cover" data-ai-hint={`${business?.type} cover`} />
           </div>
           <Button asChild variant="outline" size="sm" className="text-xs h-8">
             <Link href={`/partner/edit-business/${business?.id || MOCK_PARTNER_BUSINESS_ID}`}>
@@ -139,7 +140,7 @@ export default function PartnerGalleryPage() {
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
               {mockAdditionalImages.map((imgSrc, index) => (
                 <div key={index} className="group relative aspect-square rounded-md overflow-hidden border">
-                  <Image src={imgSrc} alt={`Imagem adicional ${index + 1}`} layout="fill" objectFit="cover" data-ai-hint={`${business?.type} interior exterior`} />
+                  <Image src={imgSrc} alt={`Imagem adicional ${index + 1}`} layout="fill" objectFit="cover" data-ai-hint={`${business?.type} gallery`} />
                   <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                     <Button variant="destructive" size="icon" className="h-7 w-7" title="Remover Imagem (Simulado)" disabled>
                       <Trash2 className="h-3.5 w-3.5" />

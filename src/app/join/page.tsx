@@ -6,6 +6,7 @@ import { useState, useEffect } from 'react';
 import { useForm, type SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
+import Image from 'next/image'; // Import Image
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -96,7 +97,7 @@ export default function JoinPage() {
   const router = useRouter();
   const { signInUser } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [currentSelectedPlanId, setCurrentSelectedPlanId] = useState<Plan['id']>(premiumPlans[1].id); // Default to annual
+  const [currentSelectedPlanId, setCurrentSelectedPlanId] = useState<Plan['id']>(premiumPlans[1].id); 
 
   useEffect(() => {
     document.title = "Assinatura Premium - Guia Mais";
@@ -111,7 +112,7 @@ export default function JoinPage() {
       cpf: '',
       password: '',
       confirmPassword: '',
-      selectedPlan: premiumPlans[1].id, // Default to annual
+      selectedPlan: premiumPlans[1].id, 
       agreeToTerms: false,
     },
   });
@@ -167,8 +168,17 @@ export default function JoinPage() {
   };
 
   return (
-    <div className="pb-28"> {/* Increased bottom padding to avoid overlap with fixed button */}
-      <section className="mb-12 text-center"> {/* Increased margin */}
+    <div className="pb-28">
+      <div className="relative w-full h-48 md:h-60 mb-8 rounded-lg overflow-hidden shadow-lg">
+        <Image
+          src="https://placehold.co/800x400.png"
+          alt="Assinatura Premium Guia Mais"
+          layout="fill"
+          objectFit="cover"
+          data-ai-hint="premium benefits"
+        />
+      </div>
+      <section className="mb-12 text-center"> 
         <Sparkles className="mx-auto mb-4 h-16 w-16 text-primary" />
         <h1 className="mb-3 text-3xl font-bold tracking-tight text-primary md:text-4xl">
           Assinatura Premium Guia Mais
@@ -178,9 +188,9 @@ export default function JoinPage() {
         </p>
       </section>
 
-      <section className="mb-12"> {/* Increased margin */}
+      <section className="mb-12"> 
         <h2 className="mb-6 text-center text-2xl font-semibold text-accent">Seus Benefícios Exclusivos:</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4"> {/* Increased gap */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4"> 
           {premiumFeatures.slice(0, 4).map((benefit, index) => ( 
             <Card key={index} className="text-center shadow-md hover:shadow-lg transition-all duration-300 ease-in-out bg-card">
               <CardContent className="pt-6">
@@ -192,13 +202,13 @@ export default function JoinPage() {
         </div>
       </section>
 
-      <section className="mb-12"> {/* Increased margin */}
+      <section className="mb-12"> 
         <Card className="shadow-lg border-accent">
-            <CardHeader className="p-6">
-                <CardTitle className="text-accent text-center text-2xl">🔓 Grátis vs. 🔑 Premium</CardTitle>
-                <CardDescription className="text-center">Veja a diferença e escolha o melhor para sua viagem!</CardDescription>
+            <CardHeader className="p-4">
+                <CardTitle className="text-accent text-center text-xl">🔓 Grátis vs. 🔑 Premium</CardTitle>
+                <CardDescription className="text-center text-sm">Veja a diferença e escolha o melhor para sua viagem!</CardDescription>
             </CardHeader>
-            <CardContent className="p-6">
+            <CardContent className="p-4">
                 <Table>
                     <TableHeader>
                         <TableRow>
@@ -228,12 +238,12 @@ export default function JoinPage() {
         </Card>
       </section>
 
-      <section className="mb-12 text-center"> {/* Increased margin */}
-        <Card className="bg-secondary/20 border-secondary p-6 shadow-sm">
-          <CardTitle className="text-secondary-foreground mb-2 flex items-center justify-center text-xl">
-            <Info className="mr-2 h-6 w-6"/> Experimente o Guia Mais!
+      <section className="mb-12 text-center"> 
+        <Card className="bg-secondary/20 border-secondary p-4 shadow-sm">
+          <CardTitle className="text-secondary-foreground mb-2 flex items-center justify-center text-lg">
+            <Info className="mr-2 h-5 w-5"/> Experimente o Guia Mais!
           </CardTitle>
-          <CardDescription className="text-secondary-foreground/90">
+          <CardDescription className="text-secondary-foreground/90 text-sm">
             “Veja um roteiro exclusivo gratuito por 24h!” (Funcionalidade de teste em breve)
           </CardDescription>
           <Button variant="outline" size="default" className="mt-4 border-secondary text-secondary-foreground hover:bg-secondary/30">
@@ -243,18 +253,18 @@ export default function JoinPage() {
       </section>
 
       <Card className="shadow-xl">
-        <CardHeader className="p-6">
-          <CardTitle className="flex items-center text-primary text-2xl">
-            <User className="mr-2 h-7 w-7 text-accent" />
+        <CardHeader className="p-4">
+          <CardTitle className="flex items-center text-primary text-xl">
+            <User className="mr-2 h-6 w-6 text-accent" />
             Complete seus Dados para Assinar
           </CardTitle>
-           <CardDescription>
+           <CardDescription className="text-sm">
             Escolha seu plano e preencha para se tornar um membro Guia Mais Premium.
           </CardDescription>
         </CardHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
-            <CardContent className="space-y-6">
+            <CardContent className="space-y-4">
               <FormField
                 control={form.control}
                 name="selectedPlan"
@@ -274,7 +284,7 @@ export default function JoinPage() {
                           <FormItem 
                             key={plan.id} 
                             className={cn(
-                                "flex flex-col items-start space-y-1 rounded-lg border p-4 transition-all duration-300 ease-in-out cursor-pointer hover:border-primary hover:shadow-lg",
+                                "flex flex-col items-start space-y-1 rounded-lg border p-3 transition-all duration-300 ease-in-out cursor-pointer hover:border-primary hover:shadow-lg",
                                 field.value === plan.id && "border-2 border-primary ring-2 ring-primary ring-offset-2",
                                 plan.highlight && "border-accent hover:border-accent ring-accent"
                             )}
@@ -291,7 +301,7 @@ export default function JoinPage() {
                                 <FormControl>
                                   <RadioGroupItem value={plan.id} className="sr-only" />
                                 </FormControl>
-                                {plan.highlight && <Badge variant="destructive" className="bg-accent text-accent-foreground">Melhor Valor!</Badge>}
+                                {plan.highlight && <Badge variant="destructive" className="bg-accent text-accent-foreground text-xs">Melhor Valor!</Badge>}
                             </div>
                             <p className={cn("text-2xl font-bold", plan.textColor)}>{plan.price} <span className="text-sm font-normal text-muted-foreground">/{plan.billingCycle}</span></p>
                             {plan.annualEquivalentMonthlyPrice && <p className="text-xs text-muted-foreground">{plan.annualEquivalentMonthlyPrice}</p>}
@@ -312,7 +322,7 @@ export default function JoinPage() {
                 )}
               />
 
-              <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <FormField
                   control={form.control}
                   name="name"
@@ -340,7 +350,7 @@ export default function JoinPage() {
                   )}
                 />
               </div>
-              <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <FormField
                   control={form.control}
                   name="phone"
@@ -368,7 +378,7 @@ export default function JoinPage() {
                   )}
                 />
               </div>
-              <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <FormField
                   control={form.control}
                   name="password"

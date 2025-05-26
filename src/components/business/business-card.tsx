@@ -33,7 +33,7 @@ const renderStars = (rating?: number) => {
 export function BusinessCard({ business }: BusinessCardProps) {
   return (
     <Card className="flex h-full flex-col overflow-hidden shadow-md transition-all duration-300 ease-in-out hover:shadow-xl group">
-      <CardHeader className="space-y-1.5 p-6">
+      <CardHeader className="space-y-1.5 p-4">
         <div className="relative mb-3 aspect-[16/9] w-full overflow-hidden rounded-md">
           <Image
             src={business.imageUrl}
@@ -41,7 +41,7 @@ export function BusinessCard({ business }: BusinessCardProps) {
             layout="fill"
             objectFit="cover"
             className="transition-transform duration-300 group-hover:scale-105"
-            data-ai-hint={`${business.type} building exterior`}
+            data-ai-hint={`${business.type} exterior`}
           />
         </div>
         <div className="flex items-center justify-between">
@@ -56,11 +56,11 @@ export function BusinessCard({ business }: BusinessCardProps) {
           </div>
         )}
       </CardHeader>
-      <CardContent className="flex-grow p-6 pt-0">
+      <CardContent className="flex-grow p-4 pt-0">
         <p className="text-sm text-foreground/80 line-clamp-3">{business.shortDescription}</p>
       </CardContent>
-      <CardFooter className="p-6 pt-0">
-        <Button asChild variant="default" className="w-full bg-primary hover:bg-primary/90 h-10 px-4 py-2 text-sm">
+      <CardFooter className="p-4 pt-0">
+        <Button asChild variant="default" className="w-full bg-primary hover:bg-primary/90 h-9 px-3 py-1.5 text-sm">
           <Link href={`/business/${business.id}`}>
             <span className="flex items-center justify-center w-full">
               Ver Detalhes

@@ -25,7 +25,7 @@ export default function MobileLandingPage() {
             alt="App illustration"
             layout="fill"
             objectFit="contain"
-            data-ai-hint="abstract app feature illustration"
+            data-ai-hint="app feature"
           />
         </div>
         <h2 className="text-2xl font-semibold mb-2 text-foreground/90">

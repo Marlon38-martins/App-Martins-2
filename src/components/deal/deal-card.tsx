@@ -50,7 +50,7 @@ export function DealCard({ deal, business, isRedeemed = false, canAccess = true 
             alt={`Imagem de ${businessName}`}
             layout="fill"
             objectFit="cover"
-            data-ai-hint={business?.type ? `${business.type} offer` : "deal offer"}
+            data-ai-hint={business?.type ? `${business.type} deal` : "special deal"}
           />
           <div className="absolute right-2 top-2 flex flex-col items-end gap-1.5">
             {deal.isVipOffer && (
@@ -77,25 +77,25 @@ export function DealCard({ deal, business, isRedeemed = false, canAccess = true 
           </div>
         </div>
       )}
-      <CardHeader className="space-y-1 p-4 pb-2 pt-3"> {/* Reduced padding */}
-        <CardTitle className="text-primary text-md">{deal.title}</CardTitle> {/* Reduced size */}
+      <CardHeader className="space-y-1 p-4 pb-2 pt-3">
+        <CardTitle className="text-lg text-primary">{deal.title}</CardTitle>
         {business && (
-            <div className="flex items-center justify-between text-xs text-muted-foreground"> {/* Reduced size */}
+            <div className="flex items-center justify-between text-xs text-muted-foreground">
                 <span>{business.name}</span>
-                {businessTypeIcon && <BusinessTypeIcon type={businessTypeIcon} className="h-3.5 w-3.5" />} {/* Reduced size */}
+                {businessTypeIcon && <BusinessTypeIcon type={businessTypeIcon} className="h-3.5 w-3.5" />}
             </div>
         )}
-        <CardDescription className="text-xs text-foreground/80 line-clamp-2 pt-0.5">{deal.description}</CardDescription> {/* Reduced size */}
+        <CardDescription className="text-xs text-foreground/80 line-clamp-2 pt-0.5">{deal.description}</CardDescription>
       </CardHeader>
-      <CardContent className="flex-grow pt-0 pb-2 p-4"> {/* Reduced padding */}
-        <p className="text-xs text-muted-foreground line-clamp-2">{deal.termsAndConditions}</p> {/* Reduced line-clamp */}
+      <CardContent className="flex-grow pt-0 pb-2 p-4">
+        <p className="text-xs text-muted-foreground line-clamp-2">{deal.termsAndConditions}</p>
         {isRedeemed && (
-            <p className="mt-1.5 text-xs font-semibold text-destructive flex items-center"> {/* Reduced size */}
-                <XCircle className="mr-1 h-3.5 w-3.5"/> Você já utilizou esta oferta. {/* Reduced size */}
+            <p className="mt-1.5 text-xs font-semibold text-destructive flex items-center">
+                <XCircle className="mr-1 h-3.5 w-3.5"/> Você já utilizou esta oferta.
             </p>
         )}
       </CardContent>
-      <CardFooter className="pt-0 p-4"> {/* Reduced padding */}
+      <CardFooter className="pt-0 p-4">
         <Button
             asChild
             variant={buttonVariant}
@@ -104,9 +104,9 @@ export function DealCard({ deal, business, isRedeemed = false, canAccess = true 
         >
           <Link href={isEffectivelyDisabled && buttonLink !== '/join' ? '#' : buttonLink}>
             <span className="flex items-center justify-center w-full">
-              <Tag className="mr-1.5 h-3.5 w-3.5" /> {/* Reduced size */}
+              <Tag className="mr-1.5 h-3.5 w-3.5" />
               {buttonText}
-              {!isEffectivelyDisabled && buttonLink !== '/join' && <ArrowRight className="ml-1.5 h-3.5 w-3.5" />} {/* Reduced size */}
+              {!isEffectivelyDisabled && buttonLink !== '/join' && <ArrowRight className="ml-1.5 h-3.5 w-3.5" />}
             </span>
           </Link>
         </Button>

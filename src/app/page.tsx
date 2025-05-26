@@ -33,7 +33,7 @@ const quickNavCategories = [
   { name: 'Cafés', slug: slugify('Café'), Icon: Coffee },
   { name: 'Lojas', slug: slugify('Comércio'), Icon: ShoppingBag },
   { name: 'Lazer', slug: slugify('Atração'), Icon: AttractionIcon },
-  { name: 'Mapa', slug: 'map', Icon: MapIcon }, // Added Map as a quick nav
+  { name: 'Mapa', slug: 'map', Icon: MapIcon },
 ];
 
 const quickAccessLinks = [
@@ -288,7 +288,7 @@ export default function HomePage() {
   }
 
   return (
-    <div className="space-y-10 p-4">
+    <div className="space-y-12 p-4">
       <section className="relative mb-12 h-[300px] w-full overflow-hidden rounded-lg shadow-xl md:h-[350px]">
         <Image
           src="https://placehold.co/1600x900.png"
@@ -297,7 +297,7 @@ export default function HomePage() {
           objectFit="cover"
           className="brightness-75"
           priority
-          data-ai-hint="Martins RN scenic mountain"
+          data-ai-hint="Martins landscape"
         />
         <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/40 p-4 text-center text-white">
           <h1 className="text-3xl font-bold tracking-tight md:text-4xl drop-shadow-md">
@@ -309,14 +309,14 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="mb-8">
+      <section className="mb-10">
         <h2 className="mb-4 text-xl font-semibold text-primary text-center">Navegação Rápida</h2>
         <div className="flex space-x-3 overflow-x-auto pb-3 -mx-2 px-2 scrollbar-thin scrollbar-thumb-muted scrollbar-track-transparent">
           {quickAccessLinks.map((link) => (
             <Link
               key={link.href}
               href={link.href}
-              className="shrink-0 w-20 h-20 flex flex-col items-center justify-center p-2 text-center shadow-sm group rounded-lg border border-border transition-all duration-200 ease-in-out hover:scale-105 hover:bg-accent hover:text-accent-foreground hover:border-accent"
+              className="shrink-0 w-20 h-20 flex flex-col items-center justify-center p-2 text-center shadow-sm group rounded-lg border border-border transition-all duration-300 ease-in-out hover:scale-105 hover:bg-accent hover:text-accent-foreground hover:border-accent"
             >
                 <link.Icon className="h-5 w-5 mb-1 text-primary transition-colors group-hover:text-accent-foreground" />
                 <p className="text-xs font-medium text-foreground transition-colors group-hover:text-accent-foreground leading-tight">
@@ -327,7 +327,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="mb-8">
+      <section className="mb-10">
         <h2 className="mb-4 text-xl font-semibold text-primary text-center">Explore por Categoria</h2>
         <div className="flex space-x-3 overflow-x-auto pb-3 -mx-2 px-2 scrollbar-thin scrollbar-thumb-muted scrollbar-track-transparent">
           {quickNavCategories.map((category) => (
@@ -347,7 +347,7 @@ export default function HomePage() {
 
 
       {suggestedRegions.length > 0 && (
-        <section className="mb-8">
+        <section className="mb-10">
           <h2 className="mb-4 text-xl font-semibold text-primary text-center">Explore Regiões</h2>
           <div className="flex flex-wrap gap-2 justify-center">
             {suggestedRegions.map(city => (
@@ -370,7 +370,7 @@ export default function HomePage() {
         </section>
       )}
 
-      <section className="mb-8 py-8 bg-secondary/20 rounded-lg shadow-inner">
+      <section className="mb-10 py-8 bg-secondary/20 rounded-lg shadow-inner">
         <div className="px-4">
           <div className="grid md:grid-cols-2 gap-6 items-center">
             <div className="text-center md:text-left">
@@ -399,7 +399,7 @@ export default function HomePage() {
                     alt="Membro Guia Mais aproveitando a cidade"
                     layout="fill"
                     objectFit="cover"
-                    data-ai-hint="happy tourist city phone"
+                    data-ai-hint="happy tourist"
                 />
             </div>
           </div>
@@ -407,7 +407,7 @@ export default function HomePage() {
       </section>
 
       {(featuredDealsAndTeasers.deals.length > 0 || featuredDealsAndTeasers.teasers.length > 0) && (
-        <section className="mb-8">
+        <section className="mb-10">
           <h2 className="mb-3 text-2xl font-bold tracking-tight text-primary md:text-3xl text-center">
             <OffersIcon className="inline-block h-7 w-7 mr-2 text-accent" />
             Ofertas em Destaque
@@ -430,7 +430,7 @@ export default function HomePage() {
 
 
        {Object.keys(rankedBusinessesByCategory).length > 0 && (
-        <section className="mb-8">
+        <section className="mb-10">
           <h2 className="mb-6 text-center text-2xl font-bold tracking-tight text-primary md:text-3xl">
             <Award className="inline-block h-7 w-7 mr-2 text-accent" />
             Top Avaliados
@@ -440,7 +440,7 @@ export default function HomePage() {
       )}
 
       {touristSpots.length > 0 && (
-        <section className="mb-8">
+        <section className="mb-10">
           <h2 className="mb-6 text-center text-2xl font-bold tracking-tight text-primary md:text-3xl">
             Pontos Turísticos
           </h2>
@@ -452,7 +452,7 @@ export default function HomePage() {
         </section>
       )}
 
-      <section className="mb-8">
+      <section className="mb-10">
         <h2 className="mb-4 text-center text-2xl font-bold tracking-tight text-primary md:text-3xl">
           Descubra Martins
         </h2>
@@ -463,7 +463,7 @@ export default function HomePage() {
               alt="Thumbnail de vídeo sobre as belezas de Martins"
               layout="fill"
               objectFit="cover"
-              data-ai-hint="Martins travel video thumbnail"
+              data-ai-hint="Martins travel"
             />
             <div className="absolute inset-0 flex items-center justify-center bg-black/40 transition-opacity hover:opacity-75">
               <button
@@ -486,7 +486,7 @@ export default function HomePage() {
       </section>
 
       {otherServiceBusinesses.length > 0 && (
-        <section className="mb-8">
+        <section className="mb-10">
           <h2 className="mb-6 text-center text-2xl font-bold tracking-tight text-primary md:text-3xl">
             Mais Parceiros
           </h2>
@@ -500,16 +500,16 @@ export default function HomePage() {
         </section>
       )}
 
-      <section className="mb-6 text-center">
+      <section className="mb-8 text-center">
         <h2 className="mb-3 text-2xl font-bold tracking-tight text-primary md:text-3xl">
           Explore Todos os Parceiros
         </h2>
-        <p className="text-sm text-foreground/80 mb-1">
+        <p className="text-sm text-foreground/80 mb-4">
           Encontre restaurantes, hotéis, lojas e serviços com benefícios Guia Mais.
         </p>
       </section>
 
-      <div className="mb-6 grid grid-cols-1 gap-4">
+      <div className="mb-8 grid grid-cols-1 gap-4">
         <SearchBar searchTerm={searchTerm} onSearchChange={setSearchTerm} placeholder="Buscar por nome, tipo ou descrição..." />
         <Select value={selectedCategory} onValueChange={setSelectedCategory}>
           <SelectTrigger className="w-full rounded-lg bg-background py-2 text-sm shadow-sm focus:ring-1 focus:ring-primary h-10">
@@ -542,7 +542,7 @@ export default function HomePage() {
           ))}
         </div>
       )}
-       <div className="mt-10 text-center">
+       <div className="mt-12 text-center">
         <Button asChild variant="outline" size="lg">
           <Link href="/services">
             <span className="flex items-center justify-center">
