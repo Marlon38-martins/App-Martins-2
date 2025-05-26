@@ -14,7 +14,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { 
+import {
     Frown, Play, Tag, Award, Sparkles, CheckCircle, MapIcon, Building, UserPlus, TicketPercent as OffersIcon,
     UtensilsCrossed, BedDouble, Beer, Coffee, ShoppingBag, Landmark as AttractionIcon, Home, BarChart3, Eye, Edit3, Settings2, QrCode as QrCodeIcon, MapPinned, ExternalLink,
     LayoutGrid, Trees, ArrowRight, Sparkle, PercentDiamond, Route, Globe2, Info
@@ -31,15 +31,16 @@ const quickNavCategories = [
   { name: 'Hospedagem', slug: slugify('Hotel'), Icon: BedDouble },
   { name: 'Bares', slug: slugify('Bar'), Icon: Beer },
   { name: 'Cafés', slug: slugify('Café'), Icon: Coffee },
-  { name: 'Lojas', slug: slugify('Comércio'), Icon: ShoppingBag }, 
+  { name: 'Lojas', slug: slugify('Comércio'), Icon: ShoppingBag },
   { name: 'Lazer', slug: slugify('Atração'), Icon: AttractionIcon },
+  { name: 'Mapa', slug: 'map', Icon: MapIcon }, // Added Map as a quick nav
 ];
 
 const quickAccessLinks = [
-    { name: 'Ofertas', href: '/services', Icon: OffersIcon },
-    { name: 'Assinar', href: '/join', Icon: Sparkle },
-    { name: 'Mapa', href: '/map', Icon: MapIcon },
-    { name: 'Contato', href: '/contact', Icon: Info },
+    { name: 'Ofertas', href: '/services', Icon: OffersIcon, label: 'Ofertas' },
+    { name: 'Assinar', href: '/join', Icon: Sparkle, label: 'Assinar' },
+    { name: 'Mapa', href: '/map', Icon: MapIcon, label: 'Mapa' },
+    { name: 'Contato', href: '/contact', Icon: Info, label: 'Contato' },
 ];
 
 const suggestedRegions = [
@@ -85,7 +86,7 @@ export default function HomePage() {
   }, [authUser, userSubscription]);
 
   const featuredDealsAndTeasers = useMemo(() => {
-    if (isLoadingData || authLoading) return { deals: [], teasers: [] }; 
+    if (isLoadingData || authLoading) return { deals: [], teasers: [] };
 
     const normalDeals = allDeals.filter(deal => !deal.isVipOffer);
     const vipDeals = allDeals.filter(deal => deal.isVipOffer);
@@ -116,7 +117,7 @@ export default function HomePage() {
       .filter(
         (business) => business.type === 'Atração' || business.type === 'Parque'
       )
-      .slice(0, 2); 
+      .slice(0, 2);
   }, [businesses]);
 
   const otherServiceBusinesses = useMemo(() => {
@@ -137,13 +138,13 @@ export default function HomePage() {
                                 business.type.toLowerCase().includes(searchTerm.toLowerCase());
       const matchesCategory = selectedCategory === 'all' || business.type === selectedCategory;
       return matchesSearchTerm && matchesCategory;
-    }).slice(0, 4); 
+    }).slice(0, 4);
   }, [otherServiceBusinesses, searchTerm, selectedCategory]);
 
   const rankedBusinessesByCategory = useMemo(() => {
     if (!businesses.length) return {};
-    const categoriesToRank = ['Restaurante', 'Hotel', 'Atração']; 
-    const topN = 2; 
+    const categoriesToRank = ['Restaurante', 'Hotel', 'Atração'];
+    const topN = 2;
 
     const result: Record<string, GramadoBusiness[]> = {};
     categoriesToRank.forEach(categoryType => {
@@ -151,7 +152,7 @@ export default function HomePage() {
         .filter(b => b.type === categoryType && typeof b.rating === 'number' && typeof b.reviewCount === 'number' && b.reviewCount > 0)
         .sort((a, b) => {
           if (b.rating! !== a.rating!) return b.rating! - a.rating!;
-          return b.reviewCount! - a.reviewCount!; 
+          return b.reviewCount! - a.reviewCount!;
         })
         .slice(0, topN);
       if (categoryBusinesses.length > 0) result[categoryType] = categoryBusinesses;
@@ -163,7 +164,7 @@ export default function HomePage() {
     return (
       <div className="space-y-6 p-4">
         <Skeleton className="relative mb-8 h-[250px] w-full rounded-lg md:h-[300px]" />
-        
+
         <section className="mb-8">
           <Skeleton className="mb-3 h-6 w-1/2" />
            <div className="flex space-x-3 overflow-x-auto pb-3 -mx-2 px-2">
@@ -180,7 +181,7 @@ export default function HomePage() {
           </div>
            <Skeleton className="h-8 w-32 mt-2 rounded-md" />
         </section>
-        
+
         <section className="mb-8 py-6 bg-secondary/10 rounded-lg shadow-inner">
           <div className="px-4">
             <div className="grid md:grid-cols-2 gap-4 items-center">
@@ -288,9 +289,9 @@ export default function HomePage() {
 
   return (
     <div className="space-y-10 p-4">
-      <section className="relative mb-8 h-[250px] w-full overflow-hidden rounded-lg shadow-lg md:h-[300px]">
+      <section className="relative mb-12 h-[300px] w-full overflow-hidden rounded-lg shadow-xl md:h-[350px]">
         <Image
-          src="https://placehold.co/1200x600.png"
+          src="https://placehold.co/1600x900.png"
           alt="Paisagem deslumbrante de Martins, RN"
           layout="fill"
           objectFit="cover"
@@ -300,15 +301,15 @@ export default function HomePage() {
         />
         <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/40 p-4 text-center text-white">
           <h1 className="text-3xl font-bold tracking-tight md:text-4xl drop-shadow-md">
-            Bem-vindo ao Guia Mais
+            Bem-vindo ao Guia Mais, seu guia de vantagens!
           </h1>
           <p className="mt-2 max-w-lg text-sm md:text-base drop-shadow-sm">
-            Seu clube de vantagens em Martins e região. Explore e aproveite!
+            Explore o melhor de Martins e região com ofertas exclusivas.
           </p>
         </div>
       </section>
 
-      <section className="mb-10">
+      <section className="mb-8">
         <h2 className="mb-4 text-xl font-semibold text-primary text-center">Navegação Rápida</h2>
         <div className="flex space-x-3 overflow-x-auto pb-3 -mx-2 px-2 scrollbar-thin scrollbar-thumb-muted scrollbar-track-transparent">
           {quickAccessLinks.map((link) => (
@@ -325,17 +326,17 @@ export default function HomePage() {
           ))}
         </div>
       </section>
-      
-      <section className="mb-10">
+
+      <section className="mb-8">
         <h2 className="mb-4 text-xl font-semibold text-primary text-center">Explore por Categoria</h2>
         <div className="flex space-x-3 overflow-x-auto pb-3 -mx-2 px-2 scrollbar-thin scrollbar-thumb-muted scrollbar-track-transparent">
           {quickNavCategories.map((category) => (
             <Link
               key={category.slug}
-              href={`/services/${category.slug}`}
-              className="shrink-0 w-24 h-24 flex flex-col items-center justify-center p-2 text-center shadow-md group rounded-lg border border-border transition-all duration-300 ease-in-out hover:scale-105 hover:bg-accent hover:text-accent-foreground hover:border-accent"
+              href={category.slug === 'map' ? '/map' : `/services/${category.slug}`}
+              className="shrink-0 w-28 h-28 flex flex-col items-center justify-center p-3 text-center shadow-md group rounded-lg border border-border transition-all duration-300 ease-in-out hover:scale-105 hover:bg-accent hover:text-accent-foreground hover:border-accent"
             >
-                <category.Icon className="h-6 w-6 mb-1 text-primary transition-colors group-hover:text-accent-foreground" />
+                <category.Icon className="h-7 w-7 mb-1.5 text-primary transition-colors group-hover:text-accent-foreground" />
                 <p className="text-xs font-medium text-foreground transition-colors group-hover:text-accent-foreground leading-tight">
                   {category.name}
                 </p>
@@ -346,28 +347,30 @@ export default function HomePage() {
 
 
       {suggestedRegions.length > 0 && (
-        <section className="mb-10">
+        <section className="mb-8">
           <h2 className="mb-4 text-xl font-semibold text-primary text-center">Explore Regiões</h2>
           <div className="flex flex-wrap gap-2 justify-center">
             {suggestedRegions.map(city => (
               <Button key={city.slug} variant="outline" size="default" asChild className="text-sm">
                 <Link href={`/services?city=${city.slug}`}>
-                  <span className="flex items-center">
+                   <span className="flex items-center justify-center">
                     <MapPinned className="mr-2 h-4 w-4" /> {city.name}
-                  </span>
+                   </span>
                 </Link>
               </Button>
             ))}
              <Button variant="link" size="default" asChild className="text-sm text-primary hover:text-primary/80">
                 <Link href="/services">
+                  <span className="flex items-center justify-center">
                     Ver todas as regiões <ArrowRight className="ml-1.5 h-4 w-4" />
+                  </span>
                 </Link>
             </Button>
           </div>
         </section>
       )}
 
-      <section className="mb-10 py-8 bg-secondary/20 rounded-lg shadow-inner">
+      <section className="mb-8 py-8 bg-secondary/20 rounded-lg shadow-inner">
         <div className="px-4">
           <div className="grid md:grid-cols-2 gap-6 items-center">
             <div className="text-center md:text-left">
@@ -392,7 +395,7 @@ export default function HomePage() {
             </div>
             <div className="relative aspect-square max-w-xs mx-auto w-full overflow-hidden rounded-lg shadow-xl">
                 <Image
-                    src="https://placehold.co/400x400.png" 
+                    src="https://placehold.co/400x400.png"
                     alt="Membro Guia Mais aproveitando a cidade"
                     layout="fill"
                     objectFit="cover"
@@ -404,7 +407,7 @@ export default function HomePage() {
       </section>
 
       {(featuredDealsAndTeasers.deals.length > 0 || featuredDealsAndTeasers.teasers.length > 0) && (
-        <section className="mb-10">
+        <section className="mb-8">
           <h2 className="mb-3 text-2xl font-bold tracking-tight text-primary md:text-3xl text-center">
             <OffersIcon className="inline-block h-7 w-7 mr-2 text-accent" />
             Ofertas em Destaque
@@ -427,7 +430,7 @@ export default function HomePage() {
 
 
        {Object.keys(rankedBusinessesByCategory).length > 0 && (
-        <section className="mb-10">
+        <section className="mb-8">
           <h2 className="mb-6 text-center text-2xl font-bold tracking-tight text-primary md:text-3xl">
             <Award className="inline-block h-7 w-7 mr-2 text-accent" />
             Top Avaliados
@@ -437,7 +440,7 @@ export default function HomePage() {
       )}
 
       {touristSpots.length > 0 && (
-        <section className="mb-10">
+        <section className="mb-8">
           <h2 className="mb-6 text-center text-2xl font-bold tracking-tight text-primary md:text-3xl">
             Pontos Turísticos
           </h2>
@@ -449,7 +452,7 @@ export default function HomePage() {
         </section>
       )}
 
-      <section className="mb-10">
+      <section className="mb-8">
         <h2 className="mb-4 text-center text-2xl font-bold tracking-tight text-primary md:text-3xl">
           Descubra Martins
         </h2>
@@ -467,7 +470,7 @@ export default function HomePage() {
                 aria-label="Assistir vídeo sobre Martins"
                 className="group p-3 bg-background/80 rounded-full text-primary backdrop-blur-sm transition-all hover:bg-background hover:scale-110 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-black/50"
                 onClick={() => {
-                  const videoUrl = "https://www.youtube.com/watch?v=dQw4w9WgXcQ"; 
+                  const videoUrl = "https://www.youtube.com/watch?v=dQw4w9WgXcQ";
                   window.open(videoUrl, "_blank");
                   toast({ title: "Vídeo Demonstrativo", description: "Abrindo vídeo em nova aba..."});
                 }}
@@ -483,12 +486,12 @@ export default function HomePage() {
       </section>
 
       {otherServiceBusinesses.length > 0 && (
-        <section className="mb-10">
+        <section className="mb-8">
           <h2 className="mb-6 text-center text-2xl font-bold tracking-tight text-primary md:text-3xl">
             Mais Parceiros
           </h2>
           <div className="flex space-x-4 overflow-x-auto p-2 -m-2 scrollbar-thin scrollbar-thumb-muted scrollbar-track-transparent">
-            {otherServiceBusinesses.slice(0, 6).map(business => ( 
+            {otherServiceBusinesses.slice(0, 6).map(business => (
               <div key={business.id} className="min-w-[280px] sm:min-w-[300px] flex-shrink-0">
                 <BusinessCard business={business} />
               </div>
@@ -534,14 +537,18 @@ export default function HomePage() {
 
       {filteredListedBusinesses.length > 0 && (
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-          {filteredListedBusinesses.map(business => ( 
+          {filteredListedBusinesses.map(business => (
             <BusinessCard key={business.id} business={business} />
           ))}
         </div>
       )}
        <div className="mt-10 text-center">
         <Button asChild variant="outline" size="lg">
-          <Link href="/services">Ver Todos os Parceiros <ArrowRight className="ml-2 h-4 w-4" /></Link>
+          <Link href="/services">
+            <span className="flex items-center justify-center">
+                Ver Todos os Parceiros <ArrowRight className="ml-2 h-4 w-4" />
+            </span>
+          </Link>
         </Button>
       </div>
     </div>
