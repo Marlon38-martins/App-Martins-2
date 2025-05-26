@@ -6,7 +6,7 @@ import Image from 'next/image';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import { ArrowLeft, BarChart3, Eye, ShoppingCart, MessageSquare, ShieldAlert } from 'lucide-react';
+import { ArrowLeft, BarChart3, Eye, ShoppingCart, MessageSquare, ShieldAlert, Star } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 
@@ -32,12 +32,12 @@ export default function PartnerAnalyticsPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
         <Card className="shadow-md">
           <CardHeader className="p-3">
-            <CardTitle className="flex items-center text-sm md:text-md text-accent"><Eye className="mr-1.5 h-4 w-4"/> Visualizações</CardTitle>
-            <CardDescription className="text-xs">Quantas vezes seu estabelecimento foi visto.</CardDescription>
+            <CardTitle className="flex items-center text-sm md:text-md text-accent"><Eye className="mr-1.5 h-4 w-4"/> Visualizações da Página</CardTitle>
+            <CardDescription className="text-xs">Quantas vezes sua página no Guia Mais foi vista.</CardDescription>
           </CardHeader>
           <CardContent className="p-3">
             <div className="relative h-24 w-full mb-2 rounded overflow-hidden opacity-70">
-              <Image src="https://placehold.co/300x100.png" alt="Gráfico de visualizações" layout="fill" objectFit="contain" data-ai-hint="analytics chart views"/>
+              <Image src="https://placehold.co/300x100.png" alt="Gráfico de visualizações da página" layout="fill" objectFit="contain" data-ai-hint="analytics chart pageviews"/>
             </div>
             <p className="text-xl md:text-2xl font-bold text-primary">1,234</p>
             <p className="text-xs text-muted-foreground">Nos últimos 30 dias (simulado)</p>
@@ -47,11 +47,11 @@ export default function PartnerAnalyticsPage() {
         <Card className="shadow-md">
           <CardHeader className="p-3">
             <CardTitle className="flex items-center text-sm md:text-md text-accent"><ShoppingCart className="mr-1.5 h-4 w-4"/> Resgates de Ofertas</CardTitle>
-            <CardDescription className="text-xs">Número de ofertas Guia Mais utilizadas.</CardDescription>
+            <CardDescription className="text-xs">Número de ofertas Guia Mais utilizadas pelos clientes.</CardDescription>
           </CardHeader>
           <CardContent className="p-3">
              <div className="relative h-24 w-full mb-2 rounded overflow-hidden opacity-70">
-              <Image src="https://placehold.co/300x100.png" alt="Gráfico de resgates" layout="fill" objectFit="contain" data-ai-hint="analytics chart redemptions"/>
+              <Image src="https://placehold.co/300x100.png" alt="Gráfico de resgates de ofertas" layout="fill" objectFit="contain" data-ai-hint="analytics chart redemptions"/>
             </div>
             <p className="text-xl md:text-2xl font-bold text-primary">56</p>
             <p className="text-xs text-muted-foreground">No total (simulado)</p>
@@ -61,15 +61,15 @@ export default function PartnerAnalyticsPage() {
 
       <Card className="shadow-md">
         <CardHeader className="p-3">
-          <CardTitle className="flex items-center text-sm md:text-md text-accent"><MessageSquare className="mr-1.5 h-4 w-4"/> Feedback de Clientes</CardTitle>
-          <CardDescription className="text-xs">Avaliações e comentários (funcionalidade futura).</CardDescription>
+          <CardTitle className="flex items-center text-sm md:text-md text-accent"><Star className="mr-1.5 h-4 w-4"/> Avaliações de Clientes (Em Breve)</CardTitle>
+          <CardDescription className="text-xs">Acompanhe o que os clientes estão dizendo sobre seu estabelecimento.</CardDescription>
         </CardHeader>
         <CardContent className="p-3">
             <Alert variant="default" className="bg-secondary/20 border-secondary text-xs">
                 <MessageSquare className="h-3.5 w-3.5 text-secondary-foreground"/>
-                <AlertTitle className="text-secondary-foreground text-xs">Em Breve!</AlertTitle>
+                <AlertTitle className="text-secondary-foreground text-xs">Funcionalidade em Desenvolvimento</AlertTitle>
                 <AlertDescription className="text-xs">
-                Esta seção mostrará avaliações e comentários dos usuários Guia Mais sobre seu estabelecimento.
+                Em breve, esta seção mostrará as avaliações e comentários dos usuários Guia Mais.
                 </AlertDescription>
             </Alert>
         </CardContent>

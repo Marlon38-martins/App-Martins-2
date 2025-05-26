@@ -17,8 +17,9 @@ const partnerPlansData = [
       { text: "3 Ofertas Normais (com QR Code de resgate)", IconComp: Ticket },
       { text: "1 Oferta VIP Especial (com QR Code de resgate)", IconComp: Star },
       { text: "QR Code exclusivo para direcionar clientes à sua página no Guia Mais", IconComp: QrCodeIcon },
+      { text: "Exibição de avaliações de clientes em sua página", IconComp: Star },
     ],
-    description: "Ideal para negócios que estão começando e buscam ganhar visibilidade inicial, atraindo novos clientes com uma oferta especial de impacto e algumas promoções regulares.",
+    description: "Ideal para negócios que estão começando e buscam ganhar visibilidade inicial, atraindo novos clientes com ofertas de impacto e feedback direto dos usuários.",
     priceInfo: "Tenho Interesse",
     mailtoSubject: "Interesse no Plano Largada - Guia Mais",
   },
@@ -30,8 +31,9 @@ const partnerPlansData = [
       { text: "5 Ofertas Normais (com QR Code de resgate)", IconComp: Ticket },
       { text: "1 Oferta VIP Especial (com QR Code de resgate)", IconComp: Star },
       { text: "QR Code exclusivo para direcionar clientes à sua página no Guia Mais", IconComp: QrCodeIcon },
+      { text: "Exibição de avaliações de clientes em sua página", IconComp: Star },
     ],
-    description: "Para negócios em crescimento que desejam maior engajamento e mais oportunidades de destacar seus serviços e produtos com um volume maior de ofertas.",
+    description: "Para negócios em crescimento que desejam maior engajamento e mais oportunidades de destacar seus serviços, com mais ofertas e a força das avaliações.",
     priceInfo: "Tenho Interesse",
     mailtoSubject: "Interesse no Plano Processo - Guia Mais",
   },
@@ -45,9 +47,10 @@ const partnerPlansData = [
       { text: "QR Code exclusivo para direcionar clientes à sua página no Guia Mais", IconComp: QrCodeIcon },
       { text: "Visibilidade premium na página inicial", IconComp: TrendingUp },
       { text: "Notificações frequentes para clientes VIP sobre suas ofertas", IconComp: MessageSquare },
-      { text: "Acompanhamento de desempenho de visitas ao estabelecimento", IconComp: Users },
+      { text: "Acompanhamento de desempenho (visitas, avaliações de clientes)", IconComp: Users },
+      { text: "Exibição de avaliações de clientes em sua página", IconComp: Star },
     ],
-    description: "Maximize sua presença e resultados! Visibilidade premium na página inicial, notificações frequentes de suas ofertas para clientes VIP e acompanhamento de fluxo de visitas ao estabelecimento.",
+    description: "Maximize sua presença e resultados! Visibilidade premium, notificações VIP, acompanhamento completo de desempenho e o poder das avaliações de clientes.",
     priceInfo: "Tenho Interesse",
     mailtoSubject: "Interesse no Plano Consolide - Guia Mais",
   }
@@ -69,7 +72,7 @@ export default function PartnerPlansPage() {
           Nossos Planos de Parceria Guia Mais
         </h1>
         <p className="text-lg text-foreground/80 max-w-2xl mx-auto">
-          Escolha o plano ideal para impulsionar seu negócio em Martins e região. Todas as ofertas criadas geram um QR Code para resgate.
+          Escolha o plano ideal para impulsionar seu negócio em Martins e região. Todas as ofertas criadas geram um QR Code para resgate, e as avaliações dos clientes ajudam a destacar seu estabelecimento!
         </p>
       </section>
 
