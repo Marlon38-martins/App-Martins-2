@@ -36,13 +36,6 @@ const quickNavCategories = [
   { name: 'Mapa', slug: 'map', Icon: MapIcon },
 ];
 
-const quickAccessLinks = [
-    { name: 'Ofertas', href: '/services', Icon: OffersIcon, label: 'Ofertas' },
-    { name: 'Assinar', href: '/join', Icon: Sparkle, label: 'Assinar' },
-    { name: 'Mapa', href: '/map', Icon: MapIcon, label: 'Mapa' },
-    { name: 'Contato', href: '/contact', Icon: Info, label: 'Contato' },
-];
-
 const suggestedRegions = [
     { name: 'Martins, RN', slug: slugify('Martins, RN') },
     { name: 'Cidade Vizinha, RN', slug: slugify('Cidade Vizinha, RN') },
@@ -141,6 +134,13 @@ export default function HomePage() {
     }).slice(0, 4);
   }, [otherServiceBusinesses, searchTerm, selectedCategory]);
 
+  const uniqueCities = useMemo(() => {
+    if (!businesses.length) return [];
+    const cities = businesses.map(b => b.city).filter(Boolean) as string[];
+    return Array.from(new Set(cities)).map(city => ({ name: city, slug: slugify(city) })).sort((a,b) => a.name.localeCompare(b.name));
+  }, [businesses]);
+
+
   const rankedBusinessesByCategory = useMemo(() => {
     if (!businesses.length) return {};
     const categoriesToRank = ['Restaurante', 'Hotel', 'Atração'];
@@ -162,14 +162,14 @@ export default function HomePage() {
 
   if (isLoadingData || authLoading) {
     return (
-      <div className="space-y-6 p-4">
+      <div className="space-y-6">
         <Skeleton className="relative mb-8 h-[250px] w-full rounded-lg md:h-[300px]" />
 
         <section className="mb-8">
           <Skeleton className="mb-3 h-6 w-1/2" />
            <div className="flex space-x-3 overflow-x-auto pb-3 -mx-2 px-2">
             {Array.from({length: 4}).map((_, i) => (
-              <Skeleton key={`qnav-skel-${i}`} className="h-20 w-20 shrink-0 rounded-lg" />
+              <Skeleton key={`qnav-skel-${i}`} className="h-20 w-24 shrink-0 rounded-lg" />
             ))}
           </div>
         </section>
@@ -182,7 +182,7 @@ export default function HomePage() {
            <Skeleton className="h-8 w-32 mt-2 rounded-md" />
         </section>
 
-        <section className="mb-8 py-6 bg-secondary/10 rounded-lg shadow-inner">
+        <section className="mb-8 py-6 bg-secondary/20 rounded-lg shadow-inner">
           <div className="px-4">
             <div className="grid md:grid-cols-2 gap-4 items-center">
               <div>
@@ -215,7 +215,7 @@ export default function HomePage() {
           <Skeleton className="mb-4 h-7 w-1/2" />
            <div className="grid grid-cols-1 gap-4">
             {Array.from({ length: 1 }).map((_, index) => (
-              <div key={`rank-skeleton-${index}`} className="space-y-3 p-4 border rounded-lg">
+              <div key={`rank-skeleton-${index}`} className="space-y-3 p-3 border rounded-lg">
                 <Skeleton className="h-6 w-1/2 mb-2" />
                 {Array.from({ length: 2 }).map((_, itemIndex) => (
                   <div key={`rank-item-skeleton-${itemIndex}`} className="flex items-start space-x-3 py-2 border-b last:border-none">
@@ -288,8 +288,8 @@ export default function HomePage() {
   }
 
   return (
-    <div className="space-y-12 p-4">
-      <section className="relative mb-12 h-[300px] w-full overflow-hidden rounded-lg shadow-xl md:h-[350px]">
+    <div className="space-y-8">
+      <section className="relative mb-8 h-[250px] w-full overflow-hidden rounded-lg shadow-xl md:h-[300px]">
         <Image
           src="https://placehold.co/1600x900.png"
           alt="Paisagem deslumbrante de Martins, RN"
@@ -299,70 +299,54 @@ export default function HomePage() {
           priority
           data-ai-hint="Martins landscape"
         />
-        <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/40 p-4 text-center text-white">
-          <h1 className="text-3xl font-bold tracking-tight md:text-4xl drop-shadow-md">
+        <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/40 p-3 text-center text-white">
+          <h1 className="text-2xl font-bold tracking-tight md:text-3xl drop-shadow-md">
             Bem-vindo ao Guia Mais, seu guia de vantagens!
           </h1>
-          <p className="mt-2 max-w-lg text-sm md:text-base drop-shadow-sm">
+          <p className="mt-2 max-w-lg text-xs md:text-sm drop-shadow-sm">
             Explore o melhor de Martins e região com ofertas exclusivas.
           </p>
         </div>
       </section>
 
-      <section className="mb-10">
-        <h2 className="mb-4 text-xl font-semibold text-primary text-center">Navegação Rápida</h2>
-        <div className="flex space-x-3 overflow-x-auto pb-3 -mx-2 px-2 scrollbar-thin scrollbar-thumb-muted scrollbar-track-transparent">
-          {quickAccessLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="shrink-0 w-20 h-20 flex flex-col items-center justify-center p-2 text-center shadow-sm group rounded-lg border border-border transition-all duration-300 ease-in-out hover:scale-105 hover:bg-accent hover:text-accent-foreground hover:border-accent"
-            >
-                <link.Icon className="h-5 w-5 mb-1 text-primary transition-colors group-hover:text-accent-foreground" />
-                <p className="text-xs font-medium text-foreground transition-colors group-hover:text-accent-foreground leading-tight">
-                  {link.label}
-                </p>
-            </Link>
-          ))}
-        </div>
-      </section>
-
-      <section className="mb-10">
-        <h2 className="mb-4 text-xl font-semibold text-primary text-center">Explore por Categoria</h2>
+      <section className="mb-8">
+        <h2 className="mb-3 text-xl font-semibold text-primary text-center">Explore por Categoria</h2>
         <div className="flex space-x-3 overflow-x-auto pb-3 -mx-2 px-2 scrollbar-thin scrollbar-thumb-muted scrollbar-track-transparent">
           {quickNavCategories.map((category) => (
             <Link
               key={category.slug}
               href={category.slug === 'map' ? '/map' : `/services/${category.slug}`}
-              className="shrink-0 w-28 h-28 flex flex-col items-center justify-center p-3 text-center shadow-md group rounded-lg border border-border transition-all duration-300 ease-in-out hover:scale-105 hover:bg-accent hover:text-accent-foreground hover:border-accent"
+              className="shrink-0 w-24"
             >
-                <category.Icon className="h-7 w-7 mb-1.5 text-primary transition-colors group-hover:text-accent-foreground" />
+              <Card className="h-24 flex flex-col items-center justify-center p-2 text-center shadow-sm group rounded-lg border border-border transition-all duration-300 ease-in-out hover:scale-105 hover:bg-accent hover:text-accent-foreground hover:border-accent">
+                <category.Icon className="h-6 w-6 mb-1 text-primary transition-colors group-hover:text-accent-foreground" />
                 <p className="text-xs font-medium text-foreground transition-colors group-hover:text-accent-foreground leading-tight">
                   {category.name}
                 </p>
+              </Card>
             </Link>
           ))}
         </div>
       </section>
 
 
-      {suggestedRegions.length > 0 && (
-        <section className="mb-10">
-          <h2 className="mb-4 text-xl font-semibold text-primary text-center">Explore Regiões</h2>
+      {uniqueCities.length > 1 && (
+        <section className="mb-8">
+          <h2 className="mb-3 text-xl font-semibold text-primary text-center">Explore Regiões</h2>
           <div className="flex flex-wrap gap-2 justify-center">
-            {suggestedRegions.map(city => (
-              <Button key={city.slug} variant="outline" size="default" asChild className="text-sm">
+            {suggestedRegions.filter(sr => uniqueCities.some(uc => uc.slug === sr.slug)).map(city => (
+              <Button key={city.slug} variant="outline" size="sm" asChild className="text-xs">
                 <Link href={`/services?city=${city.slug}`}>
                    <span className="flex items-center justify-center">
-                    <MapPinned className="mr-2 h-4 w-4" /> {city.name}
+                    <MapPinned className="mr-1.5 h-3.5 w-3.5" /> {city.name}
                    </span>
                 </Link>
               </Button>
             ))}
-             <Button variant="link" size="default" asChild className="text-sm text-primary hover:text-primary/80">
+             <Button variant="link" size="sm" asChild className="text-xs text-primary hover:text-primary/80">
                 <Link href="/services">
                   <span className="flex items-center justify-center">
-                    Ver todas as regiões <ArrowRight className="ml-1.5 h-4 w-4" />
+                    Ver todas as regiões <ArrowRight className="ml-1 h-3.5 w-3.5" />
                   </span>
                 </Link>
             </Button>
@@ -370,30 +354,30 @@ export default function HomePage() {
         </section>
       )}
 
-      <section className="mb-10 py-8 bg-secondary/20 rounded-lg shadow-inner">
-        <div className="px-4">
-          <div className="grid md:grid-cols-2 gap-6 items-center">
+      <section className="mb-8 py-6 bg-secondary/20 rounded-lg shadow-inner">
+        <div className="px-3">
+          <div className="grid md:grid-cols-2 gap-4 items-center">
             <div className="text-center md:text-left">
-              <Sparkles className="h-10 w-10 text-primary mb-3 mx-auto md:mx-0" />
-              <h2 className="text-2xl font-bold tracking-tight text-primary md:text-3xl mb-3">
+              <Sparkles className="h-8 w-8 text-primary mb-2 mx-auto md:mx-0" />
+              <h2 className="text-xl font-bold tracking-tight text-primary md:text-2xl mb-2">
                 Seja Membro Guia Mais Premium
               </h2>
-              <p className="text-sm text-foreground/80 mb-4">
+              <p className="text-xs text-foreground/80 mb-3">
                 Desbloqueie um mundo de vantagens e experiências exclusivas em Martins e região.
               </p>
-              <ul className="space-y-2 text-left mb-5 text-foreground/70 text-sm">
-                <li className="flex items-center"><CheckCircle className="h-4 w-4 text-green-500 mr-2" /> Descontos incríveis.</li>
-                <li className="flex items-center"><CheckCircle className="h-4 w-4 text-green-500 mr-2" /> Roteiros personalizados.</li>
-                <li className="flex items-center"><CheckCircle className="h-4 w-4 text-green-500 mr-2" /> Recompensas locais.</li>
+              <ul className="space-y-1.5 text-left mb-4 text-foreground/70 text-xs">
+                <li className="flex items-center"><CheckCircle className="h-3.5 w-3.5 text-green-500 mr-1.5" /> Descontos incríveis.</li>
+                <li className="flex items-center"><CheckCircle className="h-3.5 w-3.5 text-green-500 mr-1.5" /> Roteiros personalizados.</li>
+                <li className="flex items-center"><CheckCircle className="h-3.5 w-3.5 text-green-500 mr-1.5" /> Recompensas locais.</li>
               </ul>
-              <Button asChild size="lg" className="bg-accent hover:bg-accent/90 text-accent-foreground text-base">
+              <Button asChild size="default" className="bg-accent hover:bg-accent/90 text-accent-foreground text-sm">
                 <Link href="/join">Conheça os Planos Premium</Link>
               </Button>
-              <p className="mt-3 text-xs text-muted-foreground">
+              <p className="mt-2 text-xs text-muted-foreground">
                 💚 Sua assinatura valoriza o turismo e comércio local!
               </p>
             </div>
-            <div className="relative aspect-square max-w-xs mx-auto w-full overflow-hidden rounded-lg shadow-xl">
+            <div className="relative aspect-square max-w-[250px] mx-auto w-full overflow-hidden rounded-lg shadow-xl">
                 <Image
                     src="https://placehold.co/400x400.png"
                     alt="Membro Guia Mais aproveitando a cidade"
@@ -407,15 +391,15 @@ export default function HomePage() {
       </section>
 
       {(featuredDealsAndTeasers.deals.length > 0 || featuredDealsAndTeasers.teasers.length > 0) && (
-        <section className="mb-10">
-          <h2 className="mb-3 text-2xl font-bold tracking-tight text-primary md:text-3xl text-center">
-            <OffersIcon className="inline-block h-7 w-7 mr-2 text-accent" />
+        <section className="mb-8">
+          <h2 className="mb-2 text-xl font-bold tracking-tight text-primary md:text-2xl text-center">
+            <OffersIcon className="inline-block h-6 w-6 mr-1.5 text-accent" />
             Ofertas em Destaque
           </h2>
-          <p className="mb-6 text-center text-sm text-foreground/80">
+          <p className="mb-4 text-center text-xs text-foreground/80">
             Benefícios exclusivos para membros Guia Mais!
           </p>
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             {featuredDealsAndTeasers.deals.map(deal => {
               const businessForDeal = businesses.find(b => b.id === deal.businessId);
               return <DealCard key={deal.id} deal={deal} business={businessForDeal} canAccess={true} />;
@@ -430,9 +414,9 @@ export default function HomePage() {
 
 
        {Object.keys(rankedBusinessesByCategory).length > 0 && (
-        <section className="mb-10">
-          <h2 className="mb-6 text-center text-2xl font-bold tracking-tight text-primary md:text-3xl">
-            <Award className="inline-block h-7 w-7 mr-2 text-accent" />
+        <section className="mb-8">
+          <h2 className="mb-4 text-center text-xl font-bold tracking-tight text-primary md:text-2xl">
+            <Award className="inline-block h-6 w-6 mr-1.5 text-accent" />
             Top Avaliados
           </h2>
           <RankingPanel rankedBusinessesByCategory={rankedBusinessesByCategory} />
@@ -440,11 +424,11 @@ export default function HomePage() {
       )}
 
       {touristSpots.length > 0 && (
-        <section className="mb-10">
-          <h2 className="mb-6 text-center text-2xl font-bold tracking-tight text-primary md:text-3xl">
+        <section className="mb-8">
+          <h2 className="mb-4 text-center text-xl font-bold tracking-tight text-primary md:text-2xl">
             Pontos Turísticos
           </h2>
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             {touristSpots.map(spot => (
               <BusinessCard key={spot.id} business={spot} />
             ))}
@@ -452,8 +436,8 @@ export default function HomePage() {
         </section>
       )}
 
-      <section className="mb-10">
-        <h2 className="mb-4 text-center text-2xl font-bold tracking-tight text-primary md:text-3xl">
+      <section className="mb-8">
+        <h2 className="mb-2 text-xl font-bold tracking-tight text-primary md:text-2xl text-center">
           Descubra Martins
         </h2>
         <div className="aspect-video w-full max-w-lg mx-auto overflow-hidden rounded-lg shadow-xl bg-muted border border-border">
@@ -468,31 +452,31 @@ export default function HomePage() {
             <div className="absolute inset-0 flex items-center justify-center bg-black/40 transition-opacity hover:opacity-75">
               <button
                 aria-label="Assistir vídeo sobre Martins"
-                className="group p-3 bg-background/80 rounded-full text-primary backdrop-blur-sm transition-all hover:bg-background hover:scale-110 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-black/50"
+                className="group p-2.5 bg-background/80 rounded-full text-primary backdrop-blur-sm transition-all hover:bg-background hover:scale-110 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-black/50"
                 onClick={() => {
                   const videoUrl = "https://www.youtube.com/watch?v=dQw4w9WgXcQ";
                   window.open(videoUrl, "_blank");
                   toast({ title: "Vídeo Demonstrativo", description: "Abrindo vídeo em nova aba..."});
                 }}
               >
-                <Play className="h-7 w-7 fill-primary md:h-9 md:w-9 transition-transform group-hover:scale-105" />
+                <Play className="h-6 w-6 fill-primary md:h-7 md:w-7 transition-transform group-hover:scale-105" />
               </button>
             </div>
           </div>
         </div>
-        <p className="mt-3 text-center text-sm text-muted-foreground">
+        <p className="mt-2 text-center text-xs text-muted-foreground">
           Clique para assistir e encante-se com as paisagens de Martins.
         </p>
       </section>
 
       {otherServiceBusinesses.length > 0 && (
-        <section className="mb-10">
-          <h2 className="mb-6 text-center text-2xl font-bold tracking-tight text-primary md:text-3xl">
+        <section className="mb-8">
+          <h2 className="mb-4 text-center text-xl font-bold tracking-tight text-primary md:text-2xl">
             Mais Parceiros
           </h2>
-          <div className="flex space-x-4 overflow-x-auto p-2 -m-2 scrollbar-thin scrollbar-thumb-muted scrollbar-track-transparent">
+          <div className="flex space-x-3 overflow-x-auto p-2 -m-2 scrollbar-thin scrollbar-thumb-muted scrollbar-track-transparent">
             {otherServiceBusinesses.slice(0, 6).map(business => (
-              <div key={business.id} className="min-w-[280px] sm:min-w-[300px] flex-shrink-0">
+              <div key={business.id} className="min-w-[260px] sm:min-w-[280px] flex-shrink-0">
                 <BusinessCard business={business} />
               </div>
             ))}
@@ -501,15 +485,15 @@ export default function HomePage() {
       )}
 
       <section className="mb-8 text-center">
-        <h2 className="mb-3 text-2xl font-bold tracking-tight text-primary md:text-3xl">
+        <h2 className="mb-2 text-xl font-bold tracking-tight text-primary md:text-2xl">
           Explore Todos os Parceiros
         </h2>
-        <p className="text-sm text-foreground/80 mb-4">
+        <p className="text-xs text-foreground/80 mb-3">
           Encontre restaurantes, hotéis, lojas e serviços com benefícios Guia Mais.
         </p>
       </section>
 
-      <div className="mb-8 grid grid-cols-1 gap-4">
+      <div className="mb-6 grid grid-cols-1 gap-3">
         <SearchBar searchTerm={searchTerm} onSearchChange={setSearchTerm} placeholder="Buscar por nome, tipo ou descrição..." />
         <Select value={selectedCategory} onValueChange={setSelectedCategory}>
           <SelectTrigger className="w-full rounded-lg bg-background py-2 text-sm shadow-sm focus:ring-1 focus:ring-primary h-10">
@@ -526,27 +510,27 @@ export default function HomePage() {
       </div>
 
       {filteredListedBusinesses.length === 0 && !isLoadingData && (
-        <div className="mt-10 flex flex-col items-center justify-center text-center">
-            <Frown className="mb-3 h-14 w-14 text-muted-foreground" />
-            <h3 className="text-lg font-semibold text-foreground">Nenhum estabelecimento encontrado</h3>
-            <p className="text-sm text-muted-foreground">
+        <div className="mt-8 flex flex-col items-center justify-center text-center">
+            <Frown className="mb-3 h-12 w-12 text-muted-foreground" />
+            <h3 className="text-md font-semibold text-foreground">Nenhum estabelecimento encontrado</h3>
+            <p className="text-xs text-muted-foreground">
               Tente ajustar seus filtros de busca ou categoria.
             </p>
           </div>
       )}
 
       {filteredListedBusinesses.length > 0 && (
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           {filteredListedBusinesses.map(business => (
             <BusinessCard key={business.id} business={business} />
           ))}
         </div>
       )}
-       <div className="mt-12 text-center">
-        <Button asChild variant="outline" size="lg">
+       <div className="mt-8 text-center">
+        <Button asChild variant="outline" size="default">
           <Link href="/services">
             <span className="flex items-center justify-center">
-                Ver Todos os Parceiros <ArrowRight className="ml-2 h-4 w-4" />
+                Ver Todos os Parceiros <ArrowRight className="ml-1.5 h-4 w-4" />
             </span>
           </Link>
         </Button>
@@ -554,3 +538,4 @@ export default function HomePage() {
     </div>
   );
 }
+

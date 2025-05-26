@@ -1,3 +1,4 @@
+
 // src/app/scan-offer/page.tsx
 'use client';
 
@@ -11,7 +12,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Skeleton } from '@/components/ui/skeleton';
-import { ArrowLeft, Camera, QrCode, VideoOff, CheckCircle } from 'lucide-react';
+import { ArrowLeft, Camera, QrCode, VideoOff, CheckCircle, Loader2 } from 'lucide-react';
 
 export default function ScanOfferPage() {
   const router = useRouter();
@@ -19,8 +20,10 @@ export default function ScanOfferPage() {
   const { toast } = useToast();
   
   const [hasCameraPermission, setHasCameraPermission] = useState<boolean | null>(null);
+  const [cameraError, setCameraError] = useState<string | null>(null);
   const [isScanning, setIsScanning] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const streamRef = useRef<MediaStream | null>(null);
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -29,76 +32,72 @@ export default function ScanOfferPage() {
   }, [authLoading, user, router]);
 
   useEffect(() => {
-    let streamToCleanUp: MediaStream | null = null;
+    // Only attempt to get camera if user is loaded and present
+    if (!user || authLoading) {
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach(track => track.stop());
+        streamRef.current = null;
+        if(videoRef.current) videoRef.current.srcObject = null;
+        console.log('Camera stream stopped due to user/auth state change.');
+      }
+      setHasCameraPermission(null); // Reset permission state if user logs out or is loading
+      return;
+    }
 
-    const getCameraStreamWithFallback = async () => {
-      if (!user || typeof window === 'undefined' || !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    const getCameraStream = async () => {
+      if (typeof window === 'undefined' || !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
         setHasCameraPermission(false);
-        if (user) { // Only toast if user is logged in, otherwise redirect will handle it
-            toast({ variant: 'destructive', title: 'Câmera Não Suportada', description: 'Seu navegador não suporta acesso à câmera ou a funcionalidade não está disponível.' });
-        }
+        setCameraError('Seu navegador não suporta acesso à câmera.');
         return;
       }
 
-      try {
-        // Attempt to get the front camera first ("user" facing)
-        console.log('Attempting to get front camera (user facing)...');
-        streamToCleanUp = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } });
-        console.log('Front camera (user facing) obtained successfully.');
-      } catch (frontCameraError) {
-        console.warn('Failed to get front camera:', frontCameraError, '. Falling back to default/any camera.');
+      const cameraConstraints = [
+        { video: { facingMode: { exact: "environment" } } }, // Prioritize rear camera
+        { video: { facingMode: "user" } },                   // Fallback to front camera
+        { video: true }                                      // Fallback to any camera
+      ];
+
+      for (const constraint of cameraConstraints) {
         try {
-          // Fallback to any camera (usually rear on mobile, or default webcam)
-          streamToCleanUp = await navigator.mediaDevices.getUserMedia({ video: true });
-          console.log('Default/any camera obtained after fallback.');
-        } catch (anyCameraError) {
-          console.error('Error accessing any camera after fallback:', anyCameraError);
-          setHasCameraPermission(false);
-          toast({
-            variant: 'destructive',
-            title: 'Acesso à Câmera Falhou',
-            description: 'Não foi possível acessar nenhuma câmera. Verifique as permissões do seu navegador.',
-          });
-          return; // Exit if all attempts fail
+          console.log('Attempting to get camera with constraint:', constraint.video);
+          streamRef.current = await navigator.mediaDevices.getUserMedia(constraint);
+          console.log('Camera obtained successfully.');
+          setHasCameraPermission(true);
+          setCameraError(null);
+          if (videoRef.current && streamRef.current) {
+            videoRef.current.srcObject = streamRef.current;
+            videoRef.current.play().catch(playError => console.error("Error playing video:", playError));
+          }
+          return; // Exit loop if camera is successfully obtained
+        } catch (err: any) {
+          console.warn(`Failed to get camera with constraint:`, constraint.video, err.name, err.message);
+          setCameraError(`Falha ao acessar câmera: ${err.message}. Tentando outra opção...`);
         }
       }
 
-      if (streamToCleanUp) {
-        setHasCameraPermission(true);
-        if (videoRef.current) {
-          videoRef.current.srcObject = streamToCleanUp;
-        }
-      } else {
-        // This case might be redundant if the catches above handle it, but serves as a safeguard
-        setHasCameraPermission(false);
-        if (user){ // Only show toast if user context is available
-             toast({
-                variant: 'destructive',
-                title: 'Acesso à Câmera Falhou',
-                description: 'Não foi possível iniciar a câmera.',
-            });
-        }
-      }
+      // If all attempts fail
+      console.error('All attempts to access camera failed.');
+      setHasCameraPermission(false);
+      setCameraError('Não foi possível acessar nenhuma câmera. Verifique as permissões do seu navegador.');
+      toast({
+        variant: 'destructive',
+        title: 'Acesso à Câmera Falhou',
+        description: 'Não foi possível acessar nenhuma câmera. Verifique as permissões do seu navegador.',
+      });
     };
 
-    if (user) { // Only attempt to get camera if user is loaded and present
-        getCameraStreamWithFallback();
-    } else if (!authLoading && !user) { // If auth is done loading and there's no user
-        setHasCameraPermission(false); // Ensure camera permission is false if no user
-    }
+    getCameraStream();
 
-
-    // Cleanup function for the useEffect hook
+    // Cleanup function
     return () => {
-      if (streamToCleanUp) {
-        streamToCleanUp.getTracks().forEach(track => track.stop());
-        console.log('Camera stream stopped on component unmount or user/auth change.');
-      }
-      if (videoRef.current) {
-        videoRef.current.srcObject = null; // Good practice to clear srcObject
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach(track => track.stop());
+        streamRef.current = null;
+        if(videoRef.current) videoRef.current.srcObject = null;
+        console.log('Camera stream stopped on component unmount.');
       }
     };
-  }, [user, authLoading, toast]); // Dependencies for useEffect
+  }, [user, authLoading, toast]);
 
   const handleScan = async () => {
     if (!hasCameraPermission) {
@@ -130,7 +129,41 @@ export default function ScanOfferPage() {
     setIsScanning(false);
   };
 
-  if (authLoading || !user) {
+  const renderCameraView = () => {
+    if (authLoading || (!user && !authLoading)) { // User context still loading or definitively no user
+      return (
+        <div className="text-center text-muted-foreground p-4 flex flex-col items-center justify-center h-full">
+          <Loader2 className="h-12 w-12 mx-auto mb-2 animate-spin text-primary" />
+          Aguardando autenticação...
+        </div>
+      );
+    }
+    if (hasCameraPermission === null && user) { // User loaded, camera permission being requested
+         return (
+            <div className="text-center text-muted-foreground p-4 flex flex-col items-center justify-center h-full">
+                <Camera className="h-12 w-12 mx-auto mb-2 text-primary" />
+                <Loader2 className="h-6 w-6 mx-auto my-2 animate-spin text-primary" />
+                Solicitando permissão da câmera...
+            </div>
+        );
+    }
+    if (hasCameraPermission === false) {
+        return (
+            <div className="text-center text-destructive-foreground p-4 bg-destructive/90 rounded-md w-full h-full flex flex-col justify-center items-center">
+                <VideoOff className="h-12 w-12 mx-auto mb-2" />
+                {cameraError || 'Acesso à câmera negado ou câmera não encontrada.'}
+            </div>
+        );
+    }
+    if (hasCameraPermission === true) {
+        // playsInline is important for iOS to play video inline
+        return <video ref={videoRef} className="w-full h-full object-cover" autoPlay muted playsInline />;
+    }
+    return null; // Fallback, should not be reached if logic is correct
+  };
+
+
+  if (authLoading) { // Skeleton for the whole page if auth is loading
     return (
       <div className="p-4 md:p-6 space-y-4">
         <Skeleton className="h-8 w-1/3" />
@@ -144,6 +177,22 @@ export default function ScanOfferPage() {
       </div>
     );
   }
+  
+  if (!user && !authLoading) { // If auth is done and still no user, show login prompt
+    return (
+      <div className="p-4 md:p-6 flex flex-col items-center justify-center min-h-[calc(100vh-200px)]">
+        <Alert variant="destructive">
+            <QrCode className="h-4 w-4" />
+            <AlertTitle>Login Necessário</AlertTitle>
+            <AlertDescription>Você precisa estar logado para escanear cupons.</AlertDescription>
+        </Alert>
+        <Button asChild className="mt-4">
+            <Link href="/login?redirect=/scan-offer">Fazer Login</Link>
+        </Button>
+      </div>
+    );
+  }
+
 
   return (
     <div className="p-4 md:p-6">
@@ -166,31 +215,10 @@ export default function ScanOfferPage() {
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="aspect-video w-full bg-muted rounded-md overflow-hidden flex items-center justify-center border border-dashed">
-            {hasCameraPermission === null && !authLoading && user && ( // Show loading only if user is loaded and no permission status yet
-              <div className="text-center text-muted-foreground p-4">
-                <Camera className="h-12 w-12 mx-auto mb-2" />
-                Solicitando permissão da câmera...
-              </div>
-            )}
-            {hasCameraPermission === false && (
-               <div className="text-center text-destructive-foreground p-4 bg-destructive/90 rounded-md w-full h-full flex flex-col justify-center items-center">
-                <VideoOff className="h-12 w-12 mx-auto mb-2" />
-                Acesso à câmera negado. Verifique as permissões do navegador.
-              </div>
-            )}
-            {hasCameraPermission === true && (
-                // Always render video tag, srcObject will be set by useEffect
-                <video ref={videoRef} className="w-full h-full object-cover" autoPlay muted playsInline />
-            )}
-             {hasCameraPermission === null && (authLoading || !user) && ( // Placeholder for when auth is loading
-                <div className="text-center text-muted-foreground p-4">
-                    <Camera className="h-12 w-12 mx-auto mb-2 opacity-50" />
-                    Aguardando autenticação para iniciar câmera...
-                </div>
-            )}
+            {renderCameraView()}
           </div>
 
-          {hasCameraPermission === false && (
+          {hasCameraPermission === false && user && ( // Show only if user is logged in and permission is denied
             <Alert variant="destructive">
               <VideoOff className="h-4 w-4" />
               <AlertTitle>Sem Acesso à Câmera</AlertTitle>
@@ -207,7 +235,11 @@ export default function ScanOfferPage() {
             size="lg"
             disabled={isScanning || hasCameraPermission !== true}
           >
-            {isScanning ? 'Escaneando...' : (
+            {isScanning ? (
+              <>
+                <Loader2 className="mr-2 h-5 w-5 animate-spin" /> Escaneando...
+              </>
+            ) : (
               <>
                 <Camera className="mr-2 h-5 w-5" />
                 {hasCameraPermission === true ? "Validar QR Code (Simulado)" : (hasCameraPermission === false ? "Câmera Indisponível" : "Aguardando Câmera...")}
