@@ -13,13 +13,14 @@ Seu clube de vantagens em Martins, RN e região! Encontre os melhores estabeleci
     *   `next-pwa` (for Progressive Web App capabilities)
 *   **Backend (Conceptual - Firebase integration prepared):**
     *   Firebase Authentication (Email/Password, Google)
-    *   Firebase Firestore (for users, businesses, deals, subscriptions, redemptions)
+    *   Firebase Firestore (for users, businesses, deals, subscriptions, redemptions, appointments)
     *   Firebase Storage (for images)
+    *   Firebase Cloud Messaging (FCM) (for Push Notifications)
     *   Genkit (for AI features, if added)
 *   **External APIs (Conceptual - Placeholders for integration):**
     *   Google Maps API (for maps, geocoding, routes)
     *   OpenWeather API (for weather information)
-    *   WhatsApp API (for sharing - typically via URL schemes client-side)
+    *   WhatsApp API (for sharing - typically via URL schemes client-side or backend for direct messaging)
 
 ## Configuração do Projeto
 
@@ -37,6 +38,7 @@ NEXT_PUBLIC_FIREBASE_PROJECT_ID="SEU_ID_DE_PROJETO_FIREBASE"
 NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET="SEU_BUCKET_STORAGE_FIREBASE.appspot.com"
 NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID="SEU_ID_DE_REMETENTE_MENSAGENS_FIREBASE"
 NEXT_PUBLIC_FIREBASE_APP_ID="SEU_ID_DE_APP_FIREBASE"
+NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID="SEU_MEASUREMENT_ID_FIREBASE" # Opcional, para Analytics
 
 # Google Maps API Key (obtenha do Google Cloud Console)
 NEXT_PUBLIC_GOOGLE_MAPS_API_KEY="SUA_CHAVE_DE_API_GOOGLE_MAPS"
@@ -64,13 +66,14 @@ pnpm install
 3.  **Authentication:** No console do Firebase, vá para "Authentication" -> "Sign-in method" e habilite os provedores "Email/Password" e "Google".
 4.  **Firestore:**
     *   Vá para "Firestore Database" e crie um banco de dados no modo "Native".
-    *   Planeje suas coleções (ex: `users`, `businesses`, `deals`, `subscriptions`, `redemptions`).
+    *   Planeje suas coleções (ex: `users`, `businesses`, `deals`, `subscriptions`, `redemptions`, `appointments`).
     *   **Crucial:** Defina as **Regras de Segurança (Security Rules)** para proteger seus dados adequadamente. (Exemplo: Permitir leitura pública de negócios e ofertas, mas escrita restrita a usuários autenticados/admins/parceiros).
 5.  **Storage (Opcional):** Se for usar para imagens de parceiros/pontos turísticos, vá para "Storage", crie um bucket e configure as Regras de Segurança.
 6.  **Firebase Cloud Messaging (FCM - para Push Notifications):**
     *   No seu projeto Firebase, vá em "Project settings" > "Cloud Messaging".
-    *   Copie a "Server key" (legacy token) se você for usar a API HTTP v1 para enviar notificações do seu backend, ou configure o Admin SDK no seu backend.
-    *   Para receber notificações no PWA, você precisará de um "Web Push certificate" (VAPID key pair) que é gerado no Firebase console em "Cloud Messaging" > "Web configuration". A chave pública será usada no seu frontend/service worker.
+    *   Se ainda não existir, habilite a API "Firebase Cloud Messaging API (V1)".
+    *   Gere uma chave de servidor (se for enviar notificações do seu próprio backend) ou configure o Admin SDK.
+    *   Para receber notificações no PWA, você precisará de um "Web Push certificate" (VAPID key pair). No console do Firebase, vá em "Project settings" > "Cloud Messaging" > "Web configuration" (abaixo de "Web Push certificates") e clique em "Generate key pair". A chave pública será usada no seu frontend/service worker.
 
 ### 4. Configurar Google Maps API (Manual)
 1.  Vá para o [Google Cloud Console](https://console.cloud.google.com/).
@@ -114,18 +117,47 @@ Você pode hospedar seu aplicativo Next.js em várias plataformas. [Firebase Hos
 2.  Faça login: `firebase login`
 3.  Inicialize o Firebase no seu projeto: `firebase init hosting`
     *   Selecione seu projeto Firebase.
-    *   Configure o diretório público para `out` (se você estiver exportando um site estático com PWA) ou `.next` (para SSR/ISR, o que pode requerer configuração adicional em `firebase.json` para reescritas para uma Cloud Function). Para um PWA com `next-pwa`, o output é tipicamente para a pasta `out` após um `next build && next export` (se você não estiver usando SSR/API routes que precisam de um servidor Node.js). Se você está usando SSR, a configuração é diferente. *Por padrão, `next-pwa` trabalha bem com o output do `next build` e Firebase Hosting pode servir o conteúdo de `.next/static` e reescrever outras rotas para um servidor Next.js se necessário.* **Para simplicidade com PWA, se você não precisa de SSR extensivo, um export estático é mais fácil.**
-    *   Configure como um single-page app (SPA): Geralmente "Não" para Next.js com App Router, a menos que você esteja fazendo um export estático e queira que o Firebase lide com todas as rotas para `index.html`.
-    *   Set up automatic builds and deploys with GitHub?: Opcional.
+    *   Configure o diretório público para `out` (se você estiver exportando um site estático com `next export` - o PWA funciona bem aqui). No entanto, com o App Router, o output padrão é a pasta `.next` para SSR/ISR. Firebase Hosting pode servir conteúdo de `.next/static` e reescrever outras rotas para um servidor Next.js (requer Cloud Functions for Firebase se você tem funcionalidades server-side). Para uma PWA mais simples com `next-pwa`, o output gerado pelo `next build` é geralmente o que você usa.
+    *   **Para a configuração atual (App Router + `next-pwa`):**
+        *   Quando o Firebase CLI perguntar "What do you want to use as your public directory?", digite `.next`.
+        *   Configure como um single-page app (SPA)? **No**. Next.js com App Router lida com o roteamento.
+        *   Set up automatic builds and deploys with GitHub? Opcional.
+        *   File `.next/hosting/index.html` already exists. Overwrite? **No**, a menos que você saiba que quer sobrescrever.
+    *   Firebase irá criar ou atualizar seu arquivo `firebase.json`. Ele deve parecer algo como:
+        ```json
+        {
+          "hosting": {
+            "public": ".next", // Se você não usa `output: 'export'`
+            // "public": "out", // Se você usa `output: 'export'` em next.config.ts
+            "ignore": [
+              "firebase.json",
+              "**/.*",
+              "**/node_modules/**"
+            ],
+            "rewrites": [
+              {
+                "source": "**",
+                "function": "server" // Se você tem SSR/API routes que precisam de um servidor Node.js
+                // "destination": "/index.html" // Para um SPA puro ou export estático com client-side routing
+              }
+            ]
+          }
+          // Se usar Cloud Functions para SSR:
+          // "functions": {
+          //   "source": "functions" // Ou o diretório das suas cloud functions
+          // }
+        }
+        ```
+        **Nota:** Para um app Next.js com App Router que pode ter funcionalidades server-side, você geralmente precisará de uma Cloud Function para servir o app. Se o seu app é puramente estático (ou você usa `output: 'export'` em `next.config.ts`), o diretório público seria `out`. A configuração atual com `next-pwa` funciona bem com o output do `next build` para PWAs.
 4.  Faça o deploy: `firebase deploy`
 
 Consulte a [documentação oficial do Next.js sobre deploy](https://nextjs.org/docs/deployment) e a [documentação do `next-pwa`](https://www.npmjs.com/package/next-pwa) para mais opções e configurações detalhadas.
 
 ## PWA (Progressive Web App)
 O projeto está configurado com `next-pwa`.
-*   `public/manifest.json`: Contém os metadados do PWA. Personalize os ícones e detalhes.
-*   `public/sw.js`: Um service worker básico está incluído.
-*   Para testar, construa para produção e sirva localmente (ex: com `npx serve out`) ou deploy para o Firebase Hosting. Teste a funcionalidade "Adicionar à Tela Inicial" e o comportamento offline.
+*   `public/manifest.json`: Contém os metadados do PWA. Personalize os ícones e detalhes. **Importante:** Substitua os ícones placeholder em `/public/icons/` (ex: `icon-192x192.png`, `icon-512x512.png`) pelos ícones reais do seu aplicativo e certifique-se de que os caminhos em `manifest.json` estão corretos.
+*   `public/sw.js`: Um service worker básico está incluído, gerado por `next-pwa`.
+*   Para testar, construa para produção (`npm run build`) e sirva localmente (ex: com `npx serve .next/server/app` se SSR, ou `npx serve out` se export estático) ou deploy para o Firebase Hosting. Teste a funcionalidade "Adicionar à Tela Inicial" e o comportamento offline.
 
 ## Avisos e Passos Manuais Importantes
 
@@ -134,6 +166,7 @@ O projeto está configurado com `next-pwa`.
 *   **Backend para Agendamentos Reais, Pagamentos, Push Notifications:**
     *   **Agendamentos e Confirmações:** A lógica atual é simulada. Para agendamentos reais e confirmações (WhatsApp/Email), você precisará de um backend (ex: Firebase Cloud Functions ou um servidor dedicado) para processar os pedidos, interagir com APIs de mensagens, e gerenciar o status dos agendamentos.
     *   **Pagamentos de Assinatura:** Requer integração com um gateway de pagamento (Stripe, Mercado Pago) e lógica de backend para gerenciar assinaturas e webhooks.
-    *   **Push Notifications:** Envio de notificações push requer lógica de backend (ex: Firebase Cloud Functions) para interagir com FCM/APNs.
+    *   **Push Notifications:** Envio de notificações push requer lógica de backend (ex: Firebase Cloud Functions) para interagir com FCM/APNs, utilizando os tokens dos dispositivos dos usuários.
 *   **Comentários no Código:** Procure por comentários `// TODO:` ou `// Placeholder:` no código para identificar áreas que necessitam de implementação de backend, integração de APIs reais, ou substituição de dados mockados.
-
+*   **Multilíngue:** A estrutura para isso não foi completamente implementada. Você precisará de bibliotecas como `next-intl` ou `react-i18next` e arquivos de tradução.
+*   **Geração de APK:** Este é um projeto Next.js (Web). Para um APK Android nativo, você precisaria de um framework como React Native, Flutter, ou usar uma ferramenta como CapacitorJS para empacotar seu app web em um contêiner nativo. A funcionalidade PWA permite que o web app seja "instalado" em dispositivos móveis.
