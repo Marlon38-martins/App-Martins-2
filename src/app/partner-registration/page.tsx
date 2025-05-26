@@ -8,6 +8,7 @@ import Image from 'next/image'; // Import Image
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { CheckCircle, Award, MessageSquare, Briefcase, ArrowLeft, TrendingUp, Rocket, Handshake, BadgePercent, UserPlus, Wrench, Ticket, Star, ShieldCheck } from 'lucide-react';
+import { Separator } from '@/components/ui/separator'; // Added import
 
 export default function PartnerRegistrationPage() {
   useEffect(() => {
@@ -22,7 +23,7 @@ export default function PartnerRegistrationPage() {
       normalOffers: 3,
       specialOffers: 1,
       description: "Ideal para começar e testar a plataforma, alcançando novos clientes com ofertas direcionadas.",
-      priceInfo: "Consulte-nos para valores",
+      priceInfo: "Saber Mais",
     },
     {
       name: "Plano Processo",
@@ -31,16 +32,16 @@ export default function PartnerRegistrationPage() {
       normalOffers: 5,
       specialOffers: 1,
       description: "Aumente seu alcance e engajamento com mais ofertas e destaque para seus benefícios.",
-      priceInfo: "Consulte-nos para valores",
+      priceInfo: "Saber Mais",
     },
     {
       name: "Plano Consolide",
-      Icon: ShieldCheck, // Using ShieldCheck for "Consolide"
+      Icon: ShieldCheck, 
       iconColor: "text-purple-500",
       normalOffers: 6,
       specialOffers: 2,
       description: "Maximize sua visibilidade e resultados com o pacote mais completo de ofertas e vantagens.",
-      priceInfo: "Consulte-nos para valores",
+      priceInfo: "Saber Mais",
     }
   ];
 
@@ -149,7 +150,7 @@ export default function PartnerRegistrationPage() {
                   </CardContent>
                   <CardFooter className="p-0 mt-auto pt-4">
                     <Button variant="outline" asChild className="w-full">
-                      <Link href="mailto:parcerias@guiamais.com.br?subject=Interesse%20no%20Plano%20Premium%20Parceiro">
+                      <Link href="mailto:parcerias@guiamais.com.br?subject=Interesse%20em%20Plano%20Premium%20Parceiro">
                         <MessageSquare className="mr-2 h-4 w-4" /> {plan.priceInfo}
                       </Link>
                     </Button>
