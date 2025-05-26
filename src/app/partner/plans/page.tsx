@@ -13,34 +13,42 @@ const partnerPlansData = [
     name: "Plano Largada",
     Icon: Rocket,
     iconColor: "text-blue-500",
+    price: "R$ 79,90",
+    billingCycle: "/ mês",
     benefits: [
       { text: "3 Ofertas Normais (com QR Code de resgate)", IconComp: Ticket },
       { text: "1 Oferta VIP Especial (com QR Code de resgate)", IconComp: Star },
+      { text: "Notificação para clientes VIP sobre sua Oferta Especial", IconComp: MessageSquare },
       { text: "QR Code exclusivo para direcionar clientes à sua página no Guia Mais", IconComp: QrCodeIcon },
       { text: "Exibição de avaliações de clientes em sua página", IconComp: Star },
     ],
     description: "Ideal para negócios que estão começando e buscam ganhar visibilidade inicial, atraindo novos clientes com ofertas de impacto e feedback direto dos usuários.",
     priceInfo: "Tenho Interesse",
-    mailtoSubject: "Interesse no Plano Largada - Guia Mais",
+    mailtoSubject: "Interesse no Plano Largada (R$79,90/mês) - Guia Mais",
   },
   {
     name: "Plano Processo",
     Icon: TrendingUp,
     iconColor: "text-green-500",
+    price: "R$ 119,90",
+    billingCycle: "/ mês",
     benefits: [
       { text: "5 Ofertas Normais (com QR Code de resgate)", IconComp: Ticket },
       { text: "1 Oferta VIP Especial (com QR Code de resgate)", IconComp: Star },
+      { text: "Notificação para clientes VIP sobre sua Oferta Especial", IconComp: MessageSquare },
       { text: "QR Code exclusivo para direcionar clientes à sua página no Guia Mais", IconComp: QrCodeIcon },
       { text: "Exibição de avaliações de clientes em sua página", IconComp: Star },
     ],
     description: "Para negócios em crescimento que desejam maior engajamento e mais oportunidades de destacar seus serviços, com mais ofertas e a força das avaliações.",
     priceInfo: "Tenho Interesse",
-    mailtoSubject: "Interesse no Plano Processo - Guia Mais",
+    mailtoSubject: "Interesse no Plano Processo (R$119,90/mês) - Guia Mais",
   },
   {
     name: "Plano Consolide",
     Icon: ShieldCheck,
     iconColor: "text-purple-500",
+    price: "R$ 179,90",
+    billingCycle: "/ mês",
     benefits: [
       { text: "6 Ofertas Normais (com QR Code de resgate)", IconComp: Ticket },
       { text: "2 Ofertas VIP Especiais (com QR Code de resgate)", IconComp: Star },
@@ -52,7 +60,7 @@ const partnerPlansData = [
     ],
     description: "Maximize sua presença e resultados! Visibilidade premium, notificações VIP, acompanhamento completo de desempenho e o poder das avaliações de clientes.",
     priceInfo: "Tenho Interesse",
-    mailtoSubject: "Interesse no Plano Consolide - Guia Mais",
+    mailtoSubject: "Interesse no Plano Consolide (R$179,90/mês) - Guia Mais",
   }
 ];
 
@@ -87,6 +95,9 @@ export default function PartnerPlansPage() {
               <CardDescription className="text-sm text-muted-foreground">{plan.description}</CardDescription>
             </CardHeader>
             <CardContent className="p-4 md:p-6 pt-0">
+              <div className="mb-4">
+                <p className="text-3xl font-bold text-primary">{plan.price}<span className="text-sm font-normal text-muted-foreground">{plan.billingCycle}</span></p>
+              </div>
               <h4 className="font-semibold text-foreground/90 mb-2">Benefícios Inclusos:</h4>
               <ul className="space-y-1.5 text-sm text-foreground/80">
                 {plan.benefits.map((benefit, index) => (
