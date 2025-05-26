@@ -18,11 +18,11 @@ export default function PartnerRegistrationPage() {
   const partnerPlans = [
     {
       name: "Plano Largada",
-      Icon: Briefcase,
+      Icon: Rocket, // Changed from Briefcase for "Largada"
       iconColor: "text-blue-500",
       normalOffers: 3,
       specialOffers: 1,
-      description: "Ideal para iniciar na plataforma, ganhar visibilidade e atrair novos clientes com uma oferta especial de impacto.",
+      description: "Ideal para negócios que estão começando e buscam ganhar visibilidade inicial, atraindo novos clientes com uma oferta especial de impacto e algumas promoções regulares.",
       priceInfo: "Saber Mais",
     },
     {
@@ -31,7 +31,7 @@ export default function PartnerRegistrationPage() {
       iconColor: "text-green-500",
       normalOffers: 5,
       specialOffers: 1,
-      description: "Para negócios em crescimento que buscam maior engajamento e mais oportunidades de destacar seus serviços e produtos.",
+      description: "Para negócios em crescimento que desejam maior engajamento e mais oportunidades de destacar seus serviços e produtos com um volume maior de ofertas.",
       priceInfo: "Saber Mais",
     },
     {
@@ -40,7 +40,7 @@ export default function PartnerRegistrationPage() {
       iconColor: "text-purple-500",
       normalOffers: 6,
       specialOffers: 2,
-      description: "Maximize sua presença e resultados! O pacote completo para negócios que querem se destacar com múltiplas ofertas VIP.",
+      description: "Maximize sua presença e resultados! Visibilidade premium na página inicial, notificações frequentes de suas ofertas para clientes VIP e acompanhamento de desempenho de fluxo de visitas ao seu estabelecimento.",
       priceInfo: "Saber Mais",
     }
   ];
@@ -65,7 +65,7 @@ export default function PartnerRegistrationPage() {
       </div>
 
       <section className="mb-10 text-center">
-        <Rocket className="mx-auto h-16 w-16 text-primary mb-4" />
+        <Handshake className="mx-auto h-16 w-16 text-primary mb-4" />
         <h1 className="mb-3 text-3xl font-bold tracking-tight text-primary md:text-4xl">
           Cadastre seu negócio e atraia mais turistas!
         </h1>
@@ -122,7 +122,7 @@ export default function PartnerRegistrationPage() {
         <Card className="shadow-lg">
           <CardHeader>
             <CardTitle className="flex items-center text-xl text-primary">
-              <Handshake className="mr-3 h-7 w-7" />
+              <BadgePercent className="mr-3 h-7 w-7" />
               Nossos Planos de Parceria Premium
             </CardTitle>
             <CardDescription>Escolha o plano que melhor se adapta às suas necessidades e impulsione seu negócio.</CardDescription>
@@ -136,9 +136,9 @@ export default function PartnerRegistrationPage() {
                       <plan.Icon className={`mr-2 h-6 w-6 ${plan.iconColor}`} />
                       <CardTitle className={`text-lg font-semibold ${plan.iconColor}`}>{plan.name}</CardTitle>
                     </div>
-                    <CardDescription className="text-xs text-muted-foreground">{plan.description}</CardDescription>
                   </CardHeader>
                   <CardContent className="p-0 flex-grow">
+                    <p className="text-xs text-muted-foreground mb-2">{plan.description}</p>
                     <ul className="space-y-1.5 text-xs text-foreground/80">
                       <li className="flex items-center">
                         <Ticket className="mr-2 h-3.5 w-3.5 text-green-500" /> {plan.normalOffers} Ofertas Normais
@@ -150,7 +150,7 @@ export default function PartnerRegistrationPage() {
                   </CardContent>
                   <CardFooter className="p-0 mt-auto pt-3">
                     <Button variant="outline" asChild className="w-full text-xs h-9">
-                      <Link href="mailto:parcerias@guiamais.com.br?subject=Interesse%20em%20Plano%20Premium%20Parceiro%20-%20Guia%20Mais">
+                      <Link href="mailto:parcerias@guiamais.com.br?subject=Interesse%20no%20Plano%20Premium%20de%20Parceiro:%20Guia%20Mais">
                         <MessageSquare className="mr-2 h-3.5 w-3.5" /> {plan.priceInfo}
                       </Link>
                     </Button>
@@ -178,7 +178,7 @@ export default function PartnerRegistrationPage() {
         <Card className="shadow-lg bg-gradient-to-r from-primary/10 via-background to-background">
           <CardHeader>
             <CardTitle className="flex items-center text-xl text-primary">
-              <Rocket className="mr-3 h-7 w-7" />
+              <UserPlus className="mr-3 h-7 w-7" />
               Pronto para Começar?
             </CardTitle>
             <CardDescription>Dê o próximo passo para destacar seu negócio em Martins!</CardDescription>
@@ -212,3 +212,4 @@ export default function PartnerRegistrationPage() {
     </div>
   );
 }
+
