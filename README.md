@@ -1,3 +1,4 @@
+
 # Guia Mais - Aplicativo de Turismo e Vantagens
 
 Seu clube de vantagens em Martins, RN e região! Encontre os melhores estabelecimentos, ofertas exclusivas e explore o que a cidade tem a oferecer.
@@ -155,7 +156,7 @@ Consulte a [documentação oficial do Next.js sobre deploy](https://nextjs.org/d
 
 ## PWA (Progressive Web App)
 O projeto está configurado com `next-pwa`.
-*   `public/manifest.json`: Contém os metadados do PWA. Personalize os ícones e detalhes. **Importante:** Substitua os ícones placeholder em `/public/icons/` (ex: `icon-192x192.png`, `icon-512x512.png`) pelos ícones reais do seu aplicativo e certifique-se de que os caminhos em `manifest.json` estão corretos.
+*   `public/manifest.json`: Contém os metadados do PWA. **Importante:** Crie uma pasta `/public/icons/` e adicione seus ícones de aplicativo (ex: `icon-72x72.png`, `icon-96x96.png`, `icon-128x128.png`, `icon-144x144.png`, `icon-152x152.png`, `icon-192x192.png`, `icon-384x384.png`, `icon-512x512.png`). Certifique-se de que os caminhos e tamanhos em `manifest.json` correspondem aos seus arquivos de ícone.
 *   `public/sw.js`: Um service worker básico está incluído, gerado por `next-pwa`.
 *   Para testar, construa para produção (`npm run build`) e sirva localmente (ex: com `npx serve .next/server/app` se SSR, ou `npx serve out` se export estático) ou deploy para o Firebase Hosting. Teste a funcionalidade "Adicionar à Tela Inicial" e o comportamento offline.
 

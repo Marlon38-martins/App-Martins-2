@@ -331,7 +331,7 @@ export default function AdminEditPartnerDetailsPage() {
                 <FormField control={form.control} name="icon" render={({ field }) => (
                     <FormItem>
                       <FormLabel>Ícone *</FormLabel>
-                      <Select onValueChange={field.onChange} value={field.value}>
+                      <Select onValueChange={field.onChange} value={field.value ?? undefined}>
                         <FormControl><SelectTrigger><SelectValue placeholder="Selecione um ícone" /></SelectTrigger></FormControl>
                         <SelectContent>{iconNames.map(iconName => (<SelectItem key={iconName} value={iconName}>{iconName}</SelectItem>))}</SelectContent>
                       </Select>

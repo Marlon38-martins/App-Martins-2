@@ -303,7 +303,7 @@ export default function AddEstablishmentPage() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel htmlFor="icon">Ícone representativo *</FormLabel>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <Select onValueChange={field.onChange} value={field.value ?? undefined}>
                         <FormControl>
                           <SelectTrigger id="icon">
                             <SelectValue placeholder="Selecione um ícone" />

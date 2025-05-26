@@ -1,11 +1,12 @@
+
 {
   "name": "Guia Mais",
   "short_name": "GuiaMais",
-  "description": "Seu clube de vantagens em Martins, RN e região!",
+  "description": "Seu clube de vantagens e guia turístico em Martins, RN e região!",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#007bff",
+  "theme_color": "#2176FF", 
   "icons": [
     {
       "src": "/icons/icon-72x72.png",
