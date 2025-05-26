@@ -8,7 +8,7 @@ import Image from 'next/image'; // Import Image
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { CheckCircle, Award, MessageSquare, Briefcase, ArrowLeft, TrendingUp, Rocket, Handshake, BadgePercent, UserPlus, Wrench, Ticket, Star, ShieldCheck } from 'lucide-react';
-import { Separator } from '@/components/ui/separator'; // Added import
+import { Separator } from '@/components/ui/separator';
 
 export default function PartnerRegistrationPage() {
   useEffect(() => {
@@ -17,12 +17,12 @@ export default function PartnerRegistrationPage() {
 
   const partnerPlans = [
     {
-      name: "Plano Largada", // Changed from Lagamar to Largada
+      name: "Plano Largada",
       Icon: Briefcase,
       iconColor: "text-blue-500",
       normalOffers: 3,
       specialOffers: 1,
-      description: "Ideal para começar e testar a plataforma, alcançando novos clientes com ofertas direcionadas.",
+      description: "Ideal para iniciar na plataforma, ganhar visibilidade e atrair novos clientes com uma oferta especial de impacto.",
       priceInfo: "Saber Mais",
     },
     {
@@ -31,16 +31,16 @@ export default function PartnerRegistrationPage() {
       iconColor: "text-green-500",
       normalOffers: 5,
       specialOffers: 1,
-      description: "Aumente seu alcance e engajamento com mais ofertas e destaque para seus benefícios.",
+      description: "Para negócios em crescimento que buscam maior engajamento e mais oportunidades de destacar seus serviços e produtos.",
       priceInfo: "Saber Mais",
     },
     {
       name: "Plano Consolide",
-      Icon: ShieldCheck, 
+      Icon: ShieldCheck,
       iconColor: "text-purple-500",
       normalOffers: 6,
       specialOffers: 2,
-      description: "Maximize sua visibilidade e resultados com o pacote mais completo de ofertas e vantagens.",
+      description: "Maximize sua presença e resultados! O pacote completo para negócios que querem se destacar com múltiplas ofertas VIP.",
       priceInfo: "Saber Mais",
     }
   ];
