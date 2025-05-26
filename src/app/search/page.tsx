@@ -2,6 +2,7 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
+import Image from 'next/image';
 import { getGramadoBusinesses, getAllDeals, type GramadoBusiness, type Deal } from '@/services/gramado-businesses';
 import { BusinessCard } from '@/components/business/business-card';
 import { DealCard } from '@/components/deal/deal-card';
@@ -111,7 +112,9 @@ export default function SearchPage() {
 
       {!isLoading && !error && searchTerm && !hasResults && (
         <div className="mt-12 flex flex-col items-center justify-center text-center">
-          <Frown className="mb-4 h-16 w-16 text-muted-foreground" />
+          <div className="relative h-32 w-32 mb-4 text-muted-foreground">
+            <Image src="https://placehold.co/200x200.png" alt="Nenhum resultado" layout="fill" objectFit="contain" data-ai-hint="no results empty" />
+          </div>
           <h3 className="text-xl font-semibold text-foreground">Nenhum resultado encontrado</h3>
           <p className="text-muted-foreground">
             Não encontramos nada para "{searchTerm}". Tente um termo diferente.
@@ -121,7 +124,9 @@ export default function SearchPage() {
       
       {!isLoading && !error && !searchTerm && !hasResults && (
          <div className="mt-12 flex flex-col items-center justify-center text-center">
-            <SearchIconLucide className="mb-4 h-16 w-16 text-muted-foreground" />
+            <div className="relative h-32 w-32 mb-4 text-muted-foreground">
+              <Image src="https://placehold.co/200x200.png" alt="Comece a buscar" layout="fill" objectFit="contain" data-ai-hint="magnifying glass search" />
+            </div>
             <h3 className="text-xl font-semibold text-foreground">O que você gostaria de encontrar?</h3>
             <p className="text-muted-foreground">
              Use a barra de busca acima para encontrar parceiros, ofertas e mais.

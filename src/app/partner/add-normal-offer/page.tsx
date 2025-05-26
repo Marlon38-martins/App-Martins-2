@@ -184,6 +184,15 @@ export default function AddNormalOfferPage() {
         <p className="text-xs text-foreground/80 md:text-sm">
           Adicione promoções e descontos para todos os membros em: <span className="font-semibold text-accent">{partnerBusiness?.name}</span>.
         </p>
+        <div className="relative w-full h-32 md:h-40 mt-3 rounded-lg overflow-hidden shadow-sm">
+          <Image
+            src="https://placehold.co/600x240.png"
+            alt="Criar oferta normal"
+            layout="fill"
+            objectFit="cover"
+            data-ai-hint="discount offer create"
+          />
+        </div>
       </section>
 
       {createdOfferDetails ? (

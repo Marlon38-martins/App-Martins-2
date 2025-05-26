@@ -181,22 +181,31 @@ export default function AddVipOfferPage() {
       </Button>
 
       <section className="mb-5">
-        <h2 className="mb-1.5 text-lg font-bold tracking-tight text-primary md:text-xl">
+        <h2 className="mb-1.5 text-lg font-bold tracking-tight text-purple-600 md:text-xl">
           Criar Nova Oferta VIP Especial
         </h2>
         <p className="text-xs text-foreground/80 md:text-sm">
           Adicione promoções exclusivas para membros VIP em: <span className="font-semibold text-accent">{partnerBusiness?.name}</span>.
         </p>
+         <div className="relative w-full h-32 md:h-40 mt-3 rounded-lg overflow-hidden shadow-sm">
+          <Image
+            src="https://placehold.co/600x240.png"
+            alt="Criar oferta VIP"
+            layout="fill"
+            objectFit="cover"
+            data-ai-hint="vip offer luxury"
+          />
+        </div>
       </section>
 
       {createdOfferDetails ? (
-        <Card className="shadow-md">
-          <CardHeader className="p-3">
-            <CardTitle className="flex items-center text-base text-primary md:text-lg">
+        <Card className="shadow-md border-purple-500/50">
+          <CardHeader className="p-3 bg-purple-500/10">
+            <CardTitle className="flex items-center text-base text-purple-700 md:text-lg">
               <Star className="mr-2 h-4 w-4 md:h-5 md:w-5 text-yellow-400 fill-yellow-400" />
               QR Code da Oferta VIP: {createdOfferDetails.title}
             </CardTitle>
-            <CardDescription className="text-xs md:text-sm">
+            <CardDescription className="text-xs md:text-sm text-purple-700/90">
               Este QR Code pode ser usado pelos clientes VIP para resgatar a oferta.
             </CardDescription>
           </CardHeader>
@@ -207,7 +216,7 @@ export default function AddVipOfferPage() {
                 alt={`QR Code para ${createdOfferDetails.title}`}
                 width={200}
                 height={200}
-                data-ai-hint="qr code offer"
+                data-ai-hint="qr code vip offer"
               />
             </div>
             <p className="text-xs text-muted-foreground mb-3">
@@ -217,7 +226,7 @@ export default function AddVipOfferPage() {
               asChild
               variant="outline"
               size="sm"
-              className="text-xs mr-2"
+              className="text-xs mr-2 border-purple-500 text-purple-600 hover:bg-purple-500/10 hover:text-purple-700"
             >
               <a href={`https://placehold.co/200x200.png?text=QR+VIP+${createdOfferDetails.id.substring(0, 8)}`} download={`QR_Code_VIP_${createdOfferDetails.title.replace(/\s+/g, '_')}.png`}>
                 <Download className="mr-1.5 h-3.5 w-3.5" />
@@ -226,7 +235,7 @@ export default function AddVipOfferPage() {
             </Button>
           </CardContent>
           <CardFooter className="p-3">
-            <Button onClick={handleCreateAnotherOffer} size="sm" className="w-full text-xs">
+            <Button onClick={handleCreateAnotherOffer} size="sm" className="w-full text-xs bg-purple-600 hover:bg-purple-700 text-white">
               <RefreshCw className="mr-1.5 h-3.5 w-3.5" />
               Criar Outra Oferta VIP
             </Button>
@@ -237,7 +246,7 @@ export default function AddVipOfferPage() {
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)}>
               <CardHeader className="p-3">
-                <CardTitle className="flex items-center text-base text-primary md:text-lg">
+                <CardTitle className="flex items-center text-base text-purple-600 md:text-lg">
                   <Star className="mr-2 h-4 w-4 md:h-5 md:w-5 text-yellow-400 fill-yellow-400" />
                   Detalhes da Nova Oferta VIP
                 </CardTitle>

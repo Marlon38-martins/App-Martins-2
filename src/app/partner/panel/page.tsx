@@ -2,38 +2,55 @@
 'use client';
 
 import Link from 'next/link';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import Image from 'next/image';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Briefcase, LayoutDashboard, Tag, Edit3, BarChart3, ImageIcon, ShieldAlert, ArrowLeft, PlusCircle, Star } from 'lucide-react';
+import { Briefcase, LayoutDashboard, Tag, Edit3, BarChart3, ImageIcon, PlusCircle, Star, ShieldAlert, ArrowLeft } from 'lucide-react';
 
 const MOCK_PARTNER_BUSINESS_ID = '1'; 
 
 export default function PartnerPanelPage() {
+  // NOTE: Authentication and role checks were removed for public access demonstration.
+  // In a real app, you'd use useAuth() here to get user details and restrict access.
+  const partnerName = "Parceiro Guia Mais"; // Generic name
+
   return (
     <div className="p-3 md:p-4 space-y-4">
       <section className="mb-5">
-        <h1 className="text-lg font-bold text-primary mb-1.5 flex items-center md:text-xl">
-            <Briefcase className="mr-2 h-5 w-5 md:h-6 md:w-6 text-accent" />
+        <div className="flex items-center mb-1.5">
+          <Briefcase className="mr-2 h-6 w-6 md:h-7 md:w-7 text-primary" />
+          <h1 className="text-xl font-bold text-primary md:text-2xl">
             Portal do Parceiro Guia Mais
-        </h1>
+          </h1>
+        </div>
         <p className="text-xs text-foreground/80 md:text-sm">
-          Bem-vindo ao Portal do Parceiro! Gerencie seu estabelecimento, ofertas e explore as ferramentas.
+          Bem-vindo(a), {partnerName}! Gerencie seu estabelecimento, ofertas e explore as ferramentas.
         </p>
       </section>
+      
+      <div className="relative w-full h-40 md:h-48 mb-6 rounded-lg overflow-hidden shadow-md">
+        <Image
+          src="https://placehold.co/800x300.png"
+          alt="Painel do Parceiro Guia Mais"
+          layout="fill"
+          objectFit="cover"
+          data-ai-hint="dashboard interface"
+        />
+      </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
         <Card className="shadow-md hover:shadow-lg transition-shadow duration-300">
           <CardHeader className="p-3">
             <CardTitle className="flex items-center text-base md:text-lg text-accent">
               <LayoutDashboard className="mr-2 h-4 w-4 md:h-5 md:w-5" />
-              Painel do Estabelecimento
+              Meu Painel Detalhado
             </CardTitle>
-            <CardDescription className="text-xs md:text-sm">Informações e ofertas do seu estabelecimento.</CardDescription>
+            <CardDescription className="text-xs md:text-sm">Informações e resumo do seu estabelecimento.</CardDescription>
           </CardHeader>
           <CardContent className="p-3">
             <Button asChild className="w-full text-xs md:text-sm" size="sm">
               <Link href="/partner/dashboard">
-                Acessar Painel
+                Acessar Painel do Estabelecimento
               </Link>
             </Button>
           </CardContent>
@@ -43,14 +60,14 @@ export default function PartnerPanelPage() {
           <CardHeader className="p-3">
             <CardTitle className="flex items-center text-base md:text-lg text-accent">
               <Edit3 className="mr-2 h-4 w-4 md:h-5 md:w-5" />
-              Editar Detalhes
+              Editar Dados do Negócio
             </CardTitle>
-            <CardDescription className="text-xs md:text-sm">Atualize informações e contatos do seu negócio.</CardDescription>
+            <CardDescription className="text-xs md:text-sm">Atualize informações, fotos e contatos.</CardDescription>
           </CardHeader>
           <CardContent className="p-3">
             <Button asChild className="w-full text-xs md:text-sm" size="sm">
               <Link href={`/partner/edit-business/${MOCK_PARTNER_BUSINESS_ID}`}>
-                Editar Dados do Negócio
+                Editar Meu Estabelecimento
               </Link>
             </Button>
           </CardContent>
@@ -62,7 +79,7 @@ export default function PartnerPanelPage() {
               <PlusCircle className="mr-2 h-4 w-4 md:h-5 md:w-5" />
               Criar Oferta Normal
             </CardTitle>
-            <CardDescription className="text-xs md:text-sm">Crie promoções para todos os clientes.</CardDescription>
+            <CardDescription className="text-xs md:text-sm">Crie promoções para todos os clientes Guia Mais.</CardDescription>
           </CardHeader>
           <CardContent className="p-3">
             <Button asChild className="w-full text-xs md:text-sm" size="sm">
@@ -94,9 +111,9 @@ export default function PartnerPanelPage() {
           <CardHeader className="p-3">
             <CardTitle className="flex items-center text-base md:text-lg text-accent">
               <BarChart3 className="mr-2 h-4 w-4 md:h-5 md:w-5" />
-              Desempenho
+              Desempenho (Em Breve)
             </CardTitle>
-            <CardDescription className="text-xs md:text-sm">Veja estatísticas de visualizações e resgates.</CardDescription>
+            <CardDescription className="text-xs md:text-sm">Estatísticas de visualizações e resgates.</CardDescription>
           </CardHeader>
           <CardContent className="p-3">
             <Button asChild className="w-full text-xs md:text-sm" size="sm">

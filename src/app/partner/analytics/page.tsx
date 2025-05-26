@@ -2,6 +2,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -25,7 +26,7 @@ export default function PartnerAnalyticsPage() {
           <BarChart3 className="mr-2 h-5 w-5 md:h-6 md:w-6 text-accent" />
           Visão Geral do Desempenho
         </h1>
-        <p className="text-xs text-muted-foreground md:text-sm">Acompanhe as métricas do seu estabelecimento no Guia Mais.</p>
+        <p className="text-xs text-muted-foreground md:text-sm">Acompanhe as métricas do seu estabelecimento no Guia Mais. (Dados simulados)</p>
       </section>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
@@ -35,6 +36,9 @@ export default function PartnerAnalyticsPage() {
             <CardDescription className="text-xs">Quantas vezes seu estabelecimento foi visto.</CardDescription>
           </CardHeader>
           <CardContent className="p-3">
+            <div className="relative h-24 w-full mb-2 rounded overflow-hidden opacity-70">
+              <Image src="https://placehold.co/300x100.png" alt="Gráfico de visualizações" layout="fill" objectFit="contain" data-ai-hint="analytics chart views"/>
+            </div>
             <p className="text-xl md:text-2xl font-bold text-primary">1,234</p>
             <p className="text-xs text-muted-foreground">Nos últimos 30 dias (simulado)</p>
           </CardContent>
@@ -46,6 +50,9 @@ export default function PartnerAnalyticsPage() {
             <CardDescription className="text-xs">Número de ofertas Guia Mais utilizadas.</CardDescription>
           </CardHeader>
           <CardContent className="p-3">
+             <div className="relative h-24 w-full mb-2 rounded overflow-hidden opacity-70">
+              <Image src="https://placehold.co/300x100.png" alt="Gráfico de resgates" layout="fill" objectFit="contain" data-ai-hint="analytics chart redemptions"/>
+            </div>
             <p className="text-xl md:text-2xl font-bold text-primary">56</p>
             <p className="text-xs text-muted-foreground">No total (simulado)</p>
           </CardContent>
