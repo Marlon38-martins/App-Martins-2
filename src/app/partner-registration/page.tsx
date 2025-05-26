@@ -18,7 +18,7 @@ export default function PartnerRegistrationPage() {
   const partnerPlans = [
     {
       name: "Plano Largada",
-      Icon: Rocket, // Changed from Briefcase for "Largada"
+      Icon: Rocket,
       iconColor: "text-blue-500",
       normalOffers: 3,
       specialOffers: 1,
@@ -40,7 +40,7 @@ export default function PartnerRegistrationPage() {
       iconColor: "text-purple-500",
       normalOffers: 6,
       specialOffers: 2,
-      description: "Maximize sua presença e resultados! Visibilidade premium na página inicial, notificações frequentes de suas ofertas para clientes VIP e acompanhamento de desempenho de fluxo de visitas ao seu estabelecimento.",
+      description: "Maximize sua presença e resultados! Visibilidade premium na página inicial, notificações frequentes de suas ofertas para clientes VIP e acompanhamento de fluxo de visitas ao estabelecimento.",
       priceInfo: "Saber Mais",
     }
   ];
@@ -76,14 +76,14 @@ export default function PartnerRegistrationPage() {
 
       <div className="space-y-8">
         <Card className="shadow-xl border-2 border-accent">
-          <CardHeader>
-            <CardTitle className="flex items-center text-xl text-accent">
+          <CardHeader className="p-6">
+            <CardTitle className="flex items-center text-2xl text-accent">
               <Award className="mr-3 h-7 w-7" />
               Benefícios Exclusivos para Parceiros Guia Mais
             </CardTitle>
             <CardDescription>Veja como podemos ajudar seu negócio a crescer:</CardDescription>
           </CardHeader>
-          <CardContent className="space-y-3">
+          <CardContent className="p-6 pt-0 space-y-3">
             <ul className="list-none space-y-2">
               <li className="flex items-start">
                 <CheckCircle className="mr-2 mt-1 h-5 w-5 shrink-0 text-green-500" />
@@ -120,14 +120,14 @@ export default function PartnerRegistrationPage() {
         </Card>
 
         <Card className="shadow-lg">
-          <CardHeader>
-            <CardTitle className="flex items-center text-xl text-primary">
+          <CardHeader className="p-6">
+            <CardTitle className="flex items-center text-2xl text-primary">
               <BadgePercent className="mr-3 h-7 w-7" />
               Nossos Planos de Parceria Premium
             </CardTitle>
             <CardDescription>Escolha o plano que melhor se adapta às suas necessidades e impulsione seu negócio.</CardDescription>
           </CardHeader>
-          <CardContent className="space-y-6">
+          <CardContent className="p-6 pt-0 space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {partnerPlans.map((plan) => (
                 <Card key={plan.name} className="flex flex-col rounded-lg border bg-card p-4 shadow-sm hover:shadow-lg transition-shadow duration-300">
@@ -176,14 +176,14 @@ export default function PartnerRegistrationPage() {
         </Card>
 
         <Card className="shadow-lg bg-gradient-to-r from-primary/10 via-background to-background">
-          <CardHeader>
-            <CardTitle className="flex items-center text-xl text-primary">
+          <CardHeader className="p-6">
+            <CardTitle className="flex items-center text-2xl text-primary">
               <UserPlus className="mr-3 h-7 w-7" />
               Pronto para Começar?
             </CardTitle>
             <CardDescription>Dê o próximo passo para destacar seu negócio em Martins!</CardDescription>
           </CardHeader>
-          <CardContent className="text-center">
+          <CardContent className="p-6 pt-0 text-center">
             <p className="mb-4 text-sm text-foreground/80">
               Não perca a oportunidade de fazer parte do Guia Mais e alcançar milhares de potenciais clientes.
             </p>
@@ -202,7 +202,7 @@ export default function PartnerRegistrationPage() {
               </Button>
             </div>
           </CardContent>
-           <CardFooter className="pt-4">
+           <CardFooter className="p-6 pt-4">
             <p className="text-xs text-muted-foreground mx-auto text-center">
                 Ao se cadastrar, você concorda com nossos <Link href="/termos-parceiros" className="underline hover:text-primary">Termos de Parceria</Link> e <Link href="/politica-de-privacidade" className="underline hover:text-primary">Política de Privacidade</Link>.
             </p>
@@ -212,4 +212,3 @@ export default function PartnerRegistrationPage() {
     </div>
   );
 }
-
