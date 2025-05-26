@@ -155,8 +155,12 @@ function CheckoutPageContent({ businessId }: { businessId: string }) {
         setIsLoadingPage(false);
       }
     }
-    loadDataAndCheckAuth();
-  }, [businessId, dealId, authUser, userSubscription]); 
+    // Only run loadDataAndCheckAuth if auth is not loading.
+    // This prevents running it multiple times during initial auth state resolution.
+    if (!authLoading) {
+        loadDataAndCheckAuth();
+    }
+  }, [businessId, dealId, authUser, userSubscription, authLoading]); 
 
 
   const getActionName = () => {
@@ -181,12 +185,15 @@ function CheckoutPageContent({ businessId }: { businessId: string }) {
 
     setIsSubmitting(true);
     try {
+      // TODO: Replace with actual Firebase Firestore call to record offer usage
+      // e.g., await recordUserOfferUsage(authUser.id, dealId!, businessId);
+      // This function would write to a 'redemptions' collection in Firestore.
       if (dealId && authUser) { 
         await recordUserOfferUsage(authUser.id, dealId, businessId);
       }
+      console.log('Agendamento/Offer Activation Data (simulated):', data, 'Deal ID:', dealId, 'Business ID:', businessId);
       await new Promise(resolve => setTimeout(resolve, 1000)); 
       
-      console.log('Agendamento/Offer Activation Data:', data, 'Deal ID:', dealId);
       toast({
         title: 'Agendamento Confirmado!',
         description: `Seu benefício Guia Mais em ${business?.name} (${specificDeal?.title || 'Benefício Geral'}) foi agendado/ativado. Apresente esta confirmação ou seu card de membro no estabelecimento.`,

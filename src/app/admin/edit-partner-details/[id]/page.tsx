@@ -133,6 +133,8 @@ export default function AdminEditPartnerDetailsPage() {
         return;
     }
     setIsSubmitting(true);
+    // TODO: Replace with actual Firebase Firestore 'setDoc' or 'updateDoc' call for the business
+    console.log(`Updating business ${business.id} in Firestore (simulated):`, data);
     await new Promise(resolve => setTimeout(resolve, 1500));
     
     const updatedBusiness = {
@@ -142,7 +144,7 @@ export default function AdminEditPartnerDetailsPage() {
         reviewCount: data.reviewCount === undefined || isNaN(data.reviewCount) ? undefined : data.reviewCount,
     };
 
-    console.log('Admin Updated Establishment Data:', updatedBusiness);
+    console.log('Admin Updated Establishment Data (simulated):', updatedBusiness);
 
     toast({
       title: 'Dados Atualizados pelo Admin!',

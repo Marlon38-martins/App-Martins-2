@@ -62,18 +62,20 @@ export default function LoginPage() {
 
   const handleEmailLogin: SubmitHandler<LoginFormValues> = async (data) => {
     setIsSubmitting(true);
+    // TODO: Replace with actual Firebase signInWithEmailAndPassword call
+    console.log("Attempting email login (simulated):", data.email);
     await new Promise(resolve => setTimeout(resolve, 500)); 
     
     const mockUser: User = {
       id: 'mock-user-' + Date.now(),
       email: data.email,
       name: data.email.split('@')[0], 
-      photoURL: `https://placehold.co/100x100`
+      photoURL: `https://placehold.co/100x100.png`
     };
     const mockSubscription: Subscription = {
       id: 'sub-mock-' + Date.now(),
       userId: mockUser.id,
-      planId: data.email === 'admin@example.com' ? 'admin_plan' : (data.email === 'partner@example.com' ? 'partner_basic' : 'premium_mensal'), // Assign roles
+      planId: data.email === 'admin@example.com' ? 'admin_plan' : (data.email === 'partner@example.com' ? 'partner_basic' : 'premium_mensal'),
       startDate: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
       endDate: new Date(Date.now() + 335 * 24 * 60 * 60 * 1000),
       status: 'active',
@@ -86,13 +88,15 @@ export default function LoginPage() {
 
   const handleGoogleLogin = async () => {
     setIsGoogleSubmitting(true);
+    // TODO: Replace with actual Firebase signInWithPopup(auth, new GoogleAuthProvider()) call
+    console.log("Attempting Google login (simulated)");
     await new Promise(resolve => setTimeout(resolve, 500)); 
 
     const mockUser: User = {
       id: 'mock-google-user-' + Date.now(),
       email: 'google.user@example.com',
       name: 'Usuário Google',
-      photoURL: 'https://placehold.co/100x100'
+      photoURL: 'https://placehold.co/100x100.png'
     };
     const mockSubscription: Subscription = {
       id: 'sub-mock-google-' + Date.now(),

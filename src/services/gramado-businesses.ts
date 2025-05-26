@@ -1,6 +1,9 @@
 
 import type { LucideIcon } from 'lucide-react';
 import type { User, Subscription } from '@/types/user'; // Placeholder for actual user/subscription types
+// TODO: When integrating Firebase, replace these mock functions with actual Firestore calls.
+// import { collection, getDocs, doc, getDoc, setDoc, addDoc, query, where } from 'firebase/firestore';
+// import { firestore } from '@/lib/firebase/config'; // Assuming firestore is exported from your Firebase config
 
 /**
  * Represents a business in Martins.
@@ -41,7 +44,7 @@ export interface GramadoBusiness {
   /**
    * The website of the business.
    */
-  website?: string; // Made optional to reflect reality
+  website?: string;
   /**
    * The Instagram URL of the business.
    */
@@ -80,7 +83,6 @@ export interface GramadoBusiness {
   reviewCount?: number;
 }
 
-// Define a type for LucideIcon names for better type safety if not already global.
 export type LucideIconName =
   | 'UtensilsCrossed'
   | 'BedDouble'
@@ -112,7 +114,7 @@ export interface Deal {
   /**
    * The discount percentage. Can be 0 if it's a "buy one get one" or other type of offer.
    */
-  discountPercentage?: number; // Optional, as P1G2 might not have a percentage
+  discountPercentage?: number;
   /**
    * The terms and conditions of the deal.
    */
@@ -442,7 +444,7 @@ const businesses: GramadoBusiness[] = [
     shortDescription: 'Arte e natureza no coração de Recife.',
     fullDescription: 'Explore o magnífico Parque das Esculturas de Francisco Brennand, um museu a céu aberto com obras monumentais do artista pernambucano.',
     address: 'Pilar, Recife Antigo, Recife - PE',
-    phoneNumber: '(81) 3424-0018', // Placeholder
+    phoneNumber: '(81) 3424-0018',
     latitude: -8.0544,
     longitude: -34.8692,
     imageUrl: 'https://placehold.co/600x400.png',
@@ -584,7 +586,7 @@ const deals: Deal[] = [
   },
   {
     id: 'deal-11',
-    businessId: '10', // Loja de Souvenirs Pauferrense
+    businessId: '10',
     title: 'Lembrança Especial Pau dos Ferros - 10% OFF',
     description: 'Leve uma recordação de Pau dos Ferros com 10% de desconto em itens selecionados.',
     discountPercentage: 10,
@@ -593,7 +595,7 @@ const deals: Deal[] = [
   },
   {
     id: 'deal-12',
-    businessId: '11', // Pizzaria Forno a Lenha Apodi
+    businessId: '11',
     title: 'Pizza Grande em Dobro - Apodi',
     description: 'Compre uma pizza grande e leve outra de igual ou menor valor. Promoção Guia Mais!',
     isPay1Get2: true,
@@ -603,17 +605,16 @@ const deals: Deal[] = [
   },
   {
     id: 'deal-13',
-    businessId: '12', // Hotel Portal de Umarizal
+    businessId: '12',
     title: 'Café da Manhã VIP Umarizal',
     description: 'Hóspedes VIP Guia Mais ganham um item extra especial no café da manhã.',
     discountPercentage: 0,
     termsAndConditions: 'Exclusivo para reservas diretas de membros VIP. Informar no check-in.',
     isVipOffer: true,
   },
-  // --- Deals for new Northeast businesses ---
   {
     id: 'deal-14',
-    businessId: '13', // Barraca Praia de Pajuçara, Maceió, AL
+    businessId: '13',
     title: 'Caipirinha em Dobro na Pajuçara',
     description: 'Compre uma caipirinha e ganhe outra na faixa! Exclusivo Guia Mais.',
     isPay1Get2: true,
@@ -623,7 +624,7 @@ const deals: Deal[] = [
   },
   {
     id: 'deal-15',
-    businessId: '14', // Hotel Pelourinho, Salvador, BA
+    businessId: '14',
     title: 'Upgrade de Quarto VIP (Salvador)',
     description: 'Membros VIP Guia Mais ganham upgrade de quarto, sujeito à disponibilidade.',
     discountPercentage: 0,
@@ -632,7 +633,7 @@ const deals: Deal[] = [
   },
   {
     id: 'deal-16',
-    businessId: '15', // Beach Park Loja Oficial, Fortaleza, CE
+    businessId: '15',
     title: '20% OFF em Moda Praia (Fortaleza)',
     description: '20% de desconto em toda a linha de moda praia para membros Guia Mais.',
     discountPercentage: 20,
@@ -641,16 +642,16 @@ const deals: Deal[] = [
   },
   {
     id: 'deal-17',
-    businessId: '17', // Café do Brejo, João Pessoa, PB
+    businessId: '17',
     title: 'Bolo do Dia + Café Expresso por R$15',
     description: 'Delicioso combo de fatia de bolo do dia com um café expresso especial.',
-    discountPercentage: 0, // This is a combo deal, not a direct percentage off.
+    discountPercentage: 0,
     termsAndConditions: 'Válido todos os dias. Apresentar card Guia Mais.',
     isVipOffer: false,
   },
   {
     id: 'deal-18',
-    businessId: '19', // Cervejaria Cabeça de Cuia, Teresina, PI
+    businessId: '19',
     title: 'Chopp Artesanal VIP em Dobro',
     description: 'Peça um chopp artesanal da casa e o segundo é por nossa conta! Exclusivo VIPs.',
     isPay1Get2: true,
@@ -661,13 +662,19 @@ const deals: Deal[] = [
 ];
 
 /**
- * Asynchronously retrieves a list of businesses in Martins.
+ * Asynchronously retrieves a list of businesses.
  *
  * @returns A promise that resolves to an array of GramadoBusiness objects.
  */
 export async function getGramadoBusinesses(): Promise<GramadoBusiness[]> {
   // Simulate API call
-  await new Promise(resolve => setTimeout(resolve, 500));
+  // TODO: Replace with actual Firebase Firestore call:
+  // if (!firestore) return businesses; // Fallback to mock if Firestore not initialized
+  // const businessesCol = collection(firestore, 'businesses');
+  // const businessSnapshot = await getDocs(businessesCol);
+  // const businessList = businessSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as GramadoBusiness));
+  // return businessList;
+  await new Promise(resolve => setTimeout(resolve, 200));
   return businesses;
 }
 
@@ -679,7 +686,12 @@ export async function getGramadoBusinesses(): Promise<GramadoBusiness[]> {
  */
 export async function getGramadoBusinessById(id: string): Promise<GramadoBusiness | undefined> {
   // Simulate API call
-  await new Promise(resolve => setTimeout(resolve, 300));
+  // TODO: Replace with actual Firebase Firestore call:
+  // if (!firestore) return businesses.find(business => business.id === id);
+  // const businessDocRef = doc(firestore, 'businesses', id);
+  // const businessSnap = await getDoc(businessDocRef);
+  // return businessSnap.exists() ? ({ id: businessSnap.id, ...businessSnap.data() } as GramadoBusiness) : undefined;
+  await new Promise(resolve => setTimeout(resolve, 100));
   return businesses.find(business => business.id === id);
 }
 
@@ -691,7 +703,14 @@ export async function getGramadoBusinessById(id: string): Promise<GramadoBusines
  */
 export async function getDealsForBusiness(businessId: string): Promise<Deal[]> {
   // Simulate API call
-  await new Promise(resolve => setTimeout(resolve, 300));
+  // TODO: Replace with actual Firebase Firestore call:
+  // if (!firestore) return deals.filter(deal => deal.businessId === businessId);
+  // const dealsCol = collection(firestore, 'deals');
+  // const q = query(dealsCol, where('businessId', '==', businessId));
+  // const dealSnapshot = await getDocs(q);
+  // const dealList = dealSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Deal));
+  // return dealList;
+  await new Promise(resolve => setTimeout(resolve, 100));
   return deals.filter(deal => deal.businessId === businessId);
 }
 
@@ -700,23 +719,25 @@ export async function getDealsForBusiness(businessId: string): Promise<Deal[]> {
  * @returns A promise that resolves to an array of all Deal objects.
  */
 export async function getAllDeals(): Promise<Deal[]> {
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 300));
-    return deals;
+  // Simulate API call
+  // TODO: Replace with actual Firebase Firestore call:
+  // if (!firestore) return deals;
+  // const dealsCol = collection(firestore, 'deals');
+  // const dealSnapshot = await getDocs(dealsCol);
+  // const dealList = dealSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Deal));
+  // return dealList;
+  await new Promise(resolve => setTimeout(resolve, 100));
+  return deals;
 }
 
 
 // --- Mocked User, Subscription, and Redemption Services ---
-// In a real app, these would interact with Firebase or your backend.
-
-const MOCK_USER_ID = 'mock-user-123';
-let mockUserRedemptions: { [offerId: string]: boolean } = {};
 let mockCurrentUser: User | null = null;
 let mockUserSubscription: Subscription | null = null;
 
 
 export async function getCurrentUser(): Promise<User | null> {
-  await new Promise(resolve => setTimeout(resolve, 100));
+  await new Promise(resolve => setTimeout(resolve, 50));
   if (typeof window !== 'undefined') {
     const storedUser = localStorage.getItem('mockUser');
     if (storedUser) {
@@ -724,40 +745,43 @@ export async function getCurrentUser(): Promise<User | null> {
         mockCurrentUser = JSON.parse(storedUser);
         return mockCurrentUser;
       } catch (e) {
-        localStorage.removeItem('mockUser'); // Clear invalid data
+        localStorage.removeItem('mockUser');
         mockCurrentUser = null;
       }
     }
   }
   return null;
+  // TODO: When Firebase Auth is integrated, this should return the actual Firebase user,
+  // potentially mapping it to your User interface.
 }
 
 export async function getMockUserSubscription(userId: string): Promise<Subscription | null> {
-  await new Promise(resolve => setTimeout(resolve, 100));
-
+  await new Promise(resolve => setTimeout(resolve, 50));
   if (typeof window !== 'undefined') {
       const storedSub = localStorage.getItem('mockSubscription');
       if (storedSub) {
         try {
           const sub = JSON.parse(storedSub) as Subscription;
-          // Ensure dates are Date objects
-          sub.startDate = new Date(sub.startDate);
-          sub.endDate = new Date(sub.endDate);
           if (sub.userId === userId) {
-            mockUserSubscription = sub;
+            mockUserSubscription = {
+              ...sub,
+              startDate: new Date(sub.startDate),
+              endDate: new Date(sub.endDate),
+            };
             return mockUserSubscription;
           }
         } catch(e) {
-           localStorage.removeItem('mockSubscription'); // Clear invalid data
+           localStorage.removeItem('mockSubscription');
            mockUserSubscription = null;
         }
       }
   }
   return null;
+  // TODO: Replace with actual Firebase Firestore call to fetch subscription details for the user.
 }
 
 export async function checkUserOfferUsage(userId: string, offerId: string): Promise<boolean> {
-  await new Promise(resolve => setTimeout(resolve, 100));
+  await new Promise(resolve => setTimeout(resolve, 50));
   if (!mockCurrentUser || userId !== mockCurrentUser.id) return false;
   
   if (typeof window !== 'undefined') {
@@ -766,15 +790,16 @@ export async function checkUserOfferUsage(userId: string, offerId: string): Prom
       const redemptions = JSON.parse(localStorage.getItem(redemptionsKey) || '{}');
       return !!redemptions[offerId];
     } catch (e) {
-      localStorage.removeItem(redemptionsKey); // Clear invalid data
+      localStorage.removeItem(redemptionsKey);
       return false;
     }
   }
-  return false; // Default if localStorage not available
+  return false;
+  // TODO: Replace with actual Firebase Firestore call to check the user's redemptions collection.
 }
 
 export async function recordUserOfferUsage(userId: string, offerId: string, businessId: string): Promise<void> {
-  await new Promise(resolve => setTimeout(resolve, 100));
+  await new Promise(resolve => setTimeout(resolve, 50));
    if (!mockCurrentUser || userId !== mockCurrentUser.id) return;
 
   if (typeof window !== 'undefined') {
@@ -784,11 +809,14 @@ export async function recordUserOfferUsage(userId: string, offerId: string, busi
         redemptions[offerId] = true;
         localStorage.setItem(redemptionsKey, JSON.stringify(redemptions));
      } catch (e) {
-        localStorage.removeItem(redemptionsKey); // Clear invalid data on error
+        localStorage.removeItem(redemptionsKey);
         const newRedemptions = { [offerId]: true };
         localStorage.setItem(redemptionsKey, JSON.stringify(newRedemptions));
      }
   }
+  // TODO: Replace with actual Firebase Firestore call to add a document to the user's redemptions collection.
+  // This should include userId, offerId, businessId, and a timestamp.
+  console.log(`Mocked: User ${userId} used offer ${offerId} for business ${businessId}`);
 }
 
 export function mockLogin(user: User, subscription: Subscription) {
@@ -800,9 +828,10 @@ export function mockLogin(user: User, subscription: Subscription) {
     localStorage.setItem('mockUser', JSON.stringify(user));
     localStorage.setItem('mockSubscription', JSON.stringify(subscription));
     const redemptionsKey = `mockUserRedemptions-${user.id}`;
-    localStorage.removeItem(redemptionsKey); // Reset redemptions
+    localStorage.removeItem(redemptionsKey);
     window.dispatchEvent(new CustomEvent('mockAuthChange'));
   }
+  console.log(`User ${user.email} mock logged in.`);
 }
 
 export function mockLogout() {
@@ -812,7 +841,7 @@ export function mockLogout() {
     if (storedUser) {
       try {
         userIdToRemoveRedemptions = JSON.parse(storedUser).id;
-      } catch (e) { /* ignore error, just won't remove redemptions by ID */ }
+      } catch (e) { /* ignore */ }
     }
 
     if (userIdToRemoveRedemptions) {
@@ -827,5 +856,6 @@ export function mockLogout() {
   if (typeof window !== 'undefined') {
     window.dispatchEvent(new CustomEvent('mockAuthChange'));
   }
+  console.log("User mock logged out.");
 }
 // --- End Mocked Services ---

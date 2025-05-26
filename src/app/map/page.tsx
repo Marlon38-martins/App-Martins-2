@@ -12,15 +12,17 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { BusinessTypeIcon } from '@/components/icons';
 import { Frown, MapPin } from 'lucide-react';
-import { slugify } from '@/lib/utils'; // Import slugify
+import { slugify } from '@/lib/utils';
 
-// TODO: Integrate Google Maps API here
-// 1. Add NEXT_PUBLIC_GOOGLE_MAPS_API_KEY to your .env.local
-// 2. Install a library like `@react-google-maps/api`
-// 3. Replace the placeholder map image and points with a real Google Map
-//    - Load the Google Maps script using your API key.
-//    - Use the <GoogleMap>, <Marker> components.
-//    - The `mapPoints` data (latitude/longitude) can be used to place markers.
+// TODO: Integrate Google Maps API here for a real interactive map.
+// 1. Ensure NEXT_PUBLIC_GOOGLE_MAPS_API_KEY is in your .env.local.
+// 2. Install a library like `@react-google-maps/api` (`npm install @react-google-maps/api`).
+// 3. Replace the placeholder map image and points with a real Google Map:
+//    - Import `GoogleMap, LoadScript, Marker` from `@react-google-maps/api`.
+//    - Wrap your map component with `<LoadScript googleMapsApiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!}>`.
+//    - Use `<GoogleMap>` to render the map, centering it on Martins.
+//    - Use `<Marker>` components to plot each `mapPoint.latitude` and `mapPoint.longitude`.
+//    - Add InfoWindow or similar to show business name on marker click.
 
 interface MapPoint extends GramadoBusiness {
   x: number; // Percentage for placeholder map
@@ -105,7 +107,8 @@ export default function MapPage() {
         </h2>
         <p className="text-lg text-foreground/80">
           Navegue pelos pontos turísticos e estabelecimentos parceiros.
-          {/* TODO: Add OpenWeather API integration here for a small weather widget */}
+          {/* TODO: OpenWeather API integration here for a small weather widget (optional) */}
+          {/* Would fetch data using NEXT_PUBLIC_OPENWEATHER_API_KEY */}
         </p>
       </section>
 
@@ -136,15 +139,21 @@ export default function MapPage() {
 
       {!isLoading && !error && mapPoints.length > 0 && (
         <TooltipProvider>
-          <div className="relative h-[500px] w-full rounded-lg border shadow-lg md:h-[700px] overflow-hidden">
+          <div className="relative h-[500px] w-full rounded-lg border shadow-lg md:h-[700px] overflow-hidden bg-muted/30">
+            {/* Placeholder for actual Google Map implementation */}
             <Image 
               src="https://placehold.co/1200x900.png" 
               alt="Mapa de fundo ilustrativo de Martins" 
               layout="fill" 
               objectFit="cover" 
-              className="opacity-20 -z-10" 
-              data-ai-hint="map mountains illustration"
+              className="opacity-50 -z-10"
+              data-ai-hint="Martins aerial map"
             />
+             <div className="absolute inset-0 flex items-center justify-center">
+                <p className="text-muted-foreground bg-background/80 p-4 rounded-md">
+                    Integração com Google Maps API pendente.
+                </p>
+            </div>
             
             {mapPoints.map((point) => (
               <Tooltip key={point.id}>

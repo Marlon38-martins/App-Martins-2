@@ -92,6 +92,8 @@ export default function AddEstablishmentPage() {
 
   const onSubmit: SubmitHandler<EstablishmentFormValues> = async (data) => {
     setIsSubmitting(true);
+    // TODO: Replace with actual Firebase Firestore 'addDoc' call
+    console.log('Adding new establishment to Firestore (simulated):', data);
     await new Promise(resolve => setTimeout(resolve, 1500));
     
     const newEstablishment = {
@@ -111,10 +113,11 @@ export default function AddEstablishmentPage() {
             termsAndConditions: data.defaultOfferTerms,
             discountPercentage: 0, 
         };
-        console.log('New Default Offer:', newDeal);
+        // TODO: If adding a default offer, also 'addDoc' this to Firestore 'deals' collection
+        console.log('New Default Offer (simulated):', newDeal);
     }
 
-    console.log('New Establishment Data:', newEstablishment);
+    console.log('New Establishment Data (simulated):', newEstablishment);
 
     toast({
       title: 'Solicitação de Cadastro Enviada!',

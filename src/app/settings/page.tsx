@@ -33,12 +33,16 @@ export default function SettingsPage() {
   }, [user, loading, router]);
 
   const handleSaveChanges = () => {
+    // TODO: Implement actual update logic (e.g., update user profile in Firebase)
+    // For Firebase: getAuth().currentUser, then updateProfile(currentUser, { displayName: name })
+    // Then, potentially update user record in Firestore if you store profile info there.
     toast({ title: "Simulação", description: `Dados salvos (simulado). Nome: ${name}` });
   };
   
   const handleSignOut = async () => {
     try {
         await contextSignOutUser(); 
+        // No need to explicitly router.push('/login') here as contextSignOutUser should handle it
     } catch (error) {
         console.error("Error signing out from settings: ", error);
         toast({ title: "Erro no Logout", description: "Não foi possível fazer logout. Tente novamente.", variant: 'destructive' });
@@ -137,7 +141,7 @@ export default function SettingsPage() {
             <Separator className="my-4" />
             <div className="flex items-center justify-between">
                 <Label htmlFor="vip-event-alerts" className="flex flex-col space-y-1">
-                  <span className="flex items-center"><CalendarDays className="mr-1.5 h-4 w-4 text-muted-foreground" /> Alertas de Novos Eventos</span>
+                  <span className="flex items-center"><CalendarDays className="mr-1.5 h-4 w-4 text-muted-foreground" /> Alertas de Novos Eventos (Municipais e de Parceiros)</span>
                   <span className="font-normal leading-snug text-muted-foreground text-xs">
                       Ser informado sobre eventos municipais, de parceiros e outras experiências exclusivas para VIPs.
                   </span>
@@ -154,7 +158,8 @@ export default function SettingsPage() {
           <CardDescription>Gerencie as configurações de segurança da sua conta.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <Button variant="outline" onClick={() => toast({title: "Simulação", description: "Funcionalidade de alterar senha (simulada)." })}>Alterar Senha (Simulado)</Button>
+          {/* TODO: Implement "Change Password" functionality, likely involving Firebase's sendPasswordResetEmail or reauthenticateWithCredential */}
+          <Button variant="outline" onClick={() => toast({title: "Simulação", description: "Funcionalidade de alterar senha (simulada). Em um app real, isso enviaria um email de redefinição ou solicitaria a senha atual." })}>Alterar Senha (Simulado)</Button>
         </CardContent>
       </Card>
       
@@ -164,6 +169,8 @@ export default function SettingsPage() {
           <CardDescription>Veja e gerencie seu plano Guia Mais.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
+            {/* TODO: Fetch and display current subscription details (plan name, status, renewal date) */}
+            {/* TODO: Implement link/button to customer portal (e.g., Stripe Customer Portal) to manage subscription */}
             <p className="text-muted-foreground text-sm">Detalhes da sua assinatura e opções de gerenciamento aparecerão aqui.</p>
             <Button variant="outline" asChild><Link href="/join">Ver Planos</Link></Button>
         </CardContent>

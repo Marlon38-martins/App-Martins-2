@@ -7,7 +7,7 @@ import { useForm, type SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import Link from 'next/link';
-import Image from 'next/image'; // Import Image
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 
 import { Button } from '@/components/ui/button';
@@ -105,10 +105,12 @@ export default function PartnerRegisterPage() {
 
   const onSubmit: SubmitHandler<PartnerRegistrationFormValues> = async (data) => {
     setIsSubmitting(true);
+    // TODO: Replace with actual backend call to submit partnership request.
+    // This would likely save to a 'pending_partners' collection in Firestore
+    // or send an email to an admin for review.
+    console.log('Partner Registration Request Data (simulated):', data);
     await new Promise(resolve => setTimeout(resolve, 1500));
     
-    console.log('Partner Registration Request Data:', data);
-
     toast({
       title: 'Solicitação de Parceria Enviada!',
       description: `Obrigado, ${data.contactName}! Sua solicitação para o estabelecimento "${data.name}" foi enviada para análise. Entraremos em contato em breve.`,
@@ -133,7 +135,7 @@ export default function PartnerRegisterPage() {
           alt="Solicitação de Parceria Guia Mais"
           layout="fill"
           objectFit="cover"
-          data-ai-hint="business growth"
+          data-ai-hint="business growth handshake"
         />
       </div>
 

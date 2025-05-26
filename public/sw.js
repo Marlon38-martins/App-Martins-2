@@ -1,12 +1,15 @@
+
 // public/sw.js
-// Basic service worker for caching strategies (e.g., stale-while-revalidate)
-// This is a very basic example. For production, you'd use Workbox or a more robust setup.
+// This is a basic service worker.
+// For PWA features like push notifications, you'll need to integrate Firebase Cloud Messaging (FCM)
+// and add its service worker logic here (often in a firebase-messaging-sw.js file that this one imports).
 
 const CACHE_NAME = 'guia-mais-cache-v1';
 const urlsToCache = [
   '/',
-  // Add other important assets/pages you want to cache initially
-  // For example: '/styles/globals.css', '/logo.png', '/offline.html'
+  '/manifest.json',
+  // Add other critical assets you want to cache for offline use
+  // For example: '/icons/icon-192x192.png', '/styles/globals.css' (if not inlined)
 ];
 
 self.addEventListener('install', (event) => {
@@ -27,28 +30,9 @@ self.addEventListener('fetch', (event) => {
         if (response) {
           return response;
         }
-        return fetch(event.request).then(
-          (response) => {
-            // Check if we received a valid response
-            if (!response || response.status !== 200 || response.type !== 'basic') {
-              return response;
-            }
-
-            // IMPORTANT: Clone the response. A response is a stream
-            // and because we want the browser to consume the response
-            // as well as the cache consuming the response, we need
-            // to clone it so we have two streams.
-            const responseToCache = response.clone();
-
-            caches.open(CACHE_NAME)
-              .then((cache) => {
-                cache.put(event.request, responseToCache);
-              });
-
-            return response;
-          }
-        );
-      })
+        return fetch(event.request);
+      }
+    )
   );
 });
 
@@ -61,24 +45,33 @@ self.addEventListener('activate', (event) => {
           if (cacheWhitelist.indexOf(cacheName) === -1) {
             return caches.delete(cacheName);
           }
-          return null; 
         })
       );
     })
   );
 });
 
-// Basic push notification listener (requires more setup for actual display)
-self.addEventListener('push', function(event) {
-  console.log('[Service Worker] Push Received.');
-  console.log(`[Service Worker] Push had this data: "${event.data ? event.data.text() : 'no payload'}"`);
+// Placeholder for FCM push notification handling
+// self.addEventListener('push', function(event) {
+//   console.log('[Service Worker] Push Received.');
+//   console.log(`[Service Worker] Push had this data: "${event.data.text()}"`);
+//
+//   const title = 'Guia Mais';
+//   const options = {
+//     body: event.data.text(),
+//     icon: '/icons/icon-192x192.png', // Path to an icon
+//     badge: '/icons/badge-72x72.png' // Path to a badge icon
+//   };
+//
+//   event.waitUntil(self.registration.showNotification(title, options));
+// });
 
-  const title = 'Guia Mais Notificação';
-  const options = {
-    body: event.data ? event.data.text() : 'Você tem uma nova notificação!',
-    icon: '/icons/icon-192x192.png', // Ensure you have this icon
-    badge: '/icons/icon-192x192.png' // Ensure you have this icon
-  };
+// self.addEventListener('notificationclick', function(event) {
+//   console.log('[Service Worker] Notification click Received.');
+//   event.notification.close();
+//   event.waitUntil(
+//     clients.openWindow('https://example.com') // TODO: Change to your app's URL or a relevant page
+//   );
+// });
 
-  event.waitUntil(self.registration.showNotification(title, options));
-});
+console.log('Guia Mais Service Worker V1 Loaded.');

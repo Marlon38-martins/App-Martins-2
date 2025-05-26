@@ -6,7 +6,7 @@ import { useState, useEffect } from 'react';
 import { useForm, type SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import Image from 'next/image'; // Import Image
+import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -16,7 +16,7 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { useToast } from '@/hooks/use-toast';
 import { 
     User, Mail, Phone as PhoneIcon, Lock, CheckCircle, Award, Sparkles, ShieldCheck, CreditCard, Star,
-    TicketPercent, MapPinned, WifiOff, Languages, XCircle, TrendingUp, Info, CalendarDays, Route as RouteIcon, MapPin
+    TicketPercent, MapPinned, WifiOff, Languages, XCircle, TrendingUp, Info, CalendarDays, Route as RouteIcon
 } from 'lucide-react';
 import type { Plan, User as AppUser, Subscription } from '@/types/user';
 import { useRouter } from 'next/navigation';
@@ -83,7 +83,7 @@ const premiumPlans: Plan[] = [
 
 
 const comparisonFeatures = [
-    { name: 'Acesso a roteiros locais', free: true, premium: true, IconComp: MapPin },
+    { name: 'Acesso a roteiros locais', free: true, premium: true, IconComp: MapPinned },
     { name: 'Descontos exclusivos em parceiros', free: false, premium: true, IconComp: TicketPercent },
     { name: 'Roteiros personalizados e acesso offline', free: false, premium: true, IconComp: RouteIcon },
     { name: 'Suporte multilíngue', free: false, premium: true, IconComp: Languages },
@@ -122,7 +122,14 @@ export default function JoinPage() {
   const onSubmit: SubmitHandler<RegistrationFormValues> = async (data) => {
     setIsSubmitting(true);
     try {
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // TODO: Implement real payment processing integration here (e.g., Stripe, Mercado Pago).
+      // This would involve:
+      // 1. Creating a payment intent/session with the payment provider.
+      // 2. Collecting payment details securely (e.g., using Stripe Elements).
+      // 3. Handling payment confirmation and webhooks from the provider.
+      // 4. On successful payment, creating the user account and subscription record in Firebase Firestore.
+      console.log("Simulating payment processing for plan:", data.selectedPlan, "for user:", data.email);
+      await new Promise(resolve => setTimeout(resolve, 1500)); // Simulate API call
 
       const mockUser: AppUser = {
         id: 'mock-user-' + Date.now(),
@@ -138,13 +145,13 @@ export default function JoinPage() {
       const mockSubscription: Subscription = {
         id: 'sub-mock-' + Date.now(),
         userId: mockUser.id,
-        planId: data.selectedPlan,
+        planId: data.selectedPlan, // 'premium_mensal' or 'premium_anual'
         startDate: new Date(),
         endDate: endDate, 
         status: 'active', 
       };
       
-      mockLogin(mockUser, mockSubscription);
+      mockLogin(mockUser, mockSubscription); // Simulate login after successful "payment"
       signInUser(mockUser, mockSubscription);
 
       toast({
@@ -179,7 +186,7 @@ export default function JoinPage() {
         />
       </div>
       <section className="mb-12 text-center"> 
-        <Sparkles className="mx-auto mb-4 h-16 w-16 text-primary" />
+        <Sparkles className="mx-auto mb-4 h-12 w-12 text-primary" />
         <h1 className="mb-3 text-3xl font-bold tracking-tight text-primary md:text-4xl">
           Assinatura Premium Guia Mais
         </h1>
@@ -194,8 +201,8 @@ export default function JoinPage() {
           {premiumFeatures.slice(0, 4).map((benefit, index) => ( 
             <Card key={index} className="text-center shadow-md hover:shadow-lg transition-all duration-300 ease-in-out bg-card">
               <CardContent className="pt-6">
-                <benefit.IconComp className="mx-auto mb-3 h-12 w-12 text-primary" />
-                <p className="font-medium text-card-foreground text-base">{benefit.text}</p>
+                <benefit.IconComp className="mx-auto mb-3 h-10 w-10 text-primary" />
+                <p className="font-medium text-card-foreground text-sm">{benefit.text}</p>
               </CardContent>
             </Card>
           ))}
@@ -212,15 +219,15 @@ export default function JoinPage() {
                 <Table>
                     <TableHeader>
                         <TableRow>
-                            <TableHead className="w-[55%] text-left">Recurso</TableHead>
-                            <TableHead className="text-center">Grátis</TableHead>
-                            <TableHead className="text-center text-primary font-semibold">Premium</TableHead>
+                            <TableHead className="w-[55%] text-left text-sm">Recurso</TableHead>
+                            <TableHead className="text-center text-sm">Grátis</TableHead>
+                            <TableHead className="text-center text-primary font-semibold text-sm">Premium</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
                         {comparisonFeatures.map((feature) => (
                             <TableRow key={feature.name}>
-                                <TableCell className="font-medium text-left flex items-center">
+                                <TableCell className="font-medium text-left flex items-center text-sm">
                                   {feature.IconComp && <feature.IconComp className="mr-2 h-4 w-4 text-muted-foreground" />}
                                   {feature.name}
                                 </TableCell>
@@ -286,7 +293,8 @@ export default function JoinPage() {
                             className={cn(
                                 "flex flex-col items-start space-y-1 rounded-lg border p-3 transition-all duration-300 ease-in-out cursor-pointer hover:border-primary hover:shadow-lg",
                                 field.value === plan.id && "border-2 border-primary ring-2 ring-primary ring-offset-2",
-                                plan.highlight && "border-accent hover:border-accent ring-accent"
+                                plan.highlight && field.value !== plan.id && "border-accent hover:border-accent",
+                                plan.highlight && field.value === plan.id && "border-accent ring-accent"
                             )}
                            onClick={() => { 
                                 field.onChange(plan.id);
@@ -305,7 +313,7 @@ export default function JoinPage() {
                             </div>
                             <p className={cn("text-2xl font-bold", plan.textColor)}>{plan.price} <span className="text-sm font-normal text-muted-foreground">/{plan.billingCycle}</span></p>
                             {plan.annualEquivalentMonthlyPrice && <p className="text-xs text-muted-foreground">{plan.annualEquivalentMonthlyPrice}</p>}
-                             <ul className="mt-2 space-y-1 text-sm text-muted-foreground">
+                             <ul className="mt-2 space-y-1 text-xs text-muted-foreground">
                                 {plan.features.slice(0,2).map(feature => ( 
                                     <li key={feature.text} className="flex items-center">
                                         <CheckCircle className="mr-2 h-4 w-4 text-green-500"/> {feature.text}
@@ -438,11 +446,11 @@ export default function JoinPage() {
               </p>
             </CardContent>
             <div className="fixed bottom-0 left-0 right-0 z-50 bg-background/90 p-4 backdrop-blur-sm border-t border-border shadow-t-lg w-full max-w-sm mx-auto">
-                <Button type="submit" size="lg" className="w-full bg-accent hover:bg-accent/80 text-accent-foreground text-lg py-3" disabled={isSubmitting}>
+                <Button type="submit" size="lg" className="w-full bg-accent hover:bg-accent/80 text-accent-foreground text-base py-3" disabled={isSubmitting}>
                     <CheckCircle className="mr-2 h-5 w-5" />
                     {isSubmitting ? 'Processando...' : `Assinar Agora - ${selectedPlanDetails.price}/${selectedPlanDetails.billingCycle}`}
                 </Button>
-                <p className="mt-2.5 text-center text-sm text-muted-foreground">
+                <p className="mt-2.5 text-center text-xs text-muted-foreground">
                     💚 Sua assinatura contribui para melhorar sua experiência na Serra mais linda do RN
                 </p>
             </div>
