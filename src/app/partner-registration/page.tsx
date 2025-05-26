@@ -17,7 +17,7 @@ export default function PartnerRegistrationPage() {
 
   const partnerPlans = [
     {
-      name: "Plano Lagamar",
+      name: "Plano Largada", // Changed from Lagamar to Largada
       Icon: Briefcase,
       iconColor: "text-blue-500",
       normalOffers: 3,
@@ -77,40 +77,40 @@ export default function PartnerRegistrationPage() {
       <div className="space-y-8">
         <Card className="shadow-xl border-2 border-accent">
           <CardHeader>
-            <CardTitle className="flex items-center text-2xl text-accent">
+            <CardTitle className="flex items-center text-xl text-accent">
               <Award className="mr-3 h-7 w-7" />
               Benefícios Exclusivos para Parceiros Guia Mais
             </CardTitle>
             <CardDescription>Veja como podemos ajudar seu negócio a crescer:</CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <ul className="list-none space-y-3">
+          <CardContent className="space-y-3">
+            <ul className="list-none space-y-2">
               <li className="flex items-start">
-                <CheckCircle className="mr-3 mt-1 h-5 w-5 shrink-0 text-green-500" />
+                <CheckCircle className="mr-2 mt-1 h-5 w-5 shrink-0 text-green-500" />
                 <span className="text-foreground/90">
                   <strong>Visibilidade com selo de parceiro oficial:</strong> Ganhe um selo de destaque que aumenta a confiança e atrai mais clientes.
                 </span>
               </li>
               <li className="flex items-start">
-                <CheckCircle className="mr-3 mt-1 h-5 w-5 shrink-0 text-green-500" />
+                <CheckCircle className="mr-2 mt-1 h-5 w-5 shrink-0 text-green-500" />
                 <span className="text-foreground/90">
                   <strong>Ferramentas para criar promoções e cupons:</strong> Gerencie facilmente suas ofertas para maximizar o engajamento e as vendas.
                 </span>
               </li>
               <li className="flex items-start">
-                <CheckCircle className="mr-3 mt-1 h-5 w-5 shrink-0 text-green-500" />
+                <CheckCircle className="mr-2 mt-1 h-5 w-5 shrink-0 text-green-500" />
                 <span className="text-foreground/90">
                   <strong>Relatórios de desempenho e engajamento:</strong> Acompanhe o alcance das suas ofertas, o número de resgates e o feedback dos clientes (em breve).
                 </span>
               </li>
                <li className="flex items-start">
-                <CheckCircle className="mr-3 mt-1 h-5 w-5 shrink-0 text-green-500" />
+                <CheckCircle className="mr-2 mt-1 h-5 w-5 shrink-0 text-green-500" />
                 <span className="text-foreground/90">
                   <strong>Alcance um público engajado:</strong> Conecte-se diretamente com turistas e moradores que buscam experiências em Martins.
                 </span>
               </li>
                <li className="flex items-start">
-                <CheckCircle className="mr-3 mt-1 h-5 w-5 shrink-0 text-green-500" />
+                <CheckCircle className="mr-2 mt-1 h-5 w-5 shrink-0 text-green-500" />
                 <span className="text-foreground/90">
                   <strong>Suporte dedicado:</strong> Nossa equipe está pronta para ajudar você a obter os melhores resultados.
                 </span>
@@ -121,37 +121,37 @@ export default function PartnerRegistrationPage() {
 
         <Card className="shadow-lg">
           <CardHeader>
-            <CardTitle className="flex items-center text-2xl text-primary">
+            <CardTitle className="flex items-center text-xl text-primary">
               <Handshake className="mr-3 h-7 w-7" />
               Nossos Planos de Parceria Premium
             </CardTitle>
             <CardDescription>Escolha o plano que melhor se adapta às suas necessidades e impulsione seu negócio.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {partnerPlans.map((plan) => (
-                <Card key={plan.name} className="flex flex-col rounded-lg border bg-card p-6 shadow-sm hover:shadow-lg transition-shadow duration-300">
-                  <CardHeader className="p-0 mb-4">
-                    <div className="flex items-center mb-2">
-                      <plan.Icon className={`mr-2 h-7 w-7 ${plan.iconColor}`} />
-                      <CardTitle className={`text-xl font-semibold ${plan.iconColor}`}>{plan.name}</CardTitle>
+                <Card key={plan.name} className="flex flex-col rounded-lg border bg-card p-4 shadow-sm hover:shadow-lg transition-shadow duration-300">
+                  <CardHeader className="p-0 mb-3">
+                    <div className="flex items-center mb-1.5">
+                      <plan.Icon className={`mr-2 h-6 w-6 ${plan.iconColor}`} />
+                      <CardTitle className={`text-lg font-semibold ${plan.iconColor}`}>{plan.name}</CardTitle>
                     </div>
-                    <CardDescription className="text-sm text-muted-foreground">{plan.description}</CardDescription>
+                    <CardDescription className="text-xs text-muted-foreground">{plan.description}</CardDescription>
                   </CardHeader>
                   <CardContent className="p-0 flex-grow">
-                    <ul className="space-y-2 text-sm text-foreground/80">
+                    <ul className="space-y-1.5 text-xs text-foreground/80">
                       <li className="flex items-center">
-                        <Ticket className="mr-2 h-4 w-4 text-green-500" /> {plan.normalOffers} Ofertas Normais
+                        <Ticket className="mr-2 h-3.5 w-3.5 text-green-500" /> {plan.normalOffers} Ofertas Normais
                       </li>
                       <li className="flex items-center">
-                        <Star className="mr-2 h-4 w-4 text-yellow-400 fill-yellow-400" /> {plan.specialOffers} Oferta(s) VIP Especial(is)
+                        <Star className="mr-2 h-3.5 w-3.5 text-yellow-400 fill-yellow-400" /> {plan.specialOffers} Oferta(s) VIP Especial(is)
                       </li>
                     </ul>
                   </CardContent>
-                  <CardFooter className="p-0 mt-auto pt-4">
-                    <Button variant="outline" asChild className="w-full">
-                      <Link href="mailto:parcerias@guiamais.com.br?subject=Interesse%20em%20Plano%20Premium%20Parceiro">
-                        <MessageSquare className="mr-2 h-4 w-4" /> {plan.priceInfo}
+                  <CardFooter className="p-0 mt-auto pt-3">
+                    <Button variant="outline" asChild className="w-full text-xs h-9">
+                      <Link href="mailto:parcerias@guiamais.com.br?subject=Interesse%20em%20Plano%20Premium%20Parceiro%20-%20Guia%20Mais">
+                        <MessageSquare className="mr-2 h-3.5 w-3.5" /> {plan.priceInfo}
                       </Link>
                     </Button>
                   </CardFooter>
@@ -166,8 +166,8 @@ export default function PartnerRegistrationPage() {
                 <p className="text-sm text-muted-foreground mb-3">
                   Planos personalizados para necessidades únicas. Ideal para grandes redes, eventos especiais ou requisitos específicos.
                 </p>
-                <Button variant="outline" asChild className="w-full md:w-auto">
-                  <Link href="mailto:parcerias@guiamais.com.br?subject=Interesse%20em%20Assinatura%20Sob%20Medida">
+                <Button variant="outline" asChild className="w-full md:w-auto text-sm h-10">
+                  <Link href="mailto:parcerias@guiamais.com.br?subject=Interesse%20em%20Assinatura%20Sob%20Medida%20-%20Guia%20Mais">
                     <MessageSquare className="mr-2 h-4 w-4" /> Falar com Consultor
                   </Link>
                 </Button>
@@ -177,25 +177,25 @@ export default function PartnerRegistrationPage() {
 
         <Card className="shadow-lg bg-gradient-to-r from-primary/10 via-background to-background">
           <CardHeader>
-            <CardTitle className="flex items-center text-2xl text-primary">
+            <CardTitle className="flex items-center text-xl text-primary">
               <Rocket className="mr-3 h-7 w-7" />
               Pronto para Começar?
             </CardTitle>
             <CardDescription>Dê o próximo passo para destacar seu negócio em Martins!</CardDescription>
           </CardHeader>
           <CardContent className="text-center">
-            <p className="mb-6 text-foreground/80">
+            <p className="mb-4 text-sm text-foreground/80">
               Não perca a oportunidade de fazer parte do Guia Mais e alcançar milhares de potenciais clientes.
             </p>
-            <div className="flex flex-col sm:flex-row justify-center gap-4">
-              <Button size="lg" className="bg-accent hover:bg-accent/90 text-accent-foreground" asChild>
+            <div className="flex flex-col sm:flex-row justify-center gap-3">
+              <Button size="lg" className="bg-accent hover:bg-accent/90 text-accent-foreground text-base" asChild>
                 <Link href="/partner/register">
                   <UserPlus className="mr-2 h-5 w-5" />
                   Quero Ser Parceiro
                 </Link>
               </Button>
-              <Button variant="outline" size="lg" asChild>
-                <Link href="mailto:parcerias@guiamais.com.br">
+              <Button variant="outline" size="lg" asChild className="text-base">
+                <Link href="mailto:parcerias@guiamais.com.br?subject=Dúvidas%20sobre%20Parceria%20-%20Guia%20Mais">
                   <MessageSquare className="mr-2 h-5 w-5" />
                   Falar com Consultor
                 </Link>
