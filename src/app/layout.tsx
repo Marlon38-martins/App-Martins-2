@@ -15,23 +15,22 @@ import {
   SidebarInset,
 } from '@/components/ui/sidebar';
 import { 
-  HomeIcon, 
-  ShoppingCart as ServicesIcon, 
-  MountainSnow, 
-  MapIcon as MapIconSidebar,
-  UserPlus, 
+  Home, 
+  LayoutGrid, 
+  MapIcon as MapIconNav, // Renamed to avoid conflict
+  Search,
+  QrCode,
+  Info,
+  ChevronDown, // For dropdown indicator
   UtensilsCrossed,
   BedDouble,
-  ShoppingBag,
-  Coffee,
   Beer,
-  Landmark as AttractionIconSidebar,
+  Coffee,
+  ShoppingBag,
+  Landmark as AttractionIconNav, // Renamed
   Trees,
-  LayoutGrid,
-  Info,
-  Search as SearchIcon,
-  Handshake,
-  QrCode,
+  TicketPercent,
+  Handshake, // For Seja Parceiro
 } from 'lucide-react'; 
 import { Header } from '@/components/layout/header';
 import { AuthProviderClient } from '@/hooks/use-auth-client'; 
@@ -40,13 +39,14 @@ import { CurrentUserDisplay } from '@/components/auth/current-user-display';
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
+  DropdownMenuItem, // Still needed for non-client items if any
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { slugify } from '@/lib/utils';
 import { DynamicPartnerLink } from '@/components/layout/partner-panel-dropdown';
 import { TopHorizontalNav } from '@/components/layout/top-horizontal-nav';
+import { ClientDropdownMenuItem } from '@/components/layout/client-dropdown-menu-item'; // New import
 
 
 const geistSans = Geist({
@@ -69,8 +69,8 @@ const categoriesForMenu = [
   { name: 'Hospedagem', slug: slugify('Hotel'), Icon: BedDouble },
   { name: 'Bares', slug: slugify('Bar'), Icon: Beer },
   { name: 'Cafés', slug: slugify('Café'), Icon: Coffee },
-  { name: 'Lojas', slug: slugify('Comércio'), Icon: ShoppingBag }, 
-  { name: 'Lazer', slug: slugify('Atração'), Icon: AttractionIconSidebar },
+  { name: 'Lojas', slug: slugify('Comércio'), Icon: ShoppingBag },
+  { name: 'Lazer', slug: slugify('Atração'), Icon: AttractionIconNav },
   { name: 'Parques', slug: slugify('Parque'), Icon: Trees },
 ];
 
@@ -103,7 +103,7 @@ export default function RootLayout({
                     <SidebarMenuButton href="/" asChild tooltip={{content: "Início", side:"right"}}>
                       <Link href="/">
                         <span className="flex items-center gap-1.5">
-                          <HomeIcon />
+                          <Home />
                           <span className="group-data-[collapsible=icon]:hidden">Início</span>
                         </span>
                       </Link>
@@ -113,10 +113,15 @@ export default function RootLayout({
                   <SidebarMenuItem>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <SidebarMenuButton href="/services" tooltip={{content: "Parceiros & Categorias", side:"right"}} className="w-full">
+                        <SidebarMenuButton 
+                          tooltip={{content: "Parceiros & Categorias", side:"right"}} 
+                          className="w-full"
+                          // Removed href here if it's just a trigger
+                        >
                            <span className="flex items-center gap-1.5">
-                            <ServicesIcon />
+                            <TicketPercent /> {/* Changed from ServicesIcon to TicketPercent */}
                             <span className="group-data-[collapsible=icon]:hidden">Parceiros</span>
+                            <ChevronDown className="ml-auto h-4 w-4 text-sidebar-foreground/70 group-data-[collapsible=icon]:hidden group-data-[state=open]:rotate-180 transition-transform" />
                           </span>
                         </SidebarMenuButton>
                       </DropdownMenuTrigger>
@@ -126,24 +131,21 @@ export default function RootLayout({
                         className="w-56 bg-popover text-popover-foreground ml-2 group-data-[collapsible=icon]:ml-0"
                       >
                         {categoriesForMenu.map(category => (
-                          <DropdownMenuItem key={category.slug} asChild>
-                            <Link href={`/services/${category.slug}`} className="flex items-center cursor-pointer">
-                              <span className="flex items-center gap-1.5 w-full">
-                                <category.Icon className="mr-2 h-4 w-4" />
-                                {category.name}
-                              </span>
-                            </Link>
-                          </DropdownMenuItem>
+                          <ClientDropdownMenuItem
+                            key={category.slug}
+                            itemKey={category.slug} // Pass key explicitly if needed by ClientDropdownMenuItem
+                            href={`/services/${category.slug}`}
+                            Icon={category.Icon}
+                            label={category.name}
+                          />
                         ))}
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem asChild>
-                          <Link href="/services" className="flex items-center cursor-pointer">
-                             <span className="flex items-center gap-1.5 w-full">
-                              <LayoutGrid className="mr-2 h-4 w-4" />
-                              Ver Todas as Categorias
-                            </span>
-                          </Link>
-                        </DropdownMenuItem>
+                        <ClientDropdownMenuItem
+                            itemKey="all-categories"
+                            href="/services"
+                            Icon={LayoutGrid}
+                            label="Ver Todas as Categorias"
+                        />
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </SidebarMenuItem>
@@ -152,7 +154,7 @@ export default function RootLayout({
                     <SidebarMenuButton href="/map" asChild tooltip={{content: "Mapa", side:"right"}}>
                       <Link href="/map">
                         <span className="flex items-center gap-1.5">
-                          <MapIconSidebar />
+                          <MapIconNav />
                           <span className="group-data-[collapsible=icon]:hidden">Mapa</span>
                         </span>
                       </Link>
@@ -163,7 +165,7 @@ export default function RootLayout({
                     <SidebarMenuButton href="/search" asChild tooltip={{content: "Buscar", side:"right"}}>
                       <Link href="/search">
                          <span className="flex items-center gap-1.5">
-                          <SearchIcon />
+                          <Search />
                           <span className="group-data-[collapsible=icon]:hidden">Buscar</span>
                         </span>
                       </Link>
