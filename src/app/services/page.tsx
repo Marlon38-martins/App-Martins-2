@@ -1,3 +1,4 @@
+
 // src/app/services/page.tsx
 'use client';
 
@@ -33,7 +34,7 @@ function ServicesPageContent() {
   const [citySearchTerm, setCitySearchTerm] = useState('');
   const [currentCityName, setCurrentCityName] = useState<string | null>(null);
 
-  const suggestedRegionsStatic = useMemo(() => [
+  const suggestedRegionsForServicesPage = useMemo(() => [
     { name: 'Martins, RN', slug: slugify('Martins, RN') },
     { name: 'Cidade Vizinha, RN', slug: slugify('Cidade Vizinha, RN') },
     { name: 'Pau dos Ferros, RN', slug: slugify('Pau dos Ferros, RN') },
@@ -98,17 +99,25 @@ function ServicesPageContent() {
   const uniqueCitiesSource = useMemo(() => {
     if (!allBusinesses.length) return [];
     const cities = allBusinesses.map(b => b.city).filter(Boolean) as string[];
-    return Array.from(new Set(cities)).map(city => ({ name: city, slug: slugify(city) })).sort((a,b) => a.name.localeCompare(b.name));
+    const citySet = Array.from(new Set(cities));
+    // Prioritize Martins, RN
+    const martinsIndex = citySet.indexOf('Martins, RN');
+    if (martinsIndex > -1) {
+      citySet.splice(martinsIndex, 1);
+      citySet.unshift('Martins, RN');
+    }
+     return citySet.map(city => ({ name: city, slug: slugify(city) }));
   }, [allBusinesses]);
 
-  const searchedAndFilteredCities = useMemo(() => {
+  const displayedCityFilters = useMemo(() => {
     if (!citySearchTerm) {
-      return []; // Only show search results if there's a search term
+      // Show suggested regions if they exist in the uniqueCitiesSource, otherwise empty for prompt
+      return suggestedRegionsForServicesPage.filter(sr => uniqueCitiesSource.some(ucs => ucs.slug === sr.slug));
     }
     return uniqueCitiesSource.filter(city =>
       city.name.toLowerCase().includes(citySearchTerm.toLowerCase())
     );
-  }, [uniqueCitiesSource, citySearchTerm]);
+  }, [uniqueCitiesSource, citySearchTerm, suggestedRegionsForServicesPage]);
 
   return (
     <div className="p-3">
@@ -127,14 +136,14 @@ function ServicesPageContent() {
       {uniqueCitiesSource.length > 0 && (
         <section className="mb-4 p-3 border rounded-lg shadow-sm bg-card">
           <h3 className="mb-2 text-sm font-semibold text-accent flex items-center">
-            <MapPinned className="mr-1.5 h-4 w-4" /> Regiões Sugeridas:
+            <MapPinned className="mr-1.5 h-4 w-4" /> Filtrar por Região:
           </h3>
           <div className="flex flex-wrap gap-1.5 mb-3">
             <Button
               variant={!citySlugFromQuery ? 'default' : 'outline'}
               size="sm"
               asChild
-              className="text-xs h-8"
+              className="text-xs h-8 hover:bg-accent hover:text-accent-foreground"
             >
               <Link href={`/services`}>
                 <span className="flex items-center">
@@ -142,48 +151,46 @@ function ServicesPageContent() {
                 </span>
               </Link>
             </Button>
-            {suggestedRegionsStatic.filter(sr => uniqueCitiesSource.some(ucs => ucs.slug === sr.slug)).map(city => (
-              <Button
-                key={city.slug}
-                variant={citySlugFromQuery === city.slug ? 'default' : 'outline'}
-                size="sm"
-                asChild
-                className="text-xs h-8"
-              >
-                <Link href={`/services?city=${city.slug}`}>
-                  <span className="flex items-center">
-                    <MapPinned className="mr-1 h-3 w-3" /> {city.name}
-                  </span>
-                </Link>
-              </Button>
+            {/* Display suggested regions first if no city search term */}
+            {!citySearchTerm && suggestedRegionsForServicesPage.map(city => (
+               uniqueCitiesSource.some(ucs => ucs.slug === city.slug) &&
+                <Button
+                    key={`suggested-${city.slug}`}
+                    variant={citySlugFromQuery === city.slug ? 'default' : 'outline'}
+                    size="sm"
+                    asChild
+                    className="text-xs h-8 hover:bg-accent hover:text-accent-foreground"
+                >
+                    <Link href={`/services?city=${city.slug}`}>
+                    <span className="flex items-center">
+                        <MapPinned className="mr-1 h-3 w-3" /> {city.name}
+                    </span>
+                    </Link>
+                </Button>
             ))}
           </div>
 
-          <h3 className="mb-1.5 text-sm font-semibold text-accent flex items-center">
-            <Search className="mr-1.5 h-4 w-4" /> Buscar Outra Região:
-          </h3>
-          <div className="mb-2">
-            <SearchBar
-              searchTerm={citySearchTerm}
-              onSearchChange={setCitySearchTerm}
-              placeholder="Digite o nome da cidade..."
-            />
-          </div>
-          {isLoading && <Skeleton className="h-8 w-full rounded-md" />}
+          <SearchBar
+            searchTerm={citySearchTerm}
+            onSearchChange={setCitySearchTerm}
+            placeholder="Buscar cidade na região..."
+          />
           
-          {citySearchTerm && searchedAndFilteredCities.length === 0 && (
-            <p className="text-xs text-muted-foreground text-center py-1.5">Nenhuma cidade encontrada para "{citySearchTerm}".</p>
+          {isLoading && <div className="mt-2"><Skeleton className="h-8 w-full rounded-md" /></div>}
+          
+          {citySearchTerm && displayedCityFilters.length === 0 && (
+            <p className="text-xs text-muted-foreground text-center py-1.5 mt-2">Nenhuma cidade encontrada para "{citySearchTerm}".</p>
           )}
 
-          {citySearchTerm && searchedAndFilteredCities.length > 0 && (
+          {citySearchTerm && displayedCityFilters.length > 0 && (
             <div className="flex flex-wrap gap-1.5 mt-2">
-              {searchedAndFilteredCities.map(city => (
+              {displayedCityFilters.map(city => (
                 <Button
                   key={city.slug}
                   variant={citySlugFromQuery === city.slug ? 'default' : 'outline'}
                   size="sm"
                   asChild
-                  className="text-xs h-8"
+                  className="text-xs h-8 hover:bg-accent hover:text-accent-foreground"
                 >
                   <Link href={`/services?city=${city.slug}`}>
                     <span className="flex items-center">
@@ -194,8 +201,8 @@ function ServicesPageContent() {
               ))}
             </div>
           )}
-           {!citySearchTerm && (
-             <p className="text-xs text-muted-foreground text-center py-1.5">Digite na busca acima para encontrar mais cidades.</p>
+          {!citySearchTerm && (
+             <p className="text-xs text-muted-foreground text-center py-1.5 mt-2">Digite na busca acima para encontrar mais cidades.</p>
            )}
         </section>
       )}
@@ -215,15 +222,15 @@ function ServicesPageContent() {
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           {Array.from({ length: 2 }).map((_, index) => (
             <Card key={index} className="flex flex-col">
-              <CardHeader className="p-2.5">
-                <Skeleton className="mb-1 h-6 w-6 rounded-md" />
-                <Skeleton className="h-4 w-3/4" />
+              <CardHeader className="p-3">
+                <Skeleton className="mb-1.5 h-7 w-7 rounded-md" />
+                <Skeleton className="h-5 w-3/4" />
               </CardHeader>
-              <CardContent className="flex-grow p-2.5 pt-0">
-                <Skeleton className="h-2.5 w-1/2" />
+              <CardContent className="flex-grow p-3 pt-0">
+                <Skeleton className="h-3 w-1/2" />
               </CardContent>
-              <div className="p-2.5 pt-0">
-                <Skeleton className="h-8 w-full rounded-md" />
+              <div className="p-3 pt-0">
+                <Skeleton className="h-9 w-full rounded-md" />
               </div>
             </Card>
           ))}
@@ -251,26 +258,26 @@ function ServicesPageContent() {
       )}
 
       {!isLoading && !error && filteredCategories.length > 0 && (
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           {filteredCategories.map(category => (
-            <Card key={category.slug} className="flex transform flex-col overflow-hidden shadow-sm transition-all duration-200 hover:scale-105 hover:shadow-lg group bg-card">
-              <CardHeader className="pb-1 p-2.5">
+            <Card key={category.slug} className="flex transform flex-col overflow-hidden shadow-md transition-all duration-200 hover:scale-105 hover:shadow-lg group bg-card">
+              <CardHeader className="pb-2 p-4">
                 <div className="flex items-center justify-between">
-                  <CardTitle className="text-md font-semibold text-primary group-hover:text-accent">{category.name}</CardTitle>
-                  {category.icon && <BusinessTypeIcon type={category.icon} className="h-5 w-5 text-muted-foreground group-hover:text-accent" />}
+                  <CardTitle className="text-lg font-semibold text-primary group-hover:text-accent">{category.name}</CardTitle>
+                  {category.icon && <BusinessTypeIcon type={category.icon} className="h-6 w-6 text-muted-foreground group-hover:text-accent" />}
                 </div>
               </CardHeader>
-              <CardContent className="flex-grow p-2.5 pt-0">
-                <p className="text-xs text-muted-foreground">{category.count} estabelecimento(s) encontrado(s)</p>
+              <CardContent className="flex-grow p-4 pt-0">
+                <p className="text-sm text-muted-foreground">{category.count} estabelecimento(s) encontrado(s)</p>
               </CardContent>
-              <div className="p-2.5 pt-1">
+              <div className="p-4 pt-2">
                  <Link
                     href={`/services/${category.slug}${citySlugFromQuery ? `?city=${citySlugFromQuery}` : ''}`}
-                    className="inline-flex items-center justify-center rounded-md bg-accent px-2.5 py-1.5 text-xs font-medium text-accent-foreground shadow-sm transition-colors hover:bg-accent/80 focus:outline-none focus:ring-1 focus:ring-accent focus:ring-offset-1 w-full group-hover:bg-primary group-hover:text-primary-foreground h-8"
+                    className="inline-flex items-center justify-center rounded-md bg-accent px-3 py-2 text-sm font-medium text-accent-foreground shadow-sm transition-colors hover:bg-accent/80 focus:outline-none focus:ring-1 focus:ring-accent focus:ring-offset-1 w-full group-hover:bg-primary group-hover:text-primary-foreground h-10"
                   >
                     <span className="flex items-center justify-center w-full">
                         Ver em {category.name}
-                        <ArrowRight className="ml-1 h-3 w-3" />
+                        <ArrowRight className="ml-2 h-4 w-4" />
                     </span>
                 </Link>
               </div>

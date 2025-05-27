@@ -30,14 +30,14 @@ interface MapPoint extends GramadoBusiness {
 }
 
 const legendCategories = [
-  { name: 'Restaurante', iconType: 'Restaurante' as GramadoBusiness['icon'] },
+  { name: 'Restaurante', iconType: 'Restaurante' as GramadoBusiness['icon'], slug: 'restaurante' },
   { name: 'Hotel/Pousada', iconType: 'Hotel' as GramadoBusiness['icon'], slug: 'hotel' },
-  { name: 'Loja', iconType: 'Loja' as GramadoBusiness['icon'] },
+  { name: 'Loja', iconType: 'Loja' as GramadoBusiness['icon'], slug: 'loja' },
   { name: 'Atração Turística', iconType: 'Atração' as GramadoBusiness['icon'], slug: 'atracao' },
-  { name: 'Café', iconType: 'Café' as GramadoBusiness['icon'] },
+  { name: 'Café', iconType: 'Café' as GramadoBusiness['icon'], slug: 'cafe' },
   { name: 'Parque/Mirante', iconType: 'Parque' as GramadoBusiness['icon'], slug: 'parque' },
-  { name: 'Serviço', iconType: 'Serviço' as GramadoBusiness['icon'] },
-  { name: 'Bar', iconType: 'Bar' as GramadoBusiness['icon'] },
+  { name: 'Serviço', iconType: 'Serviço' as GramadoBusiness['icon'], slug: 'servico' },
+  { name: 'Bar', iconType: 'Bar' as GramadoBusiness['icon'], slug: 'bar' },
   { name: 'Outro', iconType: 'Default' as GramadoBusiness['icon'], slug: 'outro' },
 ];
 
@@ -84,16 +84,34 @@ export default function MapPage() {
     const latRange = maxLat - minLat;
     const lonRange = maxLon - minLon;
 
+    // Default center to Martins, RN coordinates (approx -6.0869, -37.9119) for normalization
+    const martinsLat = -6.0869;
+    const martinsLon = -37.9119;
+
+    const defaultLatRange = 0.1; // ~11km, adjust as needed for Martins area
+    const defaultLonRange = 0.1;
+
+
     return locatableBusinesses.map(business => {
       let x = 50; 
       let y = 50; 
 
-      if (lonRange > 0 && typeof business.longitude === 'number') {
-        x = ((business.longitude - minLon) / lonRange) * 90 + 5; 
+      const currentLatRange = latRange > 0.0001 ? latRange : defaultLatRange;
+      const currentLonRange = lonRange > 0.0001 ? lonRange : defaultLonRange;
+      const currentMinLat = latRange > 0.0001 ? minLat : martinsLat - (defaultLatRange / 2);
+      const currentMinLon = lonRange > 0.0001 ? minLon : martinsLon - (defaultLonRange / 2);
+      
+
+      if (currentLonRange > 0 && typeof business.longitude === 'number') {
+        x = ((business.longitude - currentMinLon) / currentLonRange) * 90 + 5; 
       }
-      if (latRange > 0 && typeof business.latitude === 'number') {
-        y = (1 - (business.latitude - minLat) / latRange) * 90 + 5; 
+      if (currentLatRange > 0 && typeof business.latitude === 'number') {
+        y = (1 - (business.latitude - currentMinLat) / currentLatRange) * 90 + 5; 
       }
+      
+      // Clamp values to be within 5% and 95% to stay on map
+      x = Math.max(5, Math.min(95, x));
+      y = Math.max(5, Math.min(95, y));
       
       return { ...business, x, y };
     });
@@ -103,12 +121,10 @@ export default function MapPage() {
     <div>
       <section className="mb-8 text-center">
         <h2 className="mb-2 text-3xl font-bold tracking-tight text-primary md:text-4xl">
-          Mapa Interativo de Martins
+          Mapa Interativo de Martins, RN
         </h2>
         <p className="text-lg text-foreground/80">
           Navegue pelos pontos turísticos e estabelecimentos parceiros.
-          {/* TODO: OpenWeather API integration here for a small weather widget (optional) */}
-          {/* Would fetch data using NEXT_PUBLIC_OPENWEATHER_API_KEY */}
         </p>
       </section>
 
@@ -132,7 +148,7 @@ export default function MapPage() {
             <MapPin className="mb-4 h-16 w-16 text-muted-foreground" />
             <h3 className="text-xl font-semibold text-foreground">Nenhum ponto para exibir no mapa</h3>
             <p className="text-muted-foreground">
-              Não encontramos estabelecimentos com dados de localização válidos para exibir no mapa.
+              Não encontramos estabelecimentos com dados de localização válidos para exibir no mapa de Martins, RN.
             </p>
           </div>
       )}
@@ -140,18 +156,17 @@ export default function MapPage() {
       {!isLoading && !error && mapPoints.length > 0 && (
         <TooltipProvider>
           <div className="relative h-[500px] w-full rounded-lg border shadow-lg md:h-[700px] overflow-hidden bg-muted/30">
-            {/* Placeholder for actual Google Map implementation */}
             <Image 
               src="https://placehold.co/1200x900.png" 
-              alt="Mapa de fundo ilustrativo de Martins" 
+              alt="Mapa de fundo ilustrativo de Martins, RN" 
               layout="fill" 
               objectFit="cover" 
               className="opacity-50 -z-10"
-              data-ai-hint="Martins aerial map"
+              data-ai-hint="Martins RN map"
             />
              <div className="absolute inset-0 flex items-center justify-center">
-                <p className="text-muted-foreground bg-background/80 p-4 rounded-md">
-                    Integração com Google Maps API pendente.
+                <p className="text-muted-foreground bg-background/80 p-4 rounded-md text-center">
+                    Integração com Google Maps API pendente.<br/> Esta é uma simulação visual dos pontos em Martins, RN.
                 </p>
             </div>
             
@@ -173,7 +188,7 @@ export default function MapPage() {
                 </TooltipTrigger>
                 <TooltipContent side="top" className="bg-popover text-popover-foreground border-border shadow-md">
                   <p className="font-semibold">{point.name}</p>
-                  <p className="text-sm text-muted-foreground">{point.type}</p>
+                  <p className="text-sm text-muted-foreground">{point.type} em {point.city}</p>
                 </TooltipContent>
               </Tooltip>
             ))}
@@ -187,7 +202,7 @@ export default function MapPage() {
               <Link 
                 key={legend.name} 
                 href={`/services/${legend.slug || slugify(legend.name)}`} 
-                className="flex items-center gap-2 p-1 rounded-md hover:bg-muted/50 transition-colors group"
+                className="flex items-center gap-2 p-1.5 rounded-md hover:bg-muted/50 transition-colors group"
               >
                 <BusinessTypeIcon type={legend.iconType || 'Default'} className="h-5 w-5 text-accent group-hover:text-primary" />
                 <span className="text-foreground group-hover:text-primary">{legend.name}</span>
