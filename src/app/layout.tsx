@@ -31,6 +31,13 @@ import {
   Trees,
   TicketPercent,
   Handshake, // For Seja Parceiro
+  MountainSnow, // Added MountainSnow import
+  Users,      // Added for Admin links
+  Building,   // Added for Admin links
+  Briefcase,  // Added for Partner Panel link
+  Settings2,  // Added for Partner Panel links
+  PlusCircle, // Added for Partner Panel links
+  Star        // Added for Partner Panel links
 } from 'lucide-react'; 
 import { Header } from '@/components/layout/header';
 import { AuthProviderClient } from '@/hooks/use-auth-client'; 
@@ -46,7 +53,7 @@ import {
 import { slugify } from '@/lib/utils';
 import { DynamicPartnerLink } from '@/components/layout/partner-panel-dropdown';
 import { TopHorizontalNav } from '@/components/layout/top-horizontal-nav';
-import { ClientDropdownMenuItem } from '@/components/layout/client-dropdown-menu-item'; // New import
+import { ClientDropdownMenuItem } from '@/components/layout/client-dropdown-menu-item'; 
 
 
 const geistSans = Geist({
@@ -101,7 +108,7 @@ export default function RootLayout({
                 <SidebarMenu>
                   <SidebarMenuItem>
                     <SidebarMenuButton href="/" asChild tooltip={{content: "Início", side:"right"}}>
-                      <Link href="/">
+                       <Link href="/">
                         <span className="flex items-center gap-1.5">
                           <Home />
                           <span className="group-data-[collapsible=icon]:hidden">Início</span>
@@ -116,10 +123,9 @@ export default function RootLayout({
                         <SidebarMenuButton 
                           tooltip={{content: "Parceiros & Categorias", side:"right"}} 
                           className="w-full"
-                          // Removed href here if it's just a trigger
                         >
                            <span className="flex items-center gap-1.5">
-                            <TicketPercent /> {/* Changed from ServicesIcon to TicketPercent */}
+                            <TicketPercent /> 
                             <span className="group-data-[collapsible=icon]:hidden">Parceiros</span>
                             <ChevronDown className="ml-auto h-4 w-4 text-sidebar-foreground/70 group-data-[collapsible=icon]:hidden group-data-[state=open]:rotate-180 transition-transform" />
                           </span>
@@ -133,7 +139,7 @@ export default function RootLayout({
                         {categoriesForMenu.map(category => (
                           <ClientDropdownMenuItem
                             key={category.slug}
-                            itemKey={category.slug} // Pass key explicitly if needed by ClientDropdownMenuItem
+                            itemKey={category.slug}
                             href={`/services/${category.slug}`}
                             Icon={category.Icon}
                             label={category.name}
@@ -163,7 +169,7 @@ export default function RootLayout({
 
                   <SidebarMenuItem>
                     <SidebarMenuButton href="/search" asChild tooltip={{content: "Buscar", side:"right"}}>
-                      <Link href="/search">
+                       <Link href="/search">
                          <span className="flex items-center gap-1.5">
                           <Search />
                           <span className="group-data-[collapsible=icon]:hidden">Buscar</span>
@@ -200,7 +206,7 @@ export default function RootLayout({
                      <DynamicPartnerLink />
                   </SidebarMenuItem>
                   <SidebarMenuItem>
-                    <SidebarMenuButton href="/partner-registration" asChild tooltip={{content: "Seja Parceiro", side:"right"}}>
+                    <SidebarMenuButton asChild tooltip={{content: "Seja Parceiro", side:"right"}}>
                       <Link href="/partner-registration">
                         <span className="flex items-center gap-1.5">
                           <Handshake />
