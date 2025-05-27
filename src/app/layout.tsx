@@ -17,27 +17,27 @@ import {
 import { 
   Home, 
   LayoutGrid, 
-  MapIcon as MapIconNav, // Renamed to avoid conflict
+  MapIcon as MapIconNav, 
   Search,
   QrCode,
   Info,
-  ChevronDown, // For dropdown indicator
+  ChevronDown, 
   UtensilsCrossed,
   BedDouble,
   Beer,
   Coffee,
   ShoppingBag,
-  Landmark as AttractionIconNav, // Renamed
+  Landmark as AttractionIconNav, 
   Trees,
   TicketPercent,
-  Handshake, // For Seja Parceiro
-  MountainSnow, // Added MountainSnow import
-  Users,      // Added for Admin links
-  Building,   // Added for Admin links
-  Briefcase,  // Added for Partner Panel link
-  Settings2,  // Added for Partner Panel links
-  PlusCircle, // Added for Partner Panel links
-  Star        // Added for Partner Panel links
+  Handshake, 
+  MountainSnow, 
+  Users,      
+  Building,   
+  Briefcase,  
+  Settings2,  
+  PlusCircle, 
+  Star        
 } from 'lucide-react'; 
 import { Header } from '@/components/layout/header';
 import { AuthProviderClient } from '@/hooks/use-auth-client'; 
@@ -46,7 +46,7 @@ import { CurrentUserDisplay } from '@/components/auth/current-user-display';
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem, // Still needed for non-client items if any
+  DropdownMenuItem, 
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
@@ -123,6 +123,7 @@ export default function RootLayout({
                         <SidebarMenuButton 
                           tooltip={{content: "Parceiros & Categorias", side:"right"}} 
                           className="w-full"
+                          href="/services" 
                         >
                            <span className="flex items-center gap-1.5">
                             <TicketPercent /> 
@@ -206,7 +207,7 @@ export default function RootLayout({
                      <DynamicPartnerLink />
                   </SidebarMenuItem>
                   <SidebarMenuItem>
-                    <SidebarMenuButton asChild tooltip={{content: "Seja Parceiro", side:"right"}}>
+                    <SidebarMenuButton asChild tooltip={{content: "Seja Parceiro", side:"right"}} href="/partner-registration">
                       <Link href="/partner-registration">
                         <span className="flex items-center gap-1.5">
                           <Handshake />
