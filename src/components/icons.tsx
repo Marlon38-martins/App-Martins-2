@@ -1,3 +1,4 @@
+
 "use client";
 import type { GramadoBusiness } from '@/services/gramado-businesses';
 import {
@@ -9,7 +10,8 @@ import {
   Coffee,
   Trees,
   TicketPercent,
-  Beer, // Added Beer
+  Beer,
+  LayoutGrid, // Added LayoutGrid
   Icon as LucideIconComponent, // Generic icon component
 } from 'lucide-react';
 import type { LucideProps } from 'lucide-react';
@@ -19,7 +21,7 @@ export type { LucideIconName } from '@/services/gramado-businesses';
 
 
 interface BusinessIconProps extends LucideProps {
-  type: GramadoBusiness['type'] | GramadoBusiness['icon'];
+  type: GramadoBusiness['type'] | GramadoBusiness['icon'] | 'LayoutGrid'; // Allow LayoutGrid name
 }
 
 const iconMap: Record<string, React.ElementType<LucideProps>> = {
@@ -30,9 +32,8 @@ const iconMap: Record<string, React.ElementType<LucideProps>> = {
   Serviço: Wrench,
   Café: Coffee,
   Parque: Trees,
-  Bar: Beer, // Added Bar
-  Default: TicketPercent,
-  // Direct icon names from GramadoBusiness['icon']
+  Bar: Beer,
+  // Direct icon names from GramadoBusiness['icon'] or other components
   UtensilsCrossed: UtensilsCrossed,
   BedDouble: BedDouble,
   ShoppingBag: ShoppingBag,
@@ -41,11 +42,13 @@ const iconMap: Record<string, React.ElementType<LucideProps>> = {
   Coffee: Coffee,
   Trees: Trees,
   TicketPercent: TicketPercent,
-  Beer: Beer, // Added Beer
+  Beer: Beer,
+  LayoutGrid: LayoutGrid, // Map LayoutGrid name to the component
+  Default: TicketPercent,
 };
 
 export function BusinessTypeIcon({ type, ...props }: BusinessIconProps) {
-  const IconComponent = iconMap[type] || iconMap.Default;
+  const IconComponent = iconMap[type as string] || iconMap.Default;
   return <IconComponent {...props} />;
 }
 

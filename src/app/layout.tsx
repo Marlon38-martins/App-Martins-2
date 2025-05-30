@@ -14,46 +14,46 @@ import {
   SidebarMenuButton,
   SidebarInset,
 } from '@/components/ui/sidebar';
-import { 
-  Home, 
-  LayoutGrid, 
-  MapIcon as MapIconNav, 
+import {
+  Home,
+  LayoutGrid,
+  MapIcon as MapIconNav,
   Search,
   QrCode,
   Info,
-  ChevronDown, 
+  ChevronDown,
   UtensilsCrossed,
   BedDouble,
   Beer,
   Coffee,
   ShoppingBag,
-  Landmark as AttractionIconNav, 
+  Landmark as AttractionIconNav,
   Trees,
   TicketPercent,
-  Handshake, 
-  MountainSnow, 
-  Users,      
-  Building,   
-  Briefcase,  
-  Settings2,  
-  PlusCircle, 
-  Star        
-} from 'lucide-react'; 
+  Handshake,
+  MountainSnow,
+  Users,
+  Building,
+  Briefcase,
+  Settings2,
+  PlusCircle,
+  Star,
+} from 'lucide-react';
 import { Header } from '@/components/layout/header';
-import { AuthProviderClient } from '@/hooks/use-auth-client'; 
+import { AuthProviderClient } from '@/hooks/use-auth-client';
 import { AuthStateInitializer } from '@/components/auth/auth-state-initializer';
 import { CurrentUserDisplay } from '@/components/auth/current-user-display';
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem, 
+  DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { slugify } from '@/lib/utils';
 import { DynamicPartnerLink } from '@/components/layout/partner-panel-dropdown';
 import { TopHorizontalNav } from '@/components/layout/top-horizontal-nav';
-import { ClientDropdownMenuItem } from '@/components/layout/client-dropdown-menu-item'; 
+import { ClientDropdownMenuItem } from '@/components/layout/client-dropdown-menu-item';
 
 
 const geistSans = Geist({
@@ -72,13 +72,13 @@ export const metadata: Metadata = {
 };
 
 const categoriesForMenu = [
-  { name: 'Restaurantes', slug: slugify('Restaurante'), Icon: UtensilsCrossed },
-  { name: 'Hospedagem', slug: slugify('Hotel'), Icon: BedDouble },
-  { name: 'Bares', slug: slugify('Bar'), Icon: Beer },
-  { name: 'Cafés', slug: slugify('Café'), Icon: Coffee },
-  { name: 'Lojas', slug: slugify('Comércio'), Icon: ShoppingBag },
-  { name: 'Lazer', slug: slugify('Atração'), Icon: AttractionIconNav },
-  { name: 'Parques', slug: slugify('Parque'), Icon: Trees },
+  { name: 'Restaurantes', slug: slugify('Restaurante'), iconName: 'UtensilsCrossed' as const },
+  { name: 'Hospedagem', slug: slugify('Hotel'), iconName: 'BedDouble' as const },
+  { name: 'Bares', slug: slugify('Bar'), iconName: 'Beer' as const },
+  { name: 'Cafés', slug: slugify('Café'), iconName: 'Coffee' as const },
+  { name: 'Lojas', slug: slugify('Comércio'), iconName: 'ShoppingBag' as const },
+  { name: 'Lazer', slug: slugify('Atração'), iconName: 'Landmark' as const }, // Using Landmark for Lazer/Attraction
+  { name: 'Parques', slug: slugify('Parque'), iconName: 'Trees' as const },
 ];
 
 
@@ -116,25 +116,25 @@ export default function RootLayout({
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
-                  
+
                   <SidebarMenuItem>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <SidebarMenuButton 
-                          tooltip={{content: "Parceiros & Categorias", side:"right"}} 
+                        <SidebarMenuButton
+                          tooltip={{content: "Parceiros & Categorias", side:"right"}}
                           className="w-full"
-                          href="/services" 
+                          href="#" // Keep href or set to something if it's purely a trigger
                         >
                            <span className="flex items-center gap-1.5">
-                            <TicketPercent /> 
+                            <TicketPercent />
                             <span className="group-data-[collapsible=icon]:hidden">Parceiros</span>
                             <ChevronDown className="ml-auto h-4 w-4 text-sidebar-foreground/70 group-data-[collapsible=icon]:hidden group-data-[state=open]:rotate-180 transition-transform" />
                           </span>
                         </SidebarMenuButton>
                       </DropdownMenuTrigger>
-                      <DropdownMenuContent 
-                        side="right" 
-                        align="start" 
+                      <DropdownMenuContent
+                        side="right"
+                        align="start"
                         className="w-56 bg-popover text-popover-foreground ml-2 group-data-[collapsible=icon]:ml-0"
                       >
                         {categoriesForMenu.map(category => (
@@ -142,7 +142,7 @@ export default function RootLayout({
                             key={category.slug}
                             itemKey={category.slug}
                             href={`/services/${category.slug}`}
-                            Icon={category.Icon}
+                            iconName={category.iconName}
                             label={category.name}
                           />
                         ))}
@@ -150,7 +150,7 @@ export default function RootLayout({
                         <ClientDropdownMenuItem
                             itemKey="all-categories"
                             href="/services"
-                            Icon={LayoutGrid}
+                            iconName="LayoutGrid" // Pass name of LayoutGrid icon
                             label="Ver Todas as Categorias"
                         />
                       </DropdownMenuContent>
@@ -200,9 +200,9 @@ export default function RootLayout({
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
-                  
-                  <CurrentUserDisplay /> 
-                                    
+
+                  <CurrentUserDisplay />
+
                   <SidebarMenuItem className="mt-auto pt-3 border-t border-sidebar-border">
                      <DynamicPartnerLink />
                   </SidebarMenuItem>
@@ -222,9 +222,9 @@ export default function RootLayout({
 
             <SidebarInset>
               <Header />
-              <TopHorizontalNav /> 
+              <TopHorizontalNav />
               <main className="flex-grow p-4 bg-background overflow-x-hidden w-full">
-                <div className="w-full max-w-sm mx-auto"> 
+                <div className="w-full max-w-sm mx-auto">
                   {children}
                 </div>
               </main>
@@ -241,7 +241,7 @@ export default function RootLayout({
                   </nav>
                   <nav className="space-y-0.5 md:justify-self-end">
                      <Link href="/partner-registration" className="block px-2 py-1 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors">Seja um Parceiro</Link>
-                     <Link href="/contact" className="block px-2 py-1 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors">Fale Conosco</Link> 
+                     <Link href="/contact" className="block px-2 py-1 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors">Fale Conosco</Link>
                   </nav>
                 </div>
               </footer>
