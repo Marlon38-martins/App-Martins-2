@@ -22,7 +22,7 @@ const partnerPlansData = [
       { text: "QR Code exclusivo para direcionar clientes à sua página no Guia Mais", IconComp: QrCodeIcon },
       { text: "Exibição de avaliações de clientes em sua página", IconComp: Star },
     ],
-    description: "Ideal para negócios que estão começando e buscam ganhar visibilidade inicial, atraindo novos clientes com ofertas de impacto e feedback direto dos usuários.",
+    description: "Ideal para negócios que estão começando e buscam ganhar visibilidade inicial, atraindo novos clientes com uma oferta especial de impacto e algumas promoções regulares.",
     priceInfo: "Tenho Interesse",
     mailtoSubject: "Interesse no Plano Largada (R$79,90/mês) - Guia Mais",
   },
@@ -33,7 +33,7 @@ const partnerPlansData = [
     price: "R$ 119,90",
     billingCycle: "/ mês",
     benefits: [
-      { text: "5 Ofertas Normais (com QR Code de resgate)", IconComp: Ticket },
+      { text: "4 Ofertas Normais (com QR Code de resgate)", IconComp: Ticket }, // Changed from 5 to 4
       { text: "1 Oferta VIP Especial (com QR Code de resgate)", IconComp: Star },
       { text: "Notificação para clientes VIP sobre sua Oferta Especial", IconComp: MessageSquare },
       { text: "QR Code exclusivo para direcionar clientes à sua página no Guia Mais", IconComp: QrCodeIcon },
