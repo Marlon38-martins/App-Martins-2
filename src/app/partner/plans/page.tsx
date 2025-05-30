@@ -33,7 +33,7 @@ const partnerPlansData = [
     price: "R$ 119,90",
     billingCycle: "/ mês",
     benefits: [
-      { text: "4 Ofertas Normais (com QR Code de resgate)", IconComp: Ticket }, // Changed from 5 to 4
+      { text: "4 Ofertas Normais (com QR Code de resgate)", IconComp: Ticket },
       { text: "1 Oferta VIP Especial (com QR Code de resgate)", IconComp: Star },
       { text: "Notificação para clientes VIP sobre sua Oferta Especial", IconComp: MessageSquare },
       { text: "QR Code exclusivo para direcionar clientes à sua página no Guia Mais", IconComp: QrCodeIcon },
@@ -50,7 +50,7 @@ const partnerPlansData = [
     price: "R$ 179,90",
     billingCycle: "/ mês",
     benefits: [
-      { text: "6 Ofertas Normais (com QR Code de resgate)", IconComp: Ticket },
+      { text: "5 Ofertas Normais (com QR Code de resgate)", IconComp: Ticket }, // Changed from 6 to 5
       { text: "2 Ofertas VIP Especiais (com QR Code de resgate)", IconComp: Star },
       { text: "QR Code exclusivo para direcionar clientes à sua página no Guia Mais", IconComp: QrCodeIcon },
       { text: "Visibilidade premium na página inicial", IconComp: TrendingUp },
