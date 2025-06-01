@@ -20,7 +20,7 @@ export default function PartnerRegistrationPage() {
       name: "Plano Largada",
       Icon: Rocket,
       iconColor: "text-blue-500",
-      normalOffers: 2, // Changed from 3 to 2
+      normalOffers: 2,
       specialOffers: 1,
       description: "Ideal para negócios que estão começando e buscam ganhar visibilidade inicial, atraindo novos clientes com uma oferta especial de impacto e algumas promoções regulares.",
       priceInfo: "Saber Mais",
@@ -30,7 +30,7 @@ export default function PartnerRegistrationPage() {
       name: "Plano Processo",
       Icon: TrendingUp,
       iconColor: "text-green-500",
-      normalOffers: 4,
+      normalOffers: 3, // Atualizado de 4 para 3
       specialOffers: 1,
       description: "Para negócios em crescimento que desejam maior engajamento e mais oportunidades de destacar seus serviços e produtos com um volume maior de ofertas.",
       priceInfo: "Saber Mais",
