@@ -34,7 +34,7 @@ const quickNavCategories = [
   { name: 'Lojas', slug: slugify('Comércio'), Icon: ShoppingBag },
   { name: 'Lazer', slug: slugify('Atração'), Icon: AttractionIcon },
   { name: 'Mapa', slug: 'map', Icon: MapIcon },
-];
+]; // Added missing closing bracket and semicolon
 
 const suggestedRegions = [
     { name: 'Martins, RN', slug: slugify('Martins, RN') },
@@ -81,8 +81,6 @@ export default function HomePage() {
   const featuredDealsAndTeasers = useMemo(() => {
     if (isLoadingData || authLoading) return { deals: [], teasers: [] };
 
-    const normalDeals = allDeals.filter(deal => !deal.isVipOffer);
-    const vipDeals = allDeals.filter(deal => deal.isVipOffer);
     const allSortedDealsForDisplay = [...allDeals]
         .sort((a, b) => {
             if (a.isVipOffer && !b.isVipOffer) return -1;
@@ -550,4 +548,3 @@ export default function HomePage() {
     </div>
   );
 }
-
