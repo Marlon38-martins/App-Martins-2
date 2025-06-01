@@ -1,5 +1,6 @@
 
 // src/app/business/[id]/page.tsx
+// TODO: Revisar e remover se totalmente substituído por /guiamais/[slug]/page.tsx
 'use client';
 
 import { use, useEffect, useState, Suspense, useMemo } from 'react';
@@ -72,9 +73,11 @@ function BusinessPageContent({ params }: { params: BusinessPageParams }) {
       setIsLoading(true);
       setError(null);
       try {
+        // TODO: Firestore Integration - Replace getGramadoBusinessById with actual Firestore call.
         const businessData = await getGramadoBusinessById(id as string);
         if (businessData) {
           setBusiness(businessData);
+           // TODO: Firestore Integration - Replace getDealsForBusiness with actual Firestore call.
           const dealsData = await getDealsForBusiness(id as string);
           setAllDealsForBusiness(dealsData);
 
@@ -82,6 +85,7 @@ function BusinessPageContent({ params }: { params: BusinessPageParams }) {
             const redemptions: Record<string, boolean> = {};
             for (const deal of dealsData) {
                 if (deal.isPay1Get2 && deal.usageLimitPerUser === 1) {
+                    // TODO: Firestore Integration - Replace checkUserOfferUsage with actual Firestore call.
                     redemptions[deal.id] = await checkUserOfferUsage(authUser.id, deal.id);
                 }
             }
@@ -229,9 +233,12 @@ function BusinessPageContent({ params }: { params: BusinessPageParams }) {
                   <Sun className="mr-2 h-5 w-5 text-yellow-500" />
                   Previsão do Tempo (Local)
                 </h4>
+                 {/* TODO: Integrate OpenWeather API here. Fetch data based on business.latitude and business.longitude.
+                    Requires an API key set in .env.local (NEXT_PUBLIC_OPENWEATHER_API_KEY).
+                    Example API call: https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={API_KEY}&units=metric&lang=pt_br
+                */}
                 <p className="text-sm text-muted-foreground">
-                  {/* Placeholder: OpenWeather API integration here */}
-                  Esta seção exibirá a previsão do tempo atual para {business.city}.
+                  Esta seção exibirá a previsão do tempo atual para {business.city}. (Integração da API de tempo pendente)
                 </p>
                 <div className="mt-2 flex items-center space-x-2">
                   <CloudSun className="h-6 w-6 text-accent"/>
