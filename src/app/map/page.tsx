@@ -173,7 +173,7 @@ export default function MapPage() {
             {mapPoints.map((point) => (
               <Tooltip key={point.id}>
                 <TooltipTrigger asChild>
-                  <Link href={`/business/${point.id}`}>
+                  <Link href={`/guiamais/${slugify(point.name)}`}>
                     <div
                       className="group absolute -translate-x-1/2 -translate-y-1/2 transform cursor-pointer p-1"
                       style={{ left: `${point.x}%`, top: `${point.y}%` }}

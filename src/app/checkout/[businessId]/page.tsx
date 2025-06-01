@@ -20,6 +20,7 @@ import {
 } from '@/services/gramado-businesses';
 import type { User as AppUser, Subscription } from '@/types/user'; 
 import { useAuth } from '@/hooks/use-auth-client';
+import { slugify } from '@/lib/utils';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -199,7 +200,11 @@ function CheckoutPageContent({ businessId }: { businessId: string }) {
         description: `Seu benefício Guia Mais em ${business?.name} (${specificDeal?.title || 'Benefício Geral'}) foi agendado/ativado. Apresente esta confirmação ou seu card de membro no estabelecimento.`,
         variant: 'default', 
       });
-      router.push(`/business/${businessId}`); 
+      if (business) {
+        router.push(`/guiamais/${slugify(business.name)}`); 
+      } else {
+        router.push('/');
+      }
     } catch (err) {
         toast({ title: "Erro ao Registrar Uso", description: "Não foi possível registrar o uso do benefício. Tente novamente.", variant: "destructive" });
         console.error("Error recording usage:", err);
@@ -237,7 +242,7 @@ function CheckoutPageContent({ businessId }: { businessId: string }) {
           <AlertDescription>{error}</AlertDescription>
         </Alert>
          <Button asChild variant="outline" className="mt-6">
-          <Link href={businessId ? `/business/${businessId}` : "/"}>
+          <Link href={business ? `/guiamais/${slugify(business.name)}` : "/"}>
             <ArrowLeft className="mr-2 h-4 w-4" />
             Voltar
           </Link>
@@ -272,7 +277,7 @@ function CheckoutPageContent({ businessId }: { businessId: string }) {
   return (
     <div> 
       <Button asChild variant="outline" className="mb-6">
-        <Link href={`/business/${business.id}${dealId ? `?dealId=${dealId}`: ''}`}>
+        <Link href={`/guiamais/${slugify(business.name)}${dealId ? `?dealId=${dealId}`: ''}`}>
           <ArrowLeft className="mr-2 h-4 w-4" />
           Voltar para {business.name}
         </Link>

@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import type { GramadoBusiness } from '@/services/gramado-businesses';
 import { BusinessTypeIcon } from '@/components/icons';
 import { ArrowRight, Star } from 'lucide-react';
+import { slugify } from '@/lib/utils';
 
 interface BusinessCardProps {
   business: GramadoBusiness;
@@ -61,7 +62,7 @@ export function BusinessCard({ business }: BusinessCardProps) {
       </CardContent>
       <CardFooter className="p-4 pt-0">
         <Button asChild variant="default" className="w-full bg-primary hover:bg-primary/90 h-9 px-3 py-1.5 text-sm">
-          <Link href={`/business/${business.id}`}>
+          <Link href={`/guiamais/${slugify(business.name)}`}>
             <span className="flex items-center justify-center w-full">
               Ver Detalhes
               <ArrowRight className="ml-2 h-4 w-4" />

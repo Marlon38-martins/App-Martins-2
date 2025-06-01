@@ -1,6 +1,7 @@
 
 import type { LucideIcon } from 'lucide-react';
 import type { User, Subscription } from '@/types/user'; // Placeholder for actual user/subscription types
+import { slugify } from '@/lib/utils';
 // TODO: When integrating Firebase, replace these mock functions with actual Firestore calls.
 // import { collection, getDocs, doc, getDoc, setDoc, addDoc, query, where } from 'firebase/firestore';
 // import { firestore } from '@/lib/firebase/config'; // Assuming firestore is exported from your Firebase config
@@ -694,6 +695,18 @@ export async function getGramadoBusinessById(id: string): Promise<GramadoBusines
   await new Promise(resolve => setTimeout(resolve, 100));
   return businesses.find(business => business.id === id);
 }
+
+/**
+ * Asynchronously retrieves a specific business by its slugified name.
+ *
+ * @param slug The slugified name of the business to retrieve.
+ * @returns A promise that resolves to a GramadoBusiness object, or undefined if not found.
+ */
+export async function getGramadoBusinessBySlug(slug: string): Promise<GramadoBusiness | undefined> {
+  await new Promise(resolve => setTimeout(resolve, 100));
+  return businesses.find(business => slugify(business.name) === slug);
+}
+
 
 /**
  * Asynchronously retrieves a list of deals for a given business.

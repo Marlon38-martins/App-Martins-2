@@ -1,3 +1,4 @@
+
 // src/app/partner/dashboard/page.tsx
 'use client';
 
@@ -35,9 +36,10 @@ import {
     Star,
     Ticket,
     ShieldAlert,
-    Copy // Added Copy icon
+    Copy 
 } from 'lucide-react';
 import { BusinessTypeIcon } from '@/components/icons';
+import { slugify } from '@/lib/utils';
 
 const MOCK_PARTNER_BUSINESS_ID = '1'; 
 
@@ -76,7 +78,7 @@ export default function PartnerDashboardPage() {
 
   const handleCopyShareLink = () => {
     if (business && typeof window !== 'undefined') {
-      const shareableLink = `${window.location.origin}/business/${business.id}`;
+      const shareableLink = `${window.location.origin}/guiamais/${slugify(business.name)}`;
       navigator.clipboard.writeText(shareableLink);
       toast({ title: "Link de divulgação copiado!", description: "O link para sua página foi copiado para a área de transferência." });
     }
@@ -98,7 +100,11 @@ export default function PartnerDashboardPage() {
                     <Skeleton className="h-3 w-1/2" />
                 </div>
             </div>
-            <Skeleton className="mt-1.5 h-8 w-1/3" />
+            <div className="flex flex-wrap gap-1.5 mt-3">
+                <Skeleton className="h-8 w-28 rounded-md" />
+                <Skeleton className="h-8 w-24 rounded-md" />
+                <Skeleton className="h-8 w-24 rounded-md" />
+            </div>
           </CardContent>
         </Card>
          <Card className="shadow-lg">
@@ -158,7 +164,7 @@ export default function PartnerDashboardPage() {
                     </Link>
                 </Button>
                 <Button variant="default" size="sm" asChild className="text-xs h-8">
-                    <Link href={`/business/${business.id}`} target="_blank">
+                    <Link href={`/guiamais/${slugify(business.name)}`} target="_blank">
                         <Eye className="mr-1 h-3 w-3" /> Ver Página
                     </Link>
                 </Button>
