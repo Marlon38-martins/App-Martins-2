@@ -7,7 +7,7 @@ import Link from 'next/link';
 import Image from 'next/image'; // Import Image
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { CheckCircle, Award, MessageSquare, Briefcase, ArrowLeft, TrendingUp, Rocket, Handshake, BadgePercent, UserPlus, Wrench, Ticket, Star, ShieldCheck, Route } from 'lucide-react';
+import { CheckCircle, Award, MessageSquare, Briefcase, ArrowLeft, TrendingUp, Rocket, Handshake, BadgePercent, UserPlus, Wrench, Ticket, Star, ShieldCheck, Route, Bell } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 
 export default function PartnerRegistrationPage() {
@@ -22,9 +22,10 @@ export default function PartnerRegistrationPage() {
       iconColor: "text-blue-500",
       normalOffers: 2,
       specialOffers: 1,
-      benefits: [ // Added benefits array for consistency
+      benefits: [ 
         { text: "2 Ofertas Normais", IconComp: Ticket },
         { text: "1 Oferta VIP Especial", IconComp: Star },
+        { text: "Notificação para clientes VIP sobre sua Oferta Especial", IconComp: MessageSquare },
       ],
       description: "Ideal para negócios que estão começando e buscam ganhar visibilidade inicial, atraindo novos clientes com uma oferta especial de impacto e algumas promoções regulares.",
       priceInfo: "Saber Mais",
@@ -39,6 +40,7 @@ export default function PartnerRegistrationPage() {
       benefits: [
         { text: "3 Ofertas Normais", IconComp: Ticket },
         { text: "1 Oferta VIP Especial", IconComp: Star },
+        { text: "Notificação para clientes VIP sobre sua Oferta Especial", IconComp: MessageSquare },
         { text: "Criação de Roteiros Personalizados", IconComp: Route },
       ],
       description: "Para negócios em crescimento que desejam maior engajamento e mais oportunidades de destacar seus serviços e produtos com um volume maior de ofertas e roteiros personalizados.",
@@ -54,6 +56,8 @@ export default function PartnerRegistrationPage() {
       benefits: [
         { text: "5 Ofertas Normais", IconComp: Ticket },
         { text: "2 Ofertas VIP Especiais", IconComp: Star },
+        { text: "Notificações VIP sobre suas ofertas", IconComp: MessageSquare },
+        { text: "Destaque para Ofertas Normais em campanhas", IconComp: Bell },
         { text: "Visibilidade Premium", IconComp: TrendingUp },
         { text: "Criação de Roteiros Personalizados", IconComp: Route },
       ],

@@ -6,7 +6,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
-import { ArrowLeft, Rocket, TrendingUp, ShieldCheck, Wrench, MessageSquare, Ticket, Star, QrCode as QrCodeIcon, Users, Route } from 'lucide-react';
+import { ArrowLeft, Rocket, TrendingUp, ShieldCheck, Wrench, MessageSquare, Ticket, Star, QrCode as QrCodeIcon, Users, Route, Bell } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 
 const partnerPlansData = [
@@ -57,6 +57,7 @@ const partnerPlansData = [
       { text: "QR Code exclusivo para direcionar clientes à sua página no Guia Mais", IconComp: QrCodeIcon },
       { text: "Visibilidade premium na página inicial", IconComp: TrendingUp },
       { text: "Notificações frequentes para clientes VIP sobre suas ofertas", IconComp: MessageSquare },
+      { text: "Maior destaque para suas Ofertas Normais em notificações e campanhas do app", IconComp: Bell },
       { text: "Acompanhamento de desempenho (visitas, avaliações de clientes)", IconComp: Users },
       { text: "Exibição de avaliações de clientes em sua página", IconComp: Star },
       { text: "Criação de Roteiros Personalizados para Clientes", IconComp: Route },
