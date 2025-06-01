@@ -1,3 +1,4 @@
+
 // src/app/partner-registration/page.tsx
 'use client';
 
@@ -19,7 +20,7 @@ export default function PartnerRegistrationPage() {
       name: "Plano Largada",
       Icon: Rocket,
       iconColor: "text-blue-500",
-      normalOffers: 3,
+      normalOffers: 2, // Changed from 3 to 2
       specialOffers: 1,
       description: "Ideal para negócios que estão começando e buscam ganhar visibilidade inicial, atraindo novos clientes com uma oferta especial de impacto e algumas promoções regulares.",
       priceInfo: "Saber Mais",
@@ -29,7 +30,7 @@ export default function PartnerRegistrationPage() {
       name: "Plano Processo",
       Icon: TrendingUp,
       iconColor: "text-green-500",
-      normalOffers: 5,
+      normalOffers: 4,
       specialOffers: 1,
       description: "Para negócios em crescimento que desejam maior engajamento e mais oportunidades de destacar seus serviços e produtos com um volume maior de ofertas.",
       priceInfo: "Saber Mais",
@@ -39,7 +40,7 @@ export default function PartnerRegistrationPage() {
       name: "Plano Consolide",
       Icon: ShieldCheck,
       iconColor: "text-purple-500",
-      normalOffers: 6,
+      normalOffers: 5,
       specialOffers: 2,
       description: "Maximize sua presença e resultados! Visibilidade premium na página inicial, notificações frequentes de suas ofertas para clientes VIP e acompanhamento de fluxo de visitas ao estabelecimento.",
       priceInfo: "Saber Mais",
