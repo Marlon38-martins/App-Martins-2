@@ -21,6 +21,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { useToast } from '@/hooks/use-toast';
 import { 
     Building, 
     Tag, 
@@ -33,7 +34,8 @@ import {
     QrCode as QrCodeIcon,
     Star,
     Ticket,
-    ShieldAlert
+    ShieldAlert,
+    Copy // Added Copy icon
 } from 'lucide-react';
 import { BusinessTypeIcon } from '@/components/icons';
 
@@ -44,6 +46,7 @@ export default function PartnerDashboardPage() {
   const [deals, setDeals] = useState<Deal[]>([]);
   const [isLoadingData, setIsLoadingData] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { toast } = useToast();
 
   useEffect(() => {
     async function loadPartnerData() {
@@ -70,6 +73,14 @@ export default function PartnerDashboardPage() {
 
   const normalDeals = deals.filter(deal => !deal.isVipOffer);
   const vipDeals = deals.filter(deal => deal.isVipOffer);
+
+  const handleCopyShareLink = () => {
+    if (business && typeof window !== 'undefined') {
+      const shareableLink = `${window.location.origin}/business/${business.id}`;
+      navigator.clipboard.writeText(shareableLink);
+      toast({ title: "Link de divulgação copiado!", description: "O link para sua página foi copiado para a área de transferência." });
+    }
+  };
 
   if (isLoadingData) {
     return (
@@ -150,6 +161,9 @@ export default function PartnerDashboardPage() {
                     <Link href={`/business/${business.id}`} target="_blank">
                         <Eye className="mr-1 h-3 w-3" /> Ver Página
                     </Link>
+                </Button>
+                <Button variant="outline" size="sm" className="text-xs h-8" onClick={handleCopyShareLink}>
+                    <Copy className="mr-1 h-3 w-3" /> Copiar Link
                 </Button>
             </div>
           </div>
