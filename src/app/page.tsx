@@ -34,12 +34,12 @@ const quickNavCategories = [
   { name: 'Lojas', slug: slugify('Comércio'), Icon: ShoppingBag },
   { name: 'Lazer', slug: slugify('Atração'), Icon: AttractionIcon },
   { name: 'Mapa', slug: 'map', Icon: MapIcon },
-]; // Added missing closing bracket and semicolon
+];
 
 const suggestedRegions = [
     { name: 'Martins, RN', slug: slugify('Martins, RN') },
-    { name: 'Cidade Vizinha, RN', slug: slugify('Cidade Vizinha, RN') }, // Example placeholder
-    { name: 'Pau dos Ferros, RN', slug: slugify('Pau dos Ferros, RN') }, // Example
+    { name: 'Cidade Vizinha, RN', slug: slugify('Cidade Vizinha, RN') },
+    { name: 'Pau dos Ferros, RN', slug: slugify('Pau dos Ferros, RN') },
 ];
 
 
@@ -90,18 +90,51 @@ export default function HomePage() {
             return (b.discountPercentage ?? 0) - (a.discountPercentage ?? 0);
         });
 
+    const nonVipDeals = allSortedDealsForDisplay.filter(d => !d.isVipOffer);
+    const vipDeals = allSortedDealsForDisplay.filter(d => d.isVipOffer);
 
     if (!authUser || !userSubscription || userSubscription.status !== 'active') { // Not logged in or no active sub
-      const dealsToShow = allSortedDealsForDisplay.filter(d => !d.isVipOffer).slice(0, 2);
-      const teasersToShow = allSortedDealsForDisplay.filter(d => d.isVipOffer).slice(0, 1);
+      const dealsToShow = nonVipDeals.slice(0, 2);
+      const teasersToShow = vipDeals.length > 0 ? vipDeals.slice(0, 1) : [];
       return { deals: dealsToShow, teasers: teasersToShow };
-    } else if (authUser && userSubscription.status === 'active' && !isVipUser) { // Logged in, active sub, but NOT VIP
-      const dealsToShow = allSortedDealsForDisplay.filter(d => !d.isVipOffer).slice(0, 2);
-      const teasersToShow = allSortedDealsForDisplay.filter(d => d.isVipOffer).slice(0, 1);
+    } else if (userSubscription.status === 'active' && !isVipUser) { // Logged in, active sub, but NOT VIP
+      const dealsToShow = nonVipDeals.slice(0, 3);
+      const teasersToShow = vipDeals.length > 1 ? vipDeals.slice(0, 2) : (vipDeals.length > 0 ? vipDeals.slice(0,1) : []);
       return { deals: dealsToShow, teasers: teasersToShow };
-    }
-     else { // Is VIP user or Admin
-      return { deals: allSortedDealsForDisplay.slice(0, 3), teasers: [] };
+    } else { // Is VIP user (or Admin)
+      const dealsToShow: Deal[] = [];
+      let vipCount = 0;
+      let normalCount = 0;
+      const maxFeatured = 5;
+      const maxVipToShow = 3;
+      const maxNormalToShow = 2;
+
+      // Prioritize VIP deals up to maxVipToShow
+      for (const deal of vipDeals) {
+        if (dealsToShow.length >= maxFeatured || vipCount >= maxVipToShow) break;
+        dealsToShow.push(deal);
+        vipCount++;
+      }
+
+      // Fill remaining spots with normal deals up to maxNormalToShow
+      for (const deal of nonVipDeals) {
+        if (dealsToShow.length >= maxFeatured || normalCount >= maxNormalToShow) break;
+        dealsToShow.push(deal);
+        normalCount++;
+      }
+      
+      // If still less than maxFeatured and more VIP deals available, add them (up to maxFeatured total)
+      if (dealsToShow.length < maxFeatured && vipCount < vipDeals.length) {
+          const remainingVipCanAdd = Math.min(maxFeatured - dealsToShow.length, vipDeals.length - vipCount);
+          dealsToShow.push(...vipDeals.slice(vipCount, vipCount + remainingVipCanAdd));
+      }
+       // If still less than maxFeatured and more Normal deals available, add them (up to maxFeatured total)
+      if (dealsToShow.length < maxFeatured && normalCount < nonVipDeals.length && dealsToShow.filter(d=>!d.isVipOffer).length < maxNormalToShow +1) { // allow one more normal if space
+          const remainingNormalCanAdd = Math.min(maxFeatured - dealsToShow.length, nonVipDeals.length - normalCount);
+          dealsToShow.push(...nonVipDeals.slice(normalCount, normalCount + remainingNormalCanAdd));
+      }
+
+      return { deals: dealsToShow.slice(0, maxFeatured) , teasers: [] };
     }
   }, [allDeals, isLoadingData, authUser, userSubscription, isVipUser, authLoading]);
 
@@ -121,12 +154,12 @@ export default function HomePage() {
   }, [businesses]);
 
   const categories = useMemo(() => {
-    const allCategories = businesses.map(business => business.type); // Use all businesses for category list
+    const allCategories = businesses.map(business => business.type);
     return ['all', ...Array.from(new Set(allCategories))];
   }, [businesses]);
 
   const filteredListedBusinesses = useMemo(() => {
-    return businesses.filter(business => { // Search all businesses, not just 'otherServiceBusinesses'
+    return businesses.filter(business => {
       const matchesSearchTerm = business.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                                 business.shortDescription.toLowerCase().includes(searchTerm.toLowerCase()) ||
                                 business.type.toLowerCase().includes(searchTerm.toLowerCase());
@@ -139,7 +172,6 @@ export default function HomePage() {
     if (!businesses.length) return [];
     const cities = businesses.map(b => b.city).filter(Boolean) as string[];
     const citySet = Array.from(new Set(cities));
-    // Prioritize Martins, RN
     const martinsIndex = citySet.indexOf('Martins, RN');
     if (martinsIndex > -1) {
       citySet.splice(martinsIndex, 1);
@@ -151,7 +183,6 @@ export default function HomePage() {
 
   const rankedBusinessesByCategory = useMemo(() => {
     if (!businesses.length) return {};
-    // Focus ranking on Martins, RN initially, can be expanded later
     const martinsBusinesses = businesses.filter(b => b.city === 'Martins, RN');
     const categoriesToRank = ['Restaurante', 'Hotel', 'Atração'];
     const topN = 2;
