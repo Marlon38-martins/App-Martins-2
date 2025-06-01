@@ -19,7 +19,8 @@ interface AuthContextType {
   signInUser: (user: User, sub: Subscription) => void; // For mock sign-in
   signOutUser: () => Promise<void>;
   isAdmin: boolean;
-  isPartner: boolean; // Add this to easily identify a partner
+  isPartner: boolean;
+  partnerPlan: string | null; // Added partner plan
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -34,7 +35,8 @@ export function AuthProviderClient({ children }: AuthProviderClientProps) {
   const [subscription, setSubscription] = useState<Subscription | null>(null);
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
-  const [isPartner, setIsPartner] = useState(false); // State for partner role
+  const [isPartner, setIsPartner] = useState(false);
+  const [partnerPlan, setPartnerPlan] = useState<string | null>(null); // New state for partner's plan
   const { toast } = useToast();
   const router = useRouter();
 
@@ -46,15 +48,21 @@ export function AuthProviderClient({ children }: AuthProviderClientProps) {
       const adminStatus = appUser.email === 'admin@example.com';
       const partnerStatus = appUser.email === 'partner@example.com';
       setIsAdmin(adminStatus);
-      setIsPartner(partnerStatus && !adminStatus); // A partner is not also an admin
-      console.log(`AuthProvider: User processed: ${appUser.email}, Admin: ${adminStatus}, Partner: ${partnerStatus}`);
+      setIsPartner(partnerStatus && !adminStatus);
+      if (partnerStatus && !adminStatus) {
+        setPartnerPlan('processo'); // Mock: partner@example.com is on 'processo' plan
+      } else {
+        setPartnerPlan(null);
+      }
+      console.log(`AuthProvider: User processed: ${appUser.email}, Admin: ${adminStatus}, Partner: ${partnerStatus}, Partner Plan: ${partnerPlan}`);
     } else {
       setSubscription(null);
       setIsAdmin(false);
       setIsPartner(false);
+      setPartnerPlan(null);
       console.log("AuthProvider: No user processed.");
     }
-  }, []);
+  }, [partnerPlan]); // Added partnerPlan to dependency array, careful with infinite loops if not set correctly
 
   const loadMockAuthData = useCallback(async () => {
     console.log("AuthProvider: Attempting to load mock auth data...");
@@ -72,7 +80,7 @@ export function AuthProviderClient({ children }: AuthProviderClientProps) {
   }, [processUser]);
 
   useEffect(() => {
-    if (!auth) { // Firebase Auth not initialized, use mock system
+    if (!auth) { 
       console.warn("AuthProvider: Firebase Auth is not initialized. Using mock authentication.");
       loadMockAuthData();
       const handleMockAuthChange = () => loadMockAuthData();
@@ -80,7 +88,7 @@ export function AuthProviderClient({ children }: AuthProviderClientProps) {
       return () => {
         window.removeEventListener('mockAuthChange', handleMockAuthChange);
       };
-    } else { // Firebase Auth is initialized
+    } else { 
       console.log("AuthProvider: Firebase Auth initialized. Setting up real auth state listener.");
       const unsubscribe = onAuthStateChanged(auth, async (fbUser) => {
         console.log("AuthProvider: onAuthStateChanged triggered.");
@@ -107,15 +115,20 @@ export function AuthProviderClient({ children }: AuthProviderClientProps) {
 
   const signInUser = (loggedInUser: User, userSub: Subscription) => {
     console.log("AuthProvider: signInUser (mock) called for:", loggedInUser.email);
-    setLoading(true); // Set loading true during this process
+    setLoading(true); 
     setUser(loggedInUser);
     setSubscription(userSub);
     const adminStatus = loggedInUser.email === 'admin@example.com';
     const partnerStatus = loggedInUser.email === 'partner@example.com';
     setIsAdmin(adminStatus);
     setIsPartner(partnerStatus && !adminStatus);
+    if (partnerStatus && !adminStatus) {
+      setPartnerPlan('processo'); // Assign mock plan on mock sign-in
+    } else {
+      setPartnerPlan(null);
+    }
     setLoading(false);
-    console.log(`AuthProvider: Mock user signed in. Admin: ${adminStatus}, Partner: ${partnerStatus}`);
+    console.log(`AuthProvider: Mock user signed in. Admin: ${adminStatus}, Partner: ${partnerStatus}, Partner Plan: ${partnerPlan}`);
   };
 
   const signOutUser = async () => {
@@ -125,7 +138,6 @@ export function AuthProviderClient({ children }: AuthProviderClientProps) {
       try {
         await firebaseSignOut(auth);
         console.log("AuthProvider: Successfully signed out from Firebase.");
-        // onAuthStateChanged will handle setting user, subscription, isAdmin to null/false
       } catch (error) {
         console.error("AuthProvider: Error signing out from Firebase: ", error);
         toast({ title: "Erro no Logout", description: "Não foi possível fazer logout do Firebase. Tente novamente.", variant: 'destructive' });
@@ -133,21 +145,22 @@ export function AuthProviderClient({ children }: AuthProviderClientProps) {
         return;
       }
     } else {
-      await mockLogout(); // Clears localStorage for mock user
+      await mockLogout(); 
       console.log("AuthProvider: Successfully signed out from mock system or no Firebase user was present.");
       setUser(null);
       setFirebaseUser(null);
       setSubscription(null);
       setIsAdmin(false);
       setIsPartner(false);
-      setLoading(false); // Explicitly set loading false for mock logout
+      setPartnerPlan(null); // Reset partner plan on logout
+      setLoading(false); 
       if (typeof window !== 'undefined') window.dispatchEvent(new CustomEvent('mockAuthChange'));
     }
     toast({ title: 'Logout Realizado', description: 'Você foi desconectado com sucesso.' });
     router.push('/login');
   };
 
-  const value = { user, firebaseUser, subscription, loading, signInUser, signOutUser, isAdmin, isPartner };
+  const value = { user, firebaseUser, subscription, loading, signInUser, signOutUser, isAdmin, isPartner, partnerPlan };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

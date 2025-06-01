@@ -6,13 +6,37 @@ import Image from 'next/image';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Briefcase, LayoutDashboard, Tag, Edit3, BarChart3, ImageIcon, PlusCircle, Star, ShieldAlert, ArrowLeft, Route } from 'lucide-react';
+import { useAuth } from '@/hooks/use-auth-client';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const MOCK_PARTNER_BUSINESS_ID = '1'; 
 
 export default function PartnerPanelPage() {
-  // NOTE: Authentication and role checks were removed for public access demonstration.
-  // In a real app, you'd use useAuth() here to get user details and restrict access.
-  const partnerName = "Parceiro Guia Mais"; // Generic name
+  const { user, isPartner, partnerPlan, loading } = useAuth();
+  const partnerName = user?.name || user?.email?.split('@')[0] || "Parceiro Guia Mais";
+
+  if (loading) {
+    return (
+      <div className="p-3 md:p-4 space-y-4">
+        <Skeleton className="h-8 w-1/2 mb-2" />
+        <Skeleton className="h-4 w-3/4 mb-5" />
+        <Skeleton className="h-40 md:h-48 w-full mb-6 rounded-lg" />
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
+          {[...Array(6)].map((_, i) => (
+            <Card key={i} className="shadow-md">
+              <CardHeader className="p-3"><Skeleton className="h-6 w-2/3" /></CardHeader>
+              <CardContent className="p-3"><Skeleton className="h-8 w-full" /></CardContent>
+            </Card>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  // For this mock, we assume a partner user is already "logged in" or identified by useAuth
+  // If !isPartner, we could show an access denied message, but for simplicity assuming partner context
+  
+  const canCreateItinerary = isPartner && (partnerPlan === 'processo' || partnerPlan === 'consolide');
 
   return (
     <div className="p-3 md:p-4 space-y-4">
@@ -26,6 +50,9 @@ export default function PartnerPanelPage() {
         <p className="text-xs text-foreground/80 md:text-sm">
           Bem-vindo(a), {partnerName}! Gerencie seu estabelecimento, ofertas e explore as ferramentas.
         </p>
+        {isPartner && partnerPlan && (
+          <p className="text-xs text-accent font-semibold mt-1">Plano Atual: {partnerPlan.charAt(0).toUpperCase() + partnerPlan.slice(1)}</p>
+        )}
       </section>
       
       <div className="relative w-full h-40 md:h-48 mb-6 rounded-lg overflow-hidden shadow-md">
@@ -141,22 +168,41 @@ export default function PartnerPanelPage() {
           </CardContent>
         </Card>
 
-        <Card className="shadow-md hover:shadow-lg transition-shadow duration-300 sm:col-span-2">
-          <CardHeader className="p-3">
-            <CardTitle className="flex items-center text-base md:text-lg text-accent">
-              <Route className="mr-2 h-4 w-4 md:h-5 md:w-5" />
-              Criar Roteiro Personalizado
-            </CardTitle>
-            <CardDescription className="text-xs md:text-sm">Monte itinerários exclusivos para seus clientes.</CardDescription>
-          </CardHeader>
-          <CardContent className="p-3">
-            <Button asChild className="w-full text-xs md:text-sm" size="sm">
-              <Link href="/partner/create-itinerary">
-                Criar Novo Roteiro
-              </Link>
-            </Button>
-          </CardContent>
-        </Card>
+        {canCreateItinerary ? (
+          <Card className="shadow-md hover:shadow-lg transition-shadow duration-300 sm:col-span-2">
+            <CardHeader className="p-3">
+              <CardTitle className="flex items-center text-base md:text-lg text-accent">
+                <Route className="mr-2 h-4 w-4 md:h-5 md:w-5" />
+                Criar Roteiro Personalizado
+              </CardTitle>
+              <CardDescription className="text-xs md:text-sm">Monte itinerários exclusivos para seus clientes. (Disponível no seu plano atual)</CardDescription>
+            </CardHeader>
+            <CardContent className="p-3">
+              <Button asChild className="w-full text-xs md:text-sm" size="sm">
+                <Link href="/partner/create-itinerary">
+                  Criar Novo Roteiro
+                </Link>
+              </Button>
+            </CardContent>
+          </Card>
+        ) : (
+          <Card className="shadow-md sm:col-span-2 bg-muted/50 border-dashed">
+            <CardHeader className="p-3">
+              <CardTitle className="flex items-center text-base md:text-lg text-muted-foreground">
+                <Route className="mr-2 h-4 w-4 md:h-5 md:w-5" />
+                Criar Roteiro Personalizado
+              </CardTitle>
+              <CardDescription className="text-xs md:text-sm">Esta funcionalidade não está disponível no seu plano atual (Largada). Faça um upgrade para os planos Processo ou Consolide para acessá-la.</CardDescription>
+            </CardHeader>
+            <CardContent className="p-3">
+              <Button asChild variant="outline" className="w-full text-xs md:text-sm" size="sm">
+                <Link href="/partner/plans">
+                  Ver Planos de Parceiro
+                </Link>
+              </Button>
+            </CardContent>
+          </Card>
+        )}
       </div>
     </div>
   );

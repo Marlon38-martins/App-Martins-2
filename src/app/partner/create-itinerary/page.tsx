@@ -1,12 +1,13 @@
 // src/app/partner/create-itinerary/page.tsx
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm, useFieldArray, type SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -14,8 +15,11 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useToast } from '@/hooks/use-toast';
-import { ArrowLeft, Route, PlusCircle, Trash2, Send, User, Edit, CalendarDays } from 'lucide-react';
+import { ArrowLeft, Route, PlusCircle, Trash2, Send, User, Edit, CalendarDays, ShieldAlert } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
+import { useAuth } from '@/hooks/use-auth-client';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 
 const stopSchema = z.object({
   stopName: z.string().min(1, "Nome da parada é obrigatório."),
@@ -33,7 +37,26 @@ type ItineraryFormValues = z.infer<typeof itineraryFormSchema>;
 
 export default function CreateItineraryPage() {
   const { toast } = useToast();
+  const router = useRouter();
+  const { user, isPartner, partnerPlan, loading: authLoading } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const canAccessFeature = isPartner && (partnerPlan === 'processo' || partnerPlan === 'consolide');
+
+  useEffect(() => {
+    if (!authLoading) {
+      if (!user) {
+        router.push('/login?redirect=/partner/create-itinerary');
+      } else if (!canAccessFeature) {
+        toast({
+          title: "Acesso Restrito",
+          description: "Esta funcionalidade não está disponível para o seu plano de parceria atual.",
+          variant: "destructive",
+        });
+        router.push('/partner/panel');
+      }
+    }
+  }, [user, isPartner, partnerPlan, authLoading, router, toast, canAccessFeature]);
 
   const form = useForm<ItineraryFormValues>({
     resolver: zodResolver(itineraryFormSchema),
@@ -51,10 +74,11 @@ export default function CreateItineraryPage() {
   });
 
   const onSubmit: SubmitHandler<ItineraryFormValues> = async (data) => {
+    if (!canAccessFeature) {
+      toast({ title: "Acesso Negado", description: "Seu plano não permite criar roteiros.", variant: "destructive" });
+      return;
+    }
     setIsSubmitting(true);
-    // TODO: Replace with actual backend call to save the itinerary.
-    // This would likely save to a 'partnerItineraries' collection in Firestore
-    // and potentially generate a unique shareable link.
     console.log('Custom Itinerary Data (simulated):', data);
     await new Promise(resolve => setTimeout(resolve, 1500));
     
@@ -64,10 +88,51 @@ export default function CreateItineraryPage() {
       variant: 'default', 
     });
     setIsSubmitting(false);
-    // Optionally reset form or redirect:
-    // form.reset(); 
-    // router.push('/partner/manage-itineraries'); // if such a page exists
+    form.reset(); 
   };
+
+  if (authLoading) {
+    return (
+      <div className="p-3 md:p-4 space-y-3">
+        <Skeleton className="h-7 w-1/3 mb-4" />
+        <Card className="shadow-md">
+          <CardHeader className="p-3"><Skeleton className="h-6 w-1/2" /></CardHeader>
+          <CardContent className="space-y-2.5 p-3">
+            {Array(5).fill(0).map((_, i) => <Skeleton key={i} className="h-8 w-full" />)}
+          </CardContent>
+          <CardFooter className="p-3"><Skeleton className="h-9 w-full" /></CardFooter>
+        </Card>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return <div className="p-6 text-center">Redirecionando para login...</div>;
+  }
+
+  if (!canAccessFeature && !authLoading) {
+    return (
+      <div className="p-3 md:p-4">
+        <Alert variant="destructive" className="max-w-md mx-auto">
+          <ShieldAlert className="h-4 w-4" />
+          <AlertTitle className="text-sm">Acesso Negado</AlertTitle>
+          <AlertDescription className="text-xs">
+            A funcionalidade de criar roteiros personalizados não está disponível para o seu plano de parceria atual.
+            Considere fazer um upgrade para os planos Processo ou Consolide.
+          </AlertDescription>
+        </Alert>
+        <div className="mt-4 text-center">
+          <Button asChild variant="outline" size="sm" className="text-xs">
+            <Link href="/partner/panel">
+              <ArrowLeft className="mr-1.5 h-3 w-3" />
+              Voltar para o Painel
+            </Link>
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
 
   return (
     <div className="p-3 md:p-4">
