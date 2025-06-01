@@ -17,7 +17,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import {
     Frown, Play, Tag, Award, Sparkles, CheckCircle, MapIcon, Building, UserPlus, TicketPercent as OffersIcon,
     UtensilsCrossed, BedDouble, Beer, Coffee, ShoppingBag, Landmark as AttractionIcon, Home, BarChart3, Eye, Edit3, Settings2, QrCode as QrCodeIcon, MapPinned, ExternalLink,
-    LayoutGrid, Trees, ArrowRight, Sparkle, PercentDiamond, Route, Globe2, Info, TrendingUp
+    LayoutGrid, Trees, ArrowRight, Sparkle, PercentDiamond, Route, Globe2, Info, TrendingUp, Bell // Added Bell
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { RankingPanel } from '@/components/ranking/RankingPanel';
@@ -93,15 +93,20 @@ export default function HomePage() {
     const nonVipDeals = allSortedDealsForDisplay.filter(d => !d.isVipOffer);
     const vipDeals = allSortedDealsForDisplay.filter(d => d.isVipOffer);
 
-    if (!authUser || !userSubscription || userSubscription.status !== 'active') { // Not logged in or no active sub
+    // Not logged in or no active sub
+    if (!authUser || !userSubscription || userSubscription.status !== 'active') {
       const dealsToShow = nonVipDeals.slice(0, 2);
       const teasersToShow = vipDeals.length > 0 ? vipDeals.slice(0, 1) : [];
       return { deals: dealsToShow, teasers: teasersToShow };
-    } else if (userSubscription.status === 'active' && !isVipUser) { // Logged in, active sub, but NOT VIP
+    }
+    // Logged in, active sub, but NOT VIP
+    else if (userSubscription.status === 'active' && !isVipUser) {
       const dealsToShow = nonVipDeals.slice(0, 3);
       const teasersToShow = vipDeals.length > 1 ? vipDeals.slice(0, 2) : (vipDeals.length > 0 ? vipDeals.slice(0,1) : []);
       return { deals: dealsToShow, teasers: teasersToShow };
-    } else { // Is VIP user (or Admin)
+    }
+    // Is VIP user (or Admin)
+    else {
       const dealsToShow: Deal[] = [];
       let vipCount = 0;
       let normalCount = 0;
@@ -109,27 +114,23 @@ export default function HomePage() {
       const maxVipToShow = 3;
       const maxNormalToShow = 2;
 
-      // Prioritize VIP deals up to maxVipToShow
       for (const deal of vipDeals) {
         if (dealsToShow.length >= maxFeatured || vipCount >= maxVipToShow) break;
         dealsToShow.push(deal);
         vipCount++;
       }
 
-      // Fill remaining spots with normal deals up to maxNormalToShow
       for (const deal of nonVipDeals) {
         if (dealsToShow.length >= maxFeatured || normalCount >= maxNormalToShow) break;
         dealsToShow.push(deal);
         normalCount++;
       }
       
-      // If still less than maxFeatured and more VIP deals available, add them (up to maxFeatured total)
       if (dealsToShow.length < maxFeatured && vipCount < vipDeals.length) {
           const remainingVipCanAdd = Math.min(maxFeatured - dealsToShow.length, vipDeals.length - vipCount);
           dealsToShow.push(...vipDeals.slice(vipCount, vipCount + remainingVipCanAdd));
       }
-       // If still less than maxFeatured and more Normal deals available, add them (up to maxFeatured total)
-      if (dealsToShow.length < maxFeatured && normalCount < nonVipDeals.length && dealsToShow.filter(d=>!d.isVipOffer).length < maxNormalToShow +1) { // allow one more normal if space
+      if (dealsToShow.length < maxFeatured && normalCount < nonVipDeals.length && dealsToShow.filter(d=>!d.isVipOffer).length < maxNormalToShow +1) {
           const remainingNormalCanAdd = Math.min(maxFeatured - dealsToShow.length, nonVipDeals.length - normalCount);
           dealsToShow.push(...nonVipDeals.slice(normalCount, normalCount + remainingNormalCanAdd));
       }
@@ -410,6 +411,7 @@ export default function HomePage() {
                 <li className="flex items-center"><CheckCircle className="h-4 w-4 text-green-500 mr-2" /> Descontos incríveis em parceiros.</li>
                 <li className="flex items-center"><CheckCircle className="h-4 w-4 text-green-500 mr-2" /> Roteiros personalizados e acesso offline.</li>
                 <li className="flex items-center"><CheckCircle className="h-4 w-4 text-green-500 mr-2" /> Programa de recompensas exclusivo.</li>
+                <li className="flex items-center"><Bell className="h-4 w-4 text-green-500 mr-2" /> Acesso antecipado a novidades e eventos.</li>
               </ul>
               <Button asChild size="lg" className="bg-accent hover:bg-accent/90 text-accent-foreground text-base py-3">
                 <Link href="/join">Conheça os Planos Premium</Link>

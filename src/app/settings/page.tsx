@@ -12,7 +12,7 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
-import { UserCircle, Bell, Shield, CreditCard, LogOut, Star, CalendarDays } from 'lucide-react';
+import { UserCircle, Bell, Shield, CreditCard, LogOut, Star, CalendarDays, Sparkles as SparklesIcon } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/use-auth-client'; 
 import { mockLogout } from '@/services/gramado-businesses'; 
@@ -20,9 +20,10 @@ import { mockLogout } from '@/services/gramado-businesses';
 export default function SettingsPage() {
   const router = useRouter();
   const { toast } = useToast();
-  const { user, loading, signOutUser: contextSignOutUser } = useAuth(); 
+  const { user, subscription, loading, signOutUser: contextSignOutUser } = useAuth(); 
 
   const [name, setName] = useState('');
+  const isVip = subscription?.planId === 'serrano_vip' && subscription?.status === 'active';
 
   useEffect(() => {
     if (!loading && !user) {
@@ -33,16 +34,12 @@ export default function SettingsPage() {
   }, [user, loading, router]);
 
   const handleSaveChanges = () => {
-    // TODO: Implement actual update logic (e.g., update user profile in Firebase)
-    // For Firebase: getAuth().currentUser, then updateProfile(currentUser, { displayName: name })
-    // Then, potentially update user record in Firestore if you store profile info there.
     toast({ title: "Simulação", description: `Dados salvos (simulado). Nome: ${name}` });
   };
   
   const handleSignOut = async () => {
     try {
         await contextSignOutUser(); 
-        // No need to explicitly router.push('/login') here as contextSignOutUser should handle it
     } catch (error) {
         console.error("Error signing out from settings: ", error);
         toast({ title: "Erro no Logout", description: "Não foi possível fazer logout. Tente novamente.", variant: 'destructive' });
@@ -124,31 +121,33 @@ export default function SettingsPage() {
             </Label>
             <Switch id="news-notifications" />
           </div>
-          <Separator />
-           <div className="pt-2">
-             <h4 className="text-md font-semibold text-accent mb-2 flex items-center">
-                <Star className="mr-2 h-5 w-5 text-yellow-400 fill-yellow-400"/> Notificações VIP
-             </h4>
-            <div className="flex items-center justify-between">
-                <Label htmlFor="vip-offer-reminders" className="flex flex-col space-y-1">
-                <span>Lembretes de Ofertas VIP Exclusivas</span>
-                <span className="font-normal leading-snug text-muted-foreground text-xs">
-                    Receber notificações sobre promoções especiais e ofertas de parceiros para membros VIP.
-                </span>
-                </Label>
-                <Switch id="vip-offer-reminders" defaultChecked />
-            </div>
-            <Separator className="my-4" />
-            <div className="flex items-center justify-between">
-                <Label htmlFor="vip-event-alerts" className="flex flex-col space-y-1">
-                  <span className="flex items-center"><CalendarDays className="mr-1.5 h-4 w-4 text-muted-foreground" /> Alertas de Novos Eventos (Municipais e de Parceiros)</span>
+          
+          {isVip && (
+            <div className="pt-2 mt-2 border-t border-border">
+              <h4 className="text-md font-semibold text-accent mb-3 mt-3 flex items-center">
+                  <Star className="mr-2 h-5 w-5 text-yellow-400 fill-yellow-400"/> Notificações Prioritárias VIP
+              </h4>
+              <div className="flex items-center justify-between">
+                  <Label htmlFor="vip-offer-reminders" className="flex flex-col space-y-1">
+                  <span className="flex items-center"><SparklesIcon className="mr-1.5 h-4 w-4 text-muted-foreground" /> Lembretes de Ofertas VIP Exclusivas</span>
                   <span className="font-normal leading-snug text-muted-foreground text-xs">
-                      Ser informado sobre eventos municipais, de parceiros e outras experiências exclusivas para VIPs.
+                      Ser notificado sobre promoções especiais e ofertas de parceiros exclusivas para membros Serrano VIP.
                   </span>
-                </Label>
-                <Switch id="vip-event-alerts" defaultChecked />
+                  </Label>
+                  <Switch id="vip-offer-reminders" defaultChecked />
+              </div>
+              <Separator className="my-4" />
+              <div className="flex items-center justify-between">
+                  <Label htmlFor="vip-event-alerts" className="flex flex-col space-y-1">
+                    <span className="flex items-center"><CalendarDays className="mr-1.5 h-4 w-4 text-muted-foreground" /> Alertas VIP para Eventos</span>
+                    <span className="font-normal leading-snug text-muted-foreground text-xs">
+                        Receber informações prioritárias e, por vezes, acesso antecipado a eventos municipais e de parceiros.
+                    </span>
+                  </Label>
+                  <Switch id="vip-event-alerts" defaultChecked />
+              </div>
             </div>
-          </div>
+          )}
         </CardContent>
       </Card>
 
@@ -158,7 +157,6 @@ export default function SettingsPage() {
           <CardDescription>Gerencie as configurações de segurança da sua conta.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          {/* TODO: Implement "Change Password" functionality, likely involving Firebase's sendPasswordResetEmail or reauthenticateWithCredential */}
           <Button variant="outline" onClick={() => toast({title: "Simulação", description: "Funcionalidade de alterar senha (simulada). Em um app real, isso enviaria um email de redefinição ou solicitaria a senha atual." })}>Alterar Senha (Simulado)</Button>
         </CardContent>
       </Card>
@@ -169,9 +167,21 @@ export default function SettingsPage() {
           <CardDescription>Veja e gerencie seu plano Guia Mais.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-            {/* TODO: Fetch and display current subscription details (plan name, status, renewal date) */}
-            {/* TODO: Implement link/button to customer portal (e.g., Stripe Customer Portal) to manage subscription */}
-            <p className="text-muted-foreground text-sm">Detalhes da sua assinatura e opções de gerenciamento aparecerão aqui.</p>
+            {subscription ? (
+                 <div className={`p-3 rounded-md border ${subscription.status === 'active' ? 'border-green-500 bg-green-500/10' : 'border-yellow-500 bg-yellow-500/10'}`}>
+                    <p className="text-sm font-medium text-foreground">
+                    Plano: <span className="font-bold text-primary">{subscription.planId === 'serrano_vip' ? 'Serrano VIP' : (subscription.planId === 'premium_anual' ? 'Premium Anual' : 'Premium Mensal')}</span>
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                    Status: <span className={`font-semibold ${subscription.status === 'active' ? 'text-green-700' : 'text-yellow-700'}`}>{subscription.status === 'active' ? 'Ativa' : 'Pendente/Expirada'}</span>
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                    Válida até: {new Date(subscription.endDate).toLocaleDateString('pt-BR')}
+                    </p>
+                </div>
+            ) : (
+                 <p className="text-muted-foreground text-sm">Você ainda não possui uma assinatura ativa.</p>
+            )}
             <Button variant="outline" asChild><Link href="/join">Ver Planos</Link></Button>
         </CardContent>
       </Card>

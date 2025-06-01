@@ -129,9 +129,9 @@ export default function InstitutionalPage() {
             </div>
             <Alert variant="default" className="bg-purple-500/10 border-purple-500/30 mb-4">
                 <Bell className="h-5 w-5 text-purple-600" />
-                <AlertTitle className="text-purple-700">Membros VIP São Notificados!</AlertTitle>
+                <AlertTitle className="text-purple-700">Membros VIP São Notificados Primeiro!</AlertTitle>
                 <AlertDescription>
-                    Nossos membros <Link href="/vip-area" className="font-semibold underline hover:text-purple-700/80">Serrano VIP</Link> recebem notificações exclusivas sobre estes e outros eventos da cidade de Martins e de parceiros. <Link href="/settings" className="font-semibold underline hover:text-purple-700/80">Gerencie suas preferências</Link>.
+                    Nossos membros <Link href="/vip-area" className="font-semibold underline hover:text-purple-700/80">Serrano VIP</Link> recebem notificações prioritárias e detalhes exclusivos sobre estes e outros eventos da cidade de Martins e de parceiros. <Link href="/settings" className="font-semibold underline hover:text-purple-700/80">Gerencie suas preferências</Link>.
                 </AlertDescription>
             </Alert>
              <Alert variant="default" className="bg-muted/50 border-muted">
@@ -189,6 +189,13 @@ export default function InstitutionalPage() {
                 data-ai-hint="Martins RN city hall news"
               />
             </div>
+            <Alert variant="default" className="bg-purple-500/10 border-purple-500/30 mb-4">
+                <Bell className="h-5 w-5 text-purple-600" />
+                <AlertTitle className="text-purple-700">Membros VIP Informados!</AlertTitle>
+                <AlertDescription>
+                    Membros <Link href="/vip-area" className="font-semibold underline hover:text-purple-700/80">Serrano VIP</Link> podem receber atualizações importantes e consolidadas da cidade de Martins de forma prioritária.
+                </AlertDescription>
+            </Alert>
             <Alert variant="default" className="bg-muted/50 border-muted">
                 <RefreshCw className="h-4 w-4 text-muted-foreground"/>
                 <AlertDescription className="text-xs text-muted-foreground pl-1">

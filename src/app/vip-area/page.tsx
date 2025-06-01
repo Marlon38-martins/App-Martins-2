@@ -1,3 +1,4 @@
+
 // src/app/vip-area/page.tsx
 'use client';
 
@@ -8,7 +9,7 @@ import { useAuth } from '@/hooks/use-auth-client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
-import { ArrowLeft, Crown, ShieldAlert, Star, Bell, CalendarDays } from 'lucide-react'; // Added Bell and CalendarDays
+import { ArrowLeft, Crown, ShieldAlert, Star, Bell, CalendarDays, TrendingUp, Newspaper } from 'lucide-react'; // Added Bell and CalendarDays
 
 export default function VipAreaPage() {
   const { user, subscription, loading } = useAuth();
@@ -39,8 +40,6 @@ export default function VipAreaPage() {
   }
 
   if (!user) {
-    // This case should ideally be handled by the useEffect redirect,
-    // but it's a good fallback.
     return (
       <div className="flex min-h-[calc(100vh-200px)] flex-col items-center justify-center text-center">
         <ShieldAlert className="h-16 w-16 text-destructive mb-4" />
@@ -70,25 +69,25 @@ export default function VipAreaPage() {
             <Crown className="mx-auto h-16 w-16 text-accent mb-4" />
             <CardTitle className="text-3xl font-bold text-primary">Bem-vindo(a) à Área VIP!</CardTitle>
             <CardDescription className="text-lg text-accent-foreground/90">
-              {user.name || user.email?.split('@')[0] || 'Membro'}, você tem acesso exclusivo a este espaço.
+              {user.name || user.email?.split('@')[0] || 'Membro'}, você tem acesso prioritário e exclusivo neste espaço.
             </CardDescription>
           </CardHeader>
           <CardContent className="text-center space-y-6">
             <p className="text-lg mb-2 text-foreground/80">
-              Aqui você encontrará conteúdo e ofertas especiais disponíveis apenas para membros Serrano VIP.
+              Como membro Serrano VIP, você é o primeiro a saber das novidades, recebe ofertas especiais e tem acesso a conteúdo exclusivo. Explore seus benefícios!
             </p>
             
             <Card className="bg-card/80 border-accent/30">
                 <CardHeader className="pb-2">
-                    <CardTitle className="text-xl text-accent flex items-center justify-center"><Bell className="mr-2 h-5 w-5"/>Notificações Exclusivas</CardTitle>
+                    <CardTitle className="text-xl text-accent flex items-center justify-center"><Bell className="mr-2 h-5 w-5"/>Notificações Prioritárias</CardTitle>
                 </CardHeader>
                 <CardContent>
                     <p className="text-muted-foreground text-sm">
-                        Como membro VIP, você recebe alertas sobre ofertas imperdíveis e os melhores eventos da cidade, tanto da prefeitura quanto de nossos parceiros.
+                        Membros VIP recebem alertas antecipados sobre ofertas imperdíveis, novos parceiros e os melhores eventos da cidade, antes de todos.
                     </p>
                     <Button variant="outline" asChild size="sm" className="mt-3 text-xs">
                         <Link href="/settings">
-                            <Bell className="mr-1.5 h-3 w-3"/> Gerenciar Preferências de Notificação
+                            <Bell className="mr-1.5 h-3 w-3"/> Gerenciar Preferências
                         </Link>
                     </Button>
                 </CardContent>
@@ -100,17 +99,26 @@ export default function VipAreaPage() {
                         <CardTitle className="text-xl text-accent flex items-center"><Star className="mr-2 h-5 w-5"/>Ofertas VIP Exclusivas</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <p className="text-muted-foreground text-sm">Acesso a descontos e promoções ainda melhores.</p>
-                         <Button variant="link" asChild className="mt-2 text-primary"><Link href="/services">Ver Ofertas VIP</Link></Button>
+                        <p className="text-muted-foreground text-sm">Acesso a descontos e promoções ainda melhores, pensadas para você.</p>
+                         <Button variant="link" asChild className="mt-2 text-primary"><Link href="/services">Ver Minhas Ofertas VIP</Link></Button>
                     </CardContent>
                 </Card>
                 <Card className="bg-card/80">
                     <CardHeader>
-                        <CardTitle className="text-xl text-accent flex items-center"><CalendarDays className="mr-2 h-5 w-5"/>Eventos da Cidade</CardTitle>
+                        <CardTitle className="text-xl text-accent flex items-center"><CalendarDays className="mr-2 h-5 w-5"/>Eventos com Acesso VIP</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <p className="text-muted-foreground text-sm">Convites e informações antecipadas para eventos.</p>
+                        <p className="text-muted-foreground text-sm">Convites, informações antecipadas e, por vezes, condições especiais em eventos parceiros.</p>
                          <Button variant="link" asChild className="mt-2 text-primary"><Link href="/institutional">Ver Agenda de Eventos</Link></Button>
+                    </CardContent>
+                </Card>
+                 <Card className="bg-card/80 md:col-span-2">
+                    <CardHeader>
+                        <CardTitle className="text-xl text-accent flex items-center"><Newspaper className="mr-2 h-5 w-5"/>Novidades em Primeira Mão</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <p className="text-muted-foreground text-sm">Fique sabendo dos novos parceiros, funcionalidades do app e notícias importantes da região antes dos demais usuários.</p>
+                         <p className="text-xs text-muted-foreground mt-2">(Conteúdo de novidades aparecerá aqui - Simulado)</p>
                     </CardContent>
                 </Card>
             </div>
@@ -127,7 +135,7 @@ export default function VipAreaPage() {
           </CardHeader>
           <CardContent className="text-center">
             <p className="text-foreground/80 mb-6">
-              Faça um upgrade para o nosso plano Serrano VIP e desbloqueie benefícios premium, ofertas exclusivas e muito mais!
+              Faça um upgrade para o nosso plano Serrano VIP e desbloqueie benefícios premium, acesso antecipado a novidades, ofertas exclusivas e muito mais!
             </p>
             <Button asChild size="lg" className="bg-primary hover:bg-primary/90">
               <Link href="/join">Conheça os Planos e Associe-se</Link>
