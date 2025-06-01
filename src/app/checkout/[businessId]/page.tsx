@@ -90,6 +90,7 @@ function CheckoutPageContent({ businessId }: { businessId: string }) {
       setAuthCheckedAndEligible(false);
 
       try {
+        // TODO: Firestore Integration - Replace getGramadoBusinessById with actual Firestore call.
         const businessData = await getGramadoBusinessById(businessId);
         if (!businessData) {
           setError('Estabelecimento não encontrado.');
@@ -100,6 +101,7 @@ function CheckoutPageContent({ businessId }: { businessId: string }) {
 
         let currentDeal = null;
         if (dealId) {
+          // TODO: Firestore Integration - Replace getDealsForBusiness with actual Firestore call.
           const allDeals = await getDealsForBusiness(businessId);
           currentDeal = allDeals.find(d => d.id === dealId) || null;
           if (!currentDeal) {
@@ -132,6 +134,7 @@ function CheckoutPageContent({ businessId }: { businessId: string }) {
           }
 
           if (dealId && currentDeal?.isPay1Get2 && currentDeal?.usageLimitPerUser === 1) {
+            // TODO: Firestore Integration - Replace checkUserOfferUsage with actual Firestore call.
             const used = await checkUserOfferUsage(authUser.id, dealId);
             setHasUsedOfferState(used);
             if (used) {
@@ -156,8 +159,6 @@ function CheckoutPageContent({ businessId }: { businessId: string }) {
         setIsLoadingPage(false);
       }
     }
-    // Only run loadDataAndCheckAuth if auth is not loading.
-    // This prevents running it multiple times during initial auth state resolution.
     if (!authLoading) {
         loadDataAndCheckAuth();
     }
@@ -186,18 +187,27 @@ function CheckoutPageContent({ businessId }: { businessId: string }) {
 
     setIsSubmitting(true);
     try {
-      // TODO: Replace with actual Firebase Firestore call to record offer usage
-      // e.g., await recordUserOfferUsage(authUser.id, dealId!, businessId);
+      // TODO: Backend Integration - Replace recordUserOfferUsage with actual Firebase Firestore call.
       // This function would write to a 'redemptions' collection in Firestore.
+      // It should also handle any business logic like decrementing offer availability if applicable.
+      // Example:
+      // await addDoc(collection(firestore, 'redemptions'), {
+      //   userId: authUser.id,
+      //   dealId: dealId,
+      //   businessId: businessId,
+      //   redeemedAt: new Date(),
+      //   userName: data.name, // from form
+      //   userEmail: data.email // from form
+      // });
       if (dealId && authUser) { 
         await recordUserOfferUsage(authUser.id, dealId, businessId);
       }
-      console.log('Agendamento/Offer Activation Data (simulated):', data, 'Deal ID:', dealId, 'Business ID:', businessId);
+      console.log('Simulating Agendamento/Offer Activation Data:', data, 'Deal ID:', dealId, 'Business ID:', businessId);
       await new Promise(resolve => setTimeout(resolve, 1000)); 
       
       toast({
         title: 'Agendamento Confirmado!',
-        description: `Seu benefício Guia Mais em ${business?.name} (${specificDeal?.title || 'Benefício Geral'}) foi agendado/ativado. Apresente esta confirmação ou seu card de membro no estabelecimento.`,
+        description: `Seu benefício Guia Mais em ${business?.name} (${specificDeal?.title || 'Benefício Geral'}) foi agendado/ativado. Apresente esta confirmação ou seu card de membro no estabelecimento. (Simulação)`,
         variant: 'default', 
       });
       if (business) {

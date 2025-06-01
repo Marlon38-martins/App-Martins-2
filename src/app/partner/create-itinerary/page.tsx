@@ -1,3 +1,4 @@
+
 // src/app/partner/create-itinerary/page.tsx
 'use client';
 
@@ -79,7 +80,23 @@ export default function CreateItineraryPage() {
       return;
     }
     setIsSubmitting(true);
-    console.log('Custom Itinerary Data (simulated):', data);
+    // TODO: Backend Integration - Replace with actual Firebase Firestore 'addDoc' call
+    // to a 'custom_itineraries' collection, linking to the partner's businessId.
+    // Example:
+    // try {
+    //   const partnerBusinessId = MOCK_PARTNER_BUSINESS_ID; // Get this from auth/partner context
+    //   await addDoc(collection(firestore, "custom_itineraries"), { 
+    //      ...data, 
+    //      partnerId: user?.id, // ID of the partner user
+    //      businessId: partnerBusinessId, // ID of the partner's establishment
+    //      createdAt: new Date() 
+    //   });
+    //   toast({ title: 'Roteiro Salvo!', description: 'O roteiro personalizado foi salvo com sucesso.' });
+    //   form.reset();
+    // } catch (error) {
+    //   toast({ title: 'Erro ao Salvar', description: 'Não foi possível salvar o roteiro.', variant: 'destructive' });
+    // }
+    console.log('Simulating Custom Itinerary Data Save:', data);
     await new Promise(resolve => setTimeout(resolve, 1500));
     
     toast({

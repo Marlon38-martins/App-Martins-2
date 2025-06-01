@@ -1,3 +1,4 @@
+
 // src/app/partner/add-vip-offer/page.tsx
 'use client';
 
@@ -21,7 +22,7 @@ import { ArrowLeft, Star, PlusCircle, Loader2, AlertCircle, ShieldAlert, Downloa
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 
-const MOCK_PARTNER_BUSINESS_ID = '1';
+const MOCK_PARTNER_BUSINESS_ID = '1'; // TODO: Replace with dynamic partner ID from auth context
 
 const offerFormSchema = z.object({
   title: z.string().min(5, { message: 'Título da oferta é obrigatório (mínimo 5 caracteres).' }),
@@ -54,6 +55,7 @@ interface CreatedOfferInfo {
 
 export default function AddVipOfferPage() {
   const { toast } = useToast();
+  // TODO: Add authentication and ensure user is a partner and owns MOCK_PARTNER_BUSINESS_ID
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [partnerBusiness, setPartnerBusiness] = useState<GramadoBusiness | null>(null);
@@ -65,6 +67,7 @@ export default function AddVipOfferPage() {
     if (businessIdToLoad) {
       async function loadBusiness() {
         setIsLoadingBusiness(true);
+        // TODO: Firestore Integration - Replace getGramadoBusinessById with actual Firestore call.
         const business = await getGramadoBusinessById(businessIdToLoad);
         setPartnerBusiness(business || null);
         setIsLoadingBusiness(false);
@@ -73,6 +76,7 @@ export default function AddVipOfferPage() {
     } else {
       setIsLoadingBusiness(false);
       setPartnerBusiness(null);
+      // TODO: Handle case where partner business ID is not available
     }
   }, []);
 
@@ -106,10 +110,20 @@ export default function AddVipOfferPage() {
         toast({ title: "Erro", description: "Estabelecimento do parceiro não carregado.", variant: "destructive"});
         return;
     }
+    // TODO: Add authentication check: ensure the logged-in user is the owner of partnerBusiness.id
     setIsSubmitting(true);
+    // TODO: Backend Integration - Replace with actual Firebase Firestore 'addDoc' call to 'deals' collection.
+    // Example:
+    // try {
+    //   const docRef = await addDoc(collection(firestore, "deals"), newDeal);
+    //   setCreatedOfferDetails({ id: docRef.id, title: data.title });
+    //   toast({ title: 'Oferta VIP Cadastrada!', description: 'Sua oferta VIP foi adicionada.' });
+    // } catch (error) {
+    //   toast({ title: 'Erro ao Salvar', description: 'Não foi possível cadastrar a oferta VIP.', variant: 'destructive' });
+    // }
     await new Promise(resolve => setTimeout(resolve, 1000));
 
-    const newDealId = `deal-vip-${Date.now()}`;
+    const newDealId = `deal-vip-${Date.now()}`; // Mock ID
     const newDeal = {
         id: newDealId,
         businessId: partnerBusiness.id,
@@ -122,13 +136,13 @@ export default function AddVipOfferPage() {
         termsAndConditions: data.termsAndConditions,
     };
 
-    console.log('New Partner VIP Offer Data:', newDeal, 'For Business:', partnerBusiness.name);
+    console.log('Simulating New Partner VIP Offer Data:', newDeal, 'For Business:', partnerBusiness.name);
 
     setCreatedOfferDetails({ id: newDealId, title: data.title });
     setIsSubmitting(false);
     toast({
       title: 'Oferta VIP Cadastrada!',
-      description: `A oferta VIP "${data.title}" foi adicionada. Veja o QR Code abaixo para download.`,
+      description: `A oferta VIP "${data.title}" foi adicionada. Veja o QR Code abaixo para download. (Simulação)`,
       variant: 'default',
     });
   };
@@ -159,7 +173,7 @@ export default function AddVipOfferPage() {
             <Alert variant="destructive">
                 <AlertCircle className="h-4 w-4" />
                 <AlertTitle className="text-sm">Erro</AlertTitle>
-                <AlertDescription className="text-xs">Não foi possível carregar os dados do estabelecimento para adicionar ofertas VIP. Tente voltar e acessar novamente.</AlertDescription>
+                <AlertDescription className="text-xs">Não foi possível carregar os dados do estabelecimento para adicionar ofertas VIP. Certifique-se de que você está logado como parceiro e que seu estabelecimento está configurado.</AlertDescription>
             </Alert>
             <Button asChild variant="outline" size="sm" className="mt-3 text-xs">
               <Link href="/partner/panel">
@@ -211,6 +225,7 @@ export default function AddVipOfferPage() {
           </CardHeader>
           <CardContent className="p-3 text-center">
             <div className="mb-3 inline-block border p-2 rounded-md bg-white">
+              {/* TODO: QR Code Generation - Replace placeholder with a real QR code generator */}
               <Image
                 src={`https://placehold.co/200x200.png?text=QR+VIP+${createdOfferDetails.id.substring(0, 8)}`}
                 alt={`QR Code para ${createdOfferDetails.title}`}
@@ -220,7 +235,7 @@ export default function AddVipOfferPage() {
               />
             </div>
             <p className="text-xs text-muted-foreground mb-3">
-              (Este é um QR Code simulado. Em um app real, ele seria funcional.)
+              (Este é um QR Code simulado. Em um app real, conteria dados da oferta VIP.)
             </p>
             <Button
               asChild

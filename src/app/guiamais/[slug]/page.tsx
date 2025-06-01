@@ -8,7 +8,7 @@ import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 
 import {
-    getGramadoBusinessBySlug, // Changed from getGramadoBusinessById
+    getGramadoBusinessBySlug, 
     getDealsForBusiness,
     type GramadoBusiness,
     type Deal,
@@ -50,11 +50,11 @@ const generateEmailLink = (businessName: string, offerTitle?: string) => {
 
 
 interface BusinessPageParams {
-  slug: string; // Changed from id to slug
+  slug: string; 
 }
 
 function BusinessPageContent({ params }: { params: BusinessPageParams }) {
-  const { slug } = params; // Changed from id to slug
+  const { slug } = params; 
   const { user: authUser, subscription: userSubscription, loading: authLoading } = useAuth();
 
   const [business, setBusiness] = useState<GramadoBusiness | null>(null);
@@ -73,16 +73,20 @@ function BusinessPageContent({ params }: { params: BusinessPageParams }) {
       setIsLoading(true);
       setError(null);
       try {
-        const businessData = await getGramadoBusinessBySlug(slug as string); // Changed to use slug
+        // TODO: Firestore Integration - Replace getGramadoBusinessBySlug with actual Firestore call if slugs are stored.
+        // If slugs are not stored directly, you might need to fetch all and filter, or implement a server-side slug lookup.
+        const businessData = await getGramadoBusinessBySlug(slug as string); 
         if (businessData) {
           setBusiness(businessData);
-          const dealsData = await getDealsForBusiness(businessData.id); // Still use business.id for deals
+          // TODO: Firestore Integration - Replace getDealsForBusiness with actual Firestore call.
+          const dealsData = await getDealsForBusiness(businessData.id); 
           setAllDealsForBusiness(dealsData);
 
           if (authUser) {
             const redemptions: Record<string, boolean> = {};
             for (const deal of dealsData) {
                 if (deal.isPay1Get2 && deal.usageLimitPerUser === 1) {
+                    // TODO: Firestore Integration - Replace checkUserOfferUsage with actual Firestore call.
                     redemptions[deal.id] = await checkUserOfferUsage(authUser.id, deal.id);
                 }
             }
@@ -99,7 +103,7 @@ function BusinessPageContent({ params }: { params: BusinessPageParams }) {
       }
     }
     loadBusinessData();
-  }, [slug, authUser, authLoading]); // Depend on slug
+  }, [slug, authUser, authLoading]); 
 
   const canUsePrimeBenefits = authUser && userSubscription && userSubscription.status === 'active';
   const isVipUser = canUsePrimeBenefits && userSubscription?.planId === 'serrano_vip';
@@ -113,8 +117,8 @@ function BusinessPageContent({ params }: { params: BusinessPageParams }) {
         } else {
           canAccess = true; // All subscribed users can access normal offers
         }
-      } else if (!deal.isVipOffer && !authUser) { // Not logged in, can "see" normal offers, but card CTA will prompt login/join
-        canAccess = false; // Technically cannot "use" it yet
+      } else if (!deal.isVipOffer && !authUser) { 
+        canAccess = false; 
       }
       return { ...deal, canAccess };
     });
@@ -230,9 +234,12 @@ function BusinessPageContent({ params }: { params: BusinessPageParams }) {
                   <Sun className="mr-2 h-5 w-5 text-yellow-500" />
                   Previsão do Tempo (Local)
                 </h4>
+                {/* TODO: Integrate OpenWeather API here. Fetch data based on business.latitude and business.longitude.
+                    Requires an API key set in .env.local (NEXT_PUBLIC_OPENWEATHER_API_KEY).
+                    Example API call: https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={API_KEY}&units=metric&lang=pt_br
+                */}
                 <p className="text-sm text-muted-foreground">
-                  {/* Placeholder: OpenWeather API integration here */}
-                  Esta seção exibirá a previsão do tempo atual para {business.city}.
+                  Esta seção exibirá a previsão do tempo atual para {business.city}. (Integração da API de tempo pendente)
                 </p>
                 <div className="mt-2 flex items-center space-x-2">
                   <CloudSun className="h-6 w-6 text-accent"/>
@@ -379,7 +386,7 @@ function BusinessPageContent({ params }: { params: BusinessPageParams }) {
                     <DealCard
                         key={deal.id}
                         deal={deal}
-                        business={business} // Pass the whole business object
+                        business={business} 
                         isRedeemed={isP1G2Limited && hasRedeemedThisOffer}
                         canAccess={deal.canAccess}
                     />

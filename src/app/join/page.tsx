@@ -122,12 +122,31 @@ export default function JoinPage() {
   const onSubmit: SubmitHandler<RegistrationFormValues> = async (data) => {
     setIsSubmitting(true);
     try {
-      // TODO: Implement real payment processing integration here (e.g., Stripe, Mercado Pago).
+      // TODO: Backend Integration - Implement real payment processing integration (e.g., Stripe, Mercado Pago).
       // This would involve:
       // 1. Creating a payment intent/session with the payment provider.
-      // 2. Collecting payment details securely (e.g., using Stripe Elements).
+      // 2. Collecting payment details securely (e.g., using Stripe Elements or a hosted checkout page).
       // 3. Handling payment confirmation and webhooks from the provider.
-      // 4. On successful payment, creating the user account and subscription record in Firebase Firestore.
+      // 4. On successful payment, create the user account in Firebase Auth (if not already existing from social login).
+      // 5. Create the user profile and subscription record in Firebase Firestore.
+      // Example (conceptual):
+      //   const paymentResult = await processPaymentWithProvider(data.selectedPlan, data.email, paymentMethodToken);
+      //   if (paymentResult.success) {
+      //     let firebaseUser = await getFirebaseUserByEmail(data.email);
+      //     if (!firebaseUser) {
+      //       firebaseUser = await createFirebaseUserWithEmailAndPassword(data.email, data.password);
+      //       // update firebaseUser profile with name, etc.
+      //     }
+      //     const appUser = mapFirebaseUserToAppUser(firebaseUser); // Your mapping logic
+      //     await saveUserToFirestore(appUser);
+      //     const subscription = createSubscriptionObject(appUser.id, data.selectedPlan, paymentResult.subscriptionDetails);
+      //     await saveSubscriptionToFirestore(subscription);
+      //     signInUser(appUser, subscription); // Update auth context
+      //     toast({ title: 'Inscrição Realizada!', ... });
+      //     router.push('/');
+      //   } else {
+      //     toast({ title: 'Falha no Pagamento', description: paymentResult.error, variant: 'destructive' });
+      //   }
       console.log("Simulating payment processing for plan:", data.selectedPlan, "for user:", data.email);
       await new Promise(resolve => setTimeout(resolve, 1500)); // Simulate API call
 
@@ -145,18 +164,18 @@ export default function JoinPage() {
       const mockSubscription: Subscription = {
         id: 'sub-mock-' + Date.now(),
         userId: mockUser.id,
-        planId: data.selectedPlan, // 'premium_mensal' or 'premium_anual'
+        planId: data.selectedPlan, 
         startDate: new Date(),
         endDate: endDate, 
         status: 'active', 
       };
       
       mockLogin(mockUser, mockSubscription); // Simulate login after successful "payment"
-      signInUser(mockUser, mockSubscription);
+      signInUser(mockUser, mockSubscription); // Update auth context
 
       toast({
         title: 'Inscrição Premium Realizada!',
-        description: `Bem-vindo(a) ao Guia Mais Premium, ${data.name}! Seu plano ${selectedPlanDetails.name} está ativo.`,
+        description: `Bem-vindo(a) ao Guia Mais Premium, ${data.name}! Seu plano ${selectedPlanDetails.name} está ativo. (Simulação)`,
         variant: 'default',
       });
       form.reset();

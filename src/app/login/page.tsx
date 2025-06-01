@@ -17,6 +17,9 @@ import { useToast } from '@/hooks/use-toast';
 import { mockLogin, type User, type Subscription } from '@/services/gramado-businesses'; 
 import { LogIn, Mail, Lock, MountainSnow, CheckCircle } from 'lucide-react'; 
 import { useAuth } from '@/hooks/use-auth-client';
+// TODO: Firebase Auth Integration - Import necessary Firebase Auth functions
+// import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+// import { auth } from "@/lib/firebase/config"; // Your Firebase auth instance
 
 const GoogleIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -52,7 +55,7 @@ export default function LoginPage() {
     signInUser(loggedInUser, userSub); 
     toast({
       title: 'Login Bem-sucedido!',
-      description: `Bem-vindo(a) de volta, ${loggedInUser.name || 'Usuário'}!`,
+      description: `Bem-vindo(a) de volta, ${loggedInUser.name || 'Usuário'}! (Simulação)`,
       variant: 'default',
       className: 'bg-green-500 text-white',
       icon: <CheckCircle className="h-5 w-5 text-white" />
@@ -62,8 +65,20 @@ export default function LoginPage() {
 
   const handleEmailLogin: SubmitHandler<LoginFormValues> = async (data) => {
     setIsSubmitting(true);
-    // TODO: Replace with actual Firebase signInWithEmailAndPassword call
-    console.log("Attempting email login (simulated):", data.email);
+    // TODO: Firebase Auth Integration - Replace with actual Firebase signInWithEmailAndPassword call
+    // Example:
+    // try {
+    //   const userCredential = await signInWithEmailAndPassword(auth, data.email, data.password);
+    //   const firebaseUser = userCredential.user;
+    //   // Fetch or create app-specific user data and subscription from Firestore
+    //   // Then call handleMockLoginSuccess or a similar function with the real data
+    //   console.log("Firebase Email Login Successful:", firebaseUser);
+    // } catch (error: any) {
+    //   toast({ title: "Erro no Login", description: error.message, variant: "destructive" });
+    // } finally {
+    //   setIsSubmitting(false);
+    // }
+    console.log("Simulating email login:", data.email);
     await new Promise(resolve => setTimeout(resolve, 500)); 
     
     const mockUser: User = {
@@ -88,8 +103,21 @@ export default function LoginPage() {
 
   const handleGoogleLogin = async () => {
     setIsGoogleSubmitting(true);
-    // TODO: Replace with actual Firebase signInWithPopup(auth, new GoogleAuthProvider()) call
-    console.log("Attempting Google login (simulated)");
+    // TODO: Firebase Auth Integration - Replace with actual Firebase signInWithPopup(auth, new GoogleAuthProvider()) call
+    // Example:
+    // try {
+    //   const provider = new GoogleAuthProvider();
+    //   const result = await signInWithPopup(auth, provider);
+    //   const firebaseUser = result.user;
+    //   // Fetch or create app-specific user data and subscription from Firestore
+    //   // Then call handleMockLoginSuccess or a similar function with the real data
+    //   console.log("Firebase Google Login Successful:", firebaseUser);
+    // } catch (error: any) {
+    //   toast({ title: "Erro no Login com Google", description: error.message, variant: "destructive" });
+    // } finally {
+    //   setIsGoogleSubmitting(false);
+    // }
+    console.log("Simulating Google login");
     await new Promise(resolve => setTimeout(resolve, 500)); 
 
     const mockUser: User = {
@@ -157,6 +185,7 @@ export default function LoginPage() {
                 )}
               />
                <div className="text-right text-sm">
+                {/* TODO: Implement password reset functionality */}
                 <Link href="#" className="text-primary hover:underline">
                   Esqueceu sua senha?
                 </Link>

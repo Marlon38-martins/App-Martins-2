@@ -89,6 +89,7 @@ export default function AdminEditPartnerDetailsPage() {
         setIsLoadingData(true);
         setError(null);
         try {
+          // TODO: Firestore Integration - Replace getGramadoBusinessById with actual Firestore call.
           const businessData = await getGramadoBusinessById(businessId);
           if (businessData) {
             setBusiness(businessData);
@@ -132,9 +133,22 @@ export default function AdminEditPartnerDetailsPage() {
         toast({ title: "Erro", description: "Dados do estabelecimento não carregados.", variant: "destructive" });
         return;
     }
+    if (!isAdmin) {
+        toast({ title: "Acesso Negado", description: "Você não tem permissão para editar.", variant: "destructive" });
+        return;
+    }
     setIsSubmitting(true);
-    // TODO: Replace with actual Firebase Firestore 'setDoc' or 'updateDoc' call for the business
-    console.log(`Updating business ${business.id} in Firestore (simulated):`, data);
+    // TODO: Backend Integration - Replace with actual Firebase Firestore 'setDoc' or 'updateDoc' call.
+    // Example:
+    // try {
+    //   const businessDocRef = doc(firestore, 'businesses', business.id);
+    //   await updateDoc(businessDocRef, updatedBusinessData);
+    //   toast({ title: 'Dados Atualizados!', description: 'Informações salvas com sucesso.' });
+    //   router.push('/admin/list-all-partners');
+    // } catch (error) {
+    //   toast({ title: 'Erro ao Salvar', description: 'Não foi possível salvar as alterações.', variant: 'destructive' });
+    // }
+    console.log(`Simulating update for business ${business.id} in Firestore:`, data);
     await new Promise(resolve => setTimeout(resolve, 1500));
     
     const updatedBusiness = {
@@ -144,7 +158,7 @@ export default function AdminEditPartnerDetailsPage() {
         reviewCount: data.reviewCount === undefined || isNaN(data.reviewCount) ? undefined : data.reviewCount,
     };
 
-    console.log('Admin Updated Establishment Data (simulated):', updatedBusiness);
+    console.log('Simulated Admin Updated Establishment Data:', updatedBusiness);
 
     toast({
       title: 'Dados Atualizados pelo Admin!',

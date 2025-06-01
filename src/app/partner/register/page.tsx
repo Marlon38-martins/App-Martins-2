@@ -105,15 +105,23 @@ export default function PartnerRegisterPage() {
 
   const onSubmit: SubmitHandler<PartnerRegistrationFormValues> = async (data) => {
     setIsSubmitting(true);
-    // TODO: Replace with actual backend call to submit partnership request.
+    // TODO: Backend Integration - Replace with actual backend call to submit partnership request.
     // This would likely save to a 'pending_partners' collection in Firestore
     // or send an email to an admin for review.
-    console.log('Partner Registration Request Data (simulated):', data);
+    // Example:
+    // try {
+    //   await addDoc(collection(firestore, "partner_requests"), { ...data, status: 'pending', requestedAt: new Date() });
+    //   toast({ title: 'Solicitação Enviada!', description: 'Sua solicitação foi enviada para análise.' });
+    //   form.reset();
+    // } catch (error) {
+    //   toast({ title: 'Erro ao Enviar', description: 'Não foi possível enviar sua solicitação.', variant: 'destructive' });
+    // }
+    console.log('Simulating Partner Registration Request Data:', data);
     await new Promise(resolve => setTimeout(resolve, 1500));
     
     toast({
       title: 'Solicitação de Parceria Enviada!',
-      description: `Obrigado, ${data.contactName}! Sua solicitação para o estabelecimento "${data.name}" foi enviada para análise. Entraremos em contato em breve.`,
+      description: `Obrigado, ${data.contactName}! Sua solicitação para o estabelecimento "${data.name}" foi enviada para análise. Entraremos em contato em breve. (Simulação)`,
       variant: 'default', 
     });
     setIsSubmitting(false);

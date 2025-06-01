@@ -669,7 +669,7 @@ const deals: Deal[] = [
  */
 export async function getGramadoBusinesses(): Promise<GramadoBusiness[]> {
   // Simulate API call
-  // TODO: Replace with actual Firebase Firestore call:
+  // TODO: Firestore Integration - Replace with actual Firebase Firestore call:
   // if (!firestore) return businesses; // Fallback to mock if Firestore not initialized
   // const businessesCol = collection(firestore, 'businesses');
   // const businessSnapshot = await getDocs(businessesCol);
@@ -687,7 +687,7 @@ export async function getGramadoBusinesses(): Promise<GramadoBusiness[]> {
  */
 export async function getGramadoBusinessById(id: string): Promise<GramadoBusiness | undefined> {
   // Simulate API call
-  // TODO: Replace with actual Firebase Firestore call:
+  // TODO: Firestore Integration - Replace with actual Firebase Firestore call:
   // if (!firestore) return businesses.find(business => business.id === id);
   // const businessDocRef = doc(firestore, 'businesses', id);
   // const businessSnap = await getDoc(businessDocRef);
@@ -703,6 +703,14 @@ export async function getGramadoBusinessById(id: string): Promise<GramadoBusines
  * @returns A promise that resolves to a GramadoBusiness object, or undefined if not found.
  */
 export async function getGramadoBusinessBySlug(slug: string): Promise<GramadoBusiness | undefined> {
+  // Simulate API call
+  // TODO: Firestore Integration - Replace with actual Firebase Firestore call:
+  // if (!firestore) return businesses.find(business => slugify(business.name) === slug);
+  // const businessesCol = collection(firestore, 'businesses');
+  // const q = query(businessesCol, where('slug', '==', slug)); // Assuming you add a 'slug' field to your Firestore documents
+  // const businessSnapshot = await getDocs(q);
+  // if (businessSnapshot.empty) return undefined;
+  // return { id: businessSnapshot.docs[0].id, ...businessSnapshot.docs[0].data() } as GramadoBusiness;
   await new Promise(resolve => setTimeout(resolve, 100));
   return businesses.find(business => slugify(business.name) === slug);
 }
@@ -716,7 +724,7 @@ export async function getGramadoBusinessBySlug(slug: string): Promise<GramadoBus
  */
 export async function getDealsForBusiness(businessId: string): Promise<Deal[]> {
   // Simulate API call
-  // TODO: Replace with actual Firebase Firestore call:
+  // TODO: Firestore Integration - Replace with actual Firebase Firestore call:
   // if (!firestore) return deals.filter(deal => deal.businessId === businessId);
   // const dealsCol = collection(firestore, 'deals');
   // const q = query(dealsCol, where('businessId', '==', businessId));
@@ -733,7 +741,7 @@ export async function getDealsForBusiness(businessId: string): Promise<Deal[]> {
  */
 export async function getAllDeals(): Promise<Deal[]> {
   // Simulate API call
-  // TODO: Replace with actual Firebase Firestore call:
+  // TODO: Firestore Integration - Replace with actual Firebase Firestore call:
   // if (!firestore) return deals;
   // const dealsCol = collection(firestore, 'deals');
   // const dealSnapshot = await getDocs(dealsCol);
@@ -745,11 +753,14 @@ export async function getAllDeals(): Promise<Deal[]> {
 
 
 // --- Mocked User, Subscription, and Redemption Services ---
+// These will be replaced by Firebase Auth and Firestore interactions.
+
 let mockCurrentUser: User | null = null;
 let mockUserSubscription: Subscription | null = null;
 
 
 export async function getCurrentUser(): Promise<User | null> {
+  // TODO: Firebase Auth Integration - Replace with onAuthStateChanged listener and user mapping.
   await new Promise(resolve => setTimeout(resolve, 50));
   if (typeof window !== 'undefined') {
     const storedUser = localStorage.getItem('mockUser');
@@ -764,11 +775,10 @@ export async function getCurrentUser(): Promise<User | null> {
     }
   }
   return null;
-  // TODO: When Firebase Auth is integrated, this should return the actual Firebase user,
-  // potentially mapping it to your User interface.
 }
 
 export async function getMockUserSubscription(userId: string): Promise<Subscription | null> {
+  // TODO: Firestore Integration - Replace with actual Firebase Firestore call to fetch subscription.
   await new Promise(resolve => setTimeout(resolve, 50));
   if (typeof window !== 'undefined') {
       const storedSub = localStorage.getItem('mockSubscription');
@@ -790,10 +800,10 @@ export async function getMockUserSubscription(userId: string): Promise<Subscript
       }
   }
   return null;
-  // TODO: Replace with actual Firebase Firestore call to fetch subscription details for the user.
 }
 
 export async function checkUserOfferUsage(userId: string, offerId: string): Promise<boolean> {
+  // TODO: Firestore Integration - Replace with actual Firebase Firestore call to check 'redemptions' collection.
   await new Promise(resolve => setTimeout(resolve, 50));
   if (!mockCurrentUser || userId !== mockCurrentUser.id) return false;
   
@@ -808,10 +818,10 @@ export async function checkUserOfferUsage(userId: string, offerId: string): Prom
     }
   }
   return false;
-  // TODO: Replace with actual Firebase Firestore call to check the user's redemptions collection.
 }
 
 export async function recordUserOfferUsage(userId: string, offerId: string, businessId: string): Promise<void> {
+  // TODO: Firestore Integration - Replace with actual Firebase Firestore call to add to 'redemptions' collection.
   await new Promise(resolve => setTimeout(resolve, 50));
    if (!mockCurrentUser || userId !== mockCurrentUser.id) return;
 
@@ -827,11 +837,11 @@ export async function recordUserOfferUsage(userId: string, offerId: string, busi
         localStorage.setItem(redemptionsKey, JSON.stringify(newRedemptions));
      }
   }
-  // TODO: Replace with actual Firebase Firestore call to add a document to the user's redemptions collection.
-  // This should include userId, offerId, businessId, and a timestamp.
-  console.log(`Mocked: User ${userId} used offer ${offerId} for business ${businessId}`);
+  console.log(`MOCKED: User ${userId} used offer ${offerId} for business ${businessId}. Firestore call would be made here.`);
 }
 
+// Mock login/logout functions for demonstration purposes.
+// TODO: Firebase Auth Integration - These will be replaced by Firebase SDK calls.
 export function mockLogin(user: User, subscription: Subscription) {
   mockCurrentUser = user;
   mockUserSubscription = subscription;
@@ -841,10 +851,10 @@ export function mockLogin(user: User, subscription: Subscription) {
     localStorage.setItem('mockUser', JSON.stringify(user));
     localStorage.setItem('mockSubscription', JSON.stringify(subscription));
     const redemptionsKey = `mockUserRedemptions-${user.id}`;
-    localStorage.removeItem(redemptionsKey);
+    localStorage.removeItem(redemptionsKey); // Clear previous redemptions on new login
     window.dispatchEvent(new CustomEvent('mockAuthChange'));
   }
-  console.log(`User ${user.email} mock logged in.`);
+  console.log(`MOCKED: User ${user.email} mock logged in. In production, use Firebase Auth.`);
 }
 
 export function mockLogout() {
@@ -869,6 +879,6 @@ export function mockLogout() {
   if (typeof window !== 'undefined') {
     window.dispatchEvent(new CustomEvent('mockAuthChange'));
   }
-  console.log("User mock logged out.");
+  console.log("MOCKED: User mock logged out. In production, use Firebase Auth.");
 }
 // --- End Mocked Services ---

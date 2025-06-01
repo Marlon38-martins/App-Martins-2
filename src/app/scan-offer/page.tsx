@@ -14,6 +14,18 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ArrowLeft, Camera, QrCode, VideoOff, CheckCircle, Loader2 } from 'lucide-react';
 
+// TODO: Production - For real QR code scanning, consider a library like 'html5-qrcode' or 'react-qr-reader'.
+// These libraries handle camera access, stream processing, and QR code decoding.
+// Example with 'html5-qrcode':
+// 1. npm install html5-qrcode
+// 2. Import Html5QrcodeScanner from 'html5-qrcode';
+// 3. In useEffect, initialize and render the scanner:
+//    const scanner = new Html5QrcodeScanner("qr-reader-container-id", { fps: 10, qrbox: 250 }, false);
+//    scanner.render(onScanSuccess, onScanFailure);
+//    function onScanSuccess(decodedText, decodedResult) { /* handle success */ }
+//    function onScanFailure(error) { /* handle error, often ignored for continuous scanning */ }
+//    return () => { scanner.clear().catch(error => console.error("Failed to clear scanner", error)); };
+
 export default function ScanOfferPage() {
   const router = useRouter();
   const { user, loading: authLoading } = useAuth();
@@ -32,15 +44,13 @@ export default function ScanOfferPage() {
   }, [authLoading, user, router]);
 
   useEffect(() => {
-    // Only attempt to get camera if user is loaded and present
     if (!user || authLoading) {
       if (streamRef.current) {
         streamRef.current.getTracks().forEach(track => track.stop());
         streamRef.current = null;
         if(videoRef.current) videoRef.current.srcObject = null;
-        console.log('Camera stream stopped due to user/auth state change.');
       }
-      setHasCameraPermission(null); // Reset permission state if user logs out or is loading
+      setHasCameraPermission(null); 
       return;
     }
 
@@ -52,31 +62,26 @@ export default function ScanOfferPage() {
       }
 
       const cameraConstraints = [
-        { video: { facingMode: { exact: "environment" } } }, // Prioritize rear camera
-        { video: { facingMode: "user" } },                   // Fallback to front camera
-        { video: true }                                      // Fallback to any camera
+        { video: { facingMode: { exact: "environment" } } }, 
+        { video: { facingMode: "user" } },                   
+        { video: true }                                      
       ];
 
       for (const constraint of cameraConstraints) {
         try {
-          console.log('Attempting to get camera with constraint:', constraint.video);
           streamRef.current = await navigator.mediaDevices.getUserMedia(constraint);
-          console.log('Camera obtained successfully.');
           setHasCameraPermission(true);
           setCameraError(null);
           if (videoRef.current && streamRef.current) {
             videoRef.current.srcObject = streamRef.current;
             videoRef.current.play().catch(playError => console.error("Error playing video:", playError));
           }
-          return; // Exit loop if camera is successfully obtained
+          return; 
         } catch (err: any) {
-          console.warn(`Failed to get camera with constraint:`, constraint.video, err.name, err.message);
           setCameraError(`Falha ao acessar câmera: ${err.message}. Tentando outra opção...`);
         }
       }
 
-      // If all attempts fail
-      console.error('All attempts to access camera failed.');
       setHasCameraPermission(false);
       setCameraError('Não foi possível acessar nenhuma câmera. Verifique as permissões do seu navegador.');
       toast({
@@ -88,13 +93,11 @@ export default function ScanOfferPage() {
 
     getCameraStream();
 
-    // Cleanup function
     return () => {
       if (streamRef.current) {
         streamRef.current.getTracks().forEach(track => track.stop());
         streamRef.current = null;
         if(videoRef.current) videoRef.current.srcObject = null;
-        console.log('Camera stream stopped on component unmount.');
       }
     };
   }, [user, authLoading, toast]);
@@ -110,18 +113,22 @@ export default function ScanOfferPage() {
     }
 
     setIsScanning(true);
-    // Simulate scanning process
+    // TODO: Backend Integration - Replace with actual QR code scanning and validation logic.
+    // 1. Capture image from videoRef or use a QR scanning library.
+    // 2. Send QR data to backend for validation (check if offer exists, is valid, not used by user, etc.).
+    // 3. If valid, call recordUserOfferUsage (or similar backend function).
+    // 4. Display success or error message.
     await new Promise(resolve => setTimeout(resolve, 1500)); 
     
     const mockScannedData = {
-      offerTitle: "Desconto Especial de Parceiro",
+      offerTitle: "Desconto Especial de Parceiro (Simulado)",
       businessName: "Restaurante Mirante da Serra",
       discount: "15% OFF"
     };
 
     toast({
       title: 'Cupom Ativado com Sucesso!',
-      description: `Você ativou "${mockScannedData.offerTitle}" em ${mockScannedData.businessName}. Apresente esta confirmação!`,
+      description: `Você ativou "${mockScannedData.offerTitle}" em ${mockScannedData.businessName}. Apresente esta confirmação! (Simulação)`,
       variant: 'default',
       className: 'bg-green-500 text-white border-green-600',
       icon: <CheckCircle className="h-5 w-5 text-white" />,
@@ -130,7 +137,7 @@ export default function ScanOfferPage() {
   };
 
   const renderCameraView = () => {
-    if (authLoading || (!user && !authLoading)) { // User context still loading or definitively no user
+    if (authLoading || (!user && !authLoading)) {
       return (
         <div className="text-center text-muted-foreground p-4 flex flex-col items-center justify-center h-full">
           <Loader2 className="h-12 w-12 mx-auto mb-2 animate-spin text-primary" />
@@ -138,7 +145,7 @@ export default function ScanOfferPage() {
         </div>
       );
     }
-    if (hasCameraPermission === null && user) { // User loaded, camera permission being requested
+    if (hasCameraPermission === null && user) {
          return (
             <div className="text-center text-muted-foreground p-4 flex flex-col items-center justify-center h-full">
                 <Camera className="h-12 w-12 mx-auto mb-2 text-primary" />
@@ -156,14 +163,13 @@ export default function ScanOfferPage() {
         );
     }
     if (hasCameraPermission === true) {
-        // playsInline is important for iOS to play video inline
         return <video ref={videoRef} className="w-full h-full object-cover" autoPlay muted playsInline />;
     }
-    return null; // Fallback, should not be reached if logic is correct
+    return null; 
   };
 
 
-  if (authLoading) { // Skeleton for the whole page if auth is loading
+  if (authLoading) { 
     return (
       <div className="p-4 md:p-6 space-y-4">
         <Skeleton className="h-8 w-1/3" />
@@ -178,7 +184,7 @@ export default function ScanOfferPage() {
     );
   }
   
-  if (!user && !authLoading) { // If auth is done and still no user, show login prompt
+  if (!user && !authLoading) { 
     return (
       <div className="p-4 md:p-6 flex flex-col items-center justify-center min-h-[calc(100vh-200px)]">
         <Alert variant="destructive">
@@ -214,11 +220,12 @@ export default function ScanOfferPage() {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
+          {/* TODO: For real QR scanning, replace this div with the QR scanner component (e.g., <div id="qr-reader-container-id"></div>) */}
           <div className="aspect-video w-full bg-muted rounded-md overflow-hidden flex items-center justify-center border border-dashed">
             {renderCameraView()}
           </div>
 
-          {hasCameraPermission === false && user && ( // Show only if user is logged in and permission is denied
+          {hasCameraPermission === false && user && ( 
             <Alert variant="destructive">
               <VideoOff className="h-4 w-4" />
               <AlertTitle>Sem Acesso à Câmera</AlertTitle>

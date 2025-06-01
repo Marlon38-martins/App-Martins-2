@@ -6,7 +6,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
-import { ArrowLeft, Rocket, TrendingUp, ShieldCheck, Wrench, MessageSquare, Ticket, Star, QrCode as QrCodeIcon, Users } from 'lucide-react';
+import { ArrowLeft, Rocket, TrendingUp, ShieldCheck, Wrench, MessageSquare, Ticket, Star, QrCode as QrCodeIcon, Users, Route } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 
 const partnerPlansData = [
@@ -34,11 +34,12 @@ const partnerPlansData = [
     price: "R$ 119,90",
     billingCycle: "/ mês",
     benefits: [
-      { text: "3 Ofertas Normais (com QR Code de resgate)", IconComp: Ticket }, // Atualizado de 4 para 3
+      { text: "3 Ofertas Normais (com QR Code de resgate)", IconComp: Ticket }, 
       { text: "1 Oferta VIP Especial (com QR Code de resgate)", IconComp: Star },
       { text: "Notificação para clientes VIP sobre sua Oferta Especial", IconComp: MessageSquare },
       { text: "QR Code exclusivo para direcionar clientes à sua página no Guia Mais", IconComp: QrCodeIcon },
       { text: "Exibição de avaliações de clientes em sua página", IconComp: Star },
+      { text: "Criação de Roteiros Personalizados para Clientes", IconComp: Route },
     ],
     description: "Para negócios em crescimento que desejam maior engajamento e mais oportunidades de destacar seus serviços, com mais ofertas e a força das avaliações.",
     priceInfo: "Tenho Interesse",
@@ -58,6 +59,7 @@ const partnerPlansData = [
       { text: "Notificações frequentes para clientes VIP sobre suas ofertas", IconComp: MessageSquare },
       { text: "Acompanhamento de desempenho (visitas, avaliações de clientes)", IconComp: Users },
       { text: "Exibição de avaliações de clientes em sua página", IconComp: Star },
+      { text: "Criação de Roteiros Personalizados para Clientes", IconComp: Route },
     ],
     description: "Maximize sua presença e resultados! Visibilidade premium, notificações VIP, acompanhamento completo de desempenho e o poder das avaliações de clientes.",
     priceInfo: "Tenho Interesse",

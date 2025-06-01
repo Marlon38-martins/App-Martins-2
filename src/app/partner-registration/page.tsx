@@ -7,7 +7,7 @@ import Link from 'next/link';
 import Image from 'next/image'; // Import Image
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { CheckCircle, Award, MessageSquare, Briefcase, ArrowLeft, TrendingUp, Rocket, Handshake, BadgePercent, UserPlus, Wrench, Ticket, Star, ShieldCheck } from 'lucide-react';
+import { CheckCircle, Award, MessageSquare, Briefcase, ArrowLeft, TrendingUp, Rocket, Handshake, BadgePercent, UserPlus, Wrench, Ticket, Star, ShieldCheck, Route } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 
 export default function PartnerRegistrationPage() {
@@ -22,6 +22,10 @@ export default function PartnerRegistrationPage() {
       iconColor: "text-blue-500",
       normalOffers: 2,
       specialOffers: 1,
+      benefits: [ // Added benefits array for consistency
+        { text: "2 Ofertas Normais", IconComp: Ticket },
+        { text: "1 Oferta VIP Especial", IconComp: Star },
+      ],
       description: "Ideal para negócios que estão começando e buscam ganhar visibilidade inicial, atraindo novos clientes com uma oferta especial de impacto e algumas promoções regulares.",
       priceInfo: "Saber Mais",
       link: "/partner/plans",
@@ -30,9 +34,14 @@ export default function PartnerRegistrationPage() {
       name: "Plano Processo",
       Icon: TrendingUp,
       iconColor: "text-green-500",
-      normalOffers: 3, // Atualizado de 4 para 3
+      normalOffers: 3,
       specialOffers: 1,
-      description: "Para negócios em crescimento que desejam maior engajamento e mais oportunidades de destacar seus serviços e produtos com um volume maior de ofertas.",
+      benefits: [
+        { text: "3 Ofertas Normais", IconComp: Ticket },
+        { text: "1 Oferta VIP Especial", IconComp: Star },
+        { text: "Criação de Roteiros Personalizados", IconComp: Route },
+      ],
+      description: "Para negócios em crescimento que desejam maior engajamento e mais oportunidades de destacar seus serviços e produtos com um volume maior de ofertas e roteiros personalizados.",
       priceInfo: "Saber Mais",
       link: "/partner/plans",
     },
@@ -42,7 +51,13 @@ export default function PartnerRegistrationPage() {
       iconColor: "text-purple-500",
       normalOffers: 5,
       specialOffers: 2,
-      description: "Maximize sua presença e resultados! Visibilidade premium na página inicial, notificações frequentes de suas ofertas para clientes VIP e acompanhamento de fluxo de visitas ao estabelecimento.",
+      benefits: [
+        { text: "5 Ofertas Normais", IconComp: Ticket },
+        { text: "2 Ofertas VIP Especiais", IconComp: Star },
+        { text: "Visibilidade Premium", IconComp: TrendingUp },
+        { text: "Criação de Roteiros Personalizados", IconComp: Route },
+      ],
+      description: "Maximize sua presença e resultados! Visibilidade premium, notificações VIP, acompanhamento completo de desempenho e o poder das avaliações de clientes.",
       priceInfo: "Saber Mais",
       link: "/partner/plans",
     }
@@ -143,12 +158,11 @@ export default function PartnerRegistrationPage() {
                   <CardContent className="p-0 flex-grow">
                     <p className="text-xs text-muted-foreground mb-2">{plan.description}</p>
                     <ul className="space-y-1 text-xs text-foreground/80">
-                      <li className="flex items-center">
-                        <Ticket className="mr-2 h-3.5 w-3.5 text-green-500" /> {plan.normalOffers} Ofertas Normais
-                      </li>
-                      <li className="flex items-center">
-                        <Star className="mr-2 h-3.5 w-3.5 text-yellow-400 fill-yellow-400" /> {plan.specialOffers} Oferta(s) VIP Especial(is)
-                      </li>
+                      {plan.benefits.map((benefit, index) => (
+                        <li key={index} className="flex items-center">
+                          <benefit.IconComp className="mr-2 h-3.5 w-3.5 text-green-500" /> {benefit.text}
+                        </li>
+                      ))}
                     </ul>
                   </CardContent>
                   <CardFooter className="p-0 mt-auto pt-3">

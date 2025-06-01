@@ -14,10 +14,14 @@ Seu clube de vantagens em Martins, RN e região! Encontre os melhores estabeleci
     *   `next-pwa` (for Progressive Web App capabilities)
 *   **Backend (Conceptual - Firebase integration prepared):**
     *   Firebase Authentication (Email/Password, Google)
-    *   Firebase Firestore (for users, businesses, deals, subscriptions, redemptions, appointments)
+    *   Firebase Firestore (for users, businesses, deals, subscriptions, redemptions, appointments, partner_requests, custom_itineraries)
     *   Firebase Storage (for images)
     *   Firebase Cloud Messaging (FCM) (for Push Notifications)
     *   Genkit (for AI features, if added)
+*   **AI (com Genkit):**
+    *   Google AI (Gemini) - Configurado por padrão.
+    *   OpenAI (GPT models) - Opcional, requer `OPENAI_API_KEY`. Veja `src/ai/genkit.ts`.
+    *   Exemplo de fluxo: `src/ai/flows/generate-spot-description-flow.ts` para gerar descrições de pontos turísticos.
 *   **External APIs (Conceptual - Placeholders for integration):**
     *   Google Maps API (for maps, geocoding, routes)
     *   OpenWeather API (for weather information)
@@ -46,9 +50,13 @@ NEXT_PUBLIC_GOOGLE_MAPS_API_KEY="SUA_CHAVE_DE_API_GOOGLE_MAPS"
 
 # OpenWeather API Key (obtenha do OpenWeatherMap)
 NEXT_PUBLIC_OPENWEATHER_API_KEY="SUA_CHAVE_DE_API_OPENWEATHER"
+
+# OpenAI API Key (Opcional, para usar modelos OpenAI com Genkit)
+# Obtenha de: https://platform.openai.com/api-keys
+# OPENAI_API_KEY="sk-SUA_CHAVE_OPENAI"
 ```
 
-**Importante:** O aplicativo está configurado para usar dados mockados se as chaves do Firebase não estiverem presentes ou forem inválidas. Isso permite o desenvolvimento do frontend sem uma configuração completa do Firebase.
+**Importante:** O aplicativo está configurado para usar dados mockados se as chaves do Firebase não estiverem presentes ou forem inválidas. Isso permite o desenvolvimento do frontend sem uma configuração completa do Firebase. A integração com OpenAI via Genkit é opcional e requer a chave `OPENAI_API_KEY`.
 
 ### 2. Instalar Dependências
 
@@ -67,7 +75,7 @@ pnpm install
 3.  **Authentication:** No console do Firebase, vá para "Authentication" -> "Sign-in method" e habilite os provedores "Email/Password" e "Google".
 4.  **Firestore:**
     *   Vá para "Firestore Database" e crie um banco de dados no modo "Native".
-    *   Planeje suas coleções (ex: `users`, `businesses`, `deals`, `subscriptions`, `redemptions`, `appointments`).
+    *   Planeje suas coleções (ex: `users`, `businesses`, `deals`, `subscriptions`, `redemptions`, `appointments`, `partner_requests`, `custom_itineraries`).
     *   **Crucial:** Defina as **Regras de Segurança (Security Rules)** para proteger seus dados adequadamente. (Exemplo: Permitir leitura pública de negócios e ofertas, mas escrita restrita a usuários autenticados/admins/parceiros).
 5.  **Storage (Opcional):** Se for usar para imagens de parceiros/pontos turísticos, vá para "Storage", crie um bucket e configure as Regras de Segurança.
 6.  **Firebase Cloud Messaging (FCM - para Push Notifications):**
@@ -87,17 +95,35 @@ pnpm install
 1.  Crie uma conta em [OpenWeatherMap](https://openweathermap.org/).
 2.  Obtenha uma chave de API e adicione-a ao seu `.env.local` como `NEXT_PUBLIC_OPENWEATHER_API_KEY`.
 
+### 6. Configurar OpenAI API (Opcional)
+1.  Crie uma conta na [OpenAI Platform](https://platform.openai.com/).
+2.  Gere uma chave de API em [API Keys](https://platform.openai.com/api-keys).
+3.  Adicione a chave ao seu `.env.local` como `OPENAI_API_KEY="sk-..."`.
+    * O plugin Genkit OpenAI (`@genkit-ai/openai`) será ativado automaticamente se esta chave estiver presente.
+    * Você pode então especificar modelos OpenAI (ex: `openai/gpt-4o`) nos seus fluxos Genkit ou como modelo padrão em `src/ai/genkit.ts`.
+
 ## Rodar Localmente
 
-```bash
-npm run dev
-# ou
-yarn dev
-# ou
-pnpm dev
-```
+Dois terminais podem ser necessários:
 
-Abra [http://localhost:9002](http://localhost:9002) (ou a porta que for configurada) no seu navegador.
+1.  **Para o aplicativo Next.js:**
+    ```bash
+    npm run dev
+    # ou
+    yarn dev
+    # ou
+    pnpm dev
+    ```
+    Abra [http://localhost:9002](http://localhost:9002) (ou a porta que for configurada) no seu navegador.
+
+2.  **Para o servidor de desenvolvimento Genkit (se estiver testando fluxos AI):**
+    ```bash
+    npm run genkit:dev
+    # ou para recarregar automaticamente em mudanças nos fluxos:
+    npm run genkit:watch
+    ```
+    O servidor Genkit UI geralmente inicia em `http://localhost:4000`.
+
 
 ## Build para Produção (Web App / PWA)
 
@@ -162,12 +188,17 @@ O projeto está configurado com `next-pwa`.
 
 ## Avisos e Passos Manuais Importantes
 
-*   **Chaves de API:** As chaves para Firebase, Google Maps e OpenWeather DEVEM ser obtidas e configuradas manualmente no seu arquivo `.env.local`. **NÃO comite este arquivo com chaves reais em repositórios públicos.**
+*   **Chaves de API:** As chaves para Firebase, Google Maps, OpenWeather e OpenAI DEVEM ser obtidas e configuradas manualmente no seu arquivo `.env.local`. **NÃO comite este arquivo com chaves reais em repositórios públicos.**
 *   **Regras de Segurança do Firebase:** A segurança dos seus dados no Firestore e Storage depende da configuração correta das Regras de Segurança no console do Firebase. As regras padrão são muito permissivas.
-*   **Backend para Agendamentos Reais, Pagamentos, Push Notifications:**
+*   **Backend para Agendamentos Reais, Pagamentos, Push Notifications, Gerenciamento de Parceiros:**
     *   **Agendamentos e Confirmações:** A lógica atual é simulada. Para agendamentos reais e confirmações (WhatsApp/Email), você precisará de um backend (ex: Firebase Cloud Functions ou um servidor dedicado) para processar os pedidos, interagir com APIs de mensagens, e gerenciar o status dos agendamentos.
     *   **Pagamentos de Assinatura:** Requer integração com um gateway de pagamento (Stripe, Mercado Pago) e lógica de backend para gerenciar assinaturas e webhooks.
     *   **Push Notifications:** Envio de notificações push requer lógica de backend (ex: Firebase Cloud Functions) para interagir com FCM/APNs, utilizando os tokens dos dispositivos dos usuários.
-*   **Comentários no Código:** Procure por comentários `// TODO:` ou `// Placeholder:` no código para identificar áreas que necessitam de implementação de backend, integração de APIs reais, ou substituição de dados mockados.
+    *   **Aprovação de Parceiros, Gerenciamento de Ofertas, etc.:** Funções de administrador e parceiro (como adicionar/editar estabelecimentos, aprovar parcerias, gerenciar ofertas) precisam de lógica de backend e regras de segurança robustas no Firestore para garantir que apenas usuários autorizados possam realizar essas ações.
+*   **Comentários no Código:** Procure por comentários `// TODO:`, `// Placeholder:`, `// TODO: Firestore Integration - ...`, `// TODO: Backend Integration - ...` no código para identificar áreas que necessitam de implementação de backend, integração de APIs reais, ou substituição de dados mockados.
 *   **Multilíngue:** A estrutura para isso não foi completamente implementada. Você precisará de bibliotecas como `next-intl` ou `react-i18next` e arquivos de tradução.
 *   **Geração de APK:** Este é um projeto Next.js (Web). Para um APK Android nativo, você precisaria de um framework como React Native, Flutter, ou usar uma ferramenta como CapacitorJS para empacotar seu app web em um contêiner nativo. A funcionalidade PWA permite que o web app seja "instalado" em dispositivos móveis.
+*   **AI (Genkit):**
+    *   O fluxo `generate-spot-description-flow.ts` é um exemplo. Para usá-lo efetivamente, você precisaria integrá-lo à interface do usuário (por exemplo, em um formulário de administração de pontos turísticos onde o admin pode clicar em um botão para gerar uma descrição baseada em palavras-chave).
+    *   A lógica para escolher entre modelos GoogleAI e OpenAI (se a chave estiver configurada) está em `src/ai/genkit.ts`. Fluxos específicos podem também definir o modelo a ser usado.
+    *   Para executar fluxos Genkit localmente durante o desenvolvimento, use `npm run genkit:dev` ou `npm run genkit:watch`.

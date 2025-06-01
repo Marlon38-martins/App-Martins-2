@@ -1,3 +1,4 @@
+
 // src/app/partner/edit-business/[id]/page.tsx
 'use client';
 
@@ -74,6 +75,8 @@ export default function EditPartnerBusinessPage() {
   });
 
   useEffect(() => {
+    // TODO: Add authentication check here. Only the partner who owns this business or an admin should be able to edit.
+    // For now, it uses MOCK_PARTNER_BUSINESS_ID if no ID is in URL, which is not secure for production.
     const businessIdToLoad = businessIdFromUrl || MOCK_PARTNER_BUSINESS_ID;
 
     if (businessIdToLoad) {
@@ -81,8 +84,10 @@ export default function EditPartnerBusinessPage() {
         setIsLoadingData(true);
         setError(null);
         try {
+          // TODO: Firestore Integration - Replace getGramadoBusinessById with actual Firestore call.
           const businessData = await getGramadoBusinessById(businessIdToLoad);
           if (businessData) {
+                // TODO: Add ownership check here (is this user allowed to edit this business?)
                 setBusiness(businessData);
                 form.reset({
                 name: businessData.name,
@@ -123,7 +128,18 @@ export default function EditPartnerBusinessPage() {
         toast({ title: "Erro", description: "Dados do estabelecimento não carregados.", variant: "destructive" });
         return;
     }
+    // TODO: Add authentication and ownership check before submitting.
     setIsSubmitting(true);
+    // TODO: Backend Integration - Replace with actual Firebase Firestore 'updateDoc' or 'setDoc' call.
+    // Example:
+    // try {
+    //   const businessDocRef = doc(firestore, 'businesses', business.id);
+    //   await updateDoc(businessDocRef, data); // Or setDoc if you want to overwrite
+    //   toast({ title: 'Dados Atualizados!', description: 'As informações foram salvas.'});
+    //   router.push('/partner/panel');
+    // } catch (error) {
+    //   toast({ title: 'Erro ao Salvar', description: 'Não foi possível salvar as alterações.', variant: 'destructive' });
+    // }
     await new Promise(resolve => setTimeout(resolve, 1500));
     
     const updatedBusiness = {
@@ -131,7 +147,7 @@ export default function EditPartnerBusinessPage() {
         ...data,
     };
 
-    console.log('Updated Establishment Data:', updatedBusiness);
+    console.log('Simulating Updated Establishment Data:', updatedBusiness);
 
     toast({
       title: 'Dados Atualizados!',
@@ -174,7 +190,7 @@ export default function EditPartnerBusinessPage() {
   }
 
   if (!business) {
-     return <div className="p-6 text-center text-sm">Carregando dados do estabelecimento... Se o erro persistir, o ID pode ser inválido.</div>;
+     return <div className="p-6 text-center text-sm">Carregando dados do estabelecimento... Se o erro persistir, o ID pode ser inválido ou você não tem permissão.</div>;
   }
 
 
