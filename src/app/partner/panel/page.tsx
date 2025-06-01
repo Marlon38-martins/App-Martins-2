@@ -5,7 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Briefcase, LayoutDashboard, Tag, Edit3, BarChart3, ImageIcon, PlusCircle, Star, ShieldAlert, ArrowLeft } from 'lucide-react';
+import { Briefcase, LayoutDashboard, Tag, Edit3, BarChart3, ImageIcon, PlusCircle, Star, ShieldAlert, ArrowLeft, Route } from 'lucide-react';
 
 const MOCK_PARTNER_BUSINESS_ID = '1'; 
 
@@ -136,6 +136,23 @@ export default function PartnerPanelPage() {
             <Button asChild className="w-full text-xs md:text-sm" size="sm">
               <Link href="/partner/gallery">
                  Gerenciar Imagens
+              </Link>
+            </Button>
+          </CardContent>
+        </Card>
+
+        <Card className="shadow-md hover:shadow-lg transition-shadow duration-300 sm:col-span-2">
+          <CardHeader className="p-3">
+            <CardTitle className="flex items-center text-base md:text-lg text-accent">
+              <Route className="mr-2 h-4 w-4 md:h-5 md:w-5" />
+              Criar Roteiro Personalizado
+            </CardTitle>
+            <CardDescription className="text-xs md:text-sm">Monte itinerários exclusivos para seus clientes.</CardDescription>
+          </CardHeader>
+          <CardContent className="p-3">
+            <Button asChild className="w-full text-xs md:text-sm" size="sm">
+              <Link href="/partner/create-itinerary">
+                Criar Novo Roteiro
               </Link>
             </Button>
           </CardContent>
